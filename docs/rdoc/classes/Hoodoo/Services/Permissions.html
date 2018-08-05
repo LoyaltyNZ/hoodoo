@@ -32,6 +32,10 @@
             </span>
         </h1>
         <ul class="files">
+            <li><a href="../../../files/lib/hoodoo/data/types/permissions_rb.html">lib/hoodoo/data/types/permissions.rb</a></li>
+            <li><a href="../../../files/lib/hoodoo/data/types/permissions_defaults_rb.html">lib/hoodoo/data/types/permissions_defaults.rb</a></li>
+            <li><a href="../../../files/lib/hoodoo/services/middleware/middleware_rb.html">lib/hoodoo/services/middleware/middleware.rb</a></li>
+            <li><a href="../../../files/lib/hoodoo/services/services/implementation_rb.html">lib/hoodoo/services/services/implementation.rb</a></li>
             <li><a href="../../../files/lib/hoodoo/services/services/permissions_rb.html">lib/hoodoo/services/services/permissions.rb</a></li>
         </ul>
     </div>
@@ -253,7 +257,7 @@ all actions for all resources.</p>
             </p>
             <div id="method-c-new_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/services/services/permissions.rb, line 98</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">initialize</span>( <span class="ruby-identifier">hash</span> = <span class="ruby-keyword">nil</span> )
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">initialize</span>( <span class="ruby-identifier">hash</span> = <span class="ruby-keyword">nil</span> )
   <span class="ruby-keyword">if</span> <span class="ruby-identifier">hash</span>.<span class="ruby-identifier">nil?</span>
     <span class="ruby-ivar">@permissions</span> = {}
     <span class="ruby-identifier">set_default_fallback</span>( <span class="ruby-constant">DENY</span> )
@@ -274,7 +278,7 @@ all actions for all resources.</p>
 
         <div class="description">
             <p>Overwrite this instances&#39;s permissions with those from the given Hash.</p>
-<dl class="rdoc-list note-list"><dt><code>hash</code>
+<dl class="rdoc-list note-list"><dt>hash
 <dd>
 <p><a href="Permissions.html">Permissions</a> hash, which must come (directly
 or indirectly) from a <a href="Permissions.html#method-i-to_h">to_h</a>
@@ -292,7 +296,7 @@ call.</p>
             </p>
             <div id="method-i-from_h-21_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/services/services/permissions.rb, line 214</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">from_h!</span>( <span class="ruby-identifier">hash</span> )
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">from_h!</span>( <span class="ruby-identifier">hash</span> )
   <span class="ruby-ivar">@permissions</span> = <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Utilities</span>.<span class="ruby-identifier">stringify</span>( <span class="ruby-identifier">hash</span> )
 <span class="ruby-keyword">end</span></pre>
             </div>
@@ -326,7 +330,7 @@ call.</p>
             </p>
             <div id="method-i-merge-21_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/services/services/permissions.rb, line 225</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">merge!</span>( <span class="ruby-identifier">hash</span> )
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">merge!</span>( <span class="ruby-identifier">hash</span> )
   <span class="ruby-ivar">@permissions</span> = <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Utilities</span>.<span class="ruby-identifier">deep_merge_into</span>(
     <span class="ruby-ivar">@permissions</span>,
     <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Utilities</span>.<span class="ruby-identifier">stringify</span>( <span class="ruby-identifier">hash</span> )
@@ -367,7 +371,7 @@ href="Permissions.html#ASK">ASK</a> constant values.</p>
             </p>
             <div id="method-i-permitted-3F_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/services/services/permissions.rb, line 183</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">permitted?</span>( <span class="ruby-identifier">resource_name</span>, <span class="ruby-identifier">action_name</span> )
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">permitted?</span>( <span class="ruby-identifier">resource_name</span>, <span class="ruby-identifier">action_name</span> )
   <span class="ruby-identifier">resource_name</span> = <span class="ruby-identifier">resource_name</span>.<span class="ruby-identifier">to_s</span>
   <span class="ruby-identifier">action_name</span>   = <span class="ruby-identifier">action_name</span>.<span class="ruby-identifier">to_s</span>
 
@@ -420,7 +424,7 @@ href="Permissions.html#ASK">ASK</a>.</p>
             </p>
             <div id="method-i-set_default_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/services/services/permissions.rb, line 129</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">set_default</span>( <span class="ruby-identifier">action_name</span>, <span class="ruby-identifier">permission</span> )
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">set_default</span>( <span class="ruby-identifier">action_name</span>, <span class="ruby-identifier">permission</span> )
   <span class="ruby-identifier">action_name</span> = <span class="ruby-identifier">action_name</span>.<span class="ruby-identifier">to_s</span>
 
   <span class="ruby-ivar">@permissions</span>[ <span class="ruby-string">&#39;default&#39;</span> ] <span class="ruby-operator">||=</span> {}
@@ -459,7 +463,7 @@ href="Permissions.html#ASK">ASK</a>.</p>
             </p>
             <div id="method-i-set_default_fallback_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/services/services/permissions.rb, line 113</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">set_default_fallback</span>( <span class="ruby-identifier">permission</span> )
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">set_default_fallback</span>( <span class="ruby-identifier">permission</span> )
   <span class="ruby-identifier">action_name</span> = <span class="ruby-identifier">action_name</span>.<span class="ruby-identifier">to_s</span>
 
   <span class="ruby-ivar">@permissions</span>[ <span class="ruby-string">&#39;default&#39;</span> ] <span class="ruby-operator">||=</span> {}
@@ -476,7 +480,7 @@ href="Permissions.html#ASK">ASK</a>.</p>
 
         <div class="description">
             <p>Set the permissions an action on a resource.</p>
-<dl class="rdoc-list note-list"><dt><code>resource_name</code>
+<dl class="rdoc-list note-list"><dt>resource_name
 <dd>
 <p>Resource name as a Symbol or String, e.g. “<code>Purchase</code>” or
 <code>:Member</code>.</p>
@@ -502,7 +506,7 @@ href="Permissions.html#ASK">ASK</a>.</p>
             </p>
             <div id="method-i-set_resource_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/services/services/permissions.rb, line 164</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">set_resource</span>( <span class="ruby-identifier">resource_name</span>, <span class="ruby-identifier">action_name</span>, <span class="ruby-identifier">permission</span> )
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">set_resource</span>( <span class="ruby-identifier">resource_name</span>, <span class="ruby-identifier">action_name</span>, <span class="ruby-identifier">permission</span> )
   <span class="ruby-identifier">resource_name</span> = <span class="ruby-identifier">resource_name</span>.<span class="ruby-identifier">to_s</span>
   <span class="ruby-identifier">action_name</span>   = <span class="ruby-identifier">action_name</span>.<span class="ruby-identifier">to_s</span>
 
@@ -547,7 +551,7 @@ href="Permissions.html#ASK">ASK</a>.</p>
             </p>
             <div id="method-i-set_resource_fallback_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/services/services/permissions.rb, line 146</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">set_resource_fallback</span>( <span class="ruby-identifier">resource_name</span>, <span class="ruby-identifier">permission</span> )
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">set_resource_fallback</span>( <span class="ruby-identifier">resource_name</span>, <span class="ruby-identifier">permission</span> )
   <span class="ruby-identifier">resource_name</span> = <span class="ruby-identifier">resource_name</span>.<span class="ruby-identifier">to_s</span>
 
   <span class="ruby-ivar">@permissions</span>[ <span class="ruby-string">&#39;resources&#39;</span> ] <span class="ruby-operator">||=</span> {}
@@ -580,7 +584,7 @@ href="Permissions.html#method-i-from_h-21">from_h!</a>.</p>
             </p>
             <div id="method-i-to_h_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/services/services/permissions.rb, line 205</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">to_h</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">to_h</span>
   <span class="ruby-ivar">@permissions</span>
 <span class="ruby-keyword">end</span></pre>
             </div>

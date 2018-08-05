@@ -204,7 +204,7 @@ omitted, <code>nil</code> is used.</p>
             </p>
             <div id="method-c-new_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/interaction.rb, line 98</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">initialize</span>( <span class="ruby-identifier">env</span>, <span class="ruby-identifier">owning_middleware_instance</span>, <span class="ruby-identifier">session</span> = <span class="ruby-keyword">nil</span> )
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">initialize</span>( <span class="ruby-identifier">env</span>, <span class="ruby-identifier">owning_middleware_instance</span>, <span class="ruby-identifier">session</span> = <span class="ruby-keyword">nil</span> )
   <span class="ruby-ivar">@rack_request</span>   = <span class="ruby-operator">::</span><span class="ruby-constant">Rack</span><span class="ruby-operator">::</span><span class="ruby-constant">Request</span>.<span class="ruby-identifier">new</span>( <span class="ruby-identifier">env</span> )
   <span class="ruby-ivar">@interaction_id</span> = <span class="ruby-identifier">find_or_generate_interaction_id</span>()
   <span class="ruby-ivar">@context</span>        = <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Services</span><span class="ruby-operator">::</span><span class="ruby-constant">Context</span>.<span class="ruby-identifier">new</span>(
@@ -248,7 +248,7 @@ if need be.</p>
             </p>
             <div id="method-i-using_test_session_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/interaction.rb, line 68</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">using_test_session</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">using_test_session</span>
   <span class="ruby-ivar">@using_test_session</span> = <span class="ruby-keyword">true</span>
 <span class="ruby-keyword">end</span></pre>
             </div>
@@ -276,7 +276,7 @@ href="Interaction.html#method-i-using_test_session">using_test_session</a>.</p>
             </p>
             <div id="method-i-using_test_session-3F_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/interaction.rb, line 74</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">using_test_session?</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">using_test_session?</span>
   <span class="ruby-ivar">@using_test_session</span> <span class="ruby-operator">==</span> <span class="ruby-keyword">true</span>
 <span class="ruby-keyword">end</span></pre>
             </div>

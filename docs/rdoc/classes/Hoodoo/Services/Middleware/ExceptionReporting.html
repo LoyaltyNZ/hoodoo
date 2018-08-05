@@ -163,7 +163,7 @@ subclass (class, not instance) to add.</p>
             </p>
             <div id="method-c-add_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/exception_reporting/exception_reporting.rb, line 43</span>
-<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">add</span>( <span class="ruby-identifier">klass</span> )
+<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">add</span>( <span class="ruby-identifier">klass</span> )
   <span class="ruby-keyword">unless</span> <span class="ruby-identifier">klass</span> <span class="ruby-operator">&lt;</span> <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Services</span><span class="ruby-operator">::</span><span class="ruby-constant">Middleware</span><span class="ruby-operator">::</span><span class="ruby-constant">ExceptionReporting</span><span class="ruby-operator">::</span><span class="ruby-constant">BaseReporter</span>
     <span class="ruby-identifier">raise</span> <span class="ruby-string">&quot;Hoodoo::Services::Middleware.add must be called with a Hoodoo::Services::Middleware::ExceptionReporting::BaseReporter subclass&quot;</span>
   <span class="ruby-keyword">end</span>
@@ -207,8 +207,8 @@ the in-flight request/response cycle.</p>
             </p>
             <div id="method-c-contextual_report_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/exception_reporting/exception_reporting.rb, line 88</span>
-<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">contextual_report</span>( <span class="ruby-identifier">exception</span>, <span class="ruby-identifier">context</span> )
-  <span class="ruby-identifier">payload</span> = <span class="ruby-constant">Payload</span>.<span class="ruby-identifier">new</span>( <span class="ruby-value">exception:</span> <span class="ruby-identifier">exception</span>, <span class="ruby-value">context:</span> <span class="ruby-identifier">context</span> )
+<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">contextual_report</span>( <span class="ruby-identifier">exception</span>, <span class="ruby-identifier">context</span> )
+  <span class="ruby-identifier">payload</span> = <span class="ruby-constant">Payload</span>.<span class="ruby-identifier">new</span>( <span class="ruby-identifier">exception</span><span class="ruby-operator">:</span> <span class="ruby-identifier">exception</span>, <span class="ruby-identifier">context</span><span class="ruby-operator">:</span> <span class="ruby-identifier">context</span> )
   <span class="ruby-identifier">@@reporter_pool</span>.<span class="ruby-identifier">communicate</span>( <span class="ruby-identifier">payload</span> )
 <span class="ruby-keyword">end</span></pre>
             </div>
@@ -223,7 +223,7 @@ the in-flight request/response cycle.</p>
         <div class="description">
             <p>Remove an exception reporter class from the set of reporters. See <a
 href="ExceptionReporting.html#method-c-add">::add</a> for details.</p>
-<dl class="rdoc-list note-list"><dt><code>klass</code>
+<dl class="rdoc-list note-list"><dt>klass
 <dd>
 <p><a
 href="ExceptionReporting/BaseReporter.html">Hoodoo::Services::Middleware::ExceptionReporting::BaseReporter</a>
@@ -241,7 +241,7 @@ subclass (class, not instance) to remove.</p>
             </p>
             <div id="method-c-remove_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/exception_reporting/exception_reporting.rb, line 57</span>
-<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">remove</span>( <span class="ruby-identifier">klass</span> )
+<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">remove</span>( <span class="ruby-identifier">klass</span> )
   <span class="ruby-keyword">unless</span> <span class="ruby-identifier">klass</span> <span class="ruby-operator">&lt;</span> <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Services</span><span class="ruby-operator">::</span><span class="ruby-constant">Middleware</span><span class="ruby-operator">::</span><span class="ruby-constant">ExceptionReporting</span><span class="ruby-operator">::</span><span class="ruby-constant">BaseReporter</span>
     <span class="ruby-identifier">raise</span> <span class="ruby-string">&quot;Hoodoo::Services::Middleware.remove must be called with a Hoodoo::Services::Middleware::ExceptionReporting::BaseReporter subclass&quot;</span>
   <span class="ruby-keyword">end</span>
@@ -261,7 +261,7 @@ subclass (class, not instance) to remove.</p>
             <p>Call all added exception reporters (see <a
 href="ExceptionReporting.html#method-c-add">::add</a>) to report an
 exception.</p>
-<dl class="rdoc-list note-list"><dt><code>exception</code>
+<dl class="rdoc-list note-list"><dt>exception
 <dd>
 <p>Exception or Exception subclass instance to report.</p>
 </dd><dt><code>rack_env</code>
@@ -282,8 +282,8 @@ href="../../../Rack.html">Rack</a> request handling.</p>
             </p>
             <div id="method-c-report_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/exception_reporting/exception_reporting.rb, line 73</span>
-<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">report</span>( <span class="ruby-identifier">exception</span>, <span class="ruby-identifier">rack_env</span> = <span class="ruby-keyword">nil</span> )
-  <span class="ruby-identifier">payload</span> = <span class="ruby-constant">Payload</span>.<span class="ruby-identifier">new</span>( <span class="ruby-value">exception:</span> <span class="ruby-identifier">exception</span>, <span class="ruby-value">rack_env:</span> <span class="ruby-identifier">rack_env</span> )
+<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">report</span>( <span class="ruby-identifier">exception</span>, <span class="ruby-identifier">rack_env</span> = <span class="ruby-keyword">nil</span> )
+  <span class="ruby-identifier">payload</span> = <span class="ruby-constant">Payload</span>.<span class="ruby-identifier">new</span>( <span class="ruby-identifier">exception</span><span class="ruby-operator">:</span> <span class="ruby-identifier">exception</span>, <span class="ruby-identifier">rack_env</span><span class="ruby-operator">:</span> <span class="ruby-identifier">rack_env</span> )
   <span class="ruby-identifier">@@reporter_pool</span>.<span class="ruby-identifier">communicate</span>( <span class="ruby-identifier">payload</span> )
 <span class="ruby-keyword">end</span></pre>
             </div>
@@ -297,7 +297,7 @@ href="../../../Rack.html">Rack</a> request handling.</p>
 
         <div class="description">
             <p>Wait for all executing reporter threads to catch up before continuing.</p>
-<dl class="rdoc-list note-list"><dt><code>timeout</code>
+<dl class="rdoc-list note-list"><dt>timeout
 <dd>
 <p>Optional timeout wait delay <strong>for</strong> <strong>each</strong>
 <strong>thread</strong>. Default is 5 seconds.</p>
@@ -314,8 +314,8 @@ href="../../../Rack.html">Rack</a> request handling.</p>
             </p>
             <div id="method-c-wait_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/exception_reporting/exception_reporting.rb, line 98</span>
-<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">wait</span>( <span class="ruby-identifier">timeout</span> = <span class="ruby-value">5</span> )
-  <span class="ruby-identifier">@@reporter_pool</span>.<span class="ruby-identifier">wait</span>( <span class="ruby-value">per_instance_timeout:</span> <span class="ruby-identifier">timeout</span> )
+<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">wait</span>( <span class="ruby-identifier">timeout</span> = <span class="ruby-value">5</span> )
+  <span class="ruby-identifier">@@reporter_pool</span>.<span class="ruby-identifier">wait</span>( <span class="ruby-identifier">per_instance_timeout</span><span class="ruby-operator">:</span> <span class="ruby-identifier">timeout</span> )
 <span class="ruby-keyword">end</span></pre>
             </div>
         </div>

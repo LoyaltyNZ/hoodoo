@@ -203,7 +203,7 @@ href="AugmentedBase.html#method-i-set_platform_errors">set_platform_errors</a>.<
             </p>
             <div id="method-i-adds_errors_to-3F_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/client/augmented_base.rb, line 81</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">adds_errors_to?</span>( <span class="ruby-identifier">collection</span> )
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">adds_errors_to?</span>( <span class="ruby-identifier">collection</span> )
   <span class="ruby-identifier">to_add</span> = <span class="ruby-keyword">self</span>.<span class="ruby-identifier">platform_errors</span>()
 
   <span class="ruby-keyword">if</span> <span class="ruby-identifier">to_add</span>.<span class="ruby-identifier">has_errors?</span>
@@ -245,8 +245,7 @@ if result.platform_errors.halt_processing?
   # Handle result.platform_errors&#39;s error data
 else
   # Success case
-end
-</code></pre>
+end</code></pre>
 
 <p>For service authors, the <a
 href="AugmentedBase.html#method-i-platform_errors">platform_errors</a>
@@ -284,7 +283,7 @@ one line of (very slightly less obvious) code, too:</p>
             </p>
             <div id="method-i-platform_errors_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/client/augmented_base.rb, line 133</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">platform_errors</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">platform_errors</span>
   <span class="ruby-ivar">@nz_co_loyalty_platform_errors</span> <span class="ruby-operator">||=</span> <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Errors</span>.<span class="ruby-identifier">new</span>
 <span class="ruby-keyword">end</span></pre>
             </div>
@@ -318,7 +317,7 @@ be safely invoked.</p>
             </p>
             <div id="method-i-set_platform_errors_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/client/augmented_base.rb, line 145</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">set_platform_errors</span>( <span class="ruby-identifier">errors</span> )
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">set_platform_errors</span>( <span class="ruby-identifier">errors</span> )
   <span class="ruby-ivar">@nz_co_loyalty_platform_errors</span> = <span class="ruby-identifier">errors</span>
 <span class="ruby-keyword">end</span></pre>
             </div>

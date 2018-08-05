@@ -161,10 +161,10 @@ Regexp instance.</p></td>
 
         <div class="description">
             <p>Create an instance with named parameters as follows:</p>
-<dl class="rdoc-list note-list"><dt><code>resource</code>
+<dl class="rdoc-list note-list"><dt>resource
 <dd>
 <p>See <a href="ForLocal.html#attribute-i-resource">resource</a>.</p>
-</dd><dt><code>version</code>
+</dd><dt>version
 <dd>
 <p>See <a href="ForLocal.html#attribute-i-version">version</a>.</p>
 </dd><dt><code>base_path</code>
@@ -202,14 +202,14 @@ href="ForLocal.html#attribute-i-implementation_instance">implementation_instance
             </p>
             <div id="method-c-new_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/services/discovery/results/for_local.rb, line 81</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">initialize</span>( <span class="ruby-value">resource:</span>,
-                <span class="ruby-value">version:</span>,
-                <span class="ruby-value">base_path:</span>,
-                <span class="ruby-value">routing_regexp:</span>,
-                <span class="ruby-value">de_facto_base_path:</span>,
-                <span class="ruby-value">de_facto_routing_regexp:</span>,
-                <span class="ruby-value">interface_class:</span>,
-                <span class="ruby-value">implementation_instance:</span> )
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">initialize</span>( <span class="ruby-identifier">resource</span>,,
+                <span class="ruby-identifier">version</span>,,
+                <span class="ruby-identifier">base_path</span>,,
+                <span class="ruby-identifier">routing_regexp</span>,,
+                <span class="ruby-identifier">de_facto_base_path</span>,,
+                <span class="ruby-identifier">de_facto_routing_regexp</span>,,
+                <span class="ruby-identifier">interface_class</span>,,
+                <span class="ruby-identifier">implementation_instance</span><span class="ruby-operator">:</span> )
 
   <span class="ruby-keyword">self</span>.<span class="ruby-identifier">resource</span>                = <span class="ruby-identifier">resource</span>.<span class="ruby-identifier">to_sym</span>
   <span class="ruby-keyword">self</span>.<span class="ruby-identifier">version</span>                 = <span class="ruby-identifier">version</span>.<span class="ruby-identifier">to_i</span>

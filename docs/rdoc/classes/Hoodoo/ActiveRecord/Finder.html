@@ -145,7 +145,7 @@ this module.</p>
             </p>
             <div id="method-c-included_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/finder.rb, line 52</span>
-<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">included</span>( <span class="ruby-identifier">model</span> )
+<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">included</span>( <span class="ruby-identifier">model</span> )
   <span class="ruby-identifier">model</span>.<span class="ruby-identifier">class_attribute</span>(
     <span class="ruby-value">:nz_co_loyalty_hoodoo_show_id_fields</span>,
     <span class="ruby-value">:nz_co_loyalty_hoodoo_show_id_substitute</span>,
@@ -153,8 +153,8 @@ this module.</p>
     <span class="ruby-value">:nz_co_loyalty_hoodoo_search_with</span>,
     <span class="ruby-value">:nz_co_loyalty_hoodoo_filter_with</span>,
     {
-      <span class="ruby-value">:instance_predicate</span> <span class="ruby-operator">=&gt;</span> <span class="ruby-keyword">false</span>,
-      <span class="ruby-value">:instance_accessor</span>  <span class="ruby-operator">=&gt;</span> <span class="ruby-keyword">false</span>
+      <span class="ruby-value">:instance_predicate</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-keyword">false</span>,
+      <span class="ruby-value">:instance_accessor</span>  =<span class="ruby-operator">&gt;</span> <span class="ruby-keyword">false</span>
     }
   )
 
@@ -200,7 +200,7 @@ this module.</p>
             </p>
             <div id="method-c-instantiate_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/finder.rb, line 83</span>
-<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">instantiate</span>( <span class="ruby-identifier">model</span> )
+<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">instantiate</span>( <span class="ruby-identifier">model</span> )
   <span class="ruby-identifier">model</span>.<span class="ruby-identifier">extend</span>( <span class="ruby-constant">ClassMethods</span> )
 
   <span class="ruby-identifier">framework_data</span> = <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">ActiveRecord</span><span class="ruby-operator">::</span><span class="ruby-constant">Support</span>.<span class="ruby-identifier">framework_search_and_filter_data</span>()

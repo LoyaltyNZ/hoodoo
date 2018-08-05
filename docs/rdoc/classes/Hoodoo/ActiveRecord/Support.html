@@ -156,7 +156,7 @@ scope targets.</p>
             </p>
             <div id="method-c-add_undated_scope_to_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/support.rb, line 174</span>
-<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">add_undated_scope_to</span>( <span class="ruby-identifier">base_scope</span>, <span class="ruby-identifier">klass</span>, <span class="ruby-identifier">context</span> )
+<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">add_undated_scope_to</span>( <span class="ruby-identifier">base_scope</span>, <span class="ruby-identifier">klass</span>, <span class="ruby-identifier">context</span> )
   <span class="ruby-keyword">if</span> <span class="ruby-identifier">klass</span>.<span class="ruby-identifier">include?</span>( <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">ActiveRecord</span><span class="ruby-operator">::</span><span class="ruby-constant">Secure</span> )
     <span class="ruby-identifier">base_scope</span> = <span class="ruby-identifier">base_scope</span>.<span class="ruby-identifier">secure</span>( <span class="ruby-identifier">context</span> )
   <span class="ruby-keyword">end</span>
@@ -197,7 +197,7 @@ used to search inside supported database engines.</p>
             </p>
             <div id="method-c-framework_search_and_filter_data_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/support.rb, line 46</span>
-<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">framework_search_and_filter_data</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">framework_search_and_filter_data</span>
 
   <span class="ruby-comment"># The middleware includes framework-level mappings between URI query</span>
   <span class="ruby-comment"># string search keys and data validators and processors which convert</span>
@@ -223,9 +223,9 @@ used to search inside supported database engines.</p>
   <span class="ruby-comment"># design _before_ the model declarations are processed.</span>
   <span class="ruby-comment">#</span>
   <span class="ruby-identifier">mapping</span> = {
-    <span class="ruby-string">&#39;created_after&#39;</span>  <span class="ruby-operator">=&gt;</span> <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">ActiveRecord</span><span class="ruby-operator">::</span><span class="ruby-constant">Finder</span><span class="ruby-operator">::</span><span class="ruby-constant">SearchHelper</span>.<span class="ruby-identifier">cs_gt</span>( <span class="ruby-value">:created_at</span> ),
-    <span class="ruby-string">&#39;created_before&#39;</span> <span class="ruby-operator">=&gt;</span> <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">ActiveRecord</span><span class="ruby-operator">::</span><span class="ruby-constant">Finder</span><span class="ruby-operator">::</span><span class="ruby-constant">SearchHelper</span>.<span class="ruby-identifier">cs_lt</span>( <span class="ruby-value">:created_at</span> ),
-    <span class="ruby-string">&#39;created_by&#39;</span>     <span class="ruby-operator">=&gt;</span> <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">ActiveRecord</span><span class="ruby-operator">::</span><span class="ruby-constant">Finder</span><span class="ruby-operator">::</span><span class="ruby-constant">SearchHelper</span>.<span class="ruby-identifier">cs_match</span>( <span class="ruby-value">:created_by</span> )
+    <span class="ruby-string">&#39;created_after&#39;</span>  =<span class="ruby-operator">&gt;</span> <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">ActiveRecord</span><span class="ruby-operator">::</span><span class="ruby-constant">Finder</span><span class="ruby-operator">::</span><span class="ruby-constant">SearchHelper</span>.<span class="ruby-identifier">cs_gt</span>( <span class="ruby-value">:created_at</span> ),
+    <span class="ruby-string">&#39;created_before&#39;</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">ActiveRecord</span><span class="ruby-operator">::</span><span class="ruby-constant">Finder</span><span class="ruby-operator">::</span><span class="ruby-constant">SearchHelper</span>.<span class="ruby-identifier">cs_lt</span>( <span class="ruby-value">:created_at</span> ),
+    <span class="ruby-string">&#39;created_by&#39;</span>     =<span class="ruby-operator">&gt;</span> <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">ActiveRecord</span><span class="ruby-operator">::</span><span class="ruby-constant">Finder</span><span class="ruby-operator">::</span><span class="ruby-constant">SearchHelper</span>.<span class="ruby-identifier">cs_match</span>( <span class="ruby-value">:created_by</span> )
   }
 
   <span class="ruby-keyword">if</span> <span class="ruby-identifier">mapping</span>.<span class="ruby-identifier">keys</span>.<span class="ruby-identifier">length</span> <span class="ruby-operator">!=</span> ( <span class="ruby-identifier">mapping</span>.<span class="ruby-identifier">keys</span> <span class="ruby-operator">|</span> <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Services</span><span class="ruby-operator">::</span><span class="ruby-constant">Middleware</span><span class="ruby-operator">::</span><span class="ruby-constant">FRAMEWORK_QUERY_DATA</span>.<span class="ruby-identifier">keys</span> ).<span class="ruby-identifier">length</span>
@@ -293,7 +293,7 @@ scope for use with subsequent query refinements.</p>
             </p>
             <div id="method-c-full_scope_for_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/support.rb, line 132</span>
-<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">full_scope_for</span>( <span class="ruby-identifier">klass</span>, <span class="ruby-identifier">context</span> )
+<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">full_scope_for</span>( <span class="ruby-identifier">klass</span>, <span class="ruby-identifier">context</span> )
   <span class="ruby-identifier">prevailing_scope</span> = <span class="ruby-identifier">klass</span>.<span class="ruby-identifier">all</span>() <span class="ruby-comment"># &quot;Model.all&quot; -&gt; returns anonymous scope</span>
 
   <span class="ruby-comment"># Due to the mechanism used, dating scope must be done first or the</span>
@@ -341,7 +341,7 @@ Returns a similar Hash with all-String keys and a Proc for every value.</p>
             </p>
             <div id="method-c-process_to_map_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/support.rb, line 93</span>
-<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">process_to_map</span>( <span class="ruby-identifier">hash</span> )
+<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">process_to_map</span>( <span class="ruby-identifier">hash</span> )
   <span class="ruby-identifier">map</span> = <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Utilities</span>.<span class="ruby-identifier">stringify</span>( <span class="ruby-identifier">hash</span> )
 
   <span class="ruby-identifier">map</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span> <span class="ruby-identifier">attr</span>, <span class="ruby-identifier">proc_or_nil</span> <span class="ruby-operator">|</span>

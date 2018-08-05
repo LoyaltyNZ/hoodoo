@@ -142,12 +142,12 @@ describing an in-flight request/response cycle.</p>
             </p>
             <div id="method-i-contextual_report_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/exception_reporting/reporters/airbrake_reporter.rb, line 73</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">contextual_report</span>( <span class="ruby-identifier">e</span>, <span class="ruby-identifier">context</span> )
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">contextual_report</span>( <span class="ruby-identifier">e</span>, <span class="ruby-identifier">context</span> )
   <span class="ruby-identifier">opts</span> = {
-    <span class="ruby-value">:rack_env</span>         <span class="ruby-operator">=&gt;</span> <span class="ruby-identifier">context</span>.<span class="ruby-identifier">owning_interaction</span>.<span class="ruby-identifier">rack_request</span>.<span class="ruby-identifier">env</span>,
-    <span class="ruby-value">:backtrace</span>        <span class="ruby-operator">=&gt;</span> <span class="ruby-constant">Kernel</span>.<span class="ruby-identifier">caller</span>(),
-    <span class="ruby-value">:environment_name</span> <span class="ruby-operator">=&gt;</span> <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Services</span><span class="ruby-operator">::</span><span class="ruby-constant">Middleware</span>.<span class="ruby-identifier">environment</span>,
-    <span class="ruby-value">:session</span>          <span class="ruby-operator">=&gt;</span> <span class="ruby-identifier">user_data_for</span>( <span class="ruby-identifier">context</span> ) <span class="ruby-operator">||</span> <span class="ruby-string">&#39;unknown&#39;</span>
+    <span class="ruby-value">:rack_env</span>         =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">context</span>.<span class="ruby-identifier">owning_interaction</span>.<span class="ruby-identifier">rack_request</span>.<span class="ruby-identifier">env</span>,
+    <span class="ruby-value">:backtrace</span>        =<span class="ruby-operator">&gt;</span> <span class="ruby-constant">Kernel</span>.<span class="ruby-identifier">caller</span>(),
+    <span class="ruby-value">:environment_name</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Services</span><span class="ruby-operator">::</span><span class="ruby-constant">Middleware</span>.<span class="ruby-identifier">environment</span>,
+    <span class="ruby-value">:session</span>          =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">user_data_for</span>( <span class="ruby-identifier">context</span> ) <span class="ruby-operator">||</span> <span class="ruby-string">&#39;unknown&#39;</span>
   }
 
   <span class="ruby-identifier">send_synchronously_to_airbrake</span>( <span class="ruby-identifier">e</span>, <span class="ruby-identifier">opts</span> )
@@ -163,10 +163,10 @@ describing an in-flight request/response cycle.</p>
 
         <div class="description">
             <p>Report an exception to Airbrake.</p>
-<dl class="rdoc-list note-list"><dt><code>e</code>
+<dl class="rdoc-list note-list"><dt>e
 <dd>
 <p>Exception (or subclass) instance to be reported.</p>
-</dd><dt><code>env</code>
+</dd><dt>env
 <dd>
 <p>Optional <a href="../../../../Rack.html">Rack</a> environment hash for the
 inbound request, for exception reports made in the context of <a
@@ -186,8 +186,8 @@ href="../../../../Rack.html">Rack</a> environment is provided.</p>
             </p>
             <div id="method-i-report_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/exception_reporting/reporters/airbrake_reporter.rb, line 57</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">report</span>( <span class="ruby-identifier">e</span>, <span class="ruby-identifier">env</span> )
-  <span class="ruby-identifier">opts</span> = { <span class="ruby-value">:backtrace</span> <span class="ruby-operator">=&gt;</span> <span class="ruby-constant">Kernel</span>.<span class="ruby-identifier">caller</span>() }
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">report</span>( <span class="ruby-identifier">e</span>, <span class="ruby-identifier">env</span> )
+  <span class="ruby-identifier">opts</span> = { <span class="ruby-value">:backtrace</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-constant">Kernel</span>.<span class="ruby-identifier">caller</span>() }
   <span class="ruby-identifier">opts</span>[ <span class="ruby-value">:rack_env</span> ] = <span class="ruby-identifier">env</span> <span class="ruby-keyword">unless</span> <span class="ruby-identifier">env</span>.<span class="ruby-identifier">nil?</span>
 
   <span class="ruby-identifier">send_synchronously_to_airbrake</span>( <span class="ruby-identifier">e</span>, <span class="ruby-identifier">opts</span> )

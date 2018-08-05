@@ -190,8 +190,7 @@ describing extended permissions for the related action. See
 split up comma-separated value for query string <code>_embed</code> or
 <code>_reference</code> keys. For example:</p>
 
-<pre><code>...&amp;_embed=foo,bar
-</code></pre>
+<pre><code>...&amp;_embed=foo,bar</code></pre>
 
 <p>…would be valid provided there was an embedding declaration such as:</p>
 
@@ -318,7 +317,7 @@ href="Interface/ToListDSL.html">Hoodoo::Services::Interface::ToListDSL</a>.</p>
             </p>
             <div id="method-c-to_list_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/services/services/interface.rb, line 879</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">to_list</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">to_list</span>
   <span class="ruby-ivar">@to_list</span> <span class="ruby-operator">||=</span> <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Services</span><span class="ruby-operator">::</span><span class="ruby-constant">Interface</span><span class="ruby-operator">::</span><span class="ruby-constant">ToList</span>.<span class="ruby-identifier">new</span>
   <span class="ruby-ivar">@to_list</span>
 <span class="ruby-keyword">end</span></pre>
@@ -387,7 +386,7 @@ call.</p>
             </p>
             <div id="method-c-interface_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/services/services/interface.rb, line 779</span>
-<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">interface</span>( <span class="ruby-identifier">resource</span>, <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span> )
+<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">interface</span>( <span class="ruby-identifier">resource</span>, <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span> )
 
   <span class="ruby-keyword">if</span> <span class="ruby-ivar">@to_list</span>.<span class="ruby-identifier">nil?</span>
     <span class="ruby-ivar">@to_list</span> = <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Services</span><span class="ruby-operator">::</span><span class="ruby-constant">Interface</span><span class="ruby-operator">::</span><span class="ruby-constant">ToList</span>.<span class="ruby-identifier">new</span>
@@ -453,7 +452,7 @@ are given.</p>
             </p>
             <div id="method-i-actions_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/services/services/interface.rb, line 373</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">actions</span>( <span class="ruby-operator">*</span><span class="ruby-identifier">supported_actions</span> )
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">actions</span>( <span class="ruby-operator">*</span><span class="ruby-identifier">supported_actions</span> )
   <span class="ruby-identifier">supported_actions</span>.<span class="ruby-identifier">map!</span> { <span class="ruby-operator">|</span> <span class="ruby-identifier">item</span> <span class="ruby-operator">|</span> <span class="ruby-identifier">item</span>.<span class="ruby-identifier">to_sym</span> }
   <span class="ruby-identifier">invalid</span> = <span class="ruby-identifier">supported_actions</span> <span class="ruby-operator">-</span> <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Services</span><span class="ruby-operator">::</span><span class="ruby-constant">Middleware</span><span class="ruby-operator">::</span><span class="ruby-constant">ALLOWED_ACTIONS</span>
 
@@ -586,7 +585,7 @@ method calls on this instance to describe the required permissions.</p>
             </p>
             <div id="method-i-additional_permissions_for_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/services/services/interface.rb, line 726</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">additional_permissions_for</span>( <span class="ruby-identifier">action</span>, <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span> )
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">additional_permissions_for</span>( <span class="ruby-identifier">action</span>, <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span> )
   <span class="ruby-identifier">action</span> = <span class="ruby-identifier">action</span>.<span class="ruby-identifier">to_s</span>
 
   <span class="ruby-keyword">unless</span> <span class="ruby-identifier">block_given?</span>
@@ -648,7 +647,7 @@ return:</p>
             </p>
             <div id="method-i-embeds_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/services/services/interface.rb, line 496</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">embeds</span>( <span class="ruby-operator">*</span><span class="ruby-identifier">embeds</span> )
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">embeds</span>( <span class="ruby-operator">*</span><span class="ruby-identifier">embeds</span> )
   <span class="ruby-keyword">self</span>.<span class="ruby-identifier">class</span>.<span class="ruby-identifier">send</span>( <span class="ruby-value">:embeds=</span>, <span class="ruby-identifier">embeds</span>.<span class="ruby-identifier">map</span> { <span class="ruby-operator">|</span> <span class="ruby-identifier">item</span> <span class="ruby-operator">|</span> <span class="ruby-identifier">item</span>.<span class="ruby-identifier">to_s</span> } )
 <span class="ruby-keyword">end</span></pre>
             </div>
@@ -701,7 +700,7 @@ a request matching the path fragment is received.</p>
             </p>
             <div id="method-i-endpoint_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/services/services/interface.rb, line 333</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">endpoint</span>( <span class="ruby-identifier">uri_path_fragment</span>, <span class="ruby-identifier">implementation_class</span> )
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">endpoint</span>( <span class="ruby-identifier">uri_path_fragment</span>, <span class="ruby-identifier">implementation_class</span> )
 
   <span class="ruby-comment"># http://www.ruby-doc.org/core-2.2.3/Module.html#method-i-3C</span>
   <span class="ruby-comment">#</span>
@@ -760,7 +759,7 @@ end
             </p>
             <div id="method-i-errors_for_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/services/services/interface.rb, line 623</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">errors_for</span>( <span class="ruby-identifier">domain</span>, <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span> )
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">errors_for</span>( <span class="ruby-identifier">domain</span>, <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span> )
   <span class="ruby-identifier">descriptions</span> = <span class="ruby-keyword">self</span>.<span class="ruby-identifier">class</span>.<span class="ruby-identifier">errors_for</span>
 
   <span class="ruby-keyword">if</span> <span class="ruby-identifier">descriptions</span>.<span class="ruby-identifier">nil?</span>
@@ -810,7 +809,7 @@ are given.</p>
             </p>
             <div id="method-i-public_actions_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/services/services/interface.rb, line 402</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">public_actions</span>( <span class="ruby-operator">*</span><span class="ruby-identifier">public_actions</span> )
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">public_actions</span>( <span class="ruby-operator">*</span><span class="ruby-identifier">public_actions</span> )
   <span class="ruby-identifier">public_actions</span>.<span class="ruby-identifier">map!</span> { <span class="ruby-operator">|</span> <span class="ruby-identifier">item</span> <span class="ruby-operator">|</span> <span class="ruby-identifier">item</span>.<span class="ruby-identifier">to_sym</span> }
   <span class="ruby-identifier">invalid</span> = <span class="ruby-identifier">public_actions</span> <span class="ruby-operator">-</span> <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Services</span><span class="ruby-operator">::</span><span class="ruby-constant">Middleware</span><span class="ruby-operator">::</span><span class="ruby-constant">ALLOWED_ACTIONS</span>
 
@@ -831,7 +830,7 @@ are given.</p>
 
         <div class="description">
             <p>Set secure log actions.</p>
-<dl class="rdoc-list note-list"><dt><code>secure_log_actions</code>
+<dl class="rdoc-list note-list"><dt>secure_log_actions
 <dd>
 <p>A Hash, described below.</p>
 </dd></dl>
@@ -900,7 +899,7 @@ href="../../Hoodoo.html">Hoodoo</a>.</p>
             </p>
             <div id="method-i-secure_log_for_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/services/services/interface.rb, line 462</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">secure_log_for</span>( <span class="ruby-identifier">secure_log_actions</span> = {} )
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">secure_log_for</span>( <span class="ruby-identifier">secure_log_actions</span> = {} )
   <span class="ruby-identifier">secure_log_actions</span> = <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Utilities</span>.<span class="ruby-identifier">symbolize</span>( <span class="ruby-identifier">secure_log_actions</span> )
   <span class="ruby-identifier">invalid</span> = <span class="ruby-identifier">secure_log_actions</span>.<span class="ruby-identifier">keys</span> <span class="ruby-operator">-</span> <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Services</span><span class="ruby-operator">::</span><span class="ruby-constant">Middleware</span><span class="ruby-operator">::</span><span class="ruby-constant">ALLOWED_ACTIONS</span>
 
@@ -953,8 +952,7 @@ already have declared that internationalisation applies.</p>
 <pre><code>to_create do
   string :name, :length =&gt; 32, :required =&gt; true
   text :description
-end
-</code></pre>
+end</code></pre>
 
 <p>Example 2: With a resource</p>
 
@@ -980,7 +978,7 @@ the fields used for resource creation.</p>
             </p>
             <div id="method-i-to_create_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/services/services/interface.rb, line 557</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">to_create</span>( <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span> )
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">to_create</span>( <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span> )
   <span class="ruby-identifier">obj</span> = <span class="ruby-constant">Class</span>.<span class="ruby-identifier">new</span>( <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Presenters</span><span class="ruby-operator">::</span><span class="ruby-constant">Base</span> )
   <span class="ruby-identifier">obj</span>.<span class="ruby-identifier">schema</span>( <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span> )
 
@@ -1019,7 +1017,7 @@ filter   nil
             </p>
             <div id="method-i-to_list_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/services/services/interface.rb, line 510</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">to_list</span>( <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span> )
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">to_list</span>( <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span> )
   <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Services</span><span class="ruby-operator">::</span><span class="ruby-constant">Interface</span><span class="ruby-operator">::</span><span class="ruby-constant">ToListDSL</span>.<span class="ruby-identifier">new</span>(
     <span class="ruby-keyword">self</span>.<span class="ruby-identifier">class</span>.<span class="ruby-identifier">instance_variable_get</span>( <span class="ruby-string">&#39;@to_list&#39;</span> ),
     <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span>
@@ -1064,7 +1062,7 @@ the fields used for resource modification.</p>
             </p>
             <div id="method-i-to_update_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/services/services/interface.rb, line 576</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">to_update</span>( <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span> )
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">to_update</span>( <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span> )
   <span class="ruby-identifier">obj</span> = <span class="ruby-constant">Class</span>.<span class="ruby-identifier">new</span>( <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Presenters</span><span class="ruby-operator">::</span><span class="ruby-constant">Base</span> )
   <span class="ruby-identifier">obj</span>.<span class="ruby-identifier">schema</span>( <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span> )
 
@@ -1110,7 +1108,7 @@ those required for modifying resources too.</p>
             </p>
             <div id="method-i-update_same_as_create_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/services/services/interface.rb, line 600</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">update_same_as_create</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">update_same_as_create</span>
   <span class="ruby-keyword">self</span>.<span class="ruby-identifier">send</span>( <span class="ruby-value">:to_update</span>, <span class="ruby-operator">&amp;</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">class</span>.<span class="ruby-identifier">to_create</span>().<span class="ruby-identifier">get_schema_definition</span>() )
 <span class="ruby-keyword">end</span></pre>
             </div>
@@ -1146,7 +1144,7 @@ different since the resulting route to reach them will be different too.</p>
             </p>
             <div id="method-i-version_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/services/services/interface.rb, line 355</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">version</span>( <span class="ruby-identifier">major_version</span> )
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">version</span>( <span class="ruby-identifier">major_version</span> )
   <span class="ruby-keyword">self</span>.<span class="ruby-identifier">class</span>.<span class="ruby-identifier">send</span>( <span class="ruby-value">:version=</span>, <span class="ruby-identifier">major_version</span>.<span class="ruby-identifier">to_s</span>.<span class="ruby-identifier">to_i</span> )
 <span class="ruby-keyword">end</span></pre>
             </div>

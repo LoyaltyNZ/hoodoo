@@ -105,7 +105,7 @@ original <a href="Server.html#method-c-start">::start</a>.</p>
         <div class="description">
             <p>Part of the <a href="../Rack.html">Rack</a> monkey patch. See <a
 href="Server.html#method-c-start_and_record_host_and_port">::start_and_record_host_and_port</a>.</p>
-<dl class="rdoc-list note-list"><dt><code>options</code>
+<dl class="rdoc-list note-list"><dt>options
 <dd>
 <p>See <a
 href="Server.html#method-c-start_and_record_host_and_port">::start_and_record_host_and_port</a>.</p>
@@ -159,7 +159,7 @@ documentation).</p>
             </p>
             <div id="method-c-start_and_record_host_and_port_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/rack_monkey_patch.rb, line 55</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">start_and_record_host_and_port</span>( <span class="ruby-identifier">options</span> = <span class="ruby-keyword">nil</span> )
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">start_and_record_host_and_port</span>( <span class="ruby-identifier">options</span> = <span class="ruby-keyword">nil</span> )
   <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Services</span><span class="ruby-operator">::</span><span class="ruby-constant">Middleware</span>.<span class="ruby-identifier">record_host_and_port</span>( <span class="ruby-identifier">options</span> )
   <span class="ruby-identifier">racks_original_start</span>( <span class="ruby-identifier">options</span> )
 <span class="ruby-keyword">end</span></pre>

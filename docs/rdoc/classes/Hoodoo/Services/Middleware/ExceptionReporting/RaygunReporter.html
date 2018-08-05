@@ -141,9 +141,9 @@ describing an in-flight request/response cycle.</p>
             </p>
             <div id="method-i-contextual_report_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/exception_reporting/reporters/raygun_reporter.rb, line 68</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">contextual_report</span>( <span class="ruby-identifier">e</span>, <span class="ruby-identifier">context</span> )
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">contextual_report</span>( <span class="ruby-identifier">e</span>, <span class="ruby-identifier">context</span> )
   <span class="ruby-identifier">hash</span> = <span class="ruby-identifier">context</span>.<span class="ruby-identifier">owning_interaction</span>.<span class="ruby-identifier">rack_request</span>.<span class="ruby-identifier">env</span> <span class="ruby-keyword">rescue</span> {}
-  <span class="ruby-identifier">hash</span> = <span class="ruby-identifier">hash</span>.<span class="ruby-identifier">merge</span>( <span class="ruby-value">:custom_data</span> <span class="ruby-operator">=&gt;</span> <span class="ruby-identifier">user_data_for</span>( <span class="ruby-identifier">context</span> ) <span class="ruby-operator">||</span> { <span class="ruby-string">&#39;user_data&#39;</span> <span class="ruby-operator">=&gt;</span> <span class="ruby-string">&#39;unknown&#39;</span> } )
+  <span class="ruby-identifier">hash</span> = <span class="ruby-identifier">hash</span>.<span class="ruby-identifier">merge</span>( <span class="ruby-value">:custom_data</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">user_data_for</span>( <span class="ruby-identifier">context</span> ) <span class="ruby-operator">||</span> { <span class="ruby-string">&#39;user_data&#39;</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-string">&#39;unknown&#39;</span> } )
 
   <span class="ruby-constant">Raygun</span>.<span class="ruby-identifier">track_exception</span>( <span class="ruby-identifier">e</span>, <span class="ruby-identifier">hash</span> )
 <span class="ruby-keyword">end</span></pre>
@@ -158,10 +158,10 @@ describing an in-flight request/response cycle.</p>
 
         <div class="description">
             <p>Report an exception to Raygun.</p>
-<dl class="rdoc-list note-list"><dt><code>e</code>
+<dl class="rdoc-list note-list"><dt>e
 <dd>
 <p>Exception (or subclass) instance to be reported.</p>
-</dd><dt><code>env</code>
+</dd><dt>env
 <dd>
 <p>Optional <a href="../../../../Rack.html">Rack</a> environment hash for the
 inbound request, for exception reports made in the context of <a
@@ -179,7 +179,7 @@ href="../../../../Rack.html">Rack</a> request handling.</p>
             </p>
             <div id="method-i-report_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/exception_reporting/reporters/raygun_reporter.rb, line 55</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">report</span>( <span class="ruby-identifier">e</span>, <span class="ruby-identifier">env</span> = <span class="ruby-keyword">nil</span> )
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">report</span>( <span class="ruby-identifier">e</span>, <span class="ruby-identifier">env</span> = <span class="ruby-keyword">nil</span> )
   <span class="ruby-constant">Raygun</span>.<span class="ruby-identifier">track_exception</span>( <span class="ruby-identifier">e</span>, <span class="ruby-identifier">env</span> )
 <span class="ruby-keyword">end</span></pre>
             </div>

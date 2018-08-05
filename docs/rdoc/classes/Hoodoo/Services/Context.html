@@ -165,7 +165,7 @@ context instance this provides.</p>
             </p>
             <div id="method-c-new_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/services/services/context.rb, line 55</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">initialize</span>( <span class="ruby-identifier">session</span>, <span class="ruby-identifier">request</span>, <span class="ruby-identifier">response</span>, <span class="ruby-identifier">owning_interaction</span> )
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">initialize</span>( <span class="ruby-identifier">session</span>, <span class="ruby-identifier">request</span>, <span class="ruby-identifier">response</span>, <span class="ruby-identifier">owning_interaction</span> )
   <span class="ruby-ivar">@session</span>            = <span class="ruby-identifier">session</span>
   <span class="ruby-ivar">@request</span>            = <span class="ruby-identifier">request</span>
   <span class="ruby-ivar">@response</span>           = <span class="ruby-identifier">response</span>
@@ -283,7 +283,7 @@ behaviour.</p>
             </p>
             <div id="method-i-resource_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/services/services/context.rb, line 117</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">resource</span>( <span class="ruby-identifier">resource</span>, <span class="ruby-identifier">version</span> = <span class="ruby-value">1</span>, <span class="ruby-identifier">options</span> = {} )
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">resource</span>( <span class="ruby-identifier">resource</span>, <span class="ruby-identifier">version</span> = <span class="ruby-value">1</span>, <span class="ruby-identifier">options</span> = {} )
   <span class="ruby-identifier">middleware</span> = <span class="ruby-ivar">@owning_interaction</span>.<span class="ruby-identifier">owning_middleware_instance</span>
   <span class="ruby-identifier">endpoint</span>   = <span class="ruby-identifier">middleware</span>.<span class="ruby-identifier">inter_resource_endpoint_for</span>(
     <span class="ruby-identifier">resource</span>,

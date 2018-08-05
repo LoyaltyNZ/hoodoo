@@ -86,7 +86,7 @@ href="../Logger.html">Hoodoo::Logger</a>.</p>
 
         <div class="description">
             <p>Create a log writer instance.</p>
-<dl class="rdoc-list note-list"><dt><code>token</code>
+<dl class="rdoc-list note-list"><dt>token
 <dd>
 <p>Your logentries.com API token.</p>
 </dd></dl>
@@ -102,8 +102,8 @@ href="../Logger.html">Hoodoo::Logger</a>.</p>
             </p>
             <div id="method-c-new_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/logger/writers/log_entries_dot_com_writer.rb, line 29</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">initialize</span>( <span class="ruby-identifier">token</span> )
-  <span class="ruby-identifier">@@logger</span> <span class="ruby-operator">||=</span> <span class="ruby-constant">Le</span>.<span class="ruby-identifier">new</span>( <span class="ruby-identifier">token</span>, <span class="ruby-value">:ssl</span> <span class="ruby-operator">=&gt;</span> <span class="ruby-keyword">true</span> )
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">initialize</span>( <span class="ruby-identifier">token</span> )
+  <span class="ruby-identifier">@@logger</span> <span class="ruby-operator">||=</span> <span class="ruby-constant">Le</span>.<span class="ruby-identifier">new</span>( <span class="ruby-identifier">token</span>, <span class="ruby-value">:ssl</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-keyword">true</span> )
 <span class="ruby-keyword">end</span></pre>
             </div>
         </div>
@@ -131,7 +131,7 @@ href="WriterMixin.html#method-i-report">Hoodoo::Logger::WriterMixin#report</a>.<
             </p>
             <div id="method-i-report_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/logger/writers/log_entries_dot_com_writer.rb, line 35</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">report</span>( <span class="ruby-identifier">log_level</span>, <span class="ruby-identifier">component</span>, <span class="ruby-identifier">code</span>, <span class="ruby-identifier">data</span> )
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">report</span>( <span class="ruby-identifier">log_level</span>, <span class="ruby-identifier">component</span>, <span class="ruby-identifier">code</span>, <span class="ruby-identifier">data</span> )
   <span class="ruby-identifier">method</span> = <span class="ruby-keyword">case</span> <span class="ruby-identifier">log_level</span>
     <span class="ruby-keyword">when</span> <span class="ruby-value">:debug</span>, <span class="ruby-value">:info</span>, <span class="ruby-value">:warn</span>, <span class="ruby-value">:error</span>
       <span class="ruby-identifier">log_level</span>
@@ -140,10 +140,10 @@ href="WriterMixin.html#method-i-report">Hoodoo::Logger::WriterMixin#report</a>.<
   <span class="ruby-keyword">end</span>
 
   <span class="ruby-identifier">message</span> = {
-    <span class="ruby-value">:level</span>     <span class="ruby-operator">=&gt;</span> <span class="ruby-identifier">log_level</span>,
-    <span class="ruby-value">:component</span> <span class="ruby-operator">=&gt;</span> <span class="ruby-identifier">component</span>,
-    <span class="ruby-value">:code</span>      <span class="ruby-operator">=&gt;</span> <span class="ruby-identifier">code</span>,
-    <span class="ruby-value">:data</span>      <span class="ruby-operator">=&gt;</span> <span class="ruby-identifier">data</span>
+    <span class="ruby-value">:level</span>     =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">log_level</span>,
+    <span class="ruby-value">:component</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">component</span>,
+    <span class="ruby-value">:code</span>      =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">code</span>,
+    <span class="ruby-value">:data</span>      =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">data</span>
   }
 
   <span class="ruby-comment"># This method is only called if the log level set elsewhere</span>

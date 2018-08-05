@@ -161,7 +161,7 @@ comprised_of.</p>
             </p>
             <div id="method-c-component_interfaces_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/services/services/service.rb, line 86</span>
-<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">component_interfaces</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">component_interfaces</span>
   <span class="ruby-ivar">@component_interfaces</span>
 <span class="ruby-keyword">end</span></pre>
             </div>
@@ -203,7 +203,7 @@ details.</p>
             </p>
             <div id="method-c-comprised_of_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/services/services/service.rb, line 123</span>
-<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">comprised_of</span>( <span class="ruby-operator">*</span><span class="ruby-identifier">classes</span> )
+<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">comprised_of</span>( <span class="ruby-operator">*</span><span class="ruby-identifier">classes</span> )
 
   <span class="ruby-comment"># http://www.ruby-doc.org/core-2.2.3/Module.html#method-i-3C</span>
   <span class="ruby-comment">#</span>
@@ -252,7 +252,7 @@ href="../../Rack.html">Rack</a> ends up calling here directly by accident.</p>
             </p>
             <div id="method-i-call_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/services/services/service.rb, line 104</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">call</span>( <span class="ruby-identifier">env</span> )
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">call</span>( <span class="ruby-identifier">env</span> )
   <span class="ruby-identifier">raise</span> <span class="ruby-string">&quot;Hoodoo::Services::Service subclasses should only be called through the middleware - add &#39;use Hoodoo::Services::Middleware&#39; to (e.g.) config.ru&quot;</span>
 <span class="ruby-keyword">end</span></pre>
             </div>
@@ -280,7 +280,7 @@ and returns its result.</p>
             </p>
             <div id="method-i-component_interfaces_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/services/services/service.rb, line 93</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">component_interfaces</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">component_interfaces</span>
   <span class="ruby-keyword">self</span>.<span class="ruby-identifier">class</span>.<span class="ruby-identifier">component_interfaces</span>
 <span class="ruby-keyword">end</span></pre>
             </div>

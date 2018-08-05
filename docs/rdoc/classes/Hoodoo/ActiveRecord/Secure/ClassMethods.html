@@ -101,7 +101,7 @@ given in the longhand form&#39;s value Hash&#39;s <code>:using</code> key.</p></
 access security layer.</p>
 
 <p>Parameters:</p>
-<dl class="rdoc-list note-list"><dt><code>context</code>
+<dl class="rdoc-list note-list"><dt>context
 <dd>
 <p><a href="../../Services/Context.html">Hoodoo::Services::Context</a>
 instance describing a call context. This is typically a value passed to one
@@ -273,8 +273,7 @@ which were used, i.e. the rendered data would contain:</p>
     &quot;programme_code&quot;: &quot;&lt;code&gt;&quot;
   },
   ...
-}
-</code></pre>
+}</code></pre>
 
 <p>This binds the field values in the model to the values in the rendered
 resource representation, though; and what if we only wanted (say) the
@@ -351,8 +350,7 @@ in the resource and hide the “programme_code” entry:</p>
     &quot;caller_id&quot;: &quot;&lt;UUID&gt;&quot;,
   },
   ...
-}
-</code></pre>
+}</code></pre>
 
 <h2 id="method-i-secure-label-Advanced+query+conditions">Advanced query conditions</h2>
 
@@ -377,8 +375,7 @@ secure_with( {
 
 <p>This leads to SQL along the following lines:</p>
 
-<pre><code>AND (&quot;model_table&quot;.&quot;creating_caller_uuid&quot; IN (&#39;[val]&#39;))
-</code></pre>
+<pre><code>AND (&quot;model_table&quot;.&quot;creating_caller_uuid&quot; IN (&#39;[val]&#39;))</code></pre>
 
 <p>…where <code>val</code> is from the Session
 <code>authorised_caller_uuids</code> data in the <code>scoping</code>
@@ -413,8 +410,7 @@ secure_with( {
 
 <p>…yields something like:</p>
 
-<pre><code>AND ( &quot;model_table&quot;.&quot;creating_caller_uuid&quot; IN (&#39;[val]&#39;) OR &quot;model_table&quot;.&quot;other_column_name&quot; IN (&#39;[val]&#39;) )
-</code></pre>
+<pre><code>AND ( &quot;model_table&quot;.&quot;creating_caller_uuid&quot; IN (&#39;[val]&#39;) OR &quot;model_table&quot;.&quot;other_column_name&quot; IN (&#39;[val]&#39;) )</code></pre>
 
 <p>A Proc specified with <code>:using</code> is called with:</p>
 <ul><li>
@@ -477,8 +473,7 @@ secure_with( {
 
 <p>…which leads to SQL along the following lines:</p>
 
-<pre><code>AND (&quot;model_table&quot;.&quot;creating_caller_uuid&quot; IN (&#39;[val]&#39;))
-</code></pre>
+<pre><code>AND (&quot;model_table&quot;.&quot;creating_caller_uuid&quot; IN (&#39;[val]&#39;))</code></pre>
 
 <p>…then suppose we wanted to allow a session scoping value of &#39;*&#39;
 bypass security (“see everything”). We could use the
@@ -506,8 +501,7 @@ end
 attribute in the prevailing Session scoping section data was [“1234”], then
 the SQL query additions would occur as above:</p>
 
-<pre><code>AND (&quot;model_table&quot;.&quot;creating_caller_uuid&quot; IN (&#39;1234&#39;))
-</code></pre>
+<pre><code>AND (&quot;model_table&quot;.&quot;creating_caller_uuid&quot; IN (&#39;1234&#39;))</code></pre>
 
 <p>…but if there is a value of “*”, the security layer will ignore the normal
 restrictions, resulting in no SQL additions whatsoever.</p>
@@ -535,7 +529,7 @@ for methods to help with exemption Proc construction.</p>
             </p>
             <div id="method-i-secure_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/secure.rb, line 475</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">secure</span>( <span class="ruby-identifier">context</span> )
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">secure</span>( <span class="ruby-identifier">context</span> )
   <span class="ruby-identifier">prevailing_scope</span> = <span class="ruby-identifier">all</span>() <span class="ruby-comment"># &quot;Model.all&quot; -&gt; returns anonymous scope</span>
   <span class="ruby-identifier">extra_scope_map</span>  = <span class="ruby-identifier">secured_with</span>()
 
@@ -613,7 +607,7 @@ examples.</p>
             </p>
             <div id="method-i-secure_with_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/secure.rb, line 528</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">secure_with</span>( <span class="ruby-identifier">map</span> )
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">secure_with</span>( <span class="ruby-identifier">map</span> )
   <span class="ruby-keyword">self</span>.<span class="ruby-identifier">nz_co_loyalty_hoodoo_secure_with</span> = <span class="ruby-identifier">map</span>
 <span class="ruby-keyword">end</span></pre>
             </div>
@@ -644,7 +638,7 @@ href="ClassMethods.html#method-i-secure_with">secure_with</a>, or
             </p>
             <div id="method-i-secured_with_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/secure.rb, line 536</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">secured_with</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">secured_with</span>
   <span class="ruby-keyword">self</span>.<span class="ruby-identifier">nz_co_loyalty_hoodoo_secure_with</span>
 <span class="ruby-keyword">end</span></pre>
             </div>

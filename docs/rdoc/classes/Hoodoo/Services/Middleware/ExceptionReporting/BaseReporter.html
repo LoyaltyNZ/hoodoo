@@ -154,7 +154,7 @@ instance.</p>
             </p>
             <div id="method-i-communicate_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/exception_reporting/base_reporter.rb, line 121</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">communicate</span>( <span class="ruby-identifier">object</span> )
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">communicate</span>( <span class="ruby-identifier">object</span> )
 
   <span class="ruby-identifier">env</span> = <span class="ruby-identifier">object</span>.<span class="ruby-identifier">rack_env</span> <span class="ruby-operator">||</span> ( <span class="ruby-identifier">object</span>.<span class="ruby-identifier">context</span>.<span class="ruby-identifier">owning_interaction</span>.<span class="ruby-identifier">rack_request</span>.<span class="ruby-identifier">env</span> <span class="ruby-keyword">rescue</span> <span class="ruby-keyword">nil</span> )
 
@@ -221,7 +221,7 @@ describing an in-flight request/response cycle.</p>
             </p>
             <div id="method-i-contextual_report_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/exception_reporting/base_reporter.rb, line 107</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">contextual_report</span>( <span class="ruby-identifier">e</span>, <span class="ruby-identifier">context</span> )
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">contextual_report</span>( <span class="ruby-identifier">e</span>, <span class="ruby-identifier">context</span> )
   <span class="ruby-identifier">raise</span>( <span class="ruby-string">&#39;Subclasses may implement #contextual_report&#39;</span> )
 <span class="ruby-keyword">end</span></pre>
             </div>
@@ -290,7 +290,7 @@ href="../../../../Rack.html">Rack</a> request handling.</p>
             </p>
             <div id="method-i-report_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/exception_reporting/base_reporter.rb, line 83</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">report</span>( <span class="ruby-identifier">e</span>, <span class="ruby-identifier">env</span> = <span class="ruby-keyword">nil</span> )
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">report</span>( <span class="ruby-identifier">e</span>, <span class="ruby-identifier">env</span> = <span class="ruby-keyword">nil</span> )
   <span class="ruby-identifier">raise</span>( <span class="ruby-string">&#39;Subclasses must implement #report&#39;</span> )
 <span class="ruby-keyword">end</span></pre>
             </div>
@@ -325,26 +325,26 @@ describing an in-flight request/response cycle.</p>
             </p>
             <div id="method-i-user_data_for_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/exception_reporting/base_reporter.rb, line 151</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">user_data_for</span>( <span class="ruby-identifier">context</span> )
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">user_data_for</span>( <span class="ruby-identifier">context</span> )
   <span class="ruby-keyword">begin</span>
     <span class="ruby-identifier">hash</span> = {
-      <span class="ruby-value">:interaction_id</span> <span class="ruby-operator">=&gt;</span>   <span class="ruby-identifier">context</span>.<span class="ruby-identifier">owning_interaction</span>.<span class="ruby-identifier">interaction_id</span>,
-      <span class="ruby-value">:action</span>         <span class="ruby-operator">=&gt;</span> ( <span class="ruby-identifier">context</span>.<span class="ruby-identifier">owning_interaction</span>.<span class="ruby-identifier">requested_action</span>          <span class="ruby-operator">||</span> <span class="ruby-string">&#39;(unknown)&#39;</span> ).<span class="ruby-identifier">to_s</span>,
-      <span class="ruby-value">:resource</span>       <span class="ruby-operator">=&gt;</span> ( <span class="ruby-identifier">context</span>.<span class="ruby-identifier">owning_interaction</span>.<span class="ruby-identifier">target_interface</span>.<span class="ruby-identifier">resource</span> <span class="ruby-operator">||</span> <span class="ruby-string">&#39;(unknown)&#39;</span> ).<span class="ruby-identifier">to_s</span>,
-      <span class="ruby-value">:version</span>        <span class="ruby-operator">=&gt;</span>   <span class="ruby-identifier">context</span>.<span class="ruby-identifier">owning_interaction</span>.<span class="ruby-identifier">target_interface</span>.<span class="ruby-identifier">version</span>,
-      <span class="ruby-value">:request</span>        <span class="ruby-operator">=&gt;</span> {
-        <span class="ruby-value">:locale</span>              <span class="ruby-operator">=&gt;</span> <span class="ruby-identifier">context</span>.<span class="ruby-identifier">request</span>.<span class="ruby-identifier">locale</span>,
-        <span class="ruby-value">:uri_path_components</span> <span class="ruby-operator">=&gt;</span> <span class="ruby-identifier">context</span>.<span class="ruby-identifier">request</span>.<span class="ruby-identifier">uri_path_components</span>,
-        <span class="ruby-value">:uri_path_extension</span>  <span class="ruby-operator">=&gt;</span> <span class="ruby-identifier">context</span>.<span class="ruby-identifier">request</span>.<span class="ruby-identifier">uri_path_extension</span>,
-        <span class="ruby-value">:embeds</span>              <span class="ruby-operator">=&gt;</span> <span class="ruby-identifier">context</span>.<span class="ruby-identifier">request</span>.<span class="ruby-identifier">embeds</span>,
-        <span class="ruby-value">:references</span>          <span class="ruby-operator">=&gt;</span> <span class="ruby-identifier">context</span>.<span class="ruby-identifier">request</span>.<span class="ruby-identifier">references</span>,
-        <span class="ruby-value">:headers</span>             <span class="ruby-operator">=&gt;</span> <span class="ruby-identifier">context</span>.<span class="ruby-identifier">request</span>.<span class="ruby-identifier">headers</span>,
-        <span class="ruby-value">:list</span>                <span class="ruby-operator">=&gt;</span> {
-          <span class="ruby-value">:offset</span>      <span class="ruby-operator">=&gt;</span> <span class="ruby-identifier">context</span>.<span class="ruby-identifier">request</span>.<span class="ruby-identifier">list</span>.<span class="ruby-identifier">offset</span>,
-          <span class="ruby-value">:limit</span>       <span class="ruby-operator">=&gt;</span> <span class="ruby-identifier">context</span>.<span class="ruby-identifier">request</span>.<span class="ruby-identifier">list</span>.<span class="ruby-identifier">limit</span>,
-          <span class="ruby-value">:sort_data</span>   <span class="ruby-operator">=&gt;</span> <span class="ruby-identifier">context</span>.<span class="ruby-identifier">request</span>.<span class="ruby-identifier">list</span>.<span class="ruby-identifier">sort_data</span>,
-          <span class="ruby-value">:search_data</span> <span class="ruby-operator">=&gt;</span> <span class="ruby-identifier">context</span>.<span class="ruby-identifier">request</span>.<span class="ruby-identifier">list</span>.<span class="ruby-identifier">search_data</span>,
-          <span class="ruby-value">:filter_data</span> <span class="ruby-operator">=&gt;</span> <span class="ruby-identifier">context</span>.<span class="ruby-identifier">request</span>.<span class="ruby-identifier">list</span>.<span class="ruby-identifier">filter_data</span>
+      <span class="ruby-value">:interaction_id</span> =<span class="ruby-operator">&gt;</span>   <span class="ruby-identifier">context</span>.<span class="ruby-identifier">owning_interaction</span>.<span class="ruby-identifier">interaction_id</span>,
+      <span class="ruby-value">:action</span>         =<span class="ruby-operator">&gt;</span> ( <span class="ruby-identifier">context</span>.<span class="ruby-identifier">owning_interaction</span>.<span class="ruby-identifier">requested_action</span>          <span class="ruby-operator">||</span> <span class="ruby-string">&#39;(unknown)&#39;</span> ).<span class="ruby-identifier">to_s</span>,
+      <span class="ruby-value">:resource</span>       =<span class="ruby-operator">&gt;</span> ( <span class="ruby-identifier">context</span>.<span class="ruby-identifier">owning_interaction</span>.<span class="ruby-identifier">target_interface</span>.<span class="ruby-identifier">resource</span> <span class="ruby-operator">||</span> <span class="ruby-string">&#39;(unknown)&#39;</span> ).<span class="ruby-identifier">to_s</span>,
+      <span class="ruby-value">:version</span>        =<span class="ruby-operator">&gt;</span>   <span class="ruby-identifier">context</span>.<span class="ruby-identifier">owning_interaction</span>.<span class="ruby-identifier">target_interface</span>.<span class="ruby-identifier">version</span>,
+      <span class="ruby-value">:request</span>        =<span class="ruby-operator">&gt;</span> {
+        <span class="ruby-value">:locale</span>              =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">context</span>.<span class="ruby-identifier">request</span>.<span class="ruby-identifier">locale</span>,
+        <span class="ruby-value">:uri_path_components</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">context</span>.<span class="ruby-identifier">request</span>.<span class="ruby-identifier">uri_path_components</span>,
+        <span class="ruby-value">:uri_path_extension</span>  =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">context</span>.<span class="ruby-identifier">request</span>.<span class="ruby-identifier">uri_path_extension</span>,
+        <span class="ruby-value">:embeds</span>              =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">context</span>.<span class="ruby-identifier">request</span>.<span class="ruby-identifier">embeds</span>,
+        <span class="ruby-value">:references</span>          =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">context</span>.<span class="ruby-identifier">request</span>.<span class="ruby-identifier">references</span>,
+        <span class="ruby-value">:headers</span>             =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">context</span>.<span class="ruby-identifier">request</span>.<span class="ruby-identifier">headers</span>,
+        <span class="ruby-value">:list</span>                =<span class="ruby-operator">&gt;</span> {
+          <span class="ruby-value">:offset</span>      =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">context</span>.<span class="ruby-identifier">request</span>.<span class="ruby-identifier">list</span>.<span class="ruby-identifier">offset</span>,
+          <span class="ruby-value">:limit</span>       =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">context</span>.<span class="ruby-identifier">request</span>.<span class="ruby-identifier">list</span>.<span class="ruby-identifier">limit</span>,
+          <span class="ruby-value">:sort_data</span>   =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">context</span>.<span class="ruby-identifier">request</span>.<span class="ruby-identifier">list</span>.<span class="ruby-identifier">sort_data</span>,
+          <span class="ruby-value">:search_data</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">context</span>.<span class="ruby-identifier">request</span>.<span class="ruby-identifier">list</span>.<span class="ruby-identifier">search_data</span>,
+          <span class="ruby-value">:filter_data</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">context</span>.<span class="ruby-identifier">request</span>.<span class="ruby-identifier">list</span>.<span class="ruby-identifier">filter_data</span>
         }
       }
     }

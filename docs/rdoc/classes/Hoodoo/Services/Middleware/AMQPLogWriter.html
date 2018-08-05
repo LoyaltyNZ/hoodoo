@@ -90,7 +90,7 @@ Thread for this logger.</p>
 
         <div class="description">
             <p>Create an AMQP logger instance.</p>
-<dl class="rdoc-list note-list"><dt><code>alchemy</code>
+<dl class="rdoc-list note-list"><dt>alchemy
 <dd>
 <p>The Alchemy endpoint to use for sending messages to the AMQP-based queue.</p>
 </dd><dt><code>routing_key</code>
@@ -127,7 +127,7 @@ another Rabbit queue via the given alternative routing key.</p>
             </p>
             <div id="method-c-new_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/amqp_log_writer.rb, line 47</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">initialize</span>( <span class="ruby-identifier">alchemy</span>, <span class="ruby-identifier">routing_key</span> = <span class="ruby-keyword">nil</span> )
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">initialize</span>( <span class="ruby-identifier">alchemy</span>, <span class="ruby-identifier">routing_key</span> = <span class="ruby-keyword">nil</span> )
   <span class="ruby-identifier">routing_key</span>           = <span class="ruby-identifier">routing_key</span> <span class="ruby-operator">||</span> <span class="ruby-constant">ENV</span>[ <span class="ruby-string">&#39;AMQ_LOGGING_ENDPOINT&#39;</span> ] <span class="ruby-operator">||</span> <span class="ruby-string">&#39;platform.logging&#39;</span>
   <span class="ruby-identifier">analytics_routing_key</span> = <span class="ruby-constant">ENV</span>[ <span class="ruby-string">&#39;AMQ_ANALYTICS_LOGGING_ENDPOINT&#39;</span> ]
 
@@ -185,30 +185,30 @@ independent, searchable field in the log payload.</p>
             </p>
             <div id="method-i-report_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/amqp_log_writer.rb, line 77</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">report</span>( <span class="ruby-identifier">level</span>, <span class="ruby-identifier">component</span>, <span class="ruby-identifier">code</span>, <span class="ruby-identifier">data</span> )
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">report</span>( <span class="ruby-identifier">level</span>, <span class="ruby-identifier">component</span>, <span class="ruby-identifier">code</span>, <span class="ruby-identifier">data</span> )
   <span class="ruby-keyword">return</span> <span class="ruby-keyword">if</span> <span class="ruby-ivar">@alchemy</span>.<span class="ruby-identifier">nil?</span>
 
   <span class="ruby-comment"># Take care with Symbol keys in &#39;data&#39; vs string keys in e.g. &#39;session&#39;.</span>
 
   <span class="ruby-identifier">session</span> = <span class="ruby-identifier">data</span>[ <span class="ruby-value">:session</span> ] <span class="ruby-operator">||</span> {}
   <span class="ruby-identifier">message</span> = {
-    <span class="ruby-value">:id</span>                   <span class="ruby-operator">=&gt;</span> <span class="ruby-identifier">data</span>[ <span class="ruby-value">:id</span> ],
-    <span class="ruby-value">:level</span>                <span class="ruby-operator">=&gt;</span> <span class="ruby-identifier">level</span>,
-    <span class="ruby-value">:component</span>            <span class="ruby-operator">=&gt;</span> <span class="ruby-identifier">component</span>,
-    <span class="ruby-value">:code</span>                 <span class="ruby-operator">=&gt;</span> <span class="ruby-identifier">code</span>,
-    <span class="ruby-value">:reported_at</span>          <span class="ruby-operator">=&gt;</span> <span class="ruby-constant">Time</span>.<span class="ruby-identifier">now</span>.<span class="ruby-identifier">iso8601</span>( <span class="ruby-value">12</span> ),
+    <span class="ruby-value">:id</span>                   =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">data</span>[ <span class="ruby-value">:id</span> ],
+    <span class="ruby-value">:level</span>                =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">level</span>,
+    <span class="ruby-value">:component</span>            =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">component</span>,
+    <span class="ruby-value">:code</span>                 =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">code</span>,
+    <span class="ruby-value">:reported_at</span>          =<span class="ruby-operator">&gt;</span> <span class="ruby-constant">Time</span>.<span class="ruby-identifier">now</span>.<span class="ruby-identifier">iso8601</span>( <span class="ruby-value">12</span> ),
 
-    <span class="ruby-value">:interaction_id</span>       <span class="ruby-operator">=&gt;</span> <span class="ruby-identifier">data</span>[ <span class="ruby-value">:interaction_id</span> ],
-    <span class="ruby-value">:data</span>                 <span class="ruby-operator">=&gt;</span> <span class="ruby-identifier">data</span>,
+    <span class="ruby-value">:interaction_id</span>       =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">data</span>[ <span class="ruby-value">:interaction_id</span> ],
+    <span class="ruby-value">:data</span>                 =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">data</span>,
 
-    <span class="ruby-value">:caller_id</span>            <span class="ruby-operator">=&gt;</span> <span class="ruby-identifier">session</span>[ <span class="ruby-string">&#39;caller_id&#39;</span>            ],
-    <span class="ruby-value">:caller_identity_name</span> <span class="ruby-operator">=&gt;</span> <span class="ruby-identifier">session</span>[ <span class="ruby-string">&#39;caller_identity_name&#39;</span> ],
-    <span class="ruby-value">:identity</span>             <span class="ruby-operator">=&gt;</span> ( <span class="ruby-identifier">session</span>[ <span class="ruby-string">&#39;identity&#39;</span> ] <span class="ruby-operator">||</span> {} ).<span class="ruby-identifier">to_h</span>
+    <span class="ruby-value">:caller_id</span>            =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">session</span>[ <span class="ruby-string">&#39;caller_id&#39;</span>            ],
+    <span class="ruby-value">:caller_identity_name</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">session</span>[ <span class="ruby-string">&#39;caller_identity_name&#39;</span> ],
+    <span class="ruby-value">:identity</span>             =<span class="ruby-operator">&gt;</span> ( <span class="ruby-identifier">session</span>[ <span class="ruby-string">&#39;identity&#39;</span> ] <span class="ruby-operator">||</span> {} ).<span class="ruby-identifier">to_h</span>
   }.<span class="ruby-identifier">to_json</span>()
 
   <span class="ruby-ivar">@alchemy</span>.<span class="ruby-identifier">send_message_to_service</span>(
     <span class="ruby-ivar">@routing_keys</span>[ <span class="ruby-identifier">code</span>.<span class="ruby-identifier">to_sym</span> ],
-    { <span class="ruby-string">&quot;body&quot;</span> <span class="ruby-operator">=&gt;</span> <span class="ruby-identifier">message</span> }
+    { <span class="ruby-string">&quot;body&quot;</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">message</span> }
   )
 <span class="ruby-keyword">end</span></pre>
             </div>

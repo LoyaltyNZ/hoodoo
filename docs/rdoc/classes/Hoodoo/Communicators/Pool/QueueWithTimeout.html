@@ -58,8 +58,7 @@ omission and requires code gymnastics to work around.</p>
 
 <p>Enter <a href="QueueWithTimeout.html">QueueWithTimeout</a>, from:</p>
 
-<pre><code>http://spin.atomicobject.com/2014/07/07/ruby-queue-pop-timeout/
-</code></pre>
+<pre><code>http://spin.atomicobject.com/2014/07/07/ruby-queue-pop-timeout/</code></pre>
 
     </div>
 
@@ -123,7 +122,7 @@ omission and requires code gymnastics to work around.</p>
             </p>
             <div id="method-c-new_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/communicators/pool.rb, line 494</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">initialize</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">initialize</span>
   <span class="ruby-ivar">@mutex</span>    = <span class="ruby-operator">::</span><span class="ruby-constant">Mutex</span>.<span class="ruby-identifier">new</span>
   <span class="ruby-ivar">@queue</span>    = []
   <span class="ruby-ivar">@recieved</span> = <span class="ruby-operator">::</span><span class="ruby-constant">ConditionVariable</span>.<span class="ruby-identifier">new</span>
@@ -141,7 +140,7 @@ omission and requires code gymnastics to work around.</p>
 
         <div class="description">
             <p>Push a new entry to the end of the queue.</p>
-<dl class="rdoc-list note-list"><dt><code>entry</code>
+<dl class="rdoc-list note-list"><dt>entry
 <dd>
 <p>Entry to put onto the end of the queue.</p>
 </dd></dl>
@@ -157,7 +156,7 @@ omission and requires code gymnastics to work around.</p>
             </p>
             <div id="method-i-3C-3C_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/communicators/pool.rb, line 504</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">&lt;&lt;</span>( <span class="ruby-identifier">entry</span> )
+<span class="ruby-keyword">def</span> <span class="ruby-operator">&lt;&lt;</span>( <span class="ruby-identifier">entry</span> )
   <span class="ruby-ivar">@mutex</span>.<span class="ruby-identifier">synchronize</span> <span class="ruby-keyword">do</span>
     <span class="ruby-ivar">@queue</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">entry</span>
     <span class="ruby-ivar">@recieved</span>.<span class="ruby-identifier">signal</span>
@@ -175,7 +174,7 @@ omission and requires code gymnastics to work around.</p>
         <div class="description">
             <p>Take an entry from the front of the queue (FIFO) with optional timeout if
 the queue is empty.</p>
-<dl class="rdoc-list note-list"><dt><code>timeout</code>
+<dl class="rdoc-list note-list"><dt>timeout
 <dd>
 <p>Timeout (in seconds, Integer or Float) to wait for an item to appear on the
 queue, if the queue is empty. If <code>nil</code>, there is no timeout
@@ -196,7 +195,7 @@ raises a ThreadError exception (just as non-blocking Ruby Queue#pop would).</p>
             </p>
             <div id="method-i-shift_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/communicators/pool.rb, line 522</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">shift</span>( <span class="ruby-identifier">timeout</span> = <span class="ruby-keyword">nil</span> )
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">shift</span>( <span class="ruby-identifier">timeout</span> = <span class="ruby-keyword">nil</span> )
   <span class="ruby-ivar">@mutex</span>.<span class="ruby-identifier">synchronize</span> <span class="ruby-keyword">do</span>
     <span class="ruby-keyword">if</span> <span class="ruby-ivar">@queue</span>.<span class="ruby-identifier">empty?</span>
       <span class="ruby-ivar">@recieved</span>.<span class="ruby-identifier">wait</span>( <span class="ruby-ivar">@mutex</span>, <span class="ruby-identifier">timeout</span> ) <span class="ruby-keyword">if</span> <span class="ruby-identifier">timeout</span> <span class="ruby-operator">!=</span> <span class="ruby-value">0</span>

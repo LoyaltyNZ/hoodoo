@@ -184,7 +184,7 @@ href="Discovery.html#method-i-discover_remote">discover_remote</a>.</p>
 
         <div class="description">
             <p>Create a new instance.</p>
-<dl class="rdoc-list note-list"><dt><code>options</code>
+<dl class="rdoc-list note-list"><dt>options
 <dd>
 <p>Passed to the subclass in use via <a
 href="Discovery.html#method-i-configure_with">configure_with</a>.
@@ -203,7 +203,7 @@ Subclasses define their options. Only instantiate such subclasses, not this
             </p>
             <div id="method-c-new_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/services/discovery/discovery.rb, line 44</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">initialize</span>( <span class="ruby-identifier">options</span> = {} )
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">initialize</span>( <span class="ruby-identifier">options</span> = {} )
   <span class="ruby-ivar">@known_local_resources</span> = {}
   <span class="ruby-identifier">configure_with</span>( <span class="ruby-identifier">options</span> )
 <span class="ruby-keyword">end</span></pre>
@@ -250,7 +250,7 @@ definition in this base class for details.</p>
             </p>
             <div id="method-i-announce_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/services/discovery/discovery.rb, line 66</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">announce</span>( <span class="ruby-identifier">resource</span>, <span class="ruby-identifier">version</span> = <span class="ruby-value">1</span>, <span class="ruby-identifier">options</span> = {} )
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">announce</span>( <span class="ruby-identifier">resource</span>, <span class="ruby-identifier">version</span> = <span class="ruby-value">1</span>, <span class="ruby-identifier">options</span> = {} )
   <span class="ruby-identifier">resource</span> = <span class="ruby-identifier">resource</span>.<span class="ruby-identifier">to_sym</span>
   <span class="ruby-identifier">version</span>  = <span class="ruby-identifier">version</span>.<span class="ruby-identifier">to_i</span>
   <span class="ruby-identifier">result</span>   = <span class="ruby-identifier">announce_remote</span>( <span class="ruby-identifier">resource</span>, <span class="ruby-identifier">version</span>, <span class="ruby-identifier">options</span> )
@@ -300,7 +300,7 @@ to know that an endpoint was announced through this same instance
             </p>
             <div id="method-i-discover_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/services/discovery/discovery.rb, line 93</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">discover</span>( <span class="ruby-identifier">resource</span>, <span class="ruby-identifier">version</span> = <span class="ruby-value">1</span> )
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">discover</span>( <span class="ruby-identifier">resource</span>, <span class="ruby-identifier">version</span> = <span class="ruby-value">1</span> )
   <span class="ruby-identifier">resource</span> = <span class="ruby-identifier">resource</span>.<span class="ruby-identifier">to_sym</span>
   <span class="ruby-identifier">version</span>  = <span class="ruby-identifier">version</span>.<span class="ruby-identifier">to_i</span>
 
@@ -344,7 +344,7 @@ given resource and version.</p>
             </p>
             <div id="method-i-is_local-3F_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/services/discovery/discovery.rb, line 116</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">is_local?</span>( <span class="ruby-identifier">resource</span>, <span class="ruby-identifier">version</span> = <span class="ruby-value">1</span> )
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">is_local?</span>( <span class="ruby-identifier">resource</span>, <span class="ruby-identifier">version</span> = <span class="ruby-value">1</span> )
   <span class="ruby-identifier">resource</span> = <span class="ruby-identifier">resource</span>.<span class="ruby-identifier">to_sym</span>
   <span class="ruby-identifier">version</span>  = <span class="ruby-identifier">version</span>.<span class="ruby-identifier">to_i</span>
 
@@ -403,7 +403,7 @@ cannot provide information for the given resource / version.</p>
             </p>
             <div id="method-i-announce_remote_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/services/discovery/discovery.rb, line 156</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">announce_remote</span>( <span class="ruby-identifier">resource</span>, <span class="ruby-identifier">version</span>, <span class="ruby-identifier">options</span> = {} )
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">announce_remote</span>( <span class="ruby-identifier">resource</span>, <span class="ruby-identifier">version</span>, <span class="ruby-identifier">options</span> = {} )
   <span class="ruby-comment"># Implementation is optional and up to subclasses to do.</span>
   <span class="ruby-keyword">nil</span>
 <span class="ruby-keyword">end</span></pre>
@@ -436,7 +436,7 @@ document their options.</p>
             </p>
             <div id="method-i-configure_with_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/services/discovery/discovery.rb, line 132</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">configure_with</span>( <span class="ruby-identifier">options</span> )
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">configure_with</span>( <span class="ruby-identifier">options</span> )
   <span class="ruby-comment"># Implementation is optional and up to subclasses to do.</span>
 <span class="ruby-keyword">end</span></pre>
             </div>
@@ -486,7 +486,7 @@ respectively.</p>
             </p>
             <div id="method-i-discover_remote_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/services/discovery/discovery.rb, line 180</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">discover_remote</span>( <span class="ruby-identifier">resource</span>, <span class="ruby-identifier">version</span> )
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">discover_remote</span>( <span class="ruby-identifier">resource</span>, <span class="ruby-identifier">version</span> )
   <span class="ruby-identifier">raise</span> <span class="ruby-node">&quot;Hoodoo::Services::Discovery::Base subclass does not implement remote discovery required for resource &#39;#{ resource }&#39; / version &#39;#{ version }&#39;&quot;</span>
 <span class="ruby-keyword">end</span></pre>
             </div>

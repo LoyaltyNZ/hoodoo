@@ -100,7 +100,7 @@ NewRelic requires it.</p>
             </p>
             <div id="method-i-monkey_send_request_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/monkey/patch/newrelic_traced_amqp.rb, line 53</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">monkey_send_request</span>( <span class="ruby-identifier">http_message</span>, <span class="ruby-identifier">full_uri</span> )
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">monkey_send_request</span>( <span class="ruby-identifier">http_message</span>, <span class="ruby-identifier">full_uri</span> )
   <span class="ruby-identifier">amqp_response</span>   = <span class="ruby-keyword">nil</span>
   <span class="ruby-identifier">wrapped_request</span> = <span class="ruby-constant">AlchemyFluxHTTPRequestWrapper</span>.<span class="ruby-identifier">new</span>(
     <span class="ruby-identifier">http_message</span>,

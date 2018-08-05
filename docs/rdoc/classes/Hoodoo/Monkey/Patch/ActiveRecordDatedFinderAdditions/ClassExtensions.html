@@ -94,7 +94,7 @@ if so.</p>
             </p>
             <div id="method-i-acquire_in-21_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/monkey/patch/active_record_dated_finder_additions.rb, line 34</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">acquire_in!</span>( <span class="ruby-identifier">context</span> )
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">acquire_in!</span>( <span class="ruby-identifier">context</span> )
   <span class="ruby-identifier">result</span> = <span class="ruby-keyword">super</span>( <span class="ruby-identifier">context</span> )
 
   <span class="ruby-keyword">if</span> <span class="ruby-identifier">result</span>.<span class="ruby-identifier">nil?</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">context</span>.<span class="ruby-identifier">request</span>.<span class="ruby-identifier">dated_at</span>

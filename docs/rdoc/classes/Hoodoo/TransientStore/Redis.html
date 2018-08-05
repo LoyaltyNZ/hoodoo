@@ -133,7 +133,7 @@ with a <code>redis</code> protocol, such as
             </p>
             <div id="method-c-new_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/transient_store/transient_store/redis.rb, line 36</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">initialize</span>( <span class="ruby-value">storage_host_uri:</span>, <span class="ruby-value">namespace:</span> )
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">initialize</span>( <span class="ruby-identifier">storage_host_uri</span>,, <span class="ruby-identifier">namespace</span><span class="ruby-operator">:</span> )
   <span class="ruby-keyword">super</span> <span class="ruby-comment"># Pass all arguments through -&gt; *not* &#39;super()&#39;</span>
   <span class="ruby-ivar">@client</span> = <span class="ruby-identifier">connect_to_redis</span>( <span class="ruby-identifier">storage_host_uri</span> )
 <span class="ruby-keyword">end</span></pre>
@@ -164,7 +164,7 @@ details.</p>
             </p>
             <div id="method-i-close_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/transient_store/transient_store/redis.rb, line 71</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">close</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">close</span>
   <span class="ruby-ivar">@client</span>.<span class="ruby-identifier">quit</span>()
 <span class="ruby-keyword">end</span></pre>
             </div>
@@ -192,7 +192,7 @@ for details.</p>
             </p>
             <div id="method-i-delete_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/transient_store/transient_store/redis.rb, line 64</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">delete</span>( <span class="ruby-value">key:</span> )
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">delete</span>( <span class="ruby-identifier">key</span><span class="ruby-operator">:</span> )
   <span class="ruby-ivar">@client</span>.<span class="ruby-identifier">del</span>( <span class="ruby-identifier">namespaced_key</span>( <span class="ruby-identifier">key</span> ) )
   <span class="ruby-keyword">true</span>
 <span class="ruby-keyword">end</span></pre>
@@ -220,8 +220,8 @@ for details.</p>
             </p>
             <div id="method-i-get_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/transient_store/transient_store/redis.rb, line 57</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">get</span>( <span class="ruby-value">key:</span> )
-  <span class="ruby-identifier">result</span> = <span class="ruby-ivar">@client</span>.<span class="ruby-identifier">get</span>( <span class="ruby-identifier">namespaced_key</span>( <span class="ruby-identifier">key</span> ) )
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">get</span>( <span class="ruby-identifier">key</span><span class="ruby-operator">:</span> )
+  <span class="ruby-identifier">result</span> = <span class="ruby-ivar">@client</span>[ <span class="ruby-identifier">namespaced_key</span>( <span class="ruby-identifier">key</span> ) ]
   <span class="ruby-keyword">return</span> <span class="ruby-identifier">result</span>.<span class="ruby-identifier">nil?</span> <span class="ruby-operator">?</span> <span class="ruby-keyword">nil</span> <span class="ruby-operator">:</span> ( <span class="ruby-constant">JSON</span>.<span class="ruby-identifier">parse</span>( <span class="ruby-identifier">result</span> ) <span class="ruby-keyword">rescue</span> <span class="ruby-keyword">nil</span> )
 <span class="ruby-keyword">end</span></pre>
             </div>
@@ -252,10 +252,10 @@ marshalling to Strings themselves.</p>
             </p>
             <div id="method-i-set_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/transient_store/transient_store/redis.rb, line 46</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">set</span>( <span class="ruby-value">key:</span>, <span class="ruby-value">payload:</span>, <span class="ruby-value">maximum_lifespan:</span> )
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">set</span>( <span class="ruby-identifier">key</span>,, <span class="ruby-identifier">payload</span>,, <span class="ruby-identifier">maximum_lifespan</span><span class="ruby-operator">:</span> )
   <span class="ruby-identifier">nk</span> = <span class="ruby-identifier">namespaced_key</span>( <span class="ruby-identifier">key</span> )
 
-  <span class="ruby-ivar">@client</span>.<span class="ruby-identifier">set</span>( <span class="ruby-identifier">nk</span>, <span class="ruby-constant">JSON</span>.<span class="ruby-identifier">fast_generate</span>( <span class="ruby-identifier">payload</span> ) )
+  <span class="ruby-ivar">@client</span>[ <span class="ruby-identifier">nk</span> ] = <span class="ruby-constant">JSON</span>.<span class="ruby-identifier">fast_generate</span>( <span class="ruby-identifier">payload</span> )
   <span class="ruby-ivar">@client</span>.<span class="ruby-identifier">expire</span>( <span class="ruby-identifier">nk</span>, <span class="ruby-identifier">maximum_lifespan</span> )
 
   <span class="ruby-keyword">true</span>

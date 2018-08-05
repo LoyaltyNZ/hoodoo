@@ -136,7 +136,7 @@ for details.</p>
             </p>
             <div id="method-c-new_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/transient_store/transient_store/base.rb, line 29</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">initialize</span>( <span class="ruby-value">storage_host_uri:</span>, <span class="ruby-value">namespace:</span> )
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">initialize</span>( <span class="ruby-identifier">storage_host_uri</span>,, <span class="ruby-identifier">namespace</span><span class="ruby-operator">:</span> )
   <span class="ruby-ivar">@storage_host_uri</span> = <span class="ruby-identifier">storage_host_uri</span>
   <span class="ruby-ivar">@namespace</span>        = <span class="ruby-identifier">namespace</span>
 <span class="ruby-keyword">end</span></pre>
@@ -171,7 +171,7 @@ href="../TransientStore.html#method-i-close">Hoodoo::TransientStore#close</a>.</
             </p>
             <div id="method-i-close_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/transient_store/transient_store/base.rb, line 75</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">close</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">close</span>
   <span class="ruby-identifier">raise</span> <span class="ruby-string">&#39;Subclasses must implement Hoodoo::TransientStore::Base#close&#39;</span>
 <span class="ruby-keyword">end</span></pre>
             </div>
@@ -206,7 +206,7 @@ failures of unknown origin.</p>
             </p>
             <div id="method-i-delete_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/transient_store/transient_store/base.rb, line 66</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">delete</span>( <span class="ruby-value">key:</span> )
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">delete</span>( <span class="ruby-identifier">key</span><span class="ruby-operator">:</span> )
   <span class="ruby-identifier">raise</span> <span class="ruby-string">&#39;Subclasses must implement Hoodoo::TransientStore::Base#delete&#39;</span>
 <span class="ruby-keyword">end</span></pre>
             </div>
@@ -241,7 +241,7 @@ href="../TransientStore.html#method-i-get">Hoodoo::TransientStore#get</a>.</p>
             </p>
             <div id="method-i-get_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/transient_store/transient_store/base.rb, line 54</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">get</span>( <span class="ruby-value">key:</span> )
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">get</span>( <span class="ruby-identifier">key</span><span class="ruby-operator">:</span> )
   <span class="ruby-identifier">raise</span> <span class="ruby-string">&#39;Subclasses must implement Hoodoo::TransientStore::Base#get&#39;</span>
 <span class="ruby-keyword">end</span></pre>
             </div>
@@ -276,7 +276,7 @@ failures of unknown origin.</p>
             </p>
             <div id="method-i-set_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/transient_store/transient_store/base.rb, line 42</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">set</span>( <span class="ruby-value">key:</span>, <span class="ruby-value">payload:</span>, <span class="ruby-value">maximum_lifespan:</span> )
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">set</span>( <span class="ruby-identifier">key</span>,, <span class="ruby-identifier">payload</span>,, <span class="ruby-identifier">maximum_lifespan</span><span class="ruby-operator">:</span> )
   <span class="ruby-identifier">raise</span> <span class="ruby-string">&#39;Subclasses must implement Hoodoo::TransientStore::Base#set&#39;</span>
 <span class="ruby-keyword">end</span></pre>
             </div>

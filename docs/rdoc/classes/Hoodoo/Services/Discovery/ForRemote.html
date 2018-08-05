@@ -110,10 +110,10 @@ necessary to call the target remote resource).</p></td>
 
         <div class="description">
             <p>Create an instance with named parameters as follows:</p>
-<dl class="rdoc-list note-list"><dt><code>resource</code>
+<dl class="rdoc-list note-list"><dt>resource
 <dd>
 <p>See <a href="ForRemote.html#attribute-i-resource">resource</a>.</p>
-</dd><dt><code>version</code>
+</dd><dt>version
 <dd>
 <p>See <a href="ForRemote.html#attribute-i-version">version</a>.</p>
 </dd><dt><code>wrapped_endpoint</code>
@@ -133,9 +133,9 @@ href="ForRemote.html#attribute-i-wrapped_endpoint">wrapped_endpoint</a>.</p>
             </p>
             <div id="method-c-new_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/services/discovery/results/for_remote.rb, line 46</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">initialize</span>( <span class="ruby-value">resource:</span>,
-                <span class="ruby-value">version:</span>,
-                <span class="ruby-value">wrapped_endpoint:</span> )
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">initialize</span>( <span class="ruby-identifier">resource</span>,,
+                <span class="ruby-identifier">version</span>,,
+                <span class="ruby-identifier">wrapped_endpoint</span><span class="ruby-operator">:</span> )
 
   <span class="ruby-keyword">self</span>.<span class="ruby-identifier">resource</span>         = <span class="ruby-identifier">resource</span>.<span class="ruby-identifier">to_sym</span>
   <span class="ruby-keyword">self</span>.<span class="ruby-identifier">version</span>          = <span class="ruby-identifier">version</span>.<span class="ruby-identifier">to_i</span>

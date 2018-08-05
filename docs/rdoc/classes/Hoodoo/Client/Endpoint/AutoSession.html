@@ -143,7 +143,7 @@ href="../Endpoint.html#method-i-create">Hoodoo::Client::Endpoint#create</a>.</p>
             </p>
             <div id="method-i-create_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/client/endpoint/endpoints/auto_session.rb, line 94</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">create</span>( <span class="ruby-identifier">body_hash</span>, <span class="ruby-identifier">query_hash</span> = <span class="ruby-keyword">nil</span> )
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">create</span>( <span class="ruby-identifier">body_hash</span>, <span class="ruby-identifier">query_hash</span> = <span class="ruby-keyword">nil</span> )
   <span class="ruby-keyword">return</span> <span class="ruby-identifier">auto_retry</span>( <span class="ruby-value">:create</span>, <span class="ruby-identifier">body_hash</span>, <span class="ruby-identifier">query_hash</span> )
 <span class="ruby-keyword">end</span></pre>
             </div>
@@ -170,7 +170,7 @@ href="../Endpoint.html#method-i-delete">Hoodoo::Client::Endpoint#delete</a>.</p>
             </p>
             <div id="method-i-delete_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/client/endpoint/endpoints/auto_session.rb, line 106</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">delete</span>( <span class="ruby-identifier">ident</span>, <span class="ruby-identifier">query_hash</span> = <span class="ruby-keyword">nil</span> )
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">delete</span>( <span class="ruby-identifier">ident</span>, <span class="ruby-identifier">query_hash</span> = <span class="ruby-keyword">nil</span> )
   <span class="ruby-keyword">return</span> <span class="ruby-identifier">auto_retry</span>( <span class="ruby-value">:delete</span>, <span class="ruby-identifier">ident</span>, <span class="ruby-identifier">query_hash</span> )
 <span class="ruby-keyword">end</span></pre>
             </div>
@@ -197,7 +197,7 @@ href="../Endpoint.html#method-i-list">Hoodoo::Client::Endpoint#list</a>.</p>
             </p>
             <div id="method-i-list_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/client/endpoint/endpoints/auto_session.rb, line 82</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">list</span>( <span class="ruby-identifier">query_hash</span> = <span class="ruby-keyword">nil</span> )
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">list</span>( <span class="ruby-identifier">query_hash</span> = <span class="ruby-keyword">nil</span> )
   <span class="ruby-keyword">return</span> <span class="ruby-identifier">auto_retry</span>( <span class="ruby-value">:list</span>, <span class="ruby-identifier">query_hash</span> )
 <span class="ruby-keyword">end</span></pre>
             </div>
@@ -224,7 +224,7 @@ href="../Endpoint.html#method-i-show">Hoodoo::Client::Endpoint#show</a>.</p>
             </p>
             <div id="method-i-show_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/client/endpoint/endpoints/auto_session.rb, line 88</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">show</span>( <span class="ruby-identifier">ident</span>, <span class="ruby-identifier">query_hash</span> = <span class="ruby-keyword">nil</span> )
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">show</span>( <span class="ruby-identifier">ident</span>, <span class="ruby-identifier">query_hash</span> = <span class="ruby-keyword">nil</span> )
   <span class="ruby-keyword">return</span> <span class="ruby-identifier">auto_retry</span>( <span class="ruby-value">:show</span>, <span class="ruby-identifier">ident</span>, <span class="ruby-identifier">query_hash</span> )
 <span class="ruby-keyword">end</span></pre>
             </div>
@@ -251,7 +251,7 @@ href="../Endpoint.html#method-i-update">Hoodoo::Client::Endpoint#update</a>.</p>
             </p>
             <div id="method-i-update_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/client/endpoint/endpoints/auto_session.rb, line 100</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">update</span>( <span class="ruby-identifier">ident</span>, <span class="ruby-identifier">body_hash</span>, <span class="ruby-identifier">query_hash</span> = <span class="ruby-keyword">nil</span> )
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">update</span>( <span class="ruby-identifier">ident</span>, <span class="ruby-identifier">body_hash</span>, <span class="ruby-identifier">query_hash</span> = <span class="ruby-keyword">nil</span> )
   <span class="ruby-keyword">return</span> <span class="ruby-identifier">auto_retry</span>( <span class="ruby-value">:update</span>, <span class="ruby-identifier">ident</span>, <span class="ruby-identifier">body_hash</span>, <span class="ruby-identifier">query_hash</span> )
 <span class="ruby-keyword">end</span></pre>
             </div>
@@ -270,7 +270,7 @@ href="../Endpoint.html#method-i-update">Hoodoo::Client::Endpoint#update</a>.</p>
 href="../Endpoint.html#method-i-configure_with">Hoodoo::Client::Endpoint#configure_with</a>.</p>
 
 <p>Configuration option keys which <em>must</em> be supplied are:</p>
-<dl class="rdoc-list note-list"><dt><code>caller_id</code>
+<dl class="rdoc-list note-list"><dt>caller_id
 <dd>
 <p>The <a href="../../UUID.html">UUID</a> of the Caller instance to be used
 for session creation.</p>
@@ -321,7 +321,7 @@ session management are handled here.</p>
             </p>
             <div id="method-i-configure_with_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/client/endpoint/endpoints/auto_session.rb, line 71</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">configure_with</span>( <span class="ruby-identifier">resource</span>, <span class="ruby-identifier">version</span>, <span class="ruby-identifier">options</span> )
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">configure_with</span>( <span class="ruby-identifier">resource</span>, <span class="ruby-identifier">version</span>, <span class="ruby-identifier">options</span> )
   <span class="ruby-ivar">@caller_id</span>        = <span class="ruby-identifier">options</span>[ <span class="ruby-value">:caller_id</span>        ]
   <span class="ruby-ivar">@caller_secret</span>    = <span class="ruby-identifier">options</span>[ <span class="ruby-value">:caller_secret</span>    ]
   <span class="ruby-ivar">@session_endpoint</span> = <span class="ruby-identifier">options</span>[ <span class="ruby-value">:session_endpoint</span> ]

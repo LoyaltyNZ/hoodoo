@@ -129,7 +129,7 @@ href="ByConvention.html#method-i-discover_remote">discover_remote</a>.</p>
             </p>
             <div id="method-i-announce_remote_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/services/discovery/discoverers/by_convention.rb, line 139</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">announce_remote</span>( <span class="ruby-identifier">resource</span>, <span class="ruby-identifier">version</span>, <span class="ruby-identifier">options</span> = {} )
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">announce_remote</span>( <span class="ruby-identifier">resource</span>, <span class="ruby-identifier">version</span>, <span class="ruby-identifier">options</span> = {} )
   <span class="ruby-keyword">return</span> <span class="ruby-identifier">discover_remote</span>( <span class="ruby-identifier">resource</span>, <span class="ruby-identifier">version</span> )
 <span class="ruby-keyword">end</span></pre>
             </div>
@@ -144,7 +144,7 @@ href="ByConvention.html#method-i-discover_remote">discover_remote</a>.</p>
         <div class="description">
             <p>Configure an instance. Call via Hoodoo::Services::Discovery::Base#new.
 Parameters:</p>
-<dl class="rdoc-list note-list"><dt><code>options</code>
+<dl class="rdoc-list note-list"><dt>options
 <dd>
 <p>Options hash as described below.</p>
 </dd></dl>
@@ -234,7 +234,7 @@ itself but implemented in a compatible fashion.</p>
             </p>
             <div id="method-i-configure_with_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/services/discovery/discoverers/by_convention.rb, line 120</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">configure_with</span>( <span class="ruby-identifier">options</span> )
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">configure_with</span>( <span class="ruby-identifier">options</span> )
   <span class="ruby-ivar">@base_uri</span>          = <span class="ruby-constant">URI</span>.<span class="ruby-identifier">parse</span>( <span class="ruby-identifier">options</span>[ <span class="ruby-value">:base_uri</span>  ] )
   <span class="ruby-ivar">@proxy_uri</span>         = <span class="ruby-constant">URI</span>.<span class="ruby-identifier">parse</span>( <span class="ruby-identifier">options</span>[ <span class="ruby-value">:proxy_uri</span> ] ) <span class="ruby-keyword">unless</span> <span class="ruby-identifier">options</span>[ <span class="ruby-value">:proxy_uri</span> ].<span class="ruby-identifier">nil?</span>
 
@@ -290,7 +290,7 @@ the optional <code>routing</code> parameter in the constructor.</p>
             </p>
             <div id="method-i-discover_remote_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/services/discovery/discoverers/by_convention.rb, line 165</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">discover_remote</span>( <span class="ruby-identifier">resource</span>, <span class="ruby-identifier">version</span> )
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">discover_remote</span>( <span class="ruby-identifier">resource</span>, <span class="ruby-identifier">version</span> )
   <span class="ruby-identifier">custom_routes</span> = <span class="ruby-ivar">@routing</span>[ <span class="ruby-identifier">resource</span>.<span class="ruby-identifier">to_sym</span> ]
 
   <span class="ruby-identifier">path</span> = <span class="ruby-keyword">unless</span> <span class="ruby-identifier">custom_routes</span>.<span class="ruby-identifier">nil?</span>
@@ -303,13 +303,13 @@ the optional <code>routing</code> parameter in the constructor.</p>
   <span class="ruby-identifier">endpoint_uri</span>.<span class="ruby-identifier">path</span> = <span class="ruby-identifier">path</span>
 
   <span class="ruby-keyword">return</span> <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Services</span><span class="ruby-operator">::</span><span class="ruby-constant">Discovery</span><span class="ruby-operator">::</span><span class="ruby-constant">ForHTTP</span>.<span class="ruby-identifier">new</span>(
-    <span class="ruby-value">resource:</span>          <span class="ruby-identifier">resource</span>,
-    <span class="ruby-value">version:</span>           <span class="ruby-identifier">version</span>,
-    <span class="ruby-value">endpoint_uri:</span>      <span class="ruby-identifier">endpoint_uri</span>,
-    <span class="ruby-value">proxy_uri:</span>         <span class="ruby-ivar">@proxy_uri</span>,
-    <span class="ruby-value">ca_file:</span>           <span class="ruby-ivar">@ca_file</span>,
-    <span class="ruby-value">http_timeout:</span>      <span class="ruby-ivar">@http_timeout</span>,
-    <span class="ruby-value">http_open_timeout:</span> <span class="ruby-ivar">@http_open_timeout</span>
+    <span class="ruby-identifier">resource</span><span class="ruby-operator">:</span>          <span class="ruby-identifier">resource</span>,
+    <span class="ruby-identifier">version</span><span class="ruby-operator">:</span>           <span class="ruby-identifier">version</span>,
+    <span class="ruby-identifier">endpoint_uri</span><span class="ruby-operator">:</span>      <span class="ruby-identifier">endpoint_uri</span>,
+    <span class="ruby-identifier">proxy_uri</span><span class="ruby-operator">:</span>         <span class="ruby-ivar">@proxy_uri</span>,
+    <span class="ruby-identifier">ca_file</span><span class="ruby-operator">:</span>           <span class="ruby-ivar">@ca_file</span>,
+    <span class="ruby-identifier">http_timeout</span><span class="ruby-operator">:</span>      <span class="ruby-ivar">@http_timeout</span>,
+    <span class="ruby-identifier">http_open_timeout</span><span class="ruby-operator">:</span> <span class="ruby-ivar">@http_open_timeout</span>
   )
 <span class="ruby-keyword">end</span></pre>
             </div>

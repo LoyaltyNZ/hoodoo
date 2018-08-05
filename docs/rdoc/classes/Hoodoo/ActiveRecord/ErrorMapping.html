@@ -221,8 +221,7 @@ def Child &lt; ActiveRecord::Base
   # ...then add ActiveRecord validations - e.g.:
 
   validates :some_child_field, :length =&gt; { :maximum =&gt; 5 }
-end
-</code></pre>
+end</code></pre>
 
 <p>…then if a Parent were to be constructed thus:</p>
 
@@ -235,8 +234,7 @@ end
     # ...
   ],
   # ...
-} )
-</code></pre>
+} )</code></pre>
 
 <p>…then <code>parent.adds_errors_to?( some_collection )</code> could lead to
 <code>some_collection</code> containing errors such as:</p>
@@ -245,8 +243,7 @@ end
   &quot;code&quot;      =&gt; &quot;generic.invalid_string&quot;,
   &quot;message    =&gt; &quot;is too long (maximum is 5 characters)&quot;,
   &quot;reference&quot; =&gt; &quot;children.some_child_field&quot;
-}
-</code></pre>
+}</code></pre>
 <dl class="rdoc-list note-list"><dt><code>collection</code>
 <dd>
 <p>A <a href="../Errors.html">Hoodoo::Errors</a> instance, typically obtained
@@ -274,7 +271,7 @@ model, by adding equivalent structured errors to the collection.</p>
             </p>
             <div id="method-i-adds_errors_to-3F_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/error_mapping.rb, line 185</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">adds_errors_to?</span>( <span class="ruby-identifier">collection</span> )
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">adds_errors_to?</span>( <span class="ruby-identifier">collection</span> )
 
   <span class="ruby-keyword">self</span>.<span class="ruby-identifier">validate</span>()
 
@@ -298,8 +295,8 @@ model, by adding equivalent structured errors to the collection.</p>
 
       <span class="ruby-identifier">collection</span>.<span class="ruby-identifier">add_error</span>(
         <span class="ruby-identifier">error_code</span>,
-        <span class="ruby-value">:message</span>   <span class="ruby-operator">=&gt;</span> <span class="ruby-identifier">message</span>,
-        <span class="ruby-value">:reference</span> <span class="ruby-operator">=&gt;</span> { <span class="ruby-value">:field_name</span> <span class="ruby-operator">=&gt;</span> <span class="ruby-identifier">attribute_name</span> }
+        <span class="ruby-value">:message</span>   =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">message</span>,
+        <span class="ruby-value">:reference</span> =<span class="ruby-operator">&gt;</span> { <span class="ruby-value">:field_name</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">attribute_name</span> }
       )
     <span class="ruby-keyword">end</span>
   <span class="ruby-keyword">end</span>
@@ -371,7 +368,7 @@ code, too:</p>
             </p>
             <div id="method-i-platform_errors_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/error_mapping.rb, line 250</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">platform_errors</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">platform_errors</span>
   <span class="ruby-identifier">collection</span> = <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Errors</span>.<span class="ruby-identifier">new</span>
   <span class="ruby-keyword">self</span>.<span class="ruby-identifier">adds_errors_to?</span>( <span class="ruby-identifier">collection</span> )
 

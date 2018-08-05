@@ -395,8 +395,7 @@ class ConvertToManualDating &lt; ActiveRecord::Migration
     #   add_index :accounts, :account_number, :unique =&gt; true
 
   end
-end
-</code></pre>
+end</code></pre>
 
     </div>
 
@@ -518,12 +517,12 @@ this module.</p>
             </p>
             <div id="method-c-included_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/manually_dated.rb, line 386</span>
-<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">included</span>( <span class="ruby-identifier">model</span> )
+<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">included</span>( <span class="ruby-identifier">model</span> )
   <span class="ruby-identifier">model</span>.<span class="ruby-identifier">class_attribute</span>(
     <span class="ruby-value">:nz_co_loyalty_hoodoo_manually_dated</span>,
     {
-      <span class="ruby-value">:instance_predicate</span> <span class="ruby-operator">=&gt;</span> <span class="ruby-keyword">false</span>,
-      <span class="ruby-value">:instance_accessor</span>  <span class="ruby-operator">=&gt;</span> <span class="ruby-keyword">false</span>
+      <span class="ruby-value">:instance_predicate</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-keyword">false</span>,
+      <span class="ruby-value">:instance_accessor</span>  =<span class="ruby-operator">&gt;</span> <span class="ruby-keyword">false</span>
     }
   )
 
@@ -566,7 +565,7 @@ this module.</p>
             </p>
             <div id="method-c-instantiate_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/manually_dated.rb, line 412</span>
-<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">instantiate</span>( <span class="ruby-identifier">model</span> )
+<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">instantiate</span>( <span class="ruby-identifier">model</span> )
   <span class="ruby-identifier">model</span>.<span class="ruby-identifier">extend</span>( <span class="ruby-constant">ClassMethods</span> )
 <span class="ruby-keyword">end</span></pre>
             </div>

@@ -276,7 +276,7 @@ default.</p></td>
         <div class="description">
             <p>Create a new logger instance. Once created, use <a
 href="Logger.html#method-i-add">add</a> to add writers.</p>
-<dl class="rdoc-list note-list"><dt><code>component</code>
+<dl class="rdoc-list note-list"><dt>component
 <dd>
 <p>Flat logging methods (see <a href="Logger.html#method-i-debug">debug</a>,
 <a href="Logger.html#method-i-info">info</a>, <a
@@ -300,7 +300,7 @@ Symbol or String. Default is <code>:Middleware</code>.</p>
             </p>
             <div id="method-c-new_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/logger/logger.rb, line 57</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">initialize</span>( <span class="ruby-identifier">component</span> = <span class="ruby-value">:Middleware</span> )
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">initialize</span>( <span class="ruby-identifier">component</span> = <span class="ruby-value">:Middleware</span> )
   <span class="ruby-ivar">@level</span>     = <span class="ruby-value">:debug</span>
   <span class="ruby-ivar">@pool</span>      = <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Communicators</span><span class="ruby-operator">::</span><span class="ruby-constant">Pool</span>.<span class="ruby-identifier">new</span>
   <span class="ruby-ivar">@component</span> = <span class="ruby-identifier">component</span>
@@ -330,8 +330,7 @@ logger.add( stdout_writer )
 
 # ...then later...
 
-logger.report( ... ) # -&gt; Sends to &quot;output.log&quot; and $stdout
-</code></pre>
+logger.report( ... ) # -&gt; Sends to &quot;output.log&quot; and $stdout</code></pre>
 <dl class="rdoc-list note-list"><dt><code>writer_instances</code>
 <dd>
 <p>One or more <em>instances</em> of a subclass of <a
@@ -351,7 +350,7 @@ or more comma-separated parameters.</p>
             </p>
             <div id="method-i-add_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/logger/logger.rb, line 83</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">add</span>( <span class="ruby-operator">*</span><span class="ruby-identifier">writer_instances</span> )
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">add</span>( <span class="ruby-operator">*</span><span class="ruby-identifier">writer_instances</span> )
   <span class="ruby-identifier">writer_instances</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span> <span class="ruby-identifier">writer_instance</span> <span class="ruby-operator">|</span>
     <span class="ruby-identifier">communicator</span> = <span class="ruby-keyword">if</span> <span class="ruby-identifier">writer_instance</span>.<span class="ruby-identifier">is_a?</span>( <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Logger</span><span class="ruby-operator">::</span><span class="ruby-constant">FastWriter</span> )
       <span class="ruby-constant">FastCommunicator</span>.<span class="ruby-identifier">new</span>( <span class="ruby-identifier">writer_instance</span>, <span class="ruby-keyword">self</span> )
@@ -402,8 +401,8 @@ terminated).</p>
             </p>
             <div id="method-i-debug_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/logger/logger.rb, line 260</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">debug</span>( <span class="ruby-operator">*</span><span class="ruby-identifier">args</span> )
-  <span class="ruby-keyword">self</span>.<span class="ruby-identifier">report</span>( <span class="ruby-value">:debug</span>, <span class="ruby-ivar">@component</span>, <span class="ruby-value">:log</span>, { <span class="ruby-string">&#39;_data&#39;</span> <span class="ruby-operator">=&gt;</span> <span class="ruby-identifier">args</span> } )
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">debug</span>( <span class="ruby-operator">*</span><span class="ruby-identifier">args</span> )
+  <span class="ruby-keyword">self</span>.<span class="ruby-identifier">report</span>( <span class="ruby-value">:debug</span>, <span class="ruby-ivar">@component</span>, <span class="ruby-value">:log</span>, { <span class="ruby-string">&#39;_data&#39;</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">args</span> } )
 <span class="ruby-keyword">end</span></pre>
             </div>
         </div>
@@ -441,8 +440,8 @@ terminated).</p>
             </p>
             <div id="method-i-error_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/logger/logger.rb, line 310</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">error</span>( <span class="ruby-operator">*</span><span class="ruby-identifier">args</span> )
-  <span class="ruby-keyword">self</span>.<span class="ruby-identifier">report</span>( <span class="ruby-value">:error</span>, <span class="ruby-ivar">@component</span>, <span class="ruby-value">:log</span>, { <span class="ruby-string">&#39;_data&#39;</span> <span class="ruby-operator">=&gt;</span> <span class="ruby-identifier">args</span> } )
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">error</span>( <span class="ruby-operator">*</span><span class="ruby-identifier">args</span> )
+  <span class="ruby-keyword">self</span>.<span class="ruby-identifier">report</span>( <span class="ruby-value">:error</span>, <span class="ruby-ivar">@component</span>, <span class="ruby-value">:log</span>, { <span class="ruby-string">&#39;_data&#39;</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">args</span> } )
 <span class="ruby-keyword">end</span></pre>
             </div>
         </div>
@@ -478,7 +477,7 @@ href="Logger/SlowWriter.html">Hoodoo::Logger::SlowWriter</a>.</p>
             </p>
             <div id="method-i-include-3F_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/logger/logger.rb, line 138</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">include?</span>( <span class="ruby-identifier">writer_instance</span> )
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">include?</span>( <span class="ruby-identifier">writer_instance</span> )
   <span class="ruby-ivar">@writers</span>.<span class="ruby-identifier">has_key?</span>( <span class="ruby-identifier">writer_instance</span> )
 <span class="ruby-keyword">end</span></pre>
             </div>
@@ -520,7 +519,7 @@ href="Logger/SlowWriter.html">Hoodoo::Logger::SlowWriter</a>.</p>
             </p>
             <div id="method-i-include_class-3F_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/logger/logger.rb, line 155</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">include_class?</span>( <span class="ruby-identifier">writer_class</span> )
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">include_class?</span>( <span class="ruby-identifier">writer_class</span> )
   <span class="ruby-ivar">@writers</span>.<span class="ruby-identifier">keys</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span> <span class="ruby-identifier">writer_instance</span> <span class="ruby-operator">|</span>
     <span class="ruby-keyword">return</span> <span class="ruby-keyword">true</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">writer_instance</span>.<span class="ruby-identifier">is_a?</span>( <span class="ruby-identifier">writer_class</span> )
   <span class="ruby-keyword">end</span>
@@ -596,8 +595,8 @@ terminated).</p>
             </p>
             <div id="method-i-info_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/logger/logger.rb, line 277</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">info</span>( <span class="ruby-operator">*</span><span class="ruby-identifier">args</span> )
-  <span class="ruby-keyword">self</span>.<span class="ruby-identifier">report</span>( <span class="ruby-value">:info</span>, <span class="ruby-ivar">@component</span>, <span class="ruby-value">:log</span>, { <span class="ruby-string">&#39;_data&#39;</span> <span class="ruby-operator">=&gt;</span> <span class="ruby-identifier">args</span> } )
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">info</span>( <span class="ruby-operator">*</span><span class="ruby-identifier">args</span> )
+  <span class="ruby-keyword">self</span>.<span class="ruby-identifier">report</span>( <span class="ruby-value">:info</span>, <span class="ruby-ivar">@component</span>, <span class="ruby-value">:log</span>, { <span class="ruby-string">&#39;_data&#39;</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">args</span> } )
 <span class="ruby-keyword">end</span></pre>
             </div>
         </div>
@@ -623,7 +622,7 @@ addition. See <a href="Logger.html#method-i-add">add</a>.</p>
             </p>
             <div id="method-i-instances_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/logger/logger.rb, line 168</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">instances</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">instances</span>
 
   <span class="ruby-comment"># Implicit ordering relies on Ruby &gt;= 1.9 documented behaviour of</span>
   <span class="ruby-comment"># preserving order of addition to a Hash.</span>
@@ -667,7 +666,7 @@ or more comma-separated parameters.</p>
             </p>
             <div id="method-i-remove_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/logger/logger.rb, line 111</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">remove</span>( <span class="ruby-operator">*</span><span class="ruby-identifier">writer_instances</span> )
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">remove</span>( <span class="ruby-operator">*</span><span class="ruby-identifier">writer_instances</span> )
   <span class="ruby-identifier">writer_instances</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span> <span class="ruby-identifier">writer_instance</span> <span class="ruby-operator">|</span>
     <span class="ruby-identifier">communicator</span> = <span class="ruby-ivar">@writers</span>[ <span class="ruby-identifier">writer_instance</span> ]
     <span class="ruby-ivar">@pool</span>.<span class="ruby-identifier">remove</span>( <span class="ruby-identifier">communicator</span> ) <span class="ruby-keyword">unless</span> <span class="ruby-identifier">communicator</span>.<span class="ruby-identifier">nil?</span>
@@ -702,7 +701,7 @@ running (possibly entirely hung).</p>
             </p>
             <div id="method-i-remove_all_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/logger/logger.rb, line 126</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">remove_all</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">remove_all</span>
   <span class="ruby-ivar">@pool</span>.<span class="ruby-identifier">terminate</span>()
   <span class="ruby-ivar">@writers</span> = {}
 <span class="ruby-keyword">end</span></pre>
@@ -765,15 +764,15 @@ be logged.</p>
             </p>
             <div id="method-i-report_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/logger/logger.rb, line 235</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">report</span>( <span class="ruby-identifier">log_level</span>, <span class="ruby-identifier">component</span>, <span class="ruby-identifier">code</span>, <span class="ruby-identifier">data</span> )
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">report</span>( <span class="ruby-identifier">log_level</span>, <span class="ruby-identifier">component</span>, <span class="ruby-identifier">code</span>, <span class="ruby-identifier">data</span> )
   <span class="ruby-keyword">return</span> <span class="ruby-keyword">unless</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">report?</span>( <span class="ruby-identifier">log_level</span> )
 
   <span class="ruby-ivar">@pool</span>.<span class="ruby-identifier">communicate</span>(
     <span class="ruby-constant">Payload</span>.<span class="ruby-identifier">new</span>(
-      <span class="ruby-value">log_level:</span> <span class="ruby-identifier">log_level</span>,
-      <span class="ruby-value">component:</span> <span class="ruby-identifier">component</span>,
-      <span class="ruby-value">code:</span>      <span class="ruby-identifier">code</span>,
-      <span class="ruby-value">data:</span>      <span class="ruby-identifier">data</span>
+      <span class="ruby-identifier">log_level</span><span class="ruby-operator">:</span> <span class="ruby-identifier">log_level</span>,
+      <span class="ruby-identifier">component</span><span class="ruby-operator">:</span> <span class="ruby-identifier">component</span>,
+      <span class="ruby-identifier">code</span><span class="ruby-operator">:</span>      <span class="ruby-identifier">code</span>,
+      <span class="ruby-identifier">data</span><span class="ruby-operator">:</span>      <span class="ruby-identifier">data</span>
     )
   )
 <span class="ruby-keyword">end</span></pre>
@@ -812,7 +811,7 @@ from time to time, especially in tests.</p>
             </p>
             <div id="method-i-report-3F_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/logger/logger.rb, line 201</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">report?</span>( <span class="ruby-identifier">log_level</span> )
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">report?</span>( <span class="ruby-identifier">log_level</span> )
   <span class="ruby-keyword">return</span> <span class="ruby-keyword">false</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">log_level</span> <span class="ruby-operator">==</span> <span class="ruby-value">:debug</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-ivar">@level</span> <span class="ruby-operator">!=</span> <span class="ruby-value">:debug</span>
   <span class="ruby-keyword">return</span> <span class="ruby-keyword">false</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">log_level</span> <span class="ruby-operator">==</span> <span class="ruby-value">:info</span>  <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-ivar">@level</span> <span class="ruby-operator">!=</span> <span class="ruby-value">:debug</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-ivar">@level</span> <span class="ruby-operator">!=</span> <span class="ruby-value">:info</span>
   <span class="ruby-keyword">return</span> <span class="ruby-keyword">false</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">log_level</span> <span class="ruby-operator">==</span> <span class="ruby-value">:warn</span>  <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-ivar">@level</span> <span class="ruby-operator">!=</span> <span class="ruby-value">:debug</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-ivar">@level</span> <span class="ruby-operator">!=</span> <span class="ruby-value">:info</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-ivar">@level</span> <span class="ruby-operator">!=</span> <span class="ruby-value">:warn</span>
@@ -845,7 +844,7 @@ may never return at all.</p>
             </p>
             <div id="method-i-wait_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/logger/logger.rb, line 183</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">wait</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">wait</span>
   <span class="ruby-ivar">@pool</span>.<span class="ruby-identifier">wait</span>()
 <span class="ruby-keyword">end</span></pre>
             </div>
@@ -885,8 +884,8 @@ terminated).</p>
             </p>
             <div id="method-i-warn_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/logger/logger.rb, line 294</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">warn</span>( <span class="ruby-operator">*</span><span class="ruby-identifier">args</span> )
-  <span class="ruby-keyword">self</span>.<span class="ruby-identifier">report</span>( <span class="ruby-value">:warn</span>, <span class="ruby-ivar">@component</span>, <span class="ruby-value">:log</span>, { <span class="ruby-string">&#39;_data&#39;</span> <span class="ruby-operator">=&gt;</span> <span class="ruby-identifier">args</span> } )
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">warn</span>( <span class="ruby-operator">*</span><span class="ruby-identifier">args</span> )
+  <span class="ruby-keyword">self</span>.<span class="ruby-identifier">report</span>( <span class="ruby-value">:warn</span>, <span class="ruby-ivar">@component</span>, <span class="ruby-value">:log</span>, { <span class="ruby-string">&#39;_data&#39;</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">args</span> } )
 <span class="ruby-keyword">end</span></pre>
             </div>
         </div>
