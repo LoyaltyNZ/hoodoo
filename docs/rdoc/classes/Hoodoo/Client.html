@@ -404,19 +404,19 @@ code.</p>
             </p>
             <div id="method-c-new_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/client/client.rb, line 242</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier">initialize</span>( <span class="ruby-identifier">base_uri</span><span class="ruby-operator">:</span>              <span class="ruby-keyword">nil</span>,
-                <span class="ruby-identifier">drb_uri</span><span class="ruby-operator">:</span>               <span class="ruby-keyword">nil</span>,
-                <span class="ruby-identifier">drb_port</span><span class="ruby-operator">:</span>              <span class="ruby-keyword">nil</span>,
-                <span class="ruby-identifier">discoverer</span><span class="ruby-operator">:</span>            <span class="ruby-keyword">nil</span>,
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">initialize</span>( <span class="ruby-value">base_uri:</span>              <span class="ruby-keyword">nil</span>,
+                <span class="ruby-value">drb_uri:</span>               <span class="ruby-keyword">nil</span>,
+                <span class="ruby-value">drb_port:</span>              <span class="ruby-keyword">nil</span>,
+                <span class="ruby-value">discoverer:</span>            <span class="ruby-keyword">nil</span>,
 
-                <span class="ruby-identifier">locale</span><span class="ruby-operator">:</span>                <span class="ruby-keyword">nil</span>,
+                <span class="ruby-value">locale:</span>                <span class="ruby-keyword">nil</span>,
 
-                <span class="ruby-identifier">session_id</span><span class="ruby-operator">:</span>            <span class="ruby-keyword">nil</span>,
-                <span class="ruby-identifier">auto_session</span><span class="ruby-operator">:</span>          <span class="ruby-value">:true</span>,
-                <span class="ruby-identifier">auto_session_resource</span><span class="ruby-operator">:</span> <span class="ruby-string">&#39;Session&#39;</span>,
-                <span class="ruby-identifier">auto_session_version</span><span class="ruby-operator">:</span>  <span class="ruby-value">1</span>,
-                <span class="ruby-identifier">caller_id</span><span class="ruby-operator">:</span>             <span class="ruby-keyword">nil</span>,
-                <span class="ruby-identifier">caller_secret</span><span class="ruby-operator">:</span>         <span class="ruby-keyword">nil</span> )
+                <span class="ruby-value">session_id:</span>            <span class="ruby-keyword">nil</span>,
+                <span class="ruby-value">auto_session:</span>          <span class="ruby-value">:true</span>,
+                <span class="ruby-value">auto_session_resource:</span> <span class="ruby-string">&#39;Session&#39;</span>,
+                <span class="ruby-value">auto_session_version:</span>  <span class="ruby-value">1</span>,
+                <span class="ruby-value">caller_id:</span>             <span class="ruby-keyword">nil</span>,
+                <span class="ruby-value">caller_secret:</span>         <span class="ruby-keyword">nil</span> )
 
   <span class="ruby-ivar">@base_uri</span> = <span class="ruby-identifier">base_uri</span>
   <span class="ruby-ivar">@drb_uri</span>  = <span class="ruby-identifier">drb_uri</span>
@@ -429,15 +429,15 @@ code.</p>
   <span class="ruby-keyword">elsif</span> <span class="ruby-ivar">@base_uri</span> <span class="ruby-operator">!=</span> <span class="ruby-keyword">nil</span>
     <span class="ruby-keyword">if</span> <span class="ruby-keyword">defined?</span>( <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Services</span><span class="ruby-operator">::</span><span class="ruby-constant">Discovery</span><span class="ruby-operator">::</span><span class="ruby-constant">ByConvention</span> )
       <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Services</span><span class="ruby-operator">::</span><span class="ruby-constant">Discovery</span><span class="ruby-operator">::</span><span class="ruby-constant">ByConvention</span>.<span class="ruby-identifier">new</span>(
-        <span class="ruby-value">:base_uri</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-ivar">@base_uri</span>
+        <span class="ruby-value">:base_uri</span> <span class="ruby-operator">=&gt;</span> <span class="ruby-ivar">@base_uri</span>
       )
     <span class="ruby-keyword">else</span>
       <span class="ruby-identifier">raise</span> <span class="ruby-string">&#39;Hoodoo::Client: The constructor parameters indicate the use of a &quot;by convention&quot; discoverer. This discoverer requires ActiveSupport; ensure the ActiveSupport gem is present and &quot;require&quot;-able.&#39;</span>
     <span class="ruby-keyword">end</span>
   <span class="ruby-keyword">elsif</span> <span class="ruby-ivar">@drb_uri</span> <span class="ruby-operator">!=</span> <span class="ruby-keyword">nil</span> <span class="ruby-operator">||</span> <span class="ruby-ivar">@drb_port</span> <span class="ruby-operator">!=</span> <span class="ruby-keyword">nil</span>
     <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Services</span><span class="ruby-operator">::</span><span class="ruby-constant">Discovery</span><span class="ruby-operator">::</span><span class="ruby-constant">ByDRb</span>.<span class="ruby-identifier">new</span>(
-      <span class="ruby-value">:drb_uri</span>  =<span class="ruby-operator">&gt;</span> <span class="ruby-ivar">@drb_uri</span>,
-      <span class="ruby-value">:drb_port</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-ivar">@drb_port</span>
+      <span class="ruby-value">:drb_uri</span>  <span class="ruby-operator">=&gt;</span> <span class="ruby-ivar">@drb_uri</span>,
+      <span class="ruby-value">:drb_port</span> <span class="ruby-operator">=&gt;</span> <span class="ruby-ivar">@drb_port</span>
     )
   <span class="ruby-keyword">else</span>
     <span class="ruby-identifier">raise</span> <span class="ruby-string">&#39;Hoodoo::Client: Please pass one of the &quot;discoverer&quot;, &quot;base_uri&quot;, &quot;drb_uri&quot; or &quot;drb_port&quot; parameters.&#39;</span>
@@ -453,7 +453,7 @@ code.</p>
     <span class="ruby-ivar">@auto_session_endpoint</span> = <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Client</span><span class="ruby-operator">::</span><span class="ruby-constant">Endpoint</span>.<span class="ruby-identifier">endpoint_for</span>(
       <span class="ruby-identifier">auto_session_resource</span>,
       <span class="ruby-identifier">auto_session_version</span>,
-      { <span class="ruby-value">:discoverer</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-ivar">@discoverer</span> }
+      { <span class="ruby-value">:discoverer</span> <span class="ruby-operator">=&gt;</span> <span class="ruby-ivar">@discoverer</span> }
     )
   <span class="ruby-keyword">end</span>
 <span class="ruby-keyword">end</span></pre>
@@ -534,12 +534,12 @@ option keys <em>MUST</em> be Symbols.</p>
             </p>
             <div id="method-i-resource_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/client/client.rb, line 319</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier">resource</span>( <span class="ruby-identifier">resource</span>, <span class="ruby-identifier">version</span> = <span class="ruby-value">1</span>, <span class="ruby-identifier">options</span> = {} )
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">resource</span>( <span class="ruby-identifier">resource</span>, <span class="ruby-identifier">version</span> = <span class="ruby-value">1</span>, <span class="ruby-identifier">options</span> = {} )
 
   <span class="ruby-identifier">endpoint_options</span> = {
-    <span class="ruby-value">:discoverer</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-ivar">@discoverer</span>,
-    <span class="ruby-value">:session_id</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-ivar">@session_id</span>,
-    <span class="ruby-value">:locale</span>     =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">options</span>[ <span class="ruby-value">:locale</span> ] <span class="ruby-operator">||</span> <span class="ruby-ivar">@locale</span>
+    <span class="ruby-value">:discoverer</span> <span class="ruby-operator">=&gt;</span> <span class="ruby-ivar">@discoverer</span>,
+    <span class="ruby-value">:session_id</span> <span class="ruby-operator">=&gt;</span> <span class="ruby-ivar">@session_id</span>,
+    <span class="ruby-value">:locale</span>     <span class="ruby-operator">=&gt;</span> <span class="ruby-identifier">options</span>[ <span class="ruby-value">:locale</span> ] <span class="ruby-operator">||</span> <span class="ruby-ivar">@locale</span>
   }
 
   <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Client</span><span class="ruby-operator">::</span><span class="ruby-constant">Headers</span><span class="ruby-operator">::</span><span class="ruby-constant">HEADER_TO_PROPERTY</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span> <span class="ruby-identifier">rack_header</span>, <span class="ruby-identifier">description</span> <span class="ruby-operator">|</span>
@@ -555,18 +555,18 @@ option keys <em>MUST</em> be Symbols.</p>
 
   <span class="ruby-keyword">unless</span> <span class="ruby-ivar">@auto_session_endpoint</span>.<span class="ruby-identifier">nil?</span>
     <span class="ruby-identifier">remote_discovery_result</span> = <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Services</span><span class="ruby-operator">::</span><span class="ruby-constant">Discovery</span><span class="ruby-operator">::</span><span class="ruby-constant">ForRemote</span>.<span class="ruby-identifier">new</span>(
-      <span class="ruby-value">:resource</span>         =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">resource</span>,
-      <span class="ruby-value">:version</span>          =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">version</span>,
-      <span class="ruby-value">:wrapped_endpoint</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">endpoint</span>
+      <span class="ruby-value">:resource</span>         <span class="ruby-operator">=&gt;</span> <span class="ruby-identifier">resource</span>,
+      <span class="ruby-value">:version</span>          <span class="ruby-operator">=&gt;</span> <span class="ruby-identifier">version</span>,
+      <span class="ruby-value">:wrapped_endpoint</span> <span class="ruby-operator">=&gt;</span> <span class="ruby-identifier">endpoint</span>
     )
 
     <span class="ruby-identifier">endpoint</span> = <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Client</span><span class="ruby-operator">::</span><span class="ruby-constant">Endpoint</span><span class="ruby-operator">::</span><span class="ruby-constant">AutoSession</span>.<span class="ruby-identifier">new</span>(
       <span class="ruby-identifier">resource</span>,
       <span class="ruby-identifier">version</span>,
-      <span class="ruby-value">:caller_id</span>        =<span class="ruby-operator">&gt;</span> <span class="ruby-ivar">@caller_id</span>,
-      <span class="ruby-value">:caller_secret</span>    =<span class="ruby-operator">&gt;</span> <span class="ruby-ivar">@caller_secret</span>,
-      <span class="ruby-value">:session_endpoint</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-ivar">@auto_session_endpoint</span>,
-      <span class="ruby-value">:discovery_result</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">remote_discovery_result</span>
+      <span class="ruby-value">:caller_id</span>        <span class="ruby-operator">=&gt;</span> <span class="ruby-ivar">@caller_id</span>,
+      <span class="ruby-value">:caller_secret</span>    <span class="ruby-operator">=&gt;</span> <span class="ruby-ivar">@caller_secret</span>,
+      <span class="ruby-value">:session_endpoint</span> <span class="ruby-operator">=&gt;</span> <span class="ruby-ivar">@auto_session_endpoint</span>,
+      <span class="ruby-value">:discovery_result</span> <span class="ruby-operator">=&gt;</span> <span class="ruby-identifier">remote_discovery_result</span>
     )
   <span class="ruby-keyword">end</span>
 

@@ -107,7 +107,7 @@ for details).</p></td>
 
         <div class="description">
             <p>Initialize a new instance for the given domain.</p>
-<dl class="rdoc-list note-list"><dt>domain
+<dl class="rdoc-list note-list"><dt><code>domain</code>
 <dd>
 <p>The domain string - for most service-based callers, usually a short service
 name like <code>members</code> or <code>transactions</code>.</p>
@@ -124,7 +124,7 @@ name like <code>members</code> or <code>transactions</code>.</p>
             </p>
             <div id="method-c-new_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/errors/error_descriptions.rb, line 185</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier">initialize</span>( <span class="ruby-identifier">domain</span> )
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">initialize</span>( <span class="ruby-identifier">domain</span> )
   <span class="ruby-ivar">@domain</span>       = <span class="ruby-identifier">domain</span>
   <span class="ruby-ivar">@descriptions</span> = {}
 <span class="ruby-keyword">end</span></pre>
@@ -141,7 +141,7 @@ name like <code>members</code> or <code>transactions</code>.</p>
 
         <div class="description">
             <p>Describe an error.</p>
-<dl class="rdoc-list note-list"><dt>name
+<dl class="rdoc-list note-list"><dt><code>name</code>
 <dd>
 <p>The error name - the bit after the “<code>.</code>” in the code, e.g.
 <code>invalid_parameters</code>.</p>
@@ -179,7 +179,7 @@ fully qualified error data is logged and sent to clients.</p>
             </p>
             <div id="method-i-error_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/errors/error_descriptions.rb, line 213</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier">error</span>( <span class="ruby-identifier">name</span>, <span class="ruby-identifier">options</span> )
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">error</span>( <span class="ruby-identifier">name</span>, <span class="ruby-identifier">options</span> )
   <span class="ruby-identifier">options</span>       = <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Utilities</span>.<span class="ruby-identifier">stringify</span>( <span class="ruby-identifier">options</span> )
   <span class="ruby-identifier">required_keys</span> = [ <span class="ruby-string">&#39;status&#39;</span>, <span class="ruby-string">&#39;message&#39;</span> ]
 

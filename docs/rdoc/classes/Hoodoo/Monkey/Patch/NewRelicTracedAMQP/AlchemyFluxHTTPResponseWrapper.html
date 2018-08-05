@@ -92,7 +92,7 @@ expects.</p>
 
         <div class="description">
             <p>The <code>response_hash</code> to be wrapped.</p>
-<dl class="rdoc-list note-list"><dt>response_hash
+<dl class="rdoc-list note-list"><dt><code>response_hash</code>
 <dd>
 <p>Hash describing the response returned from Alchemy Flux. See that gem for
 details.</p>
@@ -109,7 +109,7 @@ details.</p>
             </p>
             <div id="method-c-new_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/monkey/patch/newrelic_traced_amqp.rb, line 184</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier">initialize</span>( <span class="ruby-identifier">response_hash</span> )
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">initialize</span>( <span class="ruby-identifier">response_hash</span> )
   <span class="ruby-ivar">@response_hash</span> = <span class="ruby-identifier">response_hash</span>
 <span class="ruby-keyword">end</span></pre>
             </div>
@@ -126,7 +126,7 @@ details.</p>
         <div class="description">
             <p>Look up a key in the headers Hash first, but if absent try the top-level
 response Hash instead.</p>
-<dl class="rdoc-list note-list"><dt>key
+<dl class="rdoc-list note-list"><dt><code>key</code>
 <dd>
 <p>Hash key to look up.</p>
 </dd></dl>
@@ -142,7 +142,7 @@ response Hash instead.</p>
             </p>
             <div id="method-i-5B-5D_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/monkey/patch/newrelic_traced_amqp.rb, line 193</span>
-<span class="ruby-keyword">def</span> <span class="ruby-operator">[]</span>( <span class="ruby-identifier">key</span> )
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">[]</span>( <span class="ruby-identifier">key</span> )
   <span class="ruby-ivar">@response_hash</span>[ <span class="ruby-string">&#39;headers&#39;</span> ][ <span class="ruby-identifier">key</span> ] <span class="ruby-operator">||</span> <span class="ruby-ivar">@response_hash</span>[ <span class="ruby-identifier">key</span> ]
 <span class="ruby-keyword">end</span></pre>
             </div>
@@ -168,7 +168,7 @@ response Hash instead.</p>
             </p>
             <div id="method-i-to_hash_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/monkey/patch/newrelic_traced_amqp.rb, line 199</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier">to_hash</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">to_hash</span>
   <span class="ruby-ivar">@response_hash</span>[ <span class="ruby-string">&#39;headers&#39;</span> ].<span class="ruby-identifier">dup</span>()
 <span class="ruby-keyword">end</span></pre>
             </div>

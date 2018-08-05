@@ -118,7 +118,7 @@ this module.</p>
             </p>
             <div id="method-c-included_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/uuid.rb, line 44</span>
-<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">included</span>( <span class="ruby-identifier">model</span> )
+<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">included</span>( <span class="ruby-identifier">model</span> )
   <span class="ruby-identifier">instantiate</span>( <span class="ruby-identifier">model</span> ) <span class="ruby-keyword">unless</span> <span class="ruby-identifier">model</span> <span class="ruby-operator">==</span> <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">ActiveRecord</span><span class="ruby-operator">::</span><span class="ruby-constant">Base</span>
   <span class="ruby-keyword">super</span>( <span class="ruby-identifier">model</span> )
 <span class="ruby-keyword">end</span></pre>
@@ -170,19 +170,19 @@ this module.</p>
             </p>
             <div id="method-c-instantiate_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/uuid.rb, line 68</span>
-<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">instantiate</span>( <span class="ruby-identifier">model</span> )
+<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">instantiate</span>( <span class="ruby-identifier">model</span> )
   <span class="ruby-identifier">model</span>.<span class="ruby-identifier">primary_key</span> = <span class="ruby-string">&#39;id&#39;</span>
 
-  <span class="ruby-identifier">model</span>.<span class="ruby-identifier">validate</span>( <span class="ruby-value">:on</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-value">:create</span> ) <span class="ruby-keyword">do</span>
+  <span class="ruby-identifier">model</span>.<span class="ruby-identifier">validate</span>( <span class="ruby-value">:on</span> <span class="ruby-operator">=&gt;</span> <span class="ruby-value">:create</span> ) <span class="ruby-keyword">do</span>
     <span class="ruby-keyword">self</span>.<span class="ruby-identifier">id</span> <span class="ruby-operator">||=</span> <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">UUID</span>.<span class="ruby-identifier">generate</span>()
   <span class="ruby-keyword">end</span>
 
   <span class="ruby-identifier">model</span>.<span class="ruby-identifier">validates</span>(
     <span class="ruby-value">:id</span>,
     {
-      <span class="ruby-value">:uuid</span>       =<span class="ruby-operator">&gt;</span> <span class="ruby-keyword">true</span>,
-      <span class="ruby-value">:presence</span>   =<span class="ruby-operator">&gt;</span> <span class="ruby-keyword">true</span>,
-      <span class="ruby-value">:uniqueness</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-keyword">true</span>
+      <span class="ruby-value">:uuid</span>       <span class="ruby-operator">=&gt;</span> <span class="ruby-keyword">true</span>,
+      <span class="ruby-value">:presence</span>   <span class="ruby-operator">=&gt;</span> <span class="ruby-keyword">true</span>,
+      <span class="ruby-value">:uniqueness</span> <span class="ruby-operator">=&gt;</span> <span class="ruby-keyword">true</span>
     }
   )
 <span class="ruby-keyword">end</span></pre>

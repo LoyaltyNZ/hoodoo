@@ -128,7 +128,7 @@ by being passed to a call to <code>run</code> in <code>config.ru</code>.</p>
 
         <div class="description">
             <p>Implement a “create” action (store one new resource instance).</p>
-<dl class="rdoc-list note-list"><dt>context
+<dl class="rdoc-list note-list"><dt><code>context</code>
 <dd>
 <p><a href="Context.html">Hoodoo::Services::Context</a> instance describing
 authorised session information, inbound request information and holding the
@@ -147,7 +147,7 @@ of this action.</p>
             </p>
             <div id="method-i-create_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/services/services/implementation.rb, line 64</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier">create</span>( <span class="ruby-identifier">context</span> )
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">create</span>( <span class="ruby-identifier">context</span> )
   <span class="ruby-identifier">raise</span> <span class="ruby-string">&quot;Hoodoo::Services::Implementation subclasses must implement &#39;create&#39;&quot;</span>
 <span class="ruby-keyword">end</span></pre>
             </div>
@@ -161,7 +161,7 @@ of this action.</p>
 
         <div class="description">
             <p>Implement a “delete” action (delete one existing resource instance).</p>
-<dl class="rdoc-list note-list"><dt>context
+<dl class="rdoc-list note-list"><dt><code>context</code>
 <dd>
 <p><a href="Context.html">Hoodoo::Services::Context</a> instance describing
 authorised session information, inbound request information and holding the
@@ -180,7 +180,7 @@ of this action.</p>
             </p>
             <div id="method-i-delete_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/services/services/implementation.rb, line 86</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier">delete</span>( <span class="ruby-identifier">context</span> )
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">delete</span>( <span class="ruby-identifier">context</span> )
   <span class="ruby-identifier">raise</span> <span class="ruby-string">&quot;Hoodoo::Services::Implementation subclasses must implement &#39;delete&#39;&quot;</span>
 <span class="ruby-keyword">end</span></pre>
             </div>
@@ -194,7 +194,7 @@ of this action.</p>
 
         <div class="description">
             <p>Implement a “list” action (paginated, sorted list of resources).</p>
-<dl class="rdoc-list note-list"><dt>context
+<dl class="rdoc-list note-list"><dt><code>context</code>
 <dd>
 <p><a href="Context.html">Hoodoo::Services::Context</a> instance describing
 authorised session information, inbound request information and holding the
@@ -213,7 +213,7 @@ of this action.</p>
             </p>
             <div id="method-i-list_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/services/services/implementation.rb, line 42</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier">list</span>( <span class="ruby-identifier">context</span> )
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">list</span>( <span class="ruby-identifier">context</span> )
   <span class="ruby-identifier">raise</span> <span class="ruby-string">&quot;Hoodoo::Services::Implementation subclasses must implement &#39;list&#39;&quot;</span>
 <span class="ruby-keyword">end</span></pre>
             </div>
@@ -227,7 +227,7 @@ of this action.</p>
 
         <div class="description">
             <p>Implement a “show” action (represent one existing resource instance).</p>
-<dl class="rdoc-list note-list"><dt>context
+<dl class="rdoc-list note-list"><dt><code>context</code>
 <dd>
 <p><a href="Context.html">Hoodoo::Services::Context</a> instance describing
 authorised session information, inbound request information and holding the
@@ -246,7 +246,7 @@ of this action.</p>
             </p>
             <div id="method-i-show_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/services/services/implementation.rb, line 53</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier">show</span>( <span class="ruby-identifier">context</span> )
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">show</span>( <span class="ruby-identifier">context</span> )
   <span class="ruby-identifier">raise</span> <span class="ruby-string">&quot;Hoodoo::Services::Implementation subclasses must implement &#39;show&#39;&quot;</span>
 <span class="ruby-keyword">end</span></pre>
             </div>
@@ -260,7 +260,7 @@ of this action.</p>
 
         <div class="description">
             <p>Implement a “update” action (modify one existing resource instance).</p>
-<dl class="rdoc-list note-list"><dt>context
+<dl class="rdoc-list note-list"><dt><code>context</code>
 <dd>
 <p><a href="Context.html">Hoodoo::Services::Context</a> instance describing
 authorised session information, inbound request information and holding the
@@ -279,7 +279,7 @@ of this action.</p>
             </p>
             <div id="method-i-update_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/services/services/implementation.rb, line 75</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier">update</span>( <span class="ruby-identifier">context</span> )
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">update</span>( <span class="ruby-identifier">context</span> )
   <span class="ruby-identifier">raise</span> <span class="ruby-string">&quot;Hoodoo::Services::Implementation subclasses must implement &#39;update&#39;&quot;</span>
 <span class="ruby-keyword">end</span></pre>
             </div>
@@ -345,7 +345,7 @@ inside.</p>
             </p>
             <div id="method-i-verify_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/services/services/implementation.rb, line 126</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier">verify</span>( <span class="ruby-identifier">context</span>, <span class="ruby-identifier">action</span> )
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">verify</span>( <span class="ruby-identifier">context</span>, <span class="ruby-identifier">action</span> )
   <span class="ruby-keyword">return</span> <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Services</span><span class="ruby-operator">::</span><span class="ruby-constant">Permissions</span><span class="ruby-operator">::</span><span class="ruby-constant">DENY</span>
 <span class="ruby-keyword">end</span></pre>
             </div>

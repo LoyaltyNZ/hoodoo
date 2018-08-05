@@ -57,7 +57,8 @@ class SomeModel &lt; ActiveRecord::Base
     :name         =&gt; sh.ci_match_generic,
     :resource_ids =&gt; sh.cs_match_csv( :associated_id )
   end
-end</code></pre>
+end
+</code></pre>
 
 <p>The helper methods just provide values to pass into the Hash used with the
 search/filter <a href="../Finder.html">Hoodoo::ActiveRecord::Finder</a>
@@ -170,7 +171,7 @@ href="ClassMethods.html#method-i-filter_with">Hoodoo::ActiveRecord::Finder::Clas
             </p>
             <div id="method-c-ci_match_generic_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/search_helper.rb, line 158</span>
-<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">ci_match_generic</span>( <span class="ruby-identifier">model_field_name</span> = <span class="ruby-keyword">nil</span> )
+<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">ci_match_generic</span>( <span class="ruby-identifier">model_field_name</span> = <span class="ruby-keyword">nil</span> )
   <span class="ruby-constant">Proc</span>.<span class="ruby-identifier">new</span> { <span class="ruby-operator">|</span> <span class="ruby-identifier">attr</span>, <span class="ruby-identifier">value</span> <span class="ruby-operator">|</span>
     <span class="ruby-identifier">column</span> = <span class="ruby-identifier">model_field_name</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">attr</span>
     <span class="ruby-identifier">value</span>  = ( <span class="ruby-identifier">value</span> <span class="ruby-operator">||</span> <span class="ruby-string">&#39;&#39;</span> ).<span class="ruby-identifier">to_s</span>.<span class="ruby-identifier">downcase</span>
@@ -217,7 +218,7 @@ href="ClassMethods.html#method-i-filter_with">Hoodoo::ActiveRecord::Finder::Clas
             </p>
             <div id="method-c-ci_match_postgres_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/search_helper.rb, line 199</span>
-<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">ci_match_postgres</span>( <span class="ruby-identifier">model_field_name</span> = <span class="ruby-keyword">nil</span> )
+<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">ci_match_postgres</span>( <span class="ruby-identifier">model_field_name</span> = <span class="ruby-keyword">nil</span> )
   <span class="ruby-constant">Proc</span>.<span class="ruby-identifier">new</span> { <span class="ruby-operator">|</span> <span class="ruby-identifier">attr</span>, <span class="ruby-identifier">value</span> <span class="ruby-operator">|</span>
     <span class="ruby-identifier">column</span> = <span class="ruby-identifier">model_field_name</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">attr</span>
 
@@ -252,7 +253,7 @@ case-insensitive-all-wildcard match.</p>
             </p>
             <div id="method-c-ciaw_match_generic_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/search_helper.rb, line 173</span>
-<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">ciaw_match_generic</span>( <span class="ruby-identifier">model_field_name</span> = <span class="ruby-keyword">nil</span> )
+<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">ciaw_match_generic</span>( <span class="ruby-identifier">model_field_name</span> = <span class="ruby-keyword">nil</span> )
   <span class="ruby-constant">Proc</span>.<span class="ruby-identifier">new</span> { <span class="ruby-operator">|</span> <span class="ruby-identifier">attr</span>, <span class="ruby-identifier">value</span> <span class="ruby-operator">|</span>
     <span class="ruby-identifier">column</span> = <span class="ruby-identifier">model_field_name</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">attr</span>
     <span class="ruby-identifier">value</span>  = ( <span class="ruby-identifier">value</span> <span class="ruby-operator">||</span> <span class="ruby-string">&#39;&#39;</span> ).<span class="ruby-identifier">to_s</span>.<span class="ruby-identifier">downcase</span>
@@ -288,7 +289,7 @@ case-insensitive-all-wildcard match.</p>
             </p>
             <div id="method-c-ciaw_match_postgres_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/search_helper.rb, line 213</span>
-<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">ciaw_match_postgres</span>( <span class="ruby-identifier">model_field_name</span> = <span class="ruby-keyword">nil</span> )
+<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">ciaw_match_postgres</span>( <span class="ruby-identifier">model_field_name</span> = <span class="ruby-keyword">nil</span> )
   <span class="ruby-constant">Proc</span>.<span class="ruby-identifier">new</span> { <span class="ruby-operator">|</span> <span class="ruby-identifier">attr</span>, <span class="ruby-identifier">value</span> <span class="ruby-operator">|</span>
     <span class="ruby-identifier">column</span> = <span class="ruby-identifier">model_field_name</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">attr</span>
 
@@ -321,7 +322,7 @@ with greater-than.</p>
             </p>
             <div id="method-c-cs_gt_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/search_helper.rb, line 267</span>
-<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">cs_gt</span>( <span class="ruby-identifier">model_field_name</span> = <span class="ruby-keyword">nil</span> )
+<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">cs_gt</span>( <span class="ruby-identifier">model_field_name</span> = <span class="ruby-keyword">nil</span> )
   <span class="ruby-constant">Proc</span>.<span class="ruby-identifier">new</span> { <span class="ruby-operator">|</span> <span class="ruby-identifier">attr</span>, <span class="ruby-identifier">value</span> <span class="ruby-operator">|</span>
     <span class="ruby-identifier">column</span> = <span class="ruby-identifier">model_field_name</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">attr</span>
 
@@ -354,7 +355,7 @@ with greater-than-or-equal-to.</p>
             </p>
             <div id="method-c-cs_gte_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/search_helper.rb, line 280</span>
-<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">cs_gte</span>( <span class="ruby-identifier">model_field_name</span> = <span class="ruby-keyword">nil</span> )
+<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">cs_gte</span>( <span class="ruby-identifier">model_field_name</span> = <span class="ruby-keyword">nil</span> )
   <span class="ruby-constant">Proc</span>.<span class="ruby-identifier">new</span> { <span class="ruby-operator">|</span> <span class="ruby-identifier">attr</span>, <span class="ruby-identifier">value</span> <span class="ruby-operator">|</span>
     <span class="ruby-identifier">column</span> = <span class="ruby-identifier">model_field_name</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">attr</span>
 
@@ -404,7 +405,7 @@ href="ClassMethods.html#method-i-filter_with">Hoodoo::ActiveRecord::Finder::Clas
             </p>
             <div id="method-c-cs_lt_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/search_helper.rb, line 241</span>
-<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">cs_lt</span>( <span class="ruby-identifier">model_field_name</span> = <span class="ruby-keyword">nil</span> )
+<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">cs_lt</span>( <span class="ruby-identifier">model_field_name</span> = <span class="ruby-keyword">nil</span> )
   <span class="ruby-constant">Proc</span>.<span class="ruby-identifier">new</span> { <span class="ruby-operator">|</span> <span class="ruby-identifier">attr</span>, <span class="ruby-identifier">value</span> <span class="ruby-operator">|</span>
     <span class="ruby-identifier">column</span> = <span class="ruby-identifier">model_field_name</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">attr</span>
 
@@ -437,7 +438,7 @@ with less-than-or-equal-to.</p>
             </p>
             <div id="method-c-cs_lte_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/search_helper.rb, line 254</span>
-<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">cs_lte</span>( <span class="ruby-identifier">model_field_name</span> = <span class="ruby-keyword">nil</span> )
+<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">cs_lte</span>( <span class="ruby-identifier">model_field_name</span> = <span class="ruby-keyword">nil</span> )
   <span class="ruby-constant">Proc</span>.<span class="ruby-identifier">new</span> { <span class="ruby-operator">|</span> <span class="ruby-identifier">attr</span>, <span class="ruby-identifier">value</span> <span class="ruby-operator">|</span>
     <span class="ruby-identifier">column</span> = <span class="ruby-identifier">model_field_name</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">attr</span>
 
@@ -482,7 +483,7 @@ href="ClassMethods.html#method-i-filter_with">Hoodoo::ActiveRecord::Finder::Clas
             </p>
             <div id="method-c-cs_match_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/search_helper.rb, line 64</span>
-<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">cs_match</span>( <span class="ruby-identifier">model_field_name</span> = <span class="ruby-keyword">nil</span> )
+<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">cs_match</span>( <span class="ruby-identifier">model_field_name</span> = <span class="ruby-keyword">nil</span> )
   <span class="ruby-constant">Proc</span>.<span class="ruby-identifier">new</span> { <span class="ruby-operator">|</span> <span class="ruby-identifier">attr</span>, <span class="ruby-identifier">value</span> <span class="ruby-operator">|</span>
     <span class="ruby-identifier">column</span> = <span class="ruby-identifier">model_field_name</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">attr</span>
 
@@ -529,7 +530,7 @@ href="ClassMethods.html#method-i-filter_with">Hoodoo::ActiveRecord::Finder::Clas
             </p>
             <div id="method-c-cs_match_array_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/search_helper.rb, line 115</span>
-<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">cs_match_array</span>( <span class="ruby-identifier">model_field_name</span> = <span class="ruby-keyword">nil</span> )
+<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">cs_match_array</span>( <span class="ruby-identifier">model_field_name</span> = <span class="ruby-keyword">nil</span> )
   <span class="ruby-constant">Proc</span>.<span class="ruby-identifier">new</span> { <span class="ruby-operator">|</span> <span class="ruby-identifier">attr</span>, <span class="ruby-identifier">value</span> <span class="ruby-operator">|</span>
     <span class="ruby-identifier">column</span> = <span class="ruby-identifier">model_field_name</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">attr</span>
     <span class="ruby-identifier">value</span>  = [ <span class="ruby-identifier">value</span> ].<span class="ruby-identifier">flatten</span>
@@ -574,7 +575,7 @@ href="ClassMethods.html#method-i-filter_with">Hoodoo::ActiveRecord::Finder::Clas
             </p>
             <div id="method-c-cs_match_csv_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/search_helper.rb, line 88</span>
-<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">cs_match_csv</span>( <span class="ruby-identifier">model_field_name</span> = <span class="ruby-keyword">nil</span> )
+<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">cs_match_csv</span>( <span class="ruby-identifier">model_field_name</span> = <span class="ruby-keyword">nil</span> )
   <span class="ruby-constant">Proc</span>.<span class="ruby-identifier">new</span> { <span class="ruby-operator">|</span> <span class="ruby-identifier">attr</span>, <span class="ruby-identifier">value</span> <span class="ruby-operator">|</span>
     <span class="ruby-identifier">column</span> = <span class="ruby-identifier">model_field_name</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">attr</span>
     <span class="ruby-identifier">value</span>  = <span class="ruby-identifier">value</span>.<span class="ruby-identifier">split</span>( <span class="ruby-string">&#39;,&#39;</span> )
@@ -609,7 +610,7 @@ case-sensitive-all-wildcard match.</p>
             </p>
             <div id="method-c-csaw_match_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/search_helper.rb, line 130</span>
-<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">csaw_match</span>( <span class="ruby-identifier">model_field_name</span> = <span class="ruby-keyword">nil</span> )
+<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">csaw_match</span>( <span class="ruby-identifier">model_field_name</span> = <span class="ruby-keyword">nil</span> )
   <span class="ruby-constant">Proc</span>.<span class="ruby-identifier">new</span> { <span class="ruby-operator">|</span> <span class="ruby-identifier">attr</span>, <span class="ruby-identifier">value</span> <span class="ruby-operator">|</span>
     <span class="ruby-identifier">column</span> = <span class="ruby-identifier">model_field_name</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">attr</span>
     <span class="ruby-identifier">value</span>  = ( <span class="ruby-identifier">value</span> <span class="ruby-operator">||</span> <span class="ruby-string">&#39;&#39;</span> ).<span class="ruby-identifier">to_s</span>

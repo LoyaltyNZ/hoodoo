@@ -1,4 +1,4 @@
-Fri, 01 Jun 2018 15:17:47 +1200
+Mon, 06 Aug 2018 10:34:14 +1200
 README.md	Tue, 22 May 2018 08:34:42 +1200
 lib/hoodoo.rb	Thu, 02 Nov 2017 08:44:50 +1300
 lib/hoodoo/active.rb	Thu, 12 Oct 2017 08:31:46 +1300
@@ -8,7 +8,7 @@ lib/hoodoo/active/active_record/creator.rb	Thu, 12 Oct 2017 08:31:46 +1300
 lib/hoodoo/active/active_record/dated.rb	Thu, 29 Mar 2018 08:39:52 +1300
 lib/hoodoo/active/active_record/error_mapping.rb	Thu, 12 Oct 2017 08:31:46 +1300
 lib/hoodoo/active/active_record/finder.rb	Mon, 16 Apr 2018 14:22:45 +1200
-lib/hoodoo/active/active_record/manually_dated.rb	Fri, 01 Jun 2018 13:14:55 +1200
+lib/hoodoo/active/active_record/manually_dated.rb	Mon, 06 Aug 2018 09:04:05 +1200
 lib/hoodoo/active/active_record/search_helper.rb	Thu, 29 Mar 2018 08:39:52 +1300
 lib/hoodoo/active/active_record/secure.rb	Fri, 01 Jun 2018 13:14:55 +1200
 lib/hoodoo/active/active_record/security_helper.rb	Fri, 01 Jun 2018 13:14:55 +1200
@@ -20,7 +20,7 @@ lib/hoodoo/client.rb	Thu, 12 Oct 2017 08:31:46 +1300
 lib/hoodoo/client/augmented_array.rb	Thu, 12 Oct 2017 08:31:46 +1300
 lib/hoodoo/client/augmented_base.rb	Thu, 12 Oct 2017 08:31:46 +1300
 lib/hoodoo/client/augmented_hash.rb	Thu, 12 Oct 2017 08:31:46 +1300
-lib/hoodoo/client/client.rb	Fri, 01 Jun 2018 13:14:55 +1200
+lib/hoodoo/client/client.rb	Mon, 06 Aug 2018 09:03:59 +1200
 lib/hoodoo/client/endpoint/endpoint.rb	Fri, 01 Jun 2018 14:37:15 +1200
 lib/hoodoo/client/endpoint/endpoints/amqp.rb	Thu, 12 Oct 2017 08:31:46 +1300
 lib/hoodoo/client/endpoint/endpoints/auto_session.rb	Thu, 12 Oct 2017 08:31:46 +1300
@@ -104,26 +104,26 @@ lib/hoodoo/services/middleware/exception_reporting/exception_reporting.rb	Thu, 1
 lib/hoodoo/services/middleware/exception_reporting/reporters/airbrake_reporter.rb	Thu, 29 Mar 2018 08:39:52 +1300
 lib/hoodoo/services/middleware/exception_reporting/reporters/raygun_reporter.rb	Thu, 12 Oct 2017 08:31:46 +1300
 lib/hoodoo/services/middleware/interaction.rb	Thu, 29 Mar 2018 08:39:52 +1300
-lib/hoodoo/services/middleware/middleware.rb	Fri, 01 Jun 2018 13:14:48 +1200
+lib/hoodoo/services/middleware/middleware.rb	Mon, 06 Aug 2018 09:03:55 +1200
 lib/hoodoo/services/middleware/rack_monkey_patch.rb	Thu, 12 Oct 2017 08:31:46 +1300
 lib/hoodoo/services/services/context.rb	Fri, 01 Jun 2018 13:14:55 +1200
 lib/hoodoo/services/services/implementation.rb	Thu, 12 Oct 2017 08:31:46 +1300
 lib/hoodoo/services/services/interface.rb	Thu, 12 Oct 2017 08:31:46 +1300
 lib/hoodoo/services/services/permissions.rb	Thu, 12 Oct 2017 08:31:46 +1300
 lib/hoodoo/services/services/request.rb	Fri, 01 Jun 2018 13:14:55 +1200
-lib/hoodoo/services/services/response.rb	Thu, 29 Mar 2018 08:39:52 +1300
+lib/hoodoo/services/services/response.rb	Fri, 27 Jul 2018 17:35:29 +1200
 lib/hoodoo/services/services/service.rb	Thu, 12 Oct 2017 08:31:46 +1300
 lib/hoodoo/services/services/session.rb	Fri, 01 Jun 2018 13:14:48 +1200
 lib/hoodoo/transient_store.rb	Thu, 12 Oct 2017 08:31:46 +1300
 lib/hoodoo/transient_store/mocks/dalli_client.rb	Thu, 12 Oct 2017 08:31:46 +1300
-lib/hoodoo/transient_store/mocks/redis.rb	Thu, 12 Oct 2017 08:31:46 +1300
+lib/hoodoo/transient_store/mocks/redis.rb	Mon, 06 Aug 2018 10:33:16 +1200
 lib/hoodoo/transient_store/transient_store.rb	Wed, 18 Oct 2017 12:51:25 +1300
 lib/hoodoo/transient_store/transient_store/base.rb	Thu, 12 Oct 2017 08:31:46 +1300
 lib/hoodoo/transient_store/transient_store/memcached.rb	Thu, 12 Oct 2017 08:31:46 +1300
 lib/hoodoo/transient_store/transient_store/memcached_redis_mirror.rb	Fri, 01 Jun 2018 13:14:48 +1200
-lib/hoodoo/transient_store/transient_store/redis.rb	Thu, 12 Oct 2017 08:31:46 +1300
+lib/hoodoo/transient_store/transient_store/redis.rb	Mon, 06 Aug 2018 10:33:16 +1200
 lib/hoodoo/utilities.rb	Thu, 12 Oct 2017 08:31:46 +1300
 lib/hoodoo/utilities/string_inquirer.rb	Thu, 12 Oct 2017 08:31:46 +1300
 lib/hoodoo/utilities/utilities.rb	Tue, 22 May 2018 08:34:42 +1200
 lib/hoodoo/utilities/uuid.rb	Thu, 12 Oct 2017 08:31:46 +1300
-lib/hoodoo/version.rb	Fri, 01 Jun 2018 15:17:12 +1200
+lib/hoodoo/version.rb	Mon, 06 Aug 2018 10:33:16 +1200

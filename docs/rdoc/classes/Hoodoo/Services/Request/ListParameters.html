@@ -147,10 +147,10 @@ each value is the direction to sort that field.</p></td>
             </p>
             <div id="method-c-new_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/services/services/request.rb, line 59</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier">initialize</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">initialize</span>
   <span class="ruby-keyword">self</span>.<span class="ruby-identifier">offset</span>      = <span class="ruby-value">0</span>
   <span class="ruby-keyword">self</span>.<span class="ruby-identifier">limit</span>       = <span class="ruby-value">50</span>
-  <span class="ruby-keyword">self</span>.<span class="ruby-identifier">sort_data</span>   = { <span class="ruby-string">&#39;created_at&#39;</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-string">&#39;desc&#39;</span> }
+  <span class="ruby-keyword">self</span>.<span class="ruby-identifier">sort_data</span>   = { <span class="ruby-string">&#39;created_at&#39;</span> <span class="ruby-operator">=&gt;</span> <span class="ruby-string">&#39;desc&#39;</span> }
   <span class="ruby-keyword">self</span>.<span class="ruby-identifier">search_data</span> = {}
   <span class="ruby-keyword">self</span>.<span class="ruby-identifier">filter_data</span> = {}
 <span class="ruby-keyword">end</span></pre>
@@ -182,7 +182,7 @@ search and filter values.</p>
             </p>
             <div id="method-i-from_h-21_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/services/services/request.rb, line 112</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier">from_h!</span>( <span class="ruby-identifier">hash</span> )
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">from_h!</span>( <span class="ruby-identifier">hash</span> )
   <span class="ruby-keyword">self</span>.<span class="ruby-identifier">offset</span>      = <span class="ruby-identifier">hash</span>[ <span class="ruby-string">&#39;offset&#39;</span> ] <span class="ruby-keyword">if</span> <span class="ruby-identifier">hash</span>.<span class="ruby-identifier">has_key?</span>( <span class="ruby-string">&#39;offset&#39;</span> )
   <span class="ruby-keyword">self</span>.<span class="ruby-identifier">limit</span>       = <span class="ruby-identifier">hash</span>[ <span class="ruby-string">&#39;limit&#39;</span>  ] <span class="ruby-keyword">if</span> <span class="ruby-identifier">hash</span>.<span class="ruby-identifier">has_key?</span>( <span class="ruby-string">&#39;limit&#39;</span>  )
   <span class="ruby-keyword">self</span>.<span class="ruby-identifier">search_data</span> = <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Utilities</span>.<span class="ruby-identifier">deep_dup</span>( <span class="ruby-identifier">hash</span>[ <span class="ruby-string">&#39;search&#39;</span> ] ) <span class="ruby-keyword">if</span> <span class="ruby-identifier">hash</span>[ <span class="ruby-string">&#39;search&#39;</span> ].<span class="ruby-identifier">is_a?</span>( <span class="ruby-constant">Hash</span> )
@@ -268,7 +268,7 @@ a simple value, while multiple sort-direction pairs are given as Arrays.</p>
             </p>
             <div id="method-i-to_h_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/services/services/request.rb, line 91</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier">to_h</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">to_h</span>
   <span class="ruby-identifier">sorts</span>      = <span class="ruby-keyword">self</span>.<span class="ruby-identifier">sort_data</span>.<span class="ruby-identifier">keys</span>.<span class="ruby-identifier">map</span>( <span class="ruby-operator">&amp;</span> <span class="ruby-value">:to_s</span> )
   <span class="ruby-identifier">directions</span> = <span class="ruby-keyword">self</span>.<span class="ruby-identifier">sort_data</span>.<span class="ruby-identifier">values</span>.<span class="ruby-identifier">map</span>( <span class="ruby-operator">&amp;</span> <span class="ruby-value">:to_s</span> )
 
@@ -276,12 +276,12 @@ a simple value, while multiple sort-direction pairs are given as Arrays.</p>
   <span class="ruby-identifier">directions</span> = <span class="ruby-identifier">directions</span>.<span class="ruby-identifier">first</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">directions</span>.<span class="ruby-identifier">count</span> <span class="ruby-operator">==</span> <span class="ruby-value">1</span>
 
   {
-    <span class="ruby-string">&#39;offset&#39;</span>    =<span class="ruby-operator">&gt;</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">offset</span>,
-    <span class="ruby-string">&#39;limit&#39;</span>     =<span class="ruby-operator">&gt;</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">limit</span>,
-    <span class="ruby-string">&#39;sort&#39;</span>      =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">sorts</span>,
-    <span class="ruby-string">&#39;direction&#39;</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">directions</span>,
-    <span class="ruby-string">&#39;search&#39;</span>    =<span class="ruby-operator">&gt;</span> <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Utilities</span>.<span class="ruby-identifier">deep_dup</span>( <span class="ruby-keyword">self</span>.<span class="ruby-identifier">search_data</span> ),
-    <span class="ruby-string">&#39;filter&#39;</span>    =<span class="ruby-operator">&gt;</span> <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Utilities</span>.<span class="ruby-identifier">deep_dup</span>( <span class="ruby-keyword">self</span>.<span class="ruby-identifier">filter_data</span> )
+    <span class="ruby-string">&#39;offset&#39;</span>    <span class="ruby-operator">=&gt;</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">offset</span>,
+    <span class="ruby-string">&#39;limit&#39;</span>     <span class="ruby-operator">=&gt;</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">limit</span>,
+    <span class="ruby-string">&#39;sort&#39;</span>      <span class="ruby-operator">=&gt;</span> <span class="ruby-identifier">sorts</span>,
+    <span class="ruby-string">&#39;direction&#39;</span> <span class="ruby-operator">=&gt;</span> <span class="ruby-identifier">directions</span>,
+    <span class="ruby-string">&#39;search&#39;</span>    <span class="ruby-operator">=&gt;</span> <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Utilities</span>.<span class="ruby-identifier">deep_dup</span>( <span class="ruby-keyword">self</span>.<span class="ruby-identifier">search_data</span> ),
+    <span class="ruby-string">&#39;filter&#39;</span>    <span class="ruby-operator">=&gt;</span> <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Utilities</span>.<span class="ruby-identifier">deep_dup</span>( <span class="ruby-keyword">self</span>.<span class="ruby-identifier">filter_data</span> )
   }
 <span class="ruby-keyword">end</span></pre>
             </div>

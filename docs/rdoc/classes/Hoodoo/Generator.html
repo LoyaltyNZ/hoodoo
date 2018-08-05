@@ -131,7 +131,7 @@ are taken from the Ruby ARGV constant.</p>
             </p>
             <div id="method-i-run-21_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/generator.rb, line 43</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier">run!</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">run!</span>
   <span class="ruby-identifier">git</span>  = <span class="ruby-keyword">nil</span>
   <span class="ruby-identifier">path</span> = <span class="ruby-keyword">nil</span>
 
@@ -161,7 +161,7 @@ are taken from the Ruby ARGV constant.</p>
         <span class="ruby-keyword">end</span>
       <span class="ruby-keyword">end</span>
 
-    <span class="ruby-keyword">rescue</span> <span class="ruby-constant">GetoptLong</span><span class="ruby-operator">::</span><span class="ruby-constant">InvalidOption</span>, <span class="ruby-constant">GetoptLong</span><span class="ruby-operator">::</span><span class="ruby-constant">MissingArgument</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">e</span>
+    <span class="ruby-keyword">rescue</span> <span class="ruby-constant">GetoptLong</span><span class="ruby-operator">::</span><span class="ruby-constant">InvalidOption</span>, <span class="ruby-constant">GetoptLong</span><span class="ruby-operator">::</span><span class="ruby-constant">MissingArgument</span> <span class="ruby-operator">=&gt;</span> <span class="ruby-identifier">e</span>
       <span class="ruby-keyword">return</span> <span class="ruby-identifier">usage_and_warning</span>( <span class="ruby-identifier">e</span>.<span class="ruby-identifier">message</span> )
 
     <span class="ruby-keyword">end</span>

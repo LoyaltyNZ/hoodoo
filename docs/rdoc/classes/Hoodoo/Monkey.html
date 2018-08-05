@@ -197,7 +197,7 @@ registered target.</p>
             </p>
             <div id="method-c-disable_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/monkey/monkey.rb, line 264</span>
-<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">disable</span>( <span class="ruby-identifier">target_unit</span><span class="ruby-operator">:</span> <span class="ruby-keyword">nil</span>, <span class="ruby-identifier">extension_module</span><span class="ruby-operator">:</span> )
+<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">disable</span>( <span class="ruby-value">target_unit:</span> <span class="ruby-keyword">nil</span>, <span class="ruby-value">extension_module:</span> )
   <span class="ruby-keyword">if</span> ( <span class="ruby-identifier">target_units_hash</span> = <span class="ruby-identifier">@@modules</span>[ <span class="ruby-identifier">extension_module</span> ] ).<span class="ruby-identifier">nil?</span>
     <span class="ruby-identifier">raise</span> <span class="ruby-node">&quot;Hoodoo::Monkey::disable: Extension module &#39;#{ extension_module.inspect }&#39; is not registered&quot;</span>
   <span class="ruby-keyword">end</span>
@@ -276,7 +276,7 @@ target.</p>
             </p>
             <div id="method-c-enable_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/monkey/monkey.rb, line 205</span>
-<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">enable</span>( <span class="ruby-identifier">extension_module</span><span class="ruby-operator">:</span> )
+<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">enable</span>( <span class="ruby-value">extension_module:</span> )
   <span class="ruby-keyword">if</span> ( <span class="ruby-identifier">target_units_hash</span> = <span class="ruby-identifier">@@modules</span>[ <span class="ruby-identifier">extension_module</span> ] ).<span class="ruby-identifier">nil?</span>
     <span class="ruby-identifier">raise</span> <span class="ruby-node">&quot;Hoodoo::Monkey::enable: Extension module &#39;#{ extension_module.inspect }&#39; is not registered&quot;</span>
   <span class="ruby-keyword">end</span>
@@ -427,7 +427,7 @@ it can only be enabled or disabled all in one go for all targets.</p>
             </p>
             <div id="method-c-register_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/monkey/monkey.rb, line 151</span>
-<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">register</span>( <span class="ruby-identifier">target_unit</span>,, <span class="ruby-identifier">extension_module</span><span class="ruby-operator">:</span> )
+<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">register</span>( <span class="ruby-value">target_unit:</span>, <span class="ruby-value">extension_module:</span> )
 
   <span class="ruby-keyword">if</span> <span class="ruby-identifier">extension_module</span>.<span class="ruby-identifier">const_defined?</span>( <span class="ruby-string">&#39;InstanceExtensions&#39;</span>, <span class="ruby-keyword">false</span> )
     <span class="ruby-identifier">instance_methods_module</span> = <span class="ruby-identifier">extension_module</span>.<span class="ruby-identifier">const_get</span>( <span class="ruby-string">&#39;InstanceExtensions&#39;</span> )
@@ -445,12 +445,12 @@ it can only be enabled or disabled all in one go for all targets.</p>
   <span class="ruby-identifier">@@modules</span>[ <span class="ruby-identifier">extension_module</span> ][ <span class="ruby-identifier">target_unit</span> ] =
   [
     {
-      <span class="ruby-value">:patch_module</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">instance_methods_module</span>,
-      <span class="ruby-value">:patch_target</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">target_unit</span>
+      <span class="ruby-value">:patch_module</span> <span class="ruby-operator">=&gt;</span> <span class="ruby-identifier">instance_methods_module</span>,
+      <span class="ruby-value">:patch_target</span> <span class="ruby-operator">=&gt;</span> <span class="ruby-identifier">target_unit</span>
     },
     {
-      <span class="ruby-value">:patch_module</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">class_methods_module</span>,
-      <span class="ruby-value">:patch_target</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">target_unit</span>.<span class="ruby-identifier">singleton_class</span>
+      <span class="ruby-value">:patch_module</span> <span class="ruby-operator">=&gt;</span> <span class="ruby-identifier">class_methods_module</span>,
+      <span class="ruby-value">:patch_target</span> <span class="ruby-operator">=&gt;</span> <span class="ruby-identifier">target_unit</span>.<span class="ruby-identifier">singleton_class</span>
     }
   ]
 

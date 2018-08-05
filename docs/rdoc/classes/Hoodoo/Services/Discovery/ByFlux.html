@@ -140,7 +140,7 @@ instances describing available resources in this local service.</p>
             </p>
             <div id="method-i-announce_remote_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/services/discovery/discoverers/by_flux.rb, line 58</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier">announce_remote</span>( <span class="ruby-identifier">resource</span>, <span class="ruby-identifier">version</span>, <span class="ruby-identifier">options</span> = {} )
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">announce_remote</span>( <span class="ruby-identifier">resource</span>, <span class="ruby-identifier">version</span>, <span class="ruby-identifier">options</span> = {} )
 
   <span class="ruby-identifier">alchemy_resource_paths</span> = <span class="ruby-constant">ENV</span>[ <span class="ruby-string">&#39;ALCHEMY_RESOURCE_PATHS&#39;</span> ]
   <span class="ruby-identifier">alchemy_service_name</span>   = <span class="ruby-constant">ENV</span>[ <span class="ruby-string">&#39;ALCHEMY_SERVICE_NAME&#39;</span>   ]
@@ -223,15 +223,15 @@ href="ByFlux.html#method-i-discover_remote">discover_remote</a>.</p>
             </p>
             <div id="method-i-discover_remote_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/services/discovery/discoverers/by_flux.rb, line 115</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier">discover_remote</span>( <span class="ruby-identifier">resource</span>, <span class="ruby-identifier">version</span> )
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">discover_remote</span>( <span class="ruby-identifier">resource</span>, <span class="ruby-identifier">version</span> )
   <span class="ruby-identifier">de_facto_path</span> = <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Services</span><span class="ruby-operator">::</span><span class="ruby-constant">Middleware</span><span class="ruby-operator">::</span><span class="ruby-identifier">de_facto_path_for</span>(
     <span class="ruby-identifier">resource</span>,
     <span class="ruby-identifier">version</span>
   )
 
   <span class="ruby-keyword">return</span> <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Services</span><span class="ruby-operator">::</span><span class="ruby-constant">Discovery</span><span class="ruby-operator">::</span><span class="ruby-constant">ForAMQP</span>.<span class="ruby-identifier">new</span>(
-    <span class="ruby-identifier">resource</span><span class="ruby-operator">:</span> <span class="ruby-identifier">resource</span>,
-    <span class="ruby-identifier">version</span><span class="ruby-operator">:</span>  <span class="ruby-identifier">version</span>
+    <span class="ruby-value">resource:</span> <span class="ruby-identifier">resource</span>,
+    <span class="ruby-value">version:</span>  <span class="ruby-identifier">version</span>
   )
 <span class="ruby-keyword">end</span></pre>
             </div>

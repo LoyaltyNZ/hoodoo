@@ -127,7 +127,7 @@ instance.</p>
             </p>
             <div id="method-i-get_data_for_request_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/client/endpoint/endpoints/http_based.rb, line 184</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier">get_data_for_request</span>( <span class="ruby-identifier">description_of_request</span> )
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">get_data_for_request</span>( <span class="ruby-identifier">description_of_request</span> )
   <span class="ruby-identifier">body_hash</span>  = <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Utilities</span>.<span class="ruby-identifier">stringify</span>( <span class="ruby-identifier">description_of_request</span>.<span class="ruby-identifier">body_hash</span>  )
   <span class="ruby-identifier">query_hash</span> = <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Utilities</span>.<span class="ruby-identifier">stringify</span>( <span class="ruby-identifier">description_of_request</span>.<span class="ruby-identifier">query_hash</span> )
   <span class="ruby-identifier">ident</span>      = <span class="ruby-identifier">description_of_request</span>.<span class="ruby-identifier">ident</span>.<span class="ruby-identifier">to_s</span>
@@ -187,9 +187,9 @@ instance.</p>
   <span class="ruby-identifier">remote_uri</span>.<span class="ruby-identifier">query</span> = <span class="ruby-constant">URI</span>.<span class="ruby-identifier">encode_www_form</span>( <span class="ruby-identifier">query_hash</span> ) <span class="ruby-keyword">unless</span> <span class="ruby-identifier">query_hash</span>.<span class="ruby-identifier">nil?</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">query_hash</span>.<span class="ruby-identifier">empty?</span>
 
   <span class="ruby-identifier">headers</span> = {
-    <span class="ruby-string">&#39;Content-Type&#39;</span>     =<span class="ruby-operator">&gt;</span> <span class="ruby-string">&#39;application/json; charset=utf-8&#39;</span>,
-    <span class="ruby-string">&#39;Content-Language&#39;</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">locale</span>() <span class="ruby-operator">||</span> <span class="ruby-string">&#39;en-nz&#39;</span>, <span class="ruby-comment"># Locale comes from Endpoint superclass</span>
-    <span class="ruby-string">&#39;Accept-Language&#39;</span>  =<span class="ruby-operator">&gt;</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">locale</span>() <span class="ruby-operator">||</span> <span class="ruby-string">&#39;en-nz&#39;</span>
+    <span class="ruby-string">&#39;Content-Type&#39;</span>     <span class="ruby-operator">=&gt;</span> <span class="ruby-string">&#39;application/json; charset=utf-8&#39;</span>,
+    <span class="ruby-string">&#39;Content-Language&#39;</span> <span class="ruby-operator">=&gt;</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">locale</span>() <span class="ruby-operator">||</span> <span class="ruby-string">&#39;en-nz&#39;</span>, <span class="ruby-comment"># Locale comes from Endpoint superclass</span>
+    <span class="ruby-string">&#39;Accept-Language&#39;</span>  <span class="ruby-operator">=&gt;</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">locale</span>() <span class="ruby-operator">||</span> <span class="ruby-string">&#39;en-nz&#39;</span>
   }
 
   <span class="ruby-comment"># Interaction comes from Endpoint superclass.</span>
@@ -264,18 +264,18 @@ instance.</p>
             </p>
             <div id="method-i-get_data_for_response_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/client/endpoint/endpoints/http_based.rb, line 296</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier">get_data_for_response</span>( <span class="ruby-identifier">description_of_response</span> )
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">get_data_for_response</span>( <span class="ruby-identifier">description_of_response</span> )
   <span class="ruby-identifier">code</span> = <span class="ruby-identifier">description_of_response</span>.<span class="ruby-identifier">http_status_code</span>
   <span class="ruby-identifier">body</span> = <span class="ruby-identifier">description_of_response</span>.<span class="ruby-identifier">raw_body_data</span>
 
   <span class="ruby-keyword">begin</span>
     <span class="ruby-identifier">parsed</span> = <span class="ruby-operator">::</span><span class="ruby-constant">JSON</span>.<span class="ruby-identifier">parse</span>(
       <span class="ruby-identifier">body</span>,
-      <span class="ruby-value">:object_class</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Client</span><span class="ruby-operator">::</span><span class="ruby-constant">AugmentedHash</span>,
-      <span class="ruby-value">:array_class</span>  =<span class="ruby-operator">&gt;</span> <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Client</span><span class="ruby-operator">::</span><span class="ruby-constant">AugmentedArray</span>
+      <span class="ruby-value">:object_class</span> <span class="ruby-operator">=&gt;</span> <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Client</span><span class="ruby-operator">::</span><span class="ruby-constant">AugmentedHash</span>,
+      <span class="ruby-value">:array_class</span>  <span class="ruby-operator">=&gt;</span> <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Client</span><span class="ruby-operator">::</span><span class="ruby-constant">AugmentedArray</span>
     )
 
-  <span class="ruby-keyword">rescue</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">e</span>
+  <span class="ruby-keyword">rescue</span> <span class="ruby-operator">=&gt;</span> <span class="ruby-identifier">e</span>
     <span class="ruby-identifier">data</span> = <span class="ruby-identifier">response_class_for</span>( <span class="ruby-identifier">description_of_response</span>.<span class="ruby-identifier">action</span> ).<span class="ruby-identifier">new</span>
     <span class="ruby-identifier">data</span>.<span class="ruby-identifier">response_options</span> = <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Client</span><span class="ruby-operator">::</span><span class="ruby-constant">Headers</span>.<span class="ruby-identifier">x_header_to_options</span>(
       <span class="ruby-identifier">description_of_response</span>.<span class="ruby-identifier">http_headers</span>
@@ -289,22 +289,22 @@ instance.</p>
       <span class="ruby-keyword">when</span> <span class="ruby-value">200</span>
         <span class="ruby-identifier">data</span>.<span class="ruby-identifier">platform_errors</span>.<span class="ruby-identifier">add_error</span>(
           <span class="ruby-string">&#39;platform.fault&#39;</span>,
-          <span class="ruby-value">:message</span>   =<span class="ruby-operator">&gt;</span> <span class="ruby-string">&#39;Could not parse retrieved body data despite receiving HTTP status code 200&#39;</span>,
-          <span class="ruby-value">:reference</span> =<span class="ruby-operator">&gt;</span> { <span class="ruby-value">:exception</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-constant">RuntimeError</span>.<span class="ruby-identifier">new</span>( <span class="ruby-node">&quot;#{ body }&quot;</span> ) }
+          <span class="ruby-value">:message</span>   <span class="ruby-operator">=&gt;</span> <span class="ruby-string">&#39;Could not parse retrieved body data despite receiving HTTP status code 200&#39;</span>,
+          <span class="ruby-value">:reference</span> <span class="ruby-operator">=&gt;</span> { <span class="ruby-value">:exception</span> <span class="ruby-operator">=&gt;</span> <span class="ruby-constant">RuntimeError</span>.<span class="ruby-identifier">new</span>( <span class="ruby-node">&quot;#{ body }&quot;</span> ) }
         )
       <span class="ruby-keyword">when</span> <span class="ruby-value">204</span>
         <span class="ruby-keyword">if</span> <span class="ruby-identifier">data</span>.<span class="ruby-identifier">response_options</span>[ <span class="ruby-string">&#39;deja_vu&#39;</span> ] <span class="ruby-operator">!=</span> <span class="ruby-string">&#39;confirmed&#39;</span>
           <span class="ruby-identifier">data</span>.<span class="ruby-identifier">platform_errors</span>.<span class="ruby-identifier">add_error</span>(
             <span class="ruby-string">&#39;platform.fault&#39;</span>,
-            <span class="ruby-value">:message</span>   =<span class="ruby-operator">&gt;</span> <span class="ruby-string">&quot;Unexpected raw HTTP status code 204 with &#39;X-Deja-Vu: confirmed&#39; not present&quot;</span>,
-            <span class="ruby-value">:reference</span> =<span class="ruby-operator">&gt;</span> { <span class="ruby-value">:exception</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-constant">RuntimeError</span>.<span class="ruby-identifier">new</span>( <span class="ruby-string">&#39;204&#39;</span> ) }
+            <span class="ruby-value">:message</span>   <span class="ruby-operator">=&gt;</span> <span class="ruby-string">&quot;Unexpected raw HTTP status code 204 with &#39;X-Deja-Vu: confirmed&#39; not present&quot;</span>,
+            <span class="ruby-value">:reference</span> <span class="ruby-operator">=&gt;</span> { <span class="ruby-value">:exception</span> <span class="ruby-operator">=&gt;</span> <span class="ruby-constant">RuntimeError</span>.<span class="ruby-identifier">new</span>( <span class="ruby-string">&#39;204&#39;</span> ) }
           )
         <span class="ruby-keyword">end</span> <span class="ruby-comment"># Else do nothing; keep the empty &#39;data&#39;</span>
       <span class="ruby-keyword">else</span>
         <span class="ruby-identifier">data</span>.<span class="ruby-identifier">platform_errors</span>.<span class="ruby-identifier">add_error</span>(
           <span class="ruby-string">&#39;platform.fault&#39;</span>,
-          <span class="ruby-value">:message</span>   =<span class="ruby-operator">&gt;</span> <span class="ruby-node">&quot;Unexpected raw HTTP status code #{ code } with non-JSON response&quot;</span>,
-          <span class="ruby-value">:reference</span> =<span class="ruby-operator">&gt;</span> { <span class="ruby-value">:exception</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-constant">RuntimeError</span>.<span class="ruby-identifier">new</span>( <span class="ruby-node">&quot;#{ body }&quot;</span> ) }
+          <span class="ruby-value">:message</span>   <span class="ruby-operator">=&gt;</span> <span class="ruby-node">&quot;Unexpected raw HTTP status code #{ code } with non-JSON response&quot;</span>,
+          <span class="ruby-value">:reference</span> <span class="ruby-operator">=&gt;</span> { <span class="ruby-value">:exception</span> <span class="ruby-operator">=&gt;</span> <span class="ruby-constant">RuntimeError</span>.<span class="ruby-identifier">new</span>( <span class="ruby-node">&quot;#{ body }&quot;</span> ) }
         )
     <span class="ruby-keyword">end</span>
 
