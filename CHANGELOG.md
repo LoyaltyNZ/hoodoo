@@ -1,5 +1,9 @@
 # Hoodoo v2.x
 
+## 2.7.0 (2018-08-06)
+
+* General maintenance pass, updating development and runtime dependencies and including `bundle-audit`.
+
 ## 2.6.1 (2018-06-01)
 
 * Fix edge case in `enumerate_all` method within [Hoodoo::Client::PaginatedEnumeration](https://cdn.rawgit.com/LoyaltyNZ/hoodoo/master/docs/rdoc/classes/Hoodoo/Client/PaginatedEnumeration.html) which caused bad behaviour should the caller use key `:offset` (Symbol) rather than `"offset"` (String) in a `#list` call's query options Hash.

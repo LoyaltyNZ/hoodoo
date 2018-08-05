@@ -133,7 +133,7 @@ describe Hoodoo::TransientStore::Redis do
 
       context '#set' do
         it 'sets' do
-          expect_redis( backend ).to receive( :[]=    ).with( @nskey, @jpayload ).and_call_original()
+          expect_redis( backend ).to receive( :set    ).with( @nskey, @jpayload ).and_call_original()
           expect_redis( backend ).to receive( :expire ).with( @nskey, @ttl      ).and_call_original()
 
           result = @instance.set(
@@ -146,7 +146,7 @@ describe Hoodoo::TransientStore::Redis do
         end
 
         it 'allows exceptions to propagate' do
-          expect_redis( backend ).to receive( :[]= ).with( @nskey, @jpayload ).and_raise( 'Hello world' )
+          expect_redis( backend ).to receive( :set ).with( @nskey, @jpayload ).and_raise( 'Hello world' )
 
           expect {
             @instance.set(
@@ -160,7 +160,7 @@ describe Hoodoo::TransientStore::Redis do
 
       context '#get' do
         before :each do
-          expect_redis( backend ).to receive( :[]=    ).with( @nskey, @jpayload ).and_call_original()
+          expect_redis( backend ).to receive( :set    ).with( @nskey, @jpayload ).and_call_original()
           expect_redis( backend ).to receive( :expire ).with( @nskey, @ttl      ).and_call_original()
 
           @instance.set(
@@ -171,7 +171,7 @@ describe Hoodoo::TransientStore::Redis do
         end
 
         it 'gets known keys' do
-          expect_redis( backend ).to receive( :[] ).with( @nskey ).and_call_original()
+          expect_redis( backend ).to receive( :get ).with( @nskey ).and_call_original()
           expect( @instance.get( key: @key ) ).to eql( @payload )
         end
 
@@ -180,7 +180,7 @@ describe Hoodoo::TransientStore::Redis do
         end
 
         it 'allows exceptions to propagate' do
-          expect_redis( backend ).to receive( :[] ).with( @nskey ).and_raise( 'Hello world' )
+          expect_redis( backend ).to receive( :get ).with( @nskey ).and_raise( 'Hello world' )
 
           expect {
             @instance.get( key: @key )
@@ -190,7 +190,7 @@ describe Hoodoo::TransientStore::Redis do
 
       context '#delete' do
         before :each do
-          expect_redis( backend ).to receive( :[]=    ).with( @nskey, @jpayload ).and_call_original()
+          expect_redis( backend ).to receive( :set    ).with( @nskey, @jpayload ).and_call_original()
           expect_redis( backend ).to receive( :expire ).with( @nskey, @ttl      ).and_call_original()
 
           @instance.set(

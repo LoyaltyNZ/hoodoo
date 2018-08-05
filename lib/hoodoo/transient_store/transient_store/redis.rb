@@ -46,7 +46,7 @@ module Hoodoo
       def set( key:, payload:, maximum_lifespan: )
         nk = namespaced_key( key )
 
-        @client[ nk ] = JSON.fast_generate( payload )
+        @client.set( nk, JSON.fast_generate( payload ) )
         @client.expire( nk, maximum_lifespan )
 
         true
@@ -55,7 +55,7 @@ module Hoodoo
       # See Hoodoo::TransientStore::Base#get for details.
       #
       def get( key: )
-        result = @client[ namespaced_key( key ) ]
+        result = @client.get( namespaced_key( key ) )
         return result.nil? ? nil : ( JSON.parse( result ) rescue nil )
       end
 
