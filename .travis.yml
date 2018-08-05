@@ -24,6 +24,7 @@ services:
   - redis-server
 
 script:
+  - "bundle exec bundle-audit update && bundle exec bundle-audit check"
   - TZ=Pacific/Auckland DATABASE_USER=postgres bundle exec rspec spec --backtrace
 
 # https://docs.travis-ci.com/user/deployment/rubygems

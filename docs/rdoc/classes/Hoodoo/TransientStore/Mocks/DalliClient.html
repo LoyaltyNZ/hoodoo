@@ -168,7 +168,7 @@ href="../Memcached.html">Memcached</a>. Pass <code>false</code> otherwise.</p>
             </p>
             <div id="method-c-bypass_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/transient_store/mocks/dalli_client.rb, line 70</span>
-<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">bypass</span>( <span class="ruby-identifier">bypass_boolean</span> )
+<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">bypass</span>( <span class="ruby-identifier">bypass_boolean</span> )
   <span class="ruby-identifier">@@bypass</span> = <span class="ruby-identifier">bypass_boolean</span>
 <span class="ruby-keyword">end</span></pre>
             </div>
@@ -197,7 +197,7 @@ don&#39;t. Default return value is <code>false</code>.</p>
             </p>
             <div id="method-c-bypass-3F_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/transient_store/mocks/dalli_client.rb, line 81</span>
-<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">bypass?</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">bypass?</span>
   <span class="ruby-identifier">@@bypass</span>
 <span class="ruby-keyword">end</span></pre>
             </div>
@@ -223,7 +223,7 @@ don&#39;t. Default return value is <code>false</code>.</p>
             </p>
             <div id="method-c-reset_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/transient_store/mocks/dalli_client.rb, line 60</span>
-<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">reset</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">reset</span>
   <span class="ruby-identifier">@@store</span> = {}
 <span class="ruby-keyword">end</span></pre>
             </div>
@@ -253,7 +253,7 @@ giving your stored value.</p>
             </p>
             <div id="method-c-store_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/transient_store/mocks/dalli_client.rb, line 54</span>
-<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">store</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">store</span>
   <span class="ruby-identifier">@@store</span>
 <span class="ruby-keyword">end</span></pre>
             </div>
@@ -281,7 +281,7 @@ giving your stored value.</p>
             </p>
             <div id="method-i-close_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/transient_store/mocks/dalli_client.rb, line 133</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier">close</span>; <span class="ruby-keyword">end</span></pre>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">close</span>; <span class="ruby-keyword">end</span></pre>
             </div>
         </div>
     </div>
@@ -305,7 +305,7 @@ giving your stored value.</p>
             </p>
             <div id="method-i-delete_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/transient_store/mocks/dalli_client.rb, line 122</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier">delete</span>( <span class="ruby-identifier">key</span> )
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">delete</span>( <span class="ruby-identifier">key</span> )
   <span class="ruby-keyword">if</span> <span class="ruby-identifier">@@store</span>.<span class="ruby-identifier">has_key?</span>( <span class="ruby-identifier">key</span> )
     <span class="ruby-identifier">@@store</span>.<span class="ruby-identifier">delete</span>( <span class="ruby-identifier">key</span> )
     <span class="ruby-keyword">true</span>
@@ -325,7 +325,7 @@ giving your stored value.</p>
         <div class="description">
             <p>Get the data stored under the given key. Returns <code>nil</code> if not
 found / expired.</p>
-<dl class="rdoc-list note-list"><dt>key
+<dl class="rdoc-list note-list"><dt><code>key</code>
 <dd>
 <p>Key to look up (see <a href="DalliClient.html#method-i-set">set</a>).</p>
 </dd></dl>
@@ -341,7 +341,7 @@ found / expired.</p>
             </p>
             <div id="method-i-get_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/transient_store/mocks/dalli_client.rb, line 90</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier">get</span>( <span class="ruby-identifier">key</span> )
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">get</span>( <span class="ruby-identifier">key</span> )
   <span class="ruby-identifier">data</span> = <span class="ruby-identifier">@@store</span>[ <span class="ruby-identifier">key</span> ]
   <span class="ruby-keyword">return</span> <span class="ruby-keyword">nil</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">data</span>.<span class="ruby-identifier">nil?</span>
 
@@ -361,10 +361,10 @@ found / expired.</p>
 
         <div class="description">
             <p>Set data for a given key.</p>
-<dl class="rdoc-list note-list"><dt>key
+<dl class="rdoc-list note-list"><dt><code>key</code>
 <dd>
 <p>Key under which to store data.</p>
-</dd><dt>value
+</dd><dt><code>value</code>
 <dd>
 <p><a href="../../Data.html">Data</a> to store.</p>
 </dd><dt><code>ttl</code>
@@ -385,10 +385,10 @@ If omitted, the data does not expire.</p>
             </p>
             <div id="method-i-set_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/transient_store/mocks/dalli_client.rb, line 110</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier">set</span>( <span class="ruby-identifier">key</span>, <span class="ruby-identifier">value</span>, <span class="ruby-identifier">ttl</span> = <span class="ruby-keyword">nil</span> )
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">set</span>( <span class="ruby-identifier">key</span>, <span class="ruby-identifier">value</span>, <span class="ruby-identifier">ttl</span> = <span class="ruby-keyword">nil</span> )
   <span class="ruby-identifier">data</span> = {
-    <span class="ruby-value">:expires_at</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">ttl</span>.<span class="ruby-identifier">nil?</span> <span class="ruby-operator">?</span> <span class="ruby-keyword">nil</span> <span class="ruby-operator">:</span> <span class="ruby-constant">Time</span>.<span class="ruby-identifier">now</span>.<span class="ruby-identifier">utc</span> <span class="ruby-operator">+</span> <span class="ruby-identifier">ttl</span>,
-    <span class="ruby-value">:value</span>      =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">value</span>
+    <span class="ruby-value">:expires_at</span> <span class="ruby-operator">=&gt;</span> <span class="ruby-identifier">ttl</span>.<span class="ruby-identifier">nil?</span> <span class="ruby-operator">?</span> <span class="ruby-keyword">nil</span> <span class="ruby-operator">:</span> <span class="ruby-constant">Time</span>.<span class="ruby-identifier">now</span>.<span class="ruby-identifier">utc</span> <span class="ruby-operator">+</span> <span class="ruby-identifier">ttl</span>,
+    <span class="ruby-value">:value</span>      <span class="ruby-operator">=&gt;</span> <span class="ruby-identifier">value</span>
   }
 
   <span class="ruby-identifier">@@store</span>[ <span class="ruby-identifier">key</span> ] = <span class="ruby-identifier">data</span>
@@ -417,7 +417,7 @@ If omitted, the data does not expire.</p>
             </p>
             <div id="method-i-stats_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/transient_store/mocks/dalli_client.rb, line 137</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier">stats</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">stats</span>
 
   <span class="ruby-comment"># Should really be a Hash, but kept as &#39;true&#39; in case any existing</span>
   <span class="ruby-comment"># client depends on this; it isn&#39;t too important either way.</span>

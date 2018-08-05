@@ -150,7 +150,7 @@ for Ruby &lt; 2.4 compatibility.</p></td>
         <div class="description">
             <p>Match a given wildcard, typically a String, to a single value via
 <code>#eql?</code>.</p>
-<dl class="rdoc-list note-list"><dt>wildcard_value
+<dl class="rdoc-list note-list"><dt><code>wildcard_value</code>
 <dd>
 <p>Wildcard value to match, e.g. <code>&#39;*&#39;</code>.</p>
 </dd></dl>
@@ -170,7 +170,7 @@ href="ClassMethods.html#method-i-secure_with">Hoodoo::ActiveRecord::Secure::Clas
             </p>
             <div id="method-c-eqls_wildcard_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/security_helper.rb, line 64</span>
-<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">eqls_wildcard</span>( <span class="ruby-identifier">wildcard_value</span> )
+<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">eqls_wildcard</span>( <span class="ruby-identifier">wildcard_value</span> )
   <span class="ruby-constant">Proc</span>.<span class="ruby-identifier">new</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span> <span class="ruby-identifier">security_value</span> <span class="ruby-operator">|</span>
     <span class="ruby-identifier">security_value</span>.<span class="ruby-identifier">eql?</span>( <span class="ruby-identifier">wildcard_value</span> ) <span class="ruby-keyword">rescue</span> <span class="ruby-keyword">false</span>
   <span class="ruby-keyword">end</span>
@@ -187,7 +187,7 @@ href="ClassMethods.html#method-i-secure_with">Hoodoo::ActiveRecord::Secure::Clas
         <div class="description">
             <p>Match a given wildcard, typically a String, inside an Enumerable subclass
 via <code>#include?</code>.</p>
-<dl class="rdoc-list note-list"><dt>wildcard_value
+<dl class="rdoc-list note-list"><dt><code>wildcard_value</code>
 <dd>
 <p>Wildcard value to match, e.g. <code>&#39;*&#39;</code>.</p>
 </dd></dl>
@@ -207,7 +207,7 @@ href="ClassMethods.html#method-i-secure_with">Hoodoo::ActiveRecord::Secure::Clas
             </p>
             <div id="method-c-includes_wildcard_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/security_helper.rb, line 78</span>
-<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">includes_wildcard</span>( <span class="ruby-identifier">wildcard_value</span> )
+<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">includes_wildcard</span>( <span class="ruby-identifier">wildcard_value</span> )
   <span class="ruby-constant">Proc</span>.<span class="ruby-identifier">new</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span> <span class="ruby-identifier">security_values</span> <span class="ruby-operator">|</span>
     <span class="ruby-identifier">security_values</span>.<span class="ruby-identifier">is_a?</span>( <span class="ruby-constant">Enumerable</span> ) <span class="ruby-operator">&amp;&amp;</span>
     <span class="ruby-identifier">security_values</span>.<span class="ruby-identifier">include?</span>( <span class="ruby-identifier">wildcard_value</span> ) <span class="ruby-keyword">rescue</span> <span class="ruby-keyword">false</span>
@@ -224,7 +224,7 @@ href="ClassMethods.html#method-i-secure_with">Hoodoo::ActiveRecord::Secure::Clas
 
         <div class="description">
             <p>Match a given wildcard Regexp to a value via <code>#match?</code>.</p>
-<dl class="rdoc-list note-list"><dt>wildcard_value
+<dl class="rdoc-list note-list"><dt><code>wildcard_value</code>
 <dd>
 <p>Wildcard Regexp to use, e.g. <code>/.*/</code>. Strings are coerced to
 Regexps without any escaping but doing so reduces performance.</p>
@@ -245,7 +245,7 @@ href="ClassMethods.html#method-i-secure_with">Hoodoo::ActiveRecord::Secure::Clas
             </p>
             <div id="method-c-matches_wildcard_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/security_helper.rb, line 94</span>
-<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">matches_wildcard</span>( <span class="ruby-identifier">wildcard_regexp</span> )
+<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">matches_wildcard</span>( <span class="ruby-identifier">wildcard_regexp</span> )
   <span class="ruby-identifier">wildcard_regexp</span> = <span class="ruby-constant">Regexp</span>.<span class="ruby-identifier">new</span>( <span class="ruby-identifier">wildcard_regexp</span> ) <span class="ruby-keyword">unless</span> <span class="ruby-identifier">wildcard_regexp</span>.<span class="ruby-identifier">is_a?</span>( <span class="ruby-constant">Regexp</span> )
 
   <span class="ruby-comment"># Use security_value&#39;s #match? (if present) to ensure that we have</span>
@@ -299,7 +299,7 @@ href="ClassMethods.html#method-i-secure_with">Hoodoo::ActiveRecord::Secure::Clas
             </p>
             <div id="method-c-matches_wildcard_enumerable_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/security_helper.rb, line 126</span>
-<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">matches_wildcard_enumerable</span>( <span class="ruby-identifier">wildcard_regexp</span> )
+<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">matches_wildcard_enumerable</span>( <span class="ruby-identifier">wildcard_regexp</span> )
   <span class="ruby-identifier">match_proc</span> = <span class="ruby-keyword">self</span>.<span class="ruby-identifier">matches_wildcard</span>( <span class="ruby-identifier">wildcard_regexp</span> )
 
   <span class="ruby-constant">Proc</span>.<span class="ruby-identifier">new</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span> <span class="ruby-identifier">security_values</span> <span class="ruby-operator">|</span>

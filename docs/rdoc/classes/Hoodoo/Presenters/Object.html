@@ -121,10 +121,10 @@
         <div class="description">
             <p>Initialize an <a href="Object.html">Object</a> instance with the
 appropriate name and options.</p>
-<dl class="rdoc-list note-list"><dt>name
+<dl class="rdoc-list note-list"><dt><code>name</code>
 <dd>
 <p>The JSON key.</p>
-</dd><dt>options
+</dd><dt><code>options</code>
 <dd>
 <p>A <code>Hash</code> of options, e.g. :required =&gt; true.</p>
 </dd></dl>
@@ -140,7 +140,7 @@ appropriate name and options.</p>
             </p>
             <div id="method-c-new_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/presenters/types/object.rb, line 20</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier">initialize</span>( <span class="ruby-identifier">name</span> = <span class="ruby-keyword">nil</span>, <span class="ruby-identifier">options</span> = {} )
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">initialize</span>( <span class="ruby-identifier">name</span> = <span class="ruby-keyword">nil</span>, <span class="ruby-identifier">options</span> = {} )
   <span class="ruby-keyword">super</span>( <span class="ruby-identifier">name</span>, <span class="ruby-identifier">options</span> )
 
   <span class="ruby-ivar">@properties</span>        = {}
@@ -182,7 +182,7 @@ nested items defined in the schema.</p>
             </p>
             <div id="method-i-render_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/presenters/types/object.rb, line 70</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier">render</span>( <span class="ruby-identifier">data</span>, <span class="ruby-identifier">target</span> )
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">render</span>( <span class="ruby-identifier">data</span>, <span class="ruby-identifier">target</span> )
 
   <span class="ruby-comment"># In an simple field, e.g. a text field, then whether or not it has</span>
   <span class="ruby-comment"># a default, should someone give a value of &quot;nil&quot; we expect that field</span>
@@ -252,15 +252,15 @@ Validation of the contents of the object at “:foo” would be under “[
             </p>
             <div id="method-i-validate_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/presenters/types/object.rb, line 39</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier">validate</span>( <span class="ruby-identifier">data</span>, <span class="ruby-identifier">path</span> = <span class="ruby-string">&#39;&#39;</span> )
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">validate</span>( <span class="ruby-identifier">data</span>, <span class="ruby-identifier">path</span> = <span class="ruby-string">&#39;&#39;</span> )
   <span class="ruby-identifier">errors</span> = <span class="ruby-keyword">super</span>( <span class="ruby-identifier">data</span>, <span class="ruby-identifier">path</span> )
   <span class="ruby-keyword">return</span> <span class="ruby-identifier">errors</span> <span class="ruby-keyword">if</span> <span class="ruby-operator">!</span><span class="ruby-ivar">@required</span> <span class="ruby-keyword">and</span> <span class="ruby-identifier">data</span>.<span class="ruby-identifier">nil?</span> <span class="ruby-comment"># If there are existing errors, we carry on and validate internally too</span>
 
   <span class="ruby-keyword">if</span> <span class="ruby-operator">!</span> <span class="ruby-identifier">data</span>.<span class="ruby-identifier">nil?</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-operator">!</span> <span class="ruby-identifier">data</span>.<span class="ruby-identifier">is_a?</span>( <span class="ruby-operator">::</span><span class="ruby-constant">Hash</span> )
     <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add_error</span>(
       <span class="ruby-string">&#39;generic.invalid_object&#39;</span>,
-      <span class="ruby-value">:message</span>   =<span class="ruby-operator">&gt;</span> <span class="ruby-node">&quot;Field `#{ full_path( path ) }` is an invalid object&quot;</span>,
-      <span class="ruby-value">:reference</span> =<span class="ruby-operator">&gt;</span> { <span class="ruby-value">:field_name</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">full_path</span>( <span class="ruby-identifier">path</span> ) }
+      <span class="ruby-value">:message</span>   <span class="ruby-operator">=&gt;</span> <span class="ruby-node">&quot;Field `#{ full_path( path ) }` is an invalid object&quot;</span>,
+      <span class="ruby-value">:reference</span> <span class="ruby-operator">=&gt;</span> { <span class="ruby-value">:field_name</span> <span class="ruby-operator">=&gt;</span> <span class="ruby-identifier">full_path</span>( <span class="ruby-identifier">path</span> ) }
     )
   <span class="ruby-keyword">end</span>
 
@@ -299,7 +299,7 @@ sub-fields too. See Hoodoo::Presenters::Base#walk for why.</p>
             </p>
             <div id="method-i-walk_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/presenters/types/object.rb, line 108</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier">walk</span>( <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span> )
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">walk</span>( <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span> )
   <span class="ruby-identifier">block</span>.<span class="ruby-identifier">call</span>( <span class="ruby-keyword">self</span> )
 
   <span class="ruby-ivar">@properties</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span> <span class="ruby-identifier">name</span>, <span class="ruby-identifier">property</span> <span class="ruby-operator">|</span>

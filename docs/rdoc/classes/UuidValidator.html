@@ -98,7 +98,7 @@ end
             </p>
             <div id="method-i-validate_each_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/active/active_model/uuid_validator.rb, line 32</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier">validate_each</span>( <span class="ruby-identifier">record</span>, <span class="ruby-identifier">attribute</span>, <span class="ruby-identifier">value</span> )
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">validate_each</span>( <span class="ruby-identifier">record</span>, <span class="ruby-identifier">attribute</span>, <span class="ruby-identifier">value</span> )
 
   <span class="ruby-keyword">unless</span> <span class="ruby-identifier">value</span>.<span class="ruby-identifier">nil?</span> <span class="ruby-operator">||</span> <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">UUID</span>.<span class="ruby-identifier">valid?</span>( <span class="ruby-identifier">value</span> )
     <span class="ruby-identifier">record</span>.<span class="ruby-identifier">errors</span>[ <span class="ruby-identifier">attribute</span> ] <span class="ruby-operator">&lt;&lt;</span> ( <span class="ruby-identifier">options</span>[ <span class="ruby-value">:message</span> ] <span class="ruby-operator">||</span> <span class="ruby-string">&#39;is invalid&#39;</span> )

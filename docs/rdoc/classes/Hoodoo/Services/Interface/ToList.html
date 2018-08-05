@@ -159,14 +159,14 @@ sort field.</p></td>
             </p>
             <div id="method-c-new_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/services/services/interface.rb, line 77</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier">initialize</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">initialize</span>
 
   <span class="ruby-comment"># Remember, these are defaults for the &quot;to_list&quot; object of an</span>
   <span class="ruby-comment"># interface only. For interface-wide top level defaults, use the</span>
   <span class="ruby-comment"># embedded calls to the DSL in Interface::interface.</span>
 
   <span class="ruby-ivar">@limit</span>            = <span class="ruby-value">50</span>
-  <span class="ruby-ivar">@sort</span>             = { <span class="ruby-string">&#39;created_at&#39;</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-constant">Set</span>.<span class="ruby-identifier">new</span>( [ <span class="ruby-string">&#39;desc&#39;</span>, <span class="ruby-string">&#39;asc&#39;</span> ] ) }
+  <span class="ruby-ivar">@sort</span>             = { <span class="ruby-string">&#39;created_at&#39;</span> <span class="ruby-operator">=&gt;</span> <span class="ruby-constant">Set</span>.<span class="ruby-identifier">new</span>( [ <span class="ruby-string">&#39;desc&#39;</span>, <span class="ruby-string">&#39;asc&#39;</span> ] ) }
   <span class="ruby-ivar">@default_sort_key</span> = <span class="ruby-string">&#39;created_at&#39;</span>
   <span class="ruby-ivar">@search</span>           = []
   <span class="ruby-ivar">@do_not_search</span>    = []
@@ -198,7 +198,7 @@ sort field.</p></td>
             </p>
             <div id="method-i-default_sort_direction_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/services/services/interface.rb, line 53</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier">default_sort_direction</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">default_sort_direction</span>
   <span class="ruby-ivar">@sort</span>[ <span class="ruby-identifier">default_sort_key</span>() ].<span class="ruby-identifier">first</span>
 <span class="ruby-keyword">end</span></pre>
             </div>

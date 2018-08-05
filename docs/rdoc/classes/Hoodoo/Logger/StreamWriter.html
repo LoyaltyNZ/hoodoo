@@ -118,7 +118,7 @@ provide a <code>puts</code> implementation.</p>
             </p>
             <div id="method-c-new_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/logger/writers/stream_writer.rb, line 32</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier">initialize</span>( <span class="ruby-identifier">output_stream</span> = <span class="ruby-identifier">$stdout</span> )
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">initialize</span>( <span class="ruby-identifier">output_stream</span> = <span class="ruby-identifier">$stdout</span> )
   <span class="ruby-ivar">@output_stream</span> = <span class="ruby-identifier">output_stream</span>
 <span class="ruby-keyword">end</span></pre>
             </div>
@@ -147,7 +147,7 @@ href="WriterMixin.html#method-i-report">Hoodoo::Logger::WriterMixin#report</a>.<
             </p>
             <div id="method-i-report_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/logger/writers/stream_writer.rb, line 38</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier">report</span>( <span class="ruby-identifier">log_level</span>, <span class="ruby-identifier">component</span>, <span class="ruby-identifier">code</span>, <span class="ruby-identifier">data</span> )
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">report</span>( <span class="ruby-identifier">log_level</span>, <span class="ruby-identifier">component</span>, <span class="ruby-identifier">code</span>, <span class="ruby-identifier">data</span> )
   <span class="ruby-ivar">@output_stream</span>.<span class="ruby-identifier">puts</span>( <span class="ruby-identifier">flatten</span>( <span class="ruby-identifier">log_level</span>, <span class="ruby-identifier">component</span>, <span class="ruby-identifier">code</span>, <span class="ruby-identifier">data</span> ) )
 <span class="ruby-keyword">end</span></pre>
             </div>

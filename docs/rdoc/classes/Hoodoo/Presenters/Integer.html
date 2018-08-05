@@ -88,15 +88,15 @@ href="../Errors.html">Hoodoo::Errors</a> instance.</p>
             </p>
             <div id="method-i-validate_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/presenters/types/integer.rb, line 10</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier">validate</span>( <span class="ruby-identifier">data</span>, <span class="ruby-identifier">path</span> = <span class="ruby-string">&#39;&#39;</span> )
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">validate</span>( <span class="ruby-identifier">data</span>, <span class="ruby-identifier">path</span> = <span class="ruby-string">&#39;&#39;</span> )
   <span class="ruby-identifier">errors</span> = <span class="ruby-keyword">super</span>( <span class="ruby-identifier">data</span>, <span class="ruby-identifier">path</span> )
   <span class="ruby-keyword">return</span> <span class="ruby-identifier">errors</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">has_errors?</span> <span class="ruby-operator">||</span> ( <span class="ruby-operator">!</span> <span class="ruby-ivar">@required</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">data</span>.<span class="ruby-identifier">nil?</span> )
 
   <span class="ruby-keyword">unless</span> <span class="ruby-identifier">data</span>.<span class="ruby-identifier">is_a?</span>( <span class="ruby-operator">::</span><span class="ruby-constant">Integer</span> )
     <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add_error</span>(
       <span class="ruby-string">&#39;generic.invalid_integer&#39;</span>,
-      <span class="ruby-value">:message</span>   =<span class="ruby-operator">&gt;</span> <span class="ruby-node">&quot;Field `#{ full_path( path ) }` is an invalid integer&quot;</span>,
-      <span class="ruby-value">:reference</span> =<span class="ruby-operator">&gt;</span> { <span class="ruby-value">:field_name</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">full_path</span>( <span class="ruby-identifier">path</span> ) }
+      <span class="ruby-value">:message</span>   <span class="ruby-operator">=&gt;</span> <span class="ruby-node">&quot;Field `#{ full_path( path ) }` is an invalid integer&quot;</span>,
+      <span class="ruby-value">:reference</span> <span class="ruby-operator">=&gt;</span> { <span class="ruby-value">:field_name</span> <span class="ruby-operator">=&gt;</span> <span class="ruby-identifier">full_path</span>( <span class="ruby-identifier">path</span> ) }
     )
   <span class="ruby-keyword">end</span>
 

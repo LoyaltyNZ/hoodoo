@@ -150,10 +150,10 @@
         <div class="description">
             <p>Initialize a <a href="Field.html">Field</a> instance with the appropriate
 name and options.</p>
-<dl class="rdoc-list note-list"><dt>name
+<dl class="rdoc-list note-list"><dt><code>name</code>
 <dd>
 <p>The JSON key.</p>
-</dd><dt>options
+</dd><dt><code>options</code>
 <dd>
 <p>A <code>Hash</code> of options, e.g. :required =&gt; true.</p>
 </dd></dl>
@@ -169,7 +169,7 @@ name and options.</p>
             </p>
             <div id="method-c-new_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/presenters/types/field.rb, line 23</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier">initialize</span>(<span class="ruby-identifier">name</span>, <span class="ruby-identifier">options</span> = {})
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">initialize</span>(<span class="ruby-identifier">name</span>, <span class="ruby-identifier">options</span> = {})
   <span class="ruby-ivar">@name</span>     = <span class="ruby-identifier">name</span>.<span class="ruby-identifier">to_s</span>
   <span class="ruby-ivar">@required</span> = <span class="ruby-identifier">options</span>.<span class="ruby-identifier">has_key?</span>( <span class="ruby-value">:required</span> ) <span class="ruby-operator">?</span> <span class="ruby-identifier">options</span>[ <span class="ruby-value">:required</span> ] <span class="ruby-operator">:</span> <span class="ruby-keyword">false</span>
   <span class="ruby-ivar">@path</span>     = <span class="ruby-identifier">options</span>.<span class="ruby-identifier">has_key?</span>( <span class="ruby-value">:path</span>     ) <span class="ruby-operator">?</span> <span class="ruby-identifier">options</span>[ <span class="ruby-value">:path</span>     ] <span class="ruby-operator">:</span> []
@@ -195,7 +195,7 @@ name and options.</p>
 
         <div class="description">
             <p>Return the full path and name of this field</p>
-<dl class="rdoc-list note-list"><dt>path
+<dl class="rdoc-list note-list"><dt><code>path</code>
 <dd>
 <p>The JSON path or nil, e.g. &#39;one.two&#39;</p>
 </dd></dl>
@@ -211,7 +211,7 @@ name and options.</p>
             </p>
             <div id="method-i-full_path_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/presenters/types/field.rb, line 102</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier">full_path</span>( <span class="ruby-identifier">path</span> )
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">full_path</span>( <span class="ruby-identifier">path</span> )
   <span class="ruby-keyword">return</span> <span class="ruby-ivar">@name</span>.<span class="ruby-identifier">to_s</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">path</span>.<span class="ruby-identifier">nil?</span> <span class="ruby-keyword">or</span> <span class="ruby-identifier">path</span>.<span class="ruby-identifier">empty?</span>
   <span class="ruby-keyword">return</span> <span class="ruby-identifier">path</span>.<span class="ruby-identifier">to_s</span> <span class="ruby-keyword">if</span> <span class="ruby-ivar">@name</span>.<span class="ruby-identifier">nil?</span> <span class="ruby-keyword">or</span> <span class="ruby-ivar">@name</span>.<span class="ruby-identifier">empty?</span>
   <span class="ruby-identifier">path</span> <span class="ruby-operator">+</span> <span class="ruby-string">&#39;.&#39;</span> <span class="ruby-operator">+</span> <span class="ruby-ivar">@name</span>.<span class="ruby-identifier">to_s</span>
@@ -242,7 +242,7 @@ otherwise)? Returns <code>true</code> if it has a default,
             </p>
             <div id="method-i-has_default-3F_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/presenters/types/field.rb, line 41</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier">has_default?</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">has_default?</span>
   <span class="ruby-operator">!</span><span class="ruby-operator">!</span> <span class="ruby-ivar">@has_default</span>
 <span class="ruby-keyword">end</span></pre>
             </div>
@@ -281,7 +281,7 @@ the path of keys from internal data +@path+.</p>
             </p>
             <div id="method-i-render_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/presenters/types/field.rb, line 73</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier">render</span>( <span class="ruby-identifier">data</span>, <span class="ruby-identifier">target</span> )
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">render</span>( <span class="ruby-identifier">data</span>, <span class="ruby-identifier">target</span> )
   <span class="ruby-keyword">return</span> <span class="ruby-keyword">if</span> <span class="ruby-ivar">@name</span>.<span class="ruby-identifier">nil?</span> <span class="ruby-operator">==</span> <span class="ruby-keyword">false</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-ivar">@name</span>.<span class="ruby-identifier">empty?</span>
 
   <span class="ruby-identifier">root</span>  = <span class="ruby-identifier">target</span>
@@ -321,14 +321,14 @@ href="../Errors.html">Hoodoo::Errors</a> instance.</p>
             </p>
             <div id="method-i-validate_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/presenters/types/field.rb, line 47</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier">validate</span>( <span class="ruby-identifier">data</span>, <span class="ruby-identifier">path</span> = <span class="ruby-string">&#39;&#39;</span> )
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">validate</span>( <span class="ruby-identifier">data</span>, <span class="ruby-identifier">path</span> = <span class="ruby-string">&#39;&#39;</span> )
   <span class="ruby-identifier">errors</span> = <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Errors</span>.<span class="ruby-identifier">new</span>
 
   <span class="ruby-keyword">if</span> <span class="ruby-identifier">data</span>.<span class="ruby-identifier">nil?</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-ivar">@required</span>
     <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add_error</span>(
       <span class="ruby-string">&#39;generic.required_field_missing&#39;</span>,
-      <span class="ruby-value">:message</span>   =<span class="ruby-operator">&gt;</span> <span class="ruby-node">&quot;Field `#{ full_path( path ) }` is required&quot;</span>,
-      <span class="ruby-value">:reference</span> =<span class="ruby-operator">&gt;</span> { <span class="ruby-value">:field_name</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">full_path</span>( <span class="ruby-identifier">path</span> ) }
+      <span class="ruby-value">:message</span>   <span class="ruby-operator">=&gt;</span> <span class="ruby-node">&quot;Field `#{ full_path( path ) }` is required&quot;</span>,
+      <span class="ruby-value">:reference</span> <span class="ruby-operator">=&gt;</span> { <span class="ruby-value">:field_name</span> <span class="ruby-operator">=&gt;</span> <span class="ruby-identifier">full_path</span>( <span class="ruby-identifier">path</span> ) }
     )
   <span class="ruby-keyword">end</span>
 
@@ -362,7 +362,7 @@ for why.</p>
             </p>
             <div id="method-i-walk_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/presenters/types/field.rb, line 95</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier">walk</span>( <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span> )
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">walk</span>( <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span> )
   <span class="ruby-identifier">block</span>.<span class="ruby-identifier">call</span>( <span class="ruby-keyword">self</span> )
 <span class="ruby-keyword">end</span></pre>
             </div>
@@ -394,7 +394,7 @@ href="Hash.html">Hash</a> is “{ :foo =&gt; { :bar =&gt; { :baz =&gt;
             </p>
             <div id="method-i-read_at_path_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/presenters/types/field.rb, line 115</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier">read_at_path</span>( <span class="ruby-identifier">from_target</span>, <span class="ruby-identifier">with_path</span> )
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">read_at_path</span>( <span class="ruby-identifier">from_target</span>, <span class="ruby-identifier">with_path</span> )
   <span class="ruby-identifier">with_path</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span> <span class="ruby-identifier">element</span> <span class="ruby-operator">|</span>
     <span class="ruby-identifier">element</span> = <span class="ruby-identifier">element</span>.<span class="ruby-identifier">to_s</span>
     <span class="ruby-identifier">from_target</span> = <span class="ruby-identifier">from_target</span>[ <span class="ruby-identifier">element</span> ]
@@ -435,7 +435,7 @@ unusual circumstances.</p>
             </p>
             <div id="method-i-rename_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/presenters/types/field.rb, line 134</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier">rename</span>( <span class="ruby-identifier">name</span> )
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">rename</span>( <span class="ruby-identifier">name</span> )
   <span class="ruby-identifier">depth</span> = <span class="ruby-ivar">@path</span>.<span class="ruby-identifier">count</span> <span class="ruby-operator">-</span> <span class="ruby-value">1</span>
   <span class="ruby-ivar">@name</span> = <span class="ruby-identifier">name</span>
 
@@ -473,7 +473,7 @@ change the same depth item to the new name in all of them.</p>
             </p>
             <div id="method-i-rewrite_path_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/presenters/types/field.rb, line 148</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier">rewrite_path</span>( <span class="ruby-identifier">depth</span>, <span class="ruby-identifier">name</span> )
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">rewrite_path</span>( <span class="ruby-identifier">depth</span>, <span class="ruby-identifier">name</span> )
   <span class="ruby-ivar">@path</span>[ <span class="ruby-identifier">depth</span> ] = <span class="ruby-identifier">name</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">depth</span> <span class="ruby-operator">&gt;=</span> <span class="ruby-value">0</span>
   <span class="ruby-keyword">return</span> <span class="ruby-keyword">if</span> <span class="ruby-ivar">@properties</span>.<span class="ruby-identifier">nil?</span>
 
