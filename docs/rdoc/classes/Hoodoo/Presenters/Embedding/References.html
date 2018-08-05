@@ -130,7 +130,7 @@ documentation - which is the <a href="../String.html">String</a>
             </p>
             <div id="method-i-resource_key_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/presenters/embedding.rb, line 194</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier">resource_key</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">resource_key</span>
   <span class="ruby-string">&#39;_reference&#39;</span>
 <span class="ruby-keyword">end</span></pre>
             </div>
@@ -166,7 +166,7 @@ entry is checked, for speed.</p>
             </p>
             <div id="method-i-validate_many_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/presenters/embedding.rb, line 218</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier">validate_many</span>( <span class="ruby-identifier">thing</span> )
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">validate_many</span>( <span class="ruby-identifier">thing</span> )
   <span class="ruby-keyword">unless</span> <span class="ruby-identifier">thing</span>.<span class="ruby-identifier">is_a?</span>( <span class="ruby-operator">::</span><span class="ruby-constant">Array</span> )
     <span class="ruby-identifier">raise</span> <span class="ruby-node">&quot;Hoodoo::Presenters::Embedding::References\#add_many requires an Array, but was given an instance of #{ thing.class }&quot;</span>
   <span class="ruby-keyword">end</span>
@@ -205,7 +205,7 @@ href="../UUID.html">UUID</a>.</p>
             </p>
             <div id="method-i-validate_one_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/presenters/embedding.rb, line 205</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier">validate_one</span>( <span class="ruby-identifier">thing</span> )
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">validate_one</span>( <span class="ruby-identifier">thing</span> )
   <span class="ruby-keyword">unless</span> <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">UUID</span>.<span class="ruby-identifier">valid?</span>( <span class="ruby-identifier">thing</span> )
     <span class="ruby-identifier">raise</span> <span class="ruby-string">&#39;Hoodoo::Presenters::Embedding::References#add_one requires a valid UUID String, but the given value is invalid&#39;</span>
   <span class="ruby-keyword">end</span>

@@ -141,9 +141,9 @@ href="../../ActiveRecord.html">ActiveRecord</a> <code>select</code> method.</p>
             </p>
             <div id="method-i-dated_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/dated.rb, line 223</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier">dated</span>( <span class="ruby-identifier">context</span>, <span class="ruby-identifier">unquoted_column_names</span><span class="ruby-operator">:</span> <span class="ruby-keyword">nil</span> )
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">dated</span>( <span class="ruby-identifier">context</span>, <span class="ruby-value">unquoted_column_names:</span> <span class="ruby-keyword">nil</span> )
   <span class="ruby-identifier">date_time</span> = <span class="ruby-identifier">context</span>.<span class="ruby-identifier">request</span>.<span class="ruby-identifier">dated_at</span> <span class="ruby-operator">||</span> <span class="ruby-constant">Time</span>.<span class="ruby-identifier">now</span>
-  <span class="ruby-keyword">return</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">dated_at</span>( <span class="ruby-identifier">date_time</span>, <span class="ruby-identifier">unquoted_column_names</span><span class="ruby-operator">:</span> <span class="ruby-identifier">unquoted_column_names</span> )
+  <span class="ruby-keyword">return</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">dated_at</span>( <span class="ruby-identifier">date_time</span>, <span class="ruby-value">unquoted_column_names:</span> <span class="ruby-identifier">unquoted_column_names</span> )
 <span class="ruby-keyword">end</span></pre>
             </div>
         </div>
@@ -189,7 +189,7 @@ href="../../ActiveRecord.html">ActiveRecord</a> <code>select</code> method.</p>
             </p>
             <div id="method-i-dated_at_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/dated.rb, line 249</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier">dated_at</span>( <span class="ruby-identifier">date_time</span> = <span class="ruby-constant">Time</span>.<span class="ruby-identifier">now</span>, <span class="ruby-identifier">unquoted_column_names</span><span class="ruby-operator">:</span> <span class="ruby-keyword">nil</span> )
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">dated_at</span>( <span class="ruby-identifier">date_time</span> = <span class="ruby-constant">Time</span>.<span class="ruby-identifier">now</span>, <span class="ruby-value">unquoted_column_names:</span> <span class="ruby-keyword">nil</span> )
 
   <span class="ruby-identifier">dating_table_name</span> = <span class="ruby-identifier">dated_with_table_name</span>()
   <span class="ruby-keyword">return</span> <span class="ruby-identifier">all</span>() <span class="ruby-keyword">if</span> <span class="ruby-identifier">dating_table_name</span>.<span class="ruby-identifier">nil?</span> <span class="ruby-comment"># &quot;Model.all&quot; -&gt; returns anonymous scope</span>
@@ -204,17 +204,17 @@ href="../../ActiveRecord.html">ActiveRecord</a> <code>select</code> method.</p>
   <span class="ruby-comment"># tables.</span>
 
   <span class="ruby-identifier">safe_name_string</span> = <span class="ruby-keyword">self</span>.<span class="ruby-identifier">quoted_column_name_string</span>(
-    <span class="ruby-identifier">unquoted_column_names</span><span class="ruby-operator">:</span> <span class="ruby-identifier">unquoted_column_names</span>
+    <span class="ruby-value">unquoted_column_names:</span> <span class="ruby-identifier">unquoted_column_names</span>
   )
 
   <span class="ruby-identifier">safe_history_name_string</span> = <span class="ruby-keyword">self</span>.<span class="ruby-identifier">quoted_column_name_string_for_history</span>(
-    <span class="ruby-identifier">unquoted_column_names</span><span class="ruby-operator">:</span> <span class="ruby-identifier">unquoted_column_names</span>
+    <span class="ruby-value">unquoted_column_names:</span> <span class="ruby-identifier">unquoted_column_names</span>
   )
 
   <span class="ruby-comment"># A query that combines historical and current records which are</span>
   <span class="ruby-comment"># effective at the specified date time.</span>
 
-  <span class="ruby-identifier">nested_query</span> = <span class="ruby-node">%Q{
+  <span class="ruby-identifier">nested_query</span> = <span class="ruby-node">%{
     (
       SELECT #{ safe_name_string } FROM (
         SELECT #{ safe_name_string },&quot;updated_at&quot; AS &quot;effective_start&quot;,NULL AS &quot;effective_end&quot;
@@ -270,7 +270,7 @@ href="../../ActiveRecord.html">ActiveRecord</a> <code>select</code> method.</p>
             </p>
             <div id="method-i-dated_historical_and_current_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/dated.rb, line 310</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier">dated_historical_and_current</span>( <span class="ruby-identifier">unquoted_column_names</span><span class="ruby-operator">:</span> <span class="ruby-keyword">nil</span> )
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">dated_historical_and_current</span>( <span class="ruby-value">unquoted_column_names:</span> <span class="ruby-keyword">nil</span> )
 
   <span class="ruby-identifier">dating_table_name</span> = <span class="ruby-identifier">dated_with_table_name</span>()
   <span class="ruby-keyword">return</span> <span class="ruby-identifier">all</span>() <span class="ruby-keyword">if</span> <span class="ruby-identifier">dating_table_name</span>.<span class="ruby-identifier">nil?</span> <span class="ruby-comment"># &quot;Model.all&quot; -&gt; returns anonymous scope</span>
@@ -280,16 +280,16 @@ href="../../ActiveRecord.html">ActiveRecord</a> <code>select</code> method.</p>
   <span class="ruby-comment"># tables.</span>
 
   <span class="ruby-identifier">safe_name_string</span> = <span class="ruby-keyword">self</span>.<span class="ruby-identifier">quoted_column_name_string</span>(
-    <span class="ruby-identifier">unquoted_column_names</span><span class="ruby-operator">:</span> <span class="ruby-identifier">unquoted_column_names</span>
+    <span class="ruby-value">unquoted_column_names:</span> <span class="ruby-identifier">unquoted_column_names</span>
   )
 
   <span class="ruby-identifier">safe_history_name_string</span> = <span class="ruby-keyword">self</span>.<span class="ruby-identifier">quoted_column_name_string_for_history</span>(
-    <span class="ruby-identifier">unquoted_column_names</span><span class="ruby-operator">:</span> <span class="ruby-identifier">unquoted_column_names</span>
+    <span class="ruby-value">unquoted_column_names:</span> <span class="ruby-identifier">unquoted_column_names</span>
   )
 
   <span class="ruby-comment"># A query that combines historical and current records.</span>
 
-  <span class="ruby-identifier">nested_query</span> = <span class="ruby-node">%Q{
+  <span class="ruby-identifier">nested_query</span> = <span class="ruby-node">%{
     (
       SELECT #{ safe_name_string }
       FROM #{ self.table_name }
@@ -330,7 +330,7 @@ href="ClassMethods.html#method-i-dating_enabled">dating_enabled</a>.</p>
             </p>
             <div id="method-i-dated_with_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/dated.rb, line 349</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier">dated_with</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">dated_with</span>
   <span class="ruby-keyword">return</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">nz_co_loyalty_hoodoo_dated_with</span>
 <span class="ruby-keyword">end</span></pre>
             </div>
@@ -363,7 +363,7 @@ returns <code>nil</code>.</p>
             </p>
             <div id="method-i-dated_with_table_name_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/dated.rb, line 361</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier">dated_with_table_name</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">dated_with_table_name</span>
   <span class="ruby-identifier">instance</span> = <span class="ruby-keyword">self</span>.<span class="ruby-identifier">dated_with</span>()
   <span class="ruby-identifier">instance</span>.<span class="ruby-identifier">nil?</span> <span class="ruby-operator">?</span> <span class="ruby-keyword">nil</span> <span class="ruby-operator">:</span> <span class="ruby-identifier">instance</span>.<span class="ruby-identifier">table_name</span>
 <span class="ruby-keyword">end</span></pre>
@@ -402,7 +402,7 @@ documentation for <a href="../Dated.html">Hoodoo::ActiveRecord::Dated</a>.</p>
             </p>
             <div id="method-i-dating_enabled_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/dated.rb, line 166</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier">dating_enabled</span>( <span class="ruby-identifier">history_table_name</span><span class="ruby-operator">:</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">table_name</span> <span class="ruby-operator">+</span> <span class="ruby-string">&#39;_history_entries&#39;</span> )
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">dating_enabled</span>( <span class="ruby-value">history_table_name:</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">table_name</span> <span class="ruby-operator">+</span> <span class="ruby-string">&#39;_history_entries&#39;</span> )
 
   <span class="ruby-comment"># Define an anonymous model for the history entries.</span>
 
@@ -421,11 +421,11 @@ documentation for <a href="../Dated.html">Hoodoo::ActiveRecord::Dated</a>.</p>
 
   <span class="ruby-keyword">if</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">include?</span>( <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">ActiveRecord</span><span class="ruby-operator">::</span><span class="ruby-constant">Finder</span> )
     <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Monkey</span>.<span class="ruby-identifier">register</span>(
-      <span class="ruby-identifier">target_unit</span><span class="ruby-operator">:</span>      <span class="ruby-keyword">self</span>,
-      <span class="ruby-identifier">extension_module</span><span class="ruby-operator">:</span> <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Monkey</span><span class="ruby-operator">::</span><span class="ruby-constant">Patch</span><span class="ruby-operator">::</span><span class="ruby-constant">ActiveRecordDatedFinderAdditions</span>
+      <span class="ruby-value">target_unit:</span>      <span class="ruby-keyword">self</span>,
+      <span class="ruby-value">extension_module:</span> <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Monkey</span><span class="ruby-operator">::</span><span class="ruby-constant">Patch</span><span class="ruby-operator">::</span><span class="ruby-constant">ActiveRecordDatedFinderAdditions</span>
     )
 
-    <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Monkey</span>.<span class="ruby-identifier">enable</span>( <span class="ruby-identifier">extension_module</span><span class="ruby-operator">:</span> <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Monkey</span><span class="ruby-operator">::</span><span class="ruby-constant">Patch</span><span class="ruby-operator">::</span><span class="ruby-constant">ActiveRecordDatedFinderAdditions</span> )
+    <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Monkey</span>.<span class="ruby-identifier">enable</span>( <span class="ruby-value">extension_module:</span> <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Monkey</span><span class="ruby-operator">::</span><span class="ruby-constant">Patch</span><span class="ruby-operator">::</span><span class="ruby-constant">ActiveRecordDatedFinderAdditions</span> )
   <span class="ruby-keyword">end</span>
 <span class="ruby-keyword">end</span></pre>
             </div>
@@ -453,7 +453,7 @@ this method returns <code>true</code>, else <code>false</code>.</p>
             </p>
             <div id="method-i-dating_enabled-3F_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/dated.rb, line 196</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier">dating_enabled?</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">dating_enabled?</span>
   <span class="ruby-keyword">return</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">dated_with</span>().<span class="ruby-identifier">present?</span>
 <span class="ruby-keyword">end</span></pre>
             </div>
@@ -490,7 +490,7 @@ If column “id” is missing, it will be added for you.</p>
             </p>
             <div id="method-i-quoted_column_name_string_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/dated.rb, line 390</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier">quoted_column_name_string</span>( <span class="ruby-identifier">unquoted_column_names</span><span class="ruby-operator">:</span> <span class="ruby-keyword">nil</span> )
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">quoted_column_name_string</span>( <span class="ruby-value">unquoted_column_names:</span> <span class="ruby-keyword">nil</span> )
   <span class="ruby-identifier">unquoted_column_names</span> <span class="ruby-operator">||=</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">attribute_names</span>()
   <span class="ruby-identifier">unquoted_column_names</span>   = <span class="ruby-identifier">unquoted_column_names</span> <span class="ruby-operator">+</span> [ <span class="ruby-string">&#39;id&#39;</span> ] <span class="ruby-keyword">unless</span> <span class="ruby-identifier">unquoted_column_names</span>.<span class="ruby-identifier">include?</span>( <span class="ruby-string">&#39;id&#39;</span> )
 
@@ -529,7 +529,7 @@ If column “id” is missing, it will be added for you.</p>
             </p>
             <div id="method-i-quoted_column_name_string_for_history_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/dated.rb, line 408</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier">quoted_column_name_string_for_history</span>( <span class="ruby-identifier">unquoted_column_names</span><span class="ruby-operator">:</span> <span class="ruby-keyword">nil</span> )
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">quoted_column_name_string_for_history</span>( <span class="ruby-value">unquoted_column_names:</span> <span class="ruby-keyword">nil</span> )
   <span class="ruby-identifier">unquoted_column_names</span> <span class="ruby-operator">||=</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">attribute_names</span>
   <span class="ruby-identifier">primary_key_index</span>       = <span class="ruby-identifier">unquoted_column_names</span>.<span class="ruby-identifier">index</span>( <span class="ruby-string">&#39;id&#39;</span> )
 
@@ -574,7 +574,7 @@ quoted by the current database adapter.</p>
             </p>
             <div id="method-i-quoted_column_names_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/dated.rb, line 374</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier">quoted_column_names</span>( <span class="ruby-identifier">unquoted_column_names</span> )
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">quoted_column_names</span>( <span class="ruby-identifier">unquoted_column_names</span> )
   <span class="ruby-keyword">return</span> <span class="ruby-identifier">unquoted_column_names</span>.<span class="ruby-identifier">map</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span> <span class="ruby-identifier">c</span> <span class="ruby-operator">|</span>
     <span class="ruby-constant">ActiveRecord</span><span class="ruby-operator">::</span><span class="ruby-constant">Base</span>.<span class="ruby-identifier">connection</span>.<span class="ruby-identifier">quote_column_name</span>( <span class="ruby-identifier">c</span> )
   <span class="ruby-keyword">end</span>

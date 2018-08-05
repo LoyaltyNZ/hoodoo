@@ -129,7 +129,7 @@ documentation - which is the <a href="../String.html">String</a>
             </p>
             <div id="method-i-resource_key_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/presenters/embedding.rb, line 128</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier">resource_key</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">resource_key</span>
   <span class="ruby-string">&#39;_embed&#39;</span>
 <span class="ruby-keyword">end</span></pre>
             </div>
@@ -165,7 +165,7 @@ checked, for speed.</p>
             </p>
             <div id="method-i-validate_many_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/presenters/embedding.rb, line 151</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier">validate_many</span>( <span class="ruby-identifier">thing</span> )
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">validate_many</span>( <span class="ruby-identifier">thing</span> )
   <span class="ruby-keyword">unless</span> <span class="ruby-identifier">thing</span>.<span class="ruby-identifier">is_a?</span>( <span class="ruby-operator">::</span><span class="ruby-constant">Array</span> )
     <span class="ruby-identifier">raise</span> <span class="ruby-node">&quot;Hoodoo::Presenters::Embedding::Embeds\#add_many requires an Array, but was given an instance of #{ thing.class }&quot;</span>
   <span class="ruby-keyword">end</span>
@@ -204,7 +204,7 @@ href="../Hash.html">Hash</a>.</p>
             </p>
             <div id="method-i-validate_one_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/presenters/embedding.rb, line 139</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier">validate_one</span>( <span class="ruby-identifier">thing</span> )
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">validate_one</span>( <span class="ruby-identifier">thing</span> )
   <span class="ruby-keyword">unless</span> <span class="ruby-identifier">thing</span>.<span class="ruby-identifier">is_a?</span>( <span class="ruby-operator">::</span><span class="ruby-constant">Hash</span> )
     <span class="ruby-identifier">raise</span> <span class="ruby-node">&quot;Hoodoo::Presenters::Embedding::Embeds\#add_one requires a rendered resource Hash, but was given an instance of #{ thing.class }&quot;</span>
   <span class="ruby-keyword">end</span>

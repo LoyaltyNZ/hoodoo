@@ -179,7 +179,8 @@ href="ClassMethods.html#method-i-acquire_with">acquire_with</a> thus:</p>
 <pre><code>class SomeModel &lt; ActiveRecord::Base
   include Hoodoo::ActiveRecord::Finder
   acquire_with ... # &lt;list-of-other-fields&gt;
-end</code></pre>
+end
+</code></pre>
 
 <p>For example, maybe you allow some resource to be looked up by fields
 <code>id</code> or <code>code</code>, both of which are independently
@@ -258,7 +259,7 @@ using calls to <code>where( attr =&gt; ident )</code>.</p>
             </p>
             <div id="method-i-acquire_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/finder.rb, line 210</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier">acquire</span>( <span class="ruby-identifier">ident</span> )
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">acquire</span>( <span class="ruby-identifier">ident</span> )
   <span class="ruby-keyword">return</span> <span class="ruby-identifier">acquisition_scope</span>( <span class="ruby-identifier">ident</span> ).<span class="ruby-identifier">first</span>
 <span class="ruby-keyword">end</span></pre>
             </div>
@@ -373,7 +374,7 @@ href="../../Services/Response.html#method-i-contemporary_exists">Hoodoo::Service
             </p>
             <div id="method-i-acquire_in_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/finder.rb, line 291</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier">acquire_in</span>( <span class="ruby-identifier">context</span> )
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">acquire_in</span>( <span class="ruby-identifier">context</span> )
   <span class="ruby-identifier">scoped_in</span>( <span class="ruby-identifier">context</span> ).<span class="ruby-identifier">acquire</span>( <span class="ruby-identifier">context</span>.<span class="ruby-identifier">request</span>.<span class="ruby-identifier">ident</span> )
 <span class="ruby-keyword">end</span></pre>
             </div>
@@ -455,7 +456,7 @@ end
             </p>
             <div id="method-i-acquire_in-21_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/finder.rb, line 339</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier">acquire_in!</span>( <span class="ruby-identifier">context</span> )
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">acquire_in!</span>( <span class="ruby-identifier">context</span> )
 
   <span class="ruby-comment"># The method is patched internally by Hoodoo::ActiveRecord::Dated</span>
   <span class="ruby-comment"># and Hoodoo::ActiveRecord::ManuallyDated. The patches add in a</span>
@@ -515,7 +516,7 @@ href="ClassMethods.html#method-i-acquire_with_id_substitute">acquire_with_id_sub
             </p>
             <div id="method-i-acquire_with_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/finder.rb, line 371</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier">acquire_with</span>( <span class="ruby-operator">*</span><span class="ruby-identifier">args</span> )
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">acquire_with</span>( <span class="ruby-operator">*</span><span class="ruby-identifier">args</span> )
   <span class="ruby-keyword">self</span>.<span class="ruby-identifier">nz_co_loyalty_hoodoo_show_id_fields</span> = <span class="ruby-identifier">args</span>.<span class="ruby-identifier">map</span>( <span class="ruby-operator">&amp;</span> <span class="ruby-value">:to_s</span> )
   <span class="ruby-keyword">self</span>.<span class="ruby-identifier">nz_co_loyalty_hoodoo_show_id_fields</span>.<span class="ruby-identifier">uniq!</span>()
 <span class="ruby-keyword">end</span></pre>
@@ -569,7 +570,7 @@ href="ClassMethods.html#method-i-acquisition_scope">acquisition_scope</a>.</p>
             </p>
             <div id="method-i-acquire_with_id_substitute_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/finder.rb, line 408</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier">acquire_with_id_substitute</span>( <span class="ruby-identifier">attr</span> )
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">acquire_with_id_substitute</span>( <span class="ruby-identifier">attr</span> )
   <span class="ruby-keyword">self</span>.<span class="ruby-identifier">nz_co_loyalty_hoodoo_show_id_substitute</span> = <span class="ruby-identifier">attr</span>.<span class="ruby-identifier">to_sym</span>
 <span class="ruby-keyword">end</span></pre>
             </div>
@@ -608,7 +609,7 @@ href="ClassMethods.html#method-i-acquire_with_id_substitute">acquire_with_id_sub
             </p>
             <div id="method-i-acquired_with_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/finder.rb, line 386</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier">acquired_with</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">acquired_with</span>
   <span class="ruby-keyword">self</span>.<span class="ruby-identifier">nz_co_loyalty_hoodoo_show_id_fields</span> <span class="ruby-operator">||</span> []
 <span class="ruby-keyword">end</span></pre>
             </div>
@@ -660,7 +661,7 @@ instance.</p>
             </p>
             <div id="method-i-acquisition_scope_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/finder.rb, line 433</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier">acquisition_scope</span>( <span class="ruby-identifier">ident</span> )
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">acquisition_scope</span>( <span class="ruby-identifier">ident</span> )
   <span class="ruby-identifier">extra_fields</span> = <span class="ruby-keyword">self</span>.<span class="ruby-identifier">acquired_with</span>()
   <span class="ruby-identifier">arel_table</span>   = <span class="ruby-keyword">self</span>.<span class="ruby-identifier">arel_table</span>()
   <span class="ruby-identifier">arel_query</span>   = <span class="ruby-identifier">arel_table</span>[ <span class="ruby-keyword">self</span>.<span class="ruby-identifier">nz_co_loyalty_hoodoo_show_id_substitute</span> <span class="ruby-operator">||</span> <span class="ruby-value">:id</span> ].<span class="ruby-identifier">eq</span>( <span class="ruby-identifier">ident</span> )
@@ -703,7 +704,7 @@ and want to fill in its <code>dataset_size</code> parameter.</p>
             </p>
             <div id="method-i-dataset_size_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/finder.rb, line 607</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier">dataset_size</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">dataset_size</span>
   <span class="ruby-keyword">return</span> <span class="ruby-identifier">all</span>.<span class="ruby-identifier">limit</span>( <span class="ruby-keyword">nil</span> ).<span class="ruby-identifier">offset</span>( <span class="ruby-keyword">nil</span> ).<span class="ruby-identifier">count</span>()
 <span class="ruby-keyword">end</span></pre>
             </div>
@@ -775,7 +776,8 @@ the new function:</p>
     ).first[ &#39;estimated_count&#39; ].to_i
   rescue
     nil
-end</code></pre>
+end
+</code></pre>
 
 <p>Suppose we have a model called <code>Purchase</code>; next tell this model
 to use the above Proc for fast counting and use it:</p>
@@ -785,7 +787,8 @@ to use the above Proc for fast counting and use it:</p>
 Purchase.estimated_count()
 # =&gt; An integer; and you can use scope chains, just like #count:
 Purchase.where(...conditions...).estimated_count()
-# =&gt; An integer</code></pre>
+# =&gt; An integer
+</code></pre>
 
 <p>A real-life example showing how running PostgreSQL&#39;s
 <code>ANALYZE</code> command can make a difference:</p>
@@ -797,7 +800,8 @@ Purchase.where(...conditions...).estimated_count()
 [3] pry(main)&gt; ActiveRecord::Base.connection.execute( &#39;ANALYZE&#39; )
 =&gt; #&lt;PG::Result:0x007f89b62cdcc8 status=PGRES_COMMAND_OK ntuples=0 nfields=0 cmd_tuples=0&gt;
 [4] pry(main)&gt; Purchase.estimated_count
-=&gt; 76</code></pre>
+=&gt; 76
+</code></pre>
 
 <p>Parameters:</p>
 <dl class="rdoc-list note-list"><dt><code>proc</code>
@@ -822,7 +826,7 @@ default behaviour.</p>
             </p>
             <div id="method-i-estimate_counts_with_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/finder.rb, line 737</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier">estimate_counts_with</span>( <span class="ruby-identifier">proc</span> )
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">estimate_counts_with</span>( <span class="ruby-identifier">proc</span> )
   <span class="ruby-keyword">self</span>.<span class="ruby-identifier">nz_co_loyalty_hoodoo_estimate_counts_with</span> = <span class="ruby-identifier">proc</span>
 <span class="ruby-keyword">end</span></pre>
             </div>
@@ -871,7 +875,7 @@ value for the estimated count will be <code>nil</code> too.</p>
             </p>
             <div id="method-i-estimated_count_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/finder.rb, line 643</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier">estimated_count</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">estimated_count</span>
   <span class="ruby-identifier">counter</span> = <span class="ruby-keyword">self</span>.<span class="ruby-identifier">nz_co_loyalty_hoodoo_estimate_counts_with</span>
 
   <span class="ruby-keyword">if</span> ( <span class="ruby-identifier">counter</span>.<span class="ruby-identifier">nil?</span> )
@@ -911,7 +915,7 @@ too slow to compute.</p>
             </p>
             <div id="method-i-estimated_dataset_size_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/finder.rb, line 616</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier">estimated_dataset_size</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">estimated_dataset_size</span>
   <span class="ruby-keyword">return</span> <span class="ruby-identifier">all</span>.<span class="ruby-identifier">limit</span>( <span class="ruby-keyword">nil</span> ).<span class="ruby-identifier">offset</span>( <span class="ruby-keyword">nil</span> ).<span class="ruby-identifier">estimated_count</span>()
 <span class="ruby-keyword">end</span></pre>
             </div>
@@ -961,7 +965,7 @@ href="https://en.wikipedia.org/wiki/Null_(SQL">en.wikipedia.org/wiki/Null_(SQL</
             </p>
             <div id="method-i-filter_with_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/finder.rb, line 843</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier">filter_with</span>( <span class="ruby-identifier">hash</span> )
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">filter_with</span>( <span class="ruby-identifier">hash</span> )
   <span class="ruby-keyword">self</span>.<span class="ruby-identifier">nz_co_loyalty_hoodoo_filter_with</span>.<span class="ruby-identifier">merge!</span>( <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">ActiveRecord</span><span class="ruby-operator">::</span><span class="ruby-constant">Support</span>.<span class="ruby-identifier">process_to_map</span>( <span class="ruby-identifier">hash</span> ) )
 <span class="ruby-keyword">end</span></pre>
             </div>
@@ -1091,7 +1095,7 @@ href="../../Services/Request.html#attribute-i-list">Hoodoo::Services::Request#li
             </p>
             <div id="method-i-list_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/finder.rb, line 534</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier">list</span>( <span class="ruby-identifier">list_parameters</span> )
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">list</span>( <span class="ruby-identifier">list_parameters</span> )
   <span class="ruby-identifier">finder</span> = <span class="ruby-identifier">all</span>.<span class="ruby-identifier">offset</span>( <span class="ruby-identifier">list_parameters</span>.<span class="ruby-identifier">offset</span> ).<span class="ruby-identifier">limit</span>( <span class="ruby-identifier">list_parameters</span>.<span class="ruby-identifier">limit</span> )
   <span class="ruby-identifier">finder</span> = <span class="ruby-identifier">finder</span>.<span class="ruby-identifier">order</span>( <span class="ruby-identifier">list_parameters</span>.<span class="ruby-identifier">sort_data</span> )
 
@@ -1134,7 +1138,7 @@ href="../../Services/Request.html#attribute-i-list">Hoodoo::Services::Request#li
             <p>Deprecated interface replaced by <a
 href="ClassMethods.html#method-i-filter_with">filter_with</a> (this is an
 alias).</p>
-<dl class="rdoc-list note-list"><dt>map
+<dl class="rdoc-list note-list"><dt><code>map</code>
 <dd>
 <p>Passed to <a href="ClassMethods.html#method-i-filter_with">filter_with</a>.</p>
 </dd></dl>
@@ -1150,7 +1154,7 @@ alias).</p>
             </p>
             <div id="method-i-list_filter_map_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/finder.rb, line 900</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier">list_filter_map</span>( <span class="ruby-identifier">map</span> )
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">list_filter_map</span>( <span class="ruby-identifier">map</span> )
   <span class="ruby-identifier">$stderr</span>.<span class="ruby-identifier">puts</span>( <span class="ruby-string">&#39;Hoodoo:ActiveRecord::Finder#list_filter_map is deprecated - rename call to &quot;#filter_with&quot;&#39;</span> )
   <span class="ruby-identifier">filter_with</span>( <span class="ruby-identifier">map</span> )
 <span class="ruby-keyword">end</span></pre>
@@ -1166,7 +1170,7 @@ alias).</p>
         <div class="description">
             <p>Deprecated interface replaced by <a
 href="ClassMethods.html#method-i-list">list</a> (this is an alias).</p>
-<dl class="rdoc-list note-list"><dt>list_parameters
+<dl class="rdoc-list note-list"><dt><code>list_parameters</code>
 <dd>
 <p>Passed to <a href="ClassMethods.html#method-i-list">list</a>.</p>
 </dd></dl>
@@ -1182,7 +1186,7 @@ href="ClassMethods.html#method-i-list">list</a> (this is an alias).</p>
             </p>
             <div id="method-i-list_finder_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/finder.rb, line 882</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier">list_finder</span>( <span class="ruby-identifier">list_parameters</span> )
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">list_finder</span>( <span class="ruby-identifier">list_parameters</span> )
   <span class="ruby-identifier">$stderr</span>.<span class="ruby-identifier">puts</span>( <span class="ruby-string">&#39;Hoodoo:ActiveRecord::Finder#list_finder is deprecated - rename call to &quot;#list&quot;&#39;</span> )
   <span class="ruby-keyword">return</span> <span class="ruby-identifier">list</span>( <span class="ruby-identifier">list_parameters</span> )
 <span class="ruby-keyword">end</span></pre>
@@ -1247,7 +1251,7 @@ methods like <code>where</code> or fetching from the database with
             </p>
             <div id="method-i-list_in_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/finder.rb, line 594</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier">list_in</span>( <span class="ruby-identifier">context</span> )
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">list_in</span>( <span class="ruby-identifier">context</span> )
   <span class="ruby-keyword">return</span> <span class="ruby-identifier">scoped_in</span>( <span class="ruby-identifier">context</span> ).<span class="ruby-identifier">list</span>( <span class="ruby-identifier">context</span>.<span class="ruby-identifier">request</span>.<span class="ruby-identifier">list</span> )
 <span class="ruby-keyword">end</span></pre>
             </div>
@@ -1263,7 +1267,7 @@ methods like <code>where</code> or fetching from the database with
             <p>Deprecated interface replaced by <a
 href="ClassMethods.html#method-i-search_with">search_with</a> (this is an
 alias).</p>
-<dl class="rdoc-list note-list"><dt>map
+<dl class="rdoc-list note-list"><dt><code>map</code>
 <dd>
 <p>Passed to <a href="ClassMethods.html#method-i-search_with">search_with</a>.</p>
 </dd></dl>
@@ -1279,7 +1283,7 @@ alias).</p>
             </p>
             <div id="method-i-list_search_map_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/finder.rb, line 891</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier">list_search_map</span>( <span class="ruby-identifier">map</span> )
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">list_search_map</span>( <span class="ruby-identifier">map</span> )
   <span class="ruby-identifier">$stderr</span>.<span class="ruby-identifier">puts</span>( <span class="ruby-string">&#39;Hoodoo:ActiveRecord::Finder#list_search_map is deprecated - rename call to &quot;#search_with&quot;&#39;</span> )
   <span class="ruby-identifier">search_with</span>( <span class="ruby-identifier">map</span> )
 <span class="ruby-keyword">end</span></pre>
@@ -1327,7 +1331,7 @@ href="ClassMethods.html#method-i-acquire">acquire</a>.</p>
             </p>
             <div id="method-i-polymorphic_find_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/finder.rb, line 864</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier">polymorphic_find</span>( <span class="ruby-identifier">finder</span>, <span class="ruby-identifier">ident</span> )
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">polymorphic_find</span>( <span class="ruby-identifier">finder</span>, <span class="ruby-identifier">ident</span> )
   <span class="ruby-identifier">$stderr</span>.<span class="ruby-identifier">puts</span>( <span class="ruby-string">&#39;Hoodoo:ActiveRecord::Finder#polymorphic_find is deprecated - use &quot;foo.acquire( ident )&quot; instead of &quot;Model.polymorphic_find( foo, ident )&quot;&#39;</span> )
   <span class="ruby-identifier">finder</span>.<span class="ruby-identifier">acquire</span>( <span class="ruby-identifier">ident</span> ) <span class="ruby-comment"># Ignore &#39;finder&#39;</span>
 <span class="ruby-keyword">end</span></pre>
@@ -1361,7 +1365,7 @@ href="ClassMethods.html#method-i-acquire_with">acquire_with</a>.</p>
             </p>
             <div id="method-i-polymorphic_id_fields_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/finder.rb, line 873</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier">polymorphic_id_fields</span>( <span class="ruby-operator">*</span><span class="ruby-identifier">args</span> )
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">polymorphic_id_fields</span>( <span class="ruby-operator">*</span><span class="ruby-identifier">args</span> )
   <span class="ruby-identifier">$stderr</span>.<span class="ruby-identifier">puts</span>( <span class="ruby-string">&#39;Hoodoo:ActiveRecord::Finder#polymorphic_id_fields is deprecated - rename call to &quot;#acquire_with&quot;&#39;</span> )
   <span class="ruby-identifier">acquire_with</span>( <span class="ruby-operator">*</span><span class="ruby-identifier">args</span> )
 <span class="ruby-keyword">end</span></pre>
@@ -1407,7 +1411,7 @@ instance methods that a resource subclass implements.</p>
             </p>
             <div id="method-i-scoped_in_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/finder.rb, line 117</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier">scoped_in</span>( <span class="ruby-identifier">context</span> )
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">scoped_in</span>( <span class="ruby-identifier">context</span> )
   <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">ActiveRecord</span><span class="ruby-operator">::</span><span class="ruby-constant">Support</span>.<span class="ruby-identifier">full_scope_for</span>( <span class="ruby-keyword">self</span>, <span class="ruby-identifier">context</span> )
 <span class="ruby-keyword">end</span></pre>
             </div>
@@ -1451,7 +1455,7 @@ instance methods that a resource subclass implements.</p>
             </p>
             <div id="method-i-scoped_undated_in_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/finder.rb, line 136</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier">scoped_undated_in</span>( <span class="ruby-identifier">context</span> )
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">scoped_undated_in</span>( <span class="ruby-identifier">context</span> )
   <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">ActiveRecord</span><span class="ruby-operator">::</span><span class="ruby-constant">Support</span>.<span class="ruby-identifier">add_undated_scope_to</span>(
     <span class="ruby-keyword">self</span>.<span class="ruby-identifier">all</span>(), <span class="ruby-comment"># &quot;all&quot; -&gt; returns anonymous scope</span>
     <span class="ruby-keyword">self</span>,
@@ -1571,7 +1575,7 @@ methods which assist with filling in non-nil values for this Hash.</p>
             </p>
             <div id="method-i-search_with_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/finder.rb, line 820</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier">search_with</span>( <span class="ruby-identifier">hash</span> )
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">search_with</span>( <span class="ruby-identifier">hash</span> )
   <span class="ruby-keyword">self</span>.<span class="ruby-identifier">nz_co_loyalty_hoodoo_search_with</span>.<span class="ruby-identifier">merge!</span>( <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">ActiveRecord</span><span class="ruby-operator">::</span><span class="ruby-constant">Support</span>.<span class="ruby-identifier">process_to_map</span>( <span class="ruby-identifier">hash</span> ) )
 <span class="ruby-keyword">end</span></pre>
             </div>

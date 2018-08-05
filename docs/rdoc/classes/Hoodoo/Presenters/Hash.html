@@ -146,7 +146,8 @@ type name. See Hoodoo::Data::Types::CalculatorConfiguration for an example.</p>
   # ...multiple calls would be made to #key usually, to define
   # each allowed key.
 
-end</code></pre>
+end
+</code></pre>
 
 <p>…defines something that this JSON would validate against:</p>
 
@@ -170,7 +171,8 @@ end</code></pre>
       &quot;string_value&quot;: &quot;I&#39;m &lt;= 16 chars&quot;
     }
   }
-}</code></pre>
+}
+</code></pre>
         </div>
 
 
@@ -183,7 +185,7 @@ end</code></pre>
             </p>
             <div id="method-i-key_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/presenters/types/hash.rb, line 55</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier">key</span>( <span class="ruby-identifier">name</span>, <span class="ruby-identifier">options</span> = {}, <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span> )
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">key</span>( <span class="ruby-identifier">name</span>, <span class="ruby-identifier">options</span> = {}, <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span> )
   <span class="ruby-keyword">if</span> <span class="ruby-ivar">@specific</span> <span class="ruby-operator">==</span> <span class="ruby-keyword">false</span>
     <span class="ruby-identifier">raise</span> <span class="ruby-string">&quot;Can&#39;t use \#keys and then \#key in the same hash definition - use one or the other&quot;</span>
   <span class="ruby-keyword">end</span>
@@ -248,7 +250,8 @@ key. If this option is omitted, keys can be any length.</p>
   # ...only one call is made to #keys, because it defines the
   # permitted form of all keys and values for the whole Hash.
 
-end</code></pre>
+end
+</code></pre>
 
 <p>…defines a <a href="Hash.html">Hash</a> with keys that have a maximum
 string length of 4 characters (inclusive) and simple object values with
@@ -302,7 +305,7 @@ just a single text field. This JSON would validate against the definition:</p>
             </p>
             <div id="method-i-keys_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/presenters/types/hash.rb, line 148</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier">keys</span>( <span class="ruby-identifier">options</span> = {}, <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span> )
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">keys</span>( <span class="ruby-identifier">options</span> = {}, <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span> )
   <span class="ruby-keyword">unless</span> <span class="ruby-ivar">@specific</span>.<span class="ruby-identifier">nil?</span>
     <span class="ruby-identifier">raise</span> <span class="ruby-string">&quot;Can&#39;t use \#key and then \#keys in the same hash definition, or use \#keys more than once&quot;</span>
   <span class="ruby-keyword">end</span>
@@ -365,7 +368,7 @@ yielding the rendered hash.</p>
             </p>
             <div id="method-i-render_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/presenters/types/hash.rb, line 286</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier">render</span>( <span class="ruby-identifier">data</span>, <span class="ruby-identifier">target</span> )
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">render</span>( <span class="ruby-identifier">data</span>, <span class="ruby-identifier">target</span> )
 
   <span class="ruby-comment"># Data provided is explicitly nil or not a hash? Don&#39;t need to render</span>
   <span class="ruby-comment"># anything beyond &#39;nil&#39; at the field (the not-hash case covers nil and</span>
@@ -451,7 +454,7 @@ href="../Errors.html">Hoodoo::Errors</a> instance.</p>
             </p>
             <div id="method-i-validate_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/presenters/types/hash.rb, line 183</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier">validate</span>( <span class="ruby-identifier">data</span>, <span class="ruby-identifier">path</span> = <span class="ruby-string">&#39;&#39;</span> )
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">validate</span>( <span class="ruby-identifier">data</span>, <span class="ruby-identifier">path</span> = <span class="ruby-string">&#39;&#39;</span> )
   <span class="ruby-identifier">errors</span> = <span class="ruby-keyword">super</span>( <span class="ruby-identifier">data</span>, <span class="ruby-identifier">path</span> )
   <span class="ruby-keyword">return</span> <span class="ruby-identifier">errors</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">has_errors?</span> <span class="ruby-operator">||</span> ( <span class="ruby-operator">!</span> <span class="ruby-ivar">@required</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">data</span>.<span class="ruby-identifier">nil?</span> )
 
@@ -468,8 +471,8 @@ href="../Errors.html">Hoodoo::Errors</a> instance.</p>
         <span class="ruby-keyword">unless</span> <span class="ruby-identifier">unrecognised_keys</span>.<span class="ruby-identifier">empty?</span>
           <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add_error</span>(
             <span class="ruby-string">&#39;generic.invalid_hash&#39;</span>,
-            <span class="ruby-value">:message</span>   =<span class="ruby-operator">&gt;</span> <span class="ruby-node">&quot;Field `#{ full_path( path ) }` is an invalid hash due to unrecognised keys `#{ unrecognised_keys.join( &#39;, &#39; ) }`&quot;</span>,
-            <span class="ruby-value">:reference</span> =<span class="ruby-operator">&gt;</span> { <span class="ruby-value">:field_name</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">full_path</span>( <span class="ruby-identifier">path</span> ) }
+            <span class="ruby-value">:message</span>   <span class="ruby-operator">=&gt;</span> <span class="ruby-node">&quot;Field `#{ full_path( path ) }` is an invalid hash due to unrecognised keys `#{ unrecognised_keys.join( &#39;, &#39; ) }`&quot;</span>,
+            <span class="ruby-value">:reference</span> <span class="ruby-operator">=&gt;</span> { <span class="ruby-value">:field_name</span> <span class="ruby-operator">=&gt;</span> <span class="ruby-identifier">full_path</span>( <span class="ruby-identifier">path</span> ) }
           )
         <span class="ruby-keyword">end</span>
 
@@ -484,8 +487,8 @@ href="../Errors.html">Hoodoo::Errors</a> instance.</p>
 
             <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add_error</span>(
               <span class="ruby-string">&#39;generic.required_field_missing&#39;</span>,
-              <span class="ruby-value">:message</span>   =<span class="ruby-operator">&gt;</span> <span class="ruby-node">&quot;Field `#{local_path}` is required&quot;</span>,
-              <span class="ruby-value">:reference</span> =<span class="ruby-operator">&gt;</span> { <span class="ruby-value">:field_name</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">local_path</span> }
+              <span class="ruby-value">:message</span>   <span class="ruby-operator">=&gt;</span> <span class="ruby-node">&quot;Field `#{local_path}` is required&quot;</span>,
+              <span class="ruby-value">:reference</span> <span class="ruby-operator">=&gt;</span> { <span class="ruby-value">:field_name</span> <span class="ruby-operator">=&gt;</span> <span class="ruby-identifier">local_path</span> }
             )
           <span class="ruby-keyword">end</span>
         <span class="ruby-keyword">end</span>
@@ -499,8 +502,8 @@ href="../Errors.html">Hoodoo::Errors</a> instance.</p>
 
           <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add_error</span>(
             <span class="ruby-string">&#39;generic.required_field_missing&#39;</span>,
-            <span class="ruby-value">:message</span>   =<span class="ruby-operator">&gt;</span> <span class="ruby-node">&quot;Field `#{ full_path( path ) }` is required (Hash, if present, must contain at least one key)&quot;</span>,
-            <span class="ruby-value">:reference</span> =<span class="ruby-operator">&gt;</span> { <span class="ruby-value">:field_name</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">full_path</span>( <span class="ruby-identifier">path</span> ) }
+            <span class="ruby-value">:message</span>   <span class="ruby-operator">=&gt;</span> <span class="ruby-node">&quot;Field `#{ full_path( path ) }` is required (Hash, if present, must contain at least one key)&quot;</span>,
+            <span class="ruby-value">:reference</span> <span class="ruby-operator">=&gt;</span> { <span class="ruby-value">:field_name</span> <span class="ruby-operator">=&gt;</span> <span class="ruby-identifier">full_path</span>( <span class="ruby-identifier">path</span> ) }
           )
 
         <span class="ruby-keyword">else</span>
@@ -537,8 +540,8 @@ href="../Errors.html">Hoodoo::Errors</a> instance.</p>
   <span class="ruby-keyword">else</span>  <span class="ruby-comment"># &#39;if data.is_a?( ::Hash )&#39;</span>
     <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add_error</span>(
       <span class="ruby-string">&#39;generic.invalid_hash&#39;</span>,
-      <span class="ruby-value">:message</span>   =<span class="ruby-operator">&gt;</span> <span class="ruby-node">&quot;Field `#{ full_path( path ) }` is an invalid hash&quot;</span>,
-      <span class="ruby-value">:reference</span> =<span class="ruby-operator">&gt;</span> { <span class="ruby-value">:field_name</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">full_path</span>( <span class="ruby-identifier">path</span> ) }
+      <span class="ruby-value">:message</span>   <span class="ruby-operator">=&gt;</span> <span class="ruby-node">&quot;Field `#{ full_path( path ) }` is an invalid hash&quot;</span>,
+      <span class="ruby-value">:reference</span> <span class="ruby-operator">=&gt;</span> { <span class="ruby-value">:field_name</span> <span class="ruby-operator">=&gt;</span> <span class="ruby-identifier">full_path</span>( <span class="ruby-identifier">path</span> ) }
     )
   <span class="ruby-keyword">end</span>
 
@@ -572,7 +575,7 @@ sub-fields too. See Hoodoo::Presenters::Base#walk for why.</p>
             </p>
             <div id="method-i-walk_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/presenters/types/hash.rb, line 354</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier">walk</span>( <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span> )
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">walk</span>( <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span> )
   <span class="ruby-identifier">block</span>.<span class="ruby-identifier">call</span>( <span class="ruby-keyword">self</span> )
 
   <span class="ruby-keyword">unless</span> <span class="ruby-ivar">@properties</span>.<span class="ruby-identifier">nil?</span>

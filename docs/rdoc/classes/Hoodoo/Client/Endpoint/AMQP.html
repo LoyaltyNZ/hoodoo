@@ -166,7 +166,7 @@ href="../Endpoint.html#method-i-create">Hoodoo::Client::Endpoint#create</a>.</p>
             </p>
             <div id="method-i-create_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/client/endpoint/endpoints/amqp.rb, line 84</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier">create</span>( <span class="ruby-identifier">body_hash</span>, <span class="ruby-identifier">query_hash</span> = <span class="ruby-keyword">nil</span> )
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">create</span>( <span class="ruby-identifier">body_hash</span>, <span class="ruby-identifier">query_hash</span> = <span class="ruby-keyword">nil</span> )
   <span class="ruby-identifier">d</span>            = <span class="ruby-ivar">@description</span>.<span class="ruby-identifier">dup</span>
   <span class="ruby-identifier">d</span>.<span class="ruby-identifier">action</span>     = <span class="ruby-value">:create</span>
   <span class="ruby-identifier">d</span>.<span class="ruby-identifier">body_hash</span>  = <span class="ruby-identifier">body_hash</span>
@@ -198,7 +198,7 @@ href="../Endpoint.html#method-i-delete">Hoodoo::Client::Endpoint#delete</a>.</p>
             </p>
             <div id="method-i-delete_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/client/endpoint/endpoints/amqp.rb, line 107</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier">delete</span>( <span class="ruby-identifier">ident</span>, <span class="ruby-identifier">query_hash</span> = <span class="ruby-keyword">nil</span> )
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">delete</span>( <span class="ruby-identifier">ident</span>, <span class="ruby-identifier">query_hash</span> = <span class="ruby-keyword">nil</span> )
   <span class="ruby-identifier">d</span>            = <span class="ruby-ivar">@description</span>.<span class="ruby-identifier">dup</span>
   <span class="ruby-identifier">d</span>.<span class="ruby-identifier">action</span>     = <span class="ruby-value">:delete</span>
   <span class="ruby-identifier">d</span>.<span class="ruby-identifier">ident</span>      = <span class="ruby-identifier">ident</span>
@@ -230,7 +230,7 @@ href="../Endpoint.html#method-i-list">Hoodoo::Client::Endpoint#list</a>.</p>
             </p>
             <div id="method-i-list_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/client/endpoint/endpoints/amqp.rb, line 63</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier">list</span>( <span class="ruby-identifier">query_hash</span> = <span class="ruby-keyword">nil</span> )
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">list</span>( <span class="ruby-identifier">query_hash</span> = <span class="ruby-keyword">nil</span> )
   <span class="ruby-identifier">d</span>            = <span class="ruby-ivar">@description</span>.<span class="ruby-identifier">dup</span> <span class="ruby-comment"># This does NOT dup the objects to which @description points</span>
   <span class="ruby-identifier">d</span>.<span class="ruby-identifier">action</span>     = <span class="ruby-value">:list</span>
   <span class="ruby-identifier">d</span>.<span class="ruby-identifier">query_hash</span> = <span class="ruby-identifier">query_hash</span>
@@ -286,7 +286,7 @@ does not consult this parameter).</p>
             </p>
             <div id="method-i-monkey_send_request_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/client/endpoint/endpoints/amqp.rb, line 135</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier">monkey_send_request</span>( <span class="ruby-identifier">http_message</span>, <span class="ruby-identifier">full_uri</span> )
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">monkey_send_request</span>( <span class="ruby-identifier">http_message</span>, <span class="ruby-identifier">full_uri</span> )
   <span class="ruby-keyword">self</span>.<span class="ruby-identifier">alchemy</span>().<span class="ruby-identifier">send_request_to_resource</span>( <span class="ruby-identifier">http_message</span> )
 <span class="ruby-keyword">end</span></pre>
             </div>
@@ -313,7 +313,7 @@ href="../Endpoint.html#method-i-show">Hoodoo::Client::Endpoint#show</a>.</p>
             </p>
             <div id="method-i-show_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/client/endpoint/endpoints/amqp.rb, line 73</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier">show</span>( <span class="ruby-identifier">ident</span>, <span class="ruby-identifier">query_hash</span> = <span class="ruby-keyword">nil</span> )
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">show</span>( <span class="ruby-identifier">ident</span>, <span class="ruby-identifier">query_hash</span> = <span class="ruby-keyword">nil</span> )
   <span class="ruby-identifier">d</span>            = <span class="ruby-ivar">@description</span>.<span class="ruby-identifier">dup</span>
   <span class="ruby-identifier">d</span>.<span class="ruby-identifier">action</span>     = <span class="ruby-value">:show</span>
   <span class="ruby-identifier">d</span>.<span class="ruby-identifier">ident</span>      = <span class="ruby-identifier">ident</span>
@@ -345,7 +345,7 @@ href="../Endpoint.html#method-i-update">Hoodoo::Client::Endpoint#update</a>.</p>
             </p>
             <div id="method-i-update_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/client/endpoint/endpoints/amqp.rb, line 95</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier">update</span>( <span class="ruby-identifier">ident</span>, <span class="ruby-identifier">body_hash</span>, <span class="ruby-identifier">query_hash</span> = <span class="ruby-keyword">nil</span> )
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">update</span>( <span class="ruby-identifier">ident</span>, <span class="ruby-identifier">body_hash</span>, <span class="ruby-identifier">query_hash</span> = <span class="ruby-keyword">nil</span> )
   <span class="ruby-identifier">d</span>            = <span class="ruby-ivar">@description</span>.<span class="ruby-identifier">dup</span>
   <span class="ruby-identifier">d</span>.<span class="ruby-identifier">action</span>     = <span class="ruby-value">:update</span>
   <span class="ruby-identifier">d</span>.<span class="ruby-identifier">ident</span>      = <span class="ruby-identifier">ident</span>
@@ -385,7 +385,7 @@ instance in the <code>discovery_result</code> field of the
             </p>
             <div id="method-i-configure_with_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/client/endpoint/endpoints/amqp.rb, line 33</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier">configure_with</span>( <span class="ruby-identifier">resource</span>, <span class="ruby-identifier">version</span>, <span class="ruby-identifier">options</span> )
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">configure_with</span>( <span class="ruby-identifier">resource</span>, <span class="ruby-identifier">version</span>, <span class="ruby-identifier">options</span> )
   <span class="ruby-keyword">unless</span> <span class="ruby-ivar">@discovery_result</span>.<span class="ruby-identifier">is_a?</span>( <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Services</span><span class="ruby-operator">::</span><span class="ruby-constant">Discovery</span><span class="ruby-operator">::</span><span class="ruby-constant">ForAMQP</span> )
     <span class="ruby-identifier">raise</span> <span class="ruby-node">&quot;Hoodoo::Client::Endpoint::AMQP must be configured with a Hoodoo::Services::Discovery::ForAMQP instance - got &#39;#{ @discovery_result.class.name }&#39;&quot;</span>
   <span class="ruby-keyword">end</span>

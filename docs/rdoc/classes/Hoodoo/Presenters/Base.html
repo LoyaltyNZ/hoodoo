@@ -137,7 +137,7 @@ of the schema.</p>
             </p>
             <div id="method-c-get_schema_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/presenters/base.rb, line 287</span>
-<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">get_schema</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">get_schema</span>
   <span class="ruby-ivar">@schema</span>
 <span class="ruby-keyword">end</span></pre>
             </div>
@@ -163,7 +163,7 @@ of the schema.</p>
             </p>
             <div id="method-c-get_schema_definition_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/presenters/base.rb, line 294</span>
-<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">get_schema_definition</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">get_schema_definition</span>
   <span class="ruby-ivar">@schema_definition</span>
 <span class="ruby-keyword">end</span></pre>
             </div>
@@ -190,7 +190,7 @@ so, else <code>false</code>.</p>
             </p>
             <div id="method-c-is_internationalised-3F_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/presenters/base.rb, line 281</span>
-<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">is_internationalised?</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">is_internationalised?</span>
   <span class="ruby-ivar">@schema</span>.<span class="ruby-identifier">is_internationalised?</span>
 <span class="ruby-keyword">end</span></pre>
             </div>
@@ -222,7 +222,8 @@ classes inside a module for namespacing - for example:</p>
       ...
     end
   end
-end</code></pre>
+end
+</code></pre>
 
 <p>Only the class “leaf” name is used to infer the resource kind - in the
 above case, that&#39;s <code>Product</code>.</p>
@@ -286,7 +287,7 @@ omitted.</p>
             </p>
             <div id="method-c-render_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/presenters/base.rb, line 93</span>
-<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">render</span>( <span class="ruby-identifier">data</span>,
+<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">render</span>( <span class="ruby-identifier">data</span>,
                  <span class="ruby-identifier">uuid</span>       = <span class="ruby-keyword">nil</span>,
                  <span class="ruby-identifier">created_at</span> = <span class="ruby-keyword">nil</span>,
                  <span class="ruby-identifier">language</span>   = <span class="ruby-string">&#39;en-nz&#39;</span>,
@@ -317,9 +318,9 @@ omitted.</p>
     <span class="ruby-identifier">kind</span>  = <span class="ruby-identifier">name</span>[ <span class="ruby-identifier">index</span> <span class="ruby-operator">..</span> <span class="ruby-value">-1</span> ]
 
     <span class="ruby-identifier">target</span>.<span class="ruby-identifier">merge!</span>( {
-      <span class="ruby-string">&#39;id&#39;</span>         =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">uuid</span>,
-      <span class="ruby-string">&#39;kind&#39;</span>       =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">kind</span>,
-      <span class="ruby-string">&#39;created_at&#39;</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Utilities</span>.<span class="ruby-identifier">standard_datetime</span>( <span class="ruby-identifier">created_at</span>.<span class="ruby-identifier">to_datetime</span> )
+      <span class="ruby-string">&#39;id&#39;</span>         <span class="ruby-operator">=&gt;</span> <span class="ruby-identifier">uuid</span>,
+      <span class="ruby-string">&#39;kind&#39;</span>       <span class="ruby-operator">=&gt;</span> <span class="ruby-identifier">kind</span>,
+      <span class="ruby-string">&#39;created_at&#39;</span> <span class="ruby-operator">=&gt;</span> <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Utilities</span>.<span class="ruby-identifier">standard_datetime</span>( <span class="ruby-identifier">created_at</span>.<span class="ruby-identifier">to_datetime</span> )
     } )
 
     <span class="ruby-identifier">target</span>[ <span class="ruby-string">&#39;created_by&#39;</span> ] = <span class="ruby-identifier">created_by</span> <span class="ruby-keyword">unless</span> <span class="ruby-identifier">created_by</span>.<span class="ruby-identifier">nil?</span>
@@ -425,7 +426,7 @@ field and object value in the rendered resource data.</p>
             </p>
             <div id="method-c-render_in_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/presenters/base.rb, line 194</span>
-<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">render_in</span>( <span class="ruby-identifier">context</span>, <span class="ruby-identifier">data</span>, <span class="ruby-identifier">options</span> = {} )
+<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">render_in</span>( <span class="ruby-identifier">context</span>, <span class="ruby-identifier">data</span>, <span class="ruby-identifier">options</span> = {} )
   <span class="ruby-identifier">uuid</span>         = <span class="ruby-identifier">options</span>[ <span class="ruby-value">:uuid</span>         ]
   <span class="ruby-identifier">created_at</span>   = <span class="ruby-identifier">options</span>[ <span class="ruby-value">:created_at</span>   ]
   <span class="ruby-identifier">created_by</span>   = <span class="ruby-identifier">options</span>[ <span class="ruby-value">:created_by</span>   ]
@@ -488,7 +489,7 @@ schema.</p>
             </p>
             <div id="method-c-schema_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/presenters/base.rb, line 26</span>
-<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">schema</span>( <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span> )
+<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">schema</span>( <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span> )
   <span class="ruby-ivar">@schema</span> = <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Presenters</span><span class="ruby-operator">::</span><span class="ruby-constant">Object</span>.<span class="ruby-identifier">new</span>
   <span class="ruby-ivar">@schema</span>.<span class="ruby-identifier">instance_eval</span>( <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span> )
   <span class="ruby-ivar">@schema_definition</span> = <span class="ruby-identifier">block</span>
@@ -528,14 +529,14 @@ Optional; default is <code>false</code>.</p>
             </p>
             <div id="method-c-validate_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/presenters/base.rb, line 241</span>
-<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">validate</span>( <span class="ruby-identifier">data</span>, <span class="ruby-identifier">as_resource</span> = <span class="ruby-keyword">false</span> )
+<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">validate</span>( <span class="ruby-identifier">data</span>, <span class="ruby-identifier">as_resource</span> = <span class="ruby-keyword">false</span> )
   <span class="ruby-identifier">errors</span> = <span class="ruby-ivar">@schema</span>.<span class="ruby-identifier">validate</span>( <span class="ruby-identifier">data</span> )
 
   <span class="ruby-keyword">if</span> <span class="ruby-identifier">as_resource</span>
     <span class="ruby-identifier">common_fields</span> = {
-      <span class="ruby-string">&#39;id&#39;</span>         =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">data</span>[ <span class="ruby-value">:id</span>         ],
-      <span class="ruby-string">&#39;created_at&#39;</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">data</span>[ <span class="ruby-value">:created_at</span> ],
-      <span class="ruby-string">&#39;kind&#39;</span>       =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">data</span>[ <span class="ruby-value">:kind</span>       ]
+      <span class="ruby-string">&#39;id&#39;</span>         <span class="ruby-operator">=&gt;</span> <span class="ruby-identifier">data</span>[ <span class="ruby-value">:id</span>         ],
+      <span class="ruby-string">&#39;created_at&#39;</span> <span class="ruby-operator">=&gt;</span> <span class="ruby-identifier">data</span>[ <span class="ruby-value">:created_at</span> ],
+      <span class="ruby-string">&#39;kind&#39;</span>       <span class="ruby-operator">=&gt;</span> <span class="ruby-identifier">data</span>[ <span class="ruby-value">:kind</span>       ]
     }
 
     <span class="ruby-identifier">created_by</span> = <span class="ruby-identifier">data</span>[ <span class="ruby-value">:created_by</span> ]
@@ -581,7 +582,7 @@ recursing into nested objects, arrays and so-on as each is encountered.</p>
             </p>
             <div id="method-c-walk_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/presenters/base.rb, line 274</span>
-<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">walk</span>( <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span> )
+<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">walk</span>( <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span> )
   <span class="ruby-ivar">@schema</span>.<span class="ruby-identifier">walk</span>( <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span> )
 <span class="ruby-keyword">end</span></pre>
             </div>

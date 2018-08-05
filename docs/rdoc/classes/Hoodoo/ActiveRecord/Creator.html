@@ -129,7 +129,7 @@ this module.</p>
             </p>
             <div id="method-c-included_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/creator.rb, line 53</span>
-<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">included</span>( <span class="ruby-identifier">model</span> )
+<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">included</span>( <span class="ruby-identifier">model</span> )
   <span class="ruby-identifier">instantiate</span>( <span class="ruby-identifier">model</span> ) <span class="ruby-keyword">unless</span> <span class="ruby-identifier">model</span> <span class="ruby-operator">==</span> <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">ActiveRecord</span><span class="ruby-operator">::</span><span class="ruby-constant">Base</span>
   <span class="ruby-keyword">super</span>( <span class="ruby-identifier">model</span> )
 <span class="ruby-keyword">end</span></pre>
@@ -164,7 +164,7 @@ this module.</p>
             </p>
             <div id="method-c-instantiate_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/creator.rb, line 65</span>
-<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">instantiate</span>( <span class="ruby-identifier">model</span> )
+<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">instantiate</span>( <span class="ruby-identifier">model</span> )
   <span class="ruby-identifier">model</span>.<span class="ruby-identifier">extend</span>( <span class="ruby-constant">ClassMethods</span> )
 <span class="ruby-keyword">end</span></pre>
             </div>

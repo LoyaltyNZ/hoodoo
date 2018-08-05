@@ -126,16 +126,16 @@ href="../../Client/Endpoint.html#method-i-create">Hoodoo::Client::Endpoint#creat
             </p>
             <div id="method-i-create_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/endpoints/inter_resource_local.rb, line 85</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier">create</span>( <span class="ruby-identifier">body_hash</span>, <span class="ruby-identifier">query_hash</span> = <span class="ruby-keyword">nil</span> )
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">create</span>( <span class="ruby-identifier">body_hash</span>, <span class="ruby-identifier">query_hash</span> = <span class="ruby-keyword">nil</span> )
   <span class="ruby-keyword">return</span> <span class="ruby-ivar">@middleware</span>.<span class="ruby-identifier">inter_resource_local</span>(
-    <span class="ruby-value">:source_interaction</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">interaction</span>(),
-    <span class="ruby-value">:discovery_result</span>   =<span class="ruby-operator">&gt;</span> <span class="ruby-ivar">@discovery_result</span>,
-    <span class="ruby-value">:endpoint</span>           =<span class="ruby-operator">&gt;</span> <span class="ruby-keyword">self</span>,
+    <span class="ruby-value">:source_interaction</span> <span class="ruby-operator">=&gt;</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">interaction</span>(),
+    <span class="ruby-value">:discovery_result</span>   <span class="ruby-operator">=&gt;</span> <span class="ruby-ivar">@discovery_result</span>,
+    <span class="ruby-value">:endpoint</span>           <span class="ruby-operator">=&gt;</span> <span class="ruby-keyword">self</span>,
 
-    <span class="ruby-value">:action</span>             =<span class="ruby-operator">&gt;</span> <span class="ruby-value">:create</span>,
+    <span class="ruby-value">:action</span>             <span class="ruby-operator">=&gt;</span> <span class="ruby-value">:create</span>,
 
-    <span class="ruby-value">:body_hash</span>          =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">body_hash</span>,
-    <span class="ruby-value">:query_hash</span>         =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">query_hash</span>
+    <span class="ruby-value">:body_hash</span>          <span class="ruby-operator">=&gt;</span> <span class="ruby-identifier">body_hash</span>,
+    <span class="ruby-value">:query_hash</span>         <span class="ruby-operator">=&gt;</span> <span class="ruby-identifier">query_hash</span>
   )
 <span class="ruby-keyword">end</span></pre>
             </div>
@@ -162,16 +162,16 @@ href="../../Client/Endpoint.html#method-i-delete">Hoodoo::Client::Endpoint#delet
             </p>
             <div id="method-i-delete_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/endpoints/inter_resource_local.rb, line 116</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier">delete</span>( <span class="ruby-identifier">ident</span>, <span class="ruby-identifier">query_hash</span> = <span class="ruby-keyword">nil</span> )
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">delete</span>( <span class="ruby-identifier">ident</span>, <span class="ruby-identifier">query_hash</span> = <span class="ruby-keyword">nil</span> )
   <span class="ruby-keyword">return</span> <span class="ruby-ivar">@middleware</span>.<span class="ruby-identifier">inter_resource_local</span>(
-    <span class="ruby-value">:source_interaction</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">interaction</span>(),
-    <span class="ruby-value">:discovery_result</span>   =<span class="ruby-operator">&gt;</span> <span class="ruby-ivar">@discovery_result</span>,
-    <span class="ruby-value">:endpoint</span>           =<span class="ruby-operator">&gt;</span> <span class="ruby-keyword">self</span>,
+    <span class="ruby-value">:source_interaction</span> <span class="ruby-operator">=&gt;</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">interaction</span>(),
+    <span class="ruby-value">:discovery_result</span>   <span class="ruby-operator">=&gt;</span> <span class="ruby-ivar">@discovery_result</span>,
+    <span class="ruby-value">:endpoint</span>           <span class="ruby-operator">=&gt;</span> <span class="ruby-keyword">self</span>,
 
-    <span class="ruby-value">:action</span>             =<span class="ruby-operator">&gt;</span> <span class="ruby-value">:delete</span>,
+    <span class="ruby-value">:action</span>             <span class="ruby-operator">=&gt;</span> <span class="ruby-value">:delete</span>,
 
-    <span class="ruby-value">:ident</span>              =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">ident</span>,
-    <span class="ruby-value">:query_hash</span>         =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">query_hash</span>
+    <span class="ruby-value">:ident</span>              <span class="ruby-operator">=&gt;</span> <span class="ruby-identifier">ident</span>,
+    <span class="ruby-value">:query_hash</span>         <span class="ruby-operator">=&gt;</span> <span class="ruby-identifier">query_hash</span>
   )
 <span class="ruby-keyword">end</span></pre>
             </div>
@@ -198,15 +198,15 @@ href="../../Client/Endpoint.html#method-i-list">Hoodoo::Client::Endpoint#list</a
             </p>
             <div id="method-i-list_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/endpoints/inter_resource_local.rb, line 55</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier">list</span>( <span class="ruby-identifier">query_hash</span> = <span class="ruby-keyword">nil</span> )
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">list</span>( <span class="ruby-identifier">query_hash</span> = <span class="ruby-keyword">nil</span> )
   <span class="ruby-identifier">result</span> =  <span class="ruby-ivar">@middleware</span>.<span class="ruby-identifier">inter_resource_local</span>(
-    <span class="ruby-value">:source_interaction</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">interaction</span>(),
-    <span class="ruby-value">:discovery_result</span>   =<span class="ruby-operator">&gt;</span> <span class="ruby-ivar">@discovery_result</span>,
-    <span class="ruby-value">:endpoint</span>           =<span class="ruby-operator">&gt;</span> <span class="ruby-keyword">self</span>,
+    <span class="ruby-value">:source_interaction</span> <span class="ruby-operator">=&gt;</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">interaction</span>(),
+    <span class="ruby-value">:discovery_result</span>   <span class="ruby-operator">=&gt;</span> <span class="ruby-ivar">@discovery_result</span>,
+    <span class="ruby-value">:endpoint</span>           <span class="ruby-operator">=&gt;</span> <span class="ruby-keyword">self</span>,
 
-    <span class="ruby-value">:action</span>             =<span class="ruby-operator">&gt;</span> <span class="ruby-value">:list</span>,
+    <span class="ruby-value">:action</span>             <span class="ruby-operator">=&gt;</span> <span class="ruby-value">:list</span>,
 
-    <span class="ruby-value">:query_hash</span>         =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">query_hash</span>
+    <span class="ruby-value">:query_hash</span>         <span class="ruby-operator">=&gt;</span> <span class="ruby-identifier">query_hash</span>
   )
   <span class="ruby-keyword">return</span> <span class="ruby-identifier">inject_enumeration_state</span>( <span class="ruby-identifier">result</span>, <span class="ruby-identifier">query_hash</span> )
 <span class="ruby-keyword">end</span></pre>
@@ -234,16 +234,16 @@ href="../../Client/Endpoint.html#method-i-show">Hoodoo::Client::Endpoint#show</a
             </p>
             <div id="method-i-show_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/endpoints/inter_resource_local.rb, line 70</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier">show</span>( <span class="ruby-identifier">ident</span>, <span class="ruby-identifier">query_hash</span> = <span class="ruby-keyword">nil</span> )
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">show</span>( <span class="ruby-identifier">ident</span>, <span class="ruby-identifier">query_hash</span> = <span class="ruby-keyword">nil</span> )
   <span class="ruby-keyword">return</span> <span class="ruby-ivar">@middleware</span>.<span class="ruby-identifier">inter_resource_local</span>(
-    <span class="ruby-value">:source_interaction</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">interaction</span>(),
-    <span class="ruby-value">:discovery_result</span>   =<span class="ruby-operator">&gt;</span> <span class="ruby-ivar">@discovery_result</span>,
-    <span class="ruby-value">:endpoint</span>           =<span class="ruby-operator">&gt;</span> <span class="ruby-keyword">self</span>,
+    <span class="ruby-value">:source_interaction</span> <span class="ruby-operator">=&gt;</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">interaction</span>(),
+    <span class="ruby-value">:discovery_result</span>   <span class="ruby-operator">=&gt;</span> <span class="ruby-ivar">@discovery_result</span>,
+    <span class="ruby-value">:endpoint</span>           <span class="ruby-operator">=&gt;</span> <span class="ruby-keyword">self</span>,
 
-    <span class="ruby-value">:action</span>             =<span class="ruby-operator">&gt;</span> <span class="ruby-value">:show</span>,
+    <span class="ruby-value">:action</span>             <span class="ruby-operator">=&gt;</span> <span class="ruby-value">:show</span>,
 
-    <span class="ruby-value">:ident</span>              =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">ident</span>,
-    <span class="ruby-value">:query_hash</span>         =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">query_hash</span>
+    <span class="ruby-value">:ident</span>              <span class="ruby-operator">=&gt;</span> <span class="ruby-identifier">ident</span>,
+    <span class="ruby-value">:query_hash</span>         <span class="ruby-operator">=&gt;</span> <span class="ruby-identifier">query_hash</span>
   )
 <span class="ruby-keyword">end</span></pre>
             </div>
@@ -270,17 +270,17 @@ href="../../Client/Endpoint.html#method-i-update">Hoodoo::Client::Endpoint#updat
             </p>
             <div id="method-i-update_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/endpoints/inter_resource_local.rb, line 100</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier">update</span>( <span class="ruby-identifier">ident</span>, <span class="ruby-identifier">body_hash</span>, <span class="ruby-identifier">query_hash</span> = <span class="ruby-keyword">nil</span> )
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">update</span>( <span class="ruby-identifier">ident</span>, <span class="ruby-identifier">body_hash</span>, <span class="ruby-identifier">query_hash</span> = <span class="ruby-keyword">nil</span> )
   <span class="ruby-keyword">return</span> <span class="ruby-ivar">@middleware</span>.<span class="ruby-identifier">inter_resource_local</span>(
-    <span class="ruby-value">:source_interaction</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">interaction</span>(),
-    <span class="ruby-value">:discovery_result</span>   =<span class="ruby-operator">&gt;</span> <span class="ruby-ivar">@discovery_result</span>,
-    <span class="ruby-value">:endpoint</span>           =<span class="ruby-operator">&gt;</span> <span class="ruby-keyword">self</span>,
+    <span class="ruby-value">:source_interaction</span> <span class="ruby-operator">=&gt;</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">interaction</span>(),
+    <span class="ruby-value">:discovery_result</span>   <span class="ruby-operator">=&gt;</span> <span class="ruby-ivar">@discovery_result</span>,
+    <span class="ruby-value">:endpoint</span>           <span class="ruby-operator">=&gt;</span> <span class="ruby-keyword">self</span>,
 
-    <span class="ruby-value">:action</span>             =<span class="ruby-operator">&gt;</span> <span class="ruby-value">:update</span>,
+    <span class="ruby-value">:action</span>             <span class="ruby-operator">=&gt;</span> <span class="ruby-value">:update</span>,
 
-    <span class="ruby-value">:ident</span>              =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">ident</span>,
-    <span class="ruby-value">:body_hash</span>          =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">body_hash</span>,
-    <span class="ruby-value">:query_hash</span>         =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">query_hash</span>
+    <span class="ruby-value">:ident</span>              <span class="ruby-operator">=&gt;</span> <span class="ruby-identifier">ident</span>,
+    <span class="ruby-value">:body_hash</span>          <span class="ruby-operator">=&gt;</span> <span class="ruby-identifier">body_hash</span>,
+    <span class="ruby-value">:query_hash</span>         <span class="ruby-operator">=&gt;</span> <span class="ruby-identifier">query_hash</span>
   )
 <span class="ruby-keyword">end</span></pre>
             </div>
@@ -329,7 +329,7 @@ instance describing the locally available resource endpoint.</p>
             </p>
             <div id="method-i-configure_with_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/endpoints/inter_resource_local.rb, line 47</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier">configure_with</span>( <span class="ruby-identifier">resource</span>, <span class="ruby-identifier">version</span>, <span class="ruby-identifier">options</span> )
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">configure_with</span>( <span class="ruby-identifier">resource</span>, <span class="ruby-identifier">version</span>, <span class="ruby-identifier">options</span> )
   <span class="ruby-ivar">@middleware</span> = <span class="ruby-keyword">self</span>.<span class="ruby-identifier">interaction</span>().<span class="ruby-identifier">owning_middleware_instance</span>
 <span class="ruby-keyword">end</span></pre>
             </div>

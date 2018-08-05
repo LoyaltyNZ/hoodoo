@@ -329,7 +329,7 @@ associated. This is the high-level transport neutral equivalent of (say) a
             </p>
             <div id="method-c-endpoint_for_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/client/endpoint/endpoint.rb, line 88</span>
-<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">endpoint_for</span>( <span class="ruby-identifier">resource</span>, <span class="ruby-identifier">version</span>, <span class="ruby-identifier">options</span> )
+<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">endpoint_for</span>( <span class="ruby-identifier">resource</span>, <span class="ruby-identifier">version</span>, <span class="ruby-identifier">options</span> )
   <span class="ruby-identifier">discoverer</span>       = <span class="ruby-identifier">options</span>.<span class="ruby-identifier">delete</span>( <span class="ruby-value">:discoverer</span> )
   <span class="ruby-identifier">discovery_result</span> = <span class="ruby-identifier">discoverer</span>.<span class="ruby-identifier">discover</span>( <span class="ruby-identifier">resource</span>.<span class="ruby-identifier">to_sym</span>, <span class="ruby-identifier">version</span>.<span class="ruby-identifier">to_i</span> )
 
@@ -363,7 +363,7 @@ associated. This is the high-level transport neutral equivalent of (say) a
         <div class="description">
             <p>Create an endpoint instance that will be used to make requests to a given
 resource.</p>
-<dl class="rdoc-list note-list"><dt>resource
+<dl class="rdoc-list note-list"><dt><code>resource</code>
 <dd>
 <p>Resource name the endpoint targets, e.g. <code>:Purchase</code>. String or
 symbol.</p>
@@ -465,7 +465,7 @@ href="Endpoint/HTTP.html">HTTP</a> request (i.e. JSON, as a Hash).</p>
             </p>
             <div id="method-c-new_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/client/endpoint/endpoint.rb, line 214</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier">initialize</span>( <span class="ruby-identifier">resource</span>, <span class="ruby-identifier">version</span> = <span class="ruby-value">1</span>, <span class="ruby-identifier">options</span> )
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">initialize</span>( <span class="ruby-identifier">resource</span>, <span class="ruby-identifier">version</span> = <span class="ruby-value">1</span>, <span class="ruby-identifier">options</span> )
   <span class="ruby-ivar">@resource</span>         = <span class="ruby-identifier">resource</span>.<span class="ruby-identifier">to_sym</span>
   <span class="ruby-ivar">@version</span>          = <span class="ruby-identifier">version</span>.<span class="ruby-identifier">to_i</span>
 
@@ -497,10 +497,10 @@ href="Endpoint/HTTP.html">HTTP</a> request (i.e. JSON, as a Hash).</p>
 
         <div class="description">
             <p>Create a resource instance.</p>
-<dl class="rdoc-list note-list"><dt>body_hash
+<dl class="rdoc-list note-list"><dt><code>body_hash</code>
 <dd>
 <p>See the constructor for details.</p>
-</dd><dt>query_hash
+</dd><dt><code>query_hash</code>
 <dd>
 <p>See the constructor for details.</p>
 </dd></dl>
@@ -528,7 +528,7 @@ instead) on the returned instance to detect and resolve error conditions
             </p>
             <div id="method-i-create_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/client/endpoint/endpoint.rb, line 410</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier">create</span>( <span class="ruby-identifier">body_hash</span>, <span class="ruby-identifier">query_hash</span> = <span class="ruby-keyword">nil</span> )
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">create</span>( <span class="ruby-identifier">body_hash</span>, <span class="ruby-identifier">query_hash</span> = <span class="ruby-keyword">nil</span> )
   <span class="ruby-identifier">raise</span> <span class="ruby-string">&quot;Subclasses must implement Hoodoo::Client::Endpoint\#create&quot;</span>
 <span class="ruby-keyword">end</span></pre>
             </div>
@@ -542,10 +542,10 @@ instead) on the returned instance to detect and resolve error conditions
 
         <div class="description">
             <p>Delete a resource instance.</p>
-<dl class="rdoc-list note-list"><dt>ident
+<dl class="rdoc-list note-list"><dt><code>ident</code>
 <dd>
 <p>See the constructor for details.</p>
-</dd><dt>query_hash
+</dd><dt><code>query_hash</code>
 <dd>
 <p>See the constructor for details.</p>
 </dd></dl>
@@ -574,7 +574,7 @@ instead) on the returned instance to detect and resolve error conditions
             </p>
             <div id="method-i-delete_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/client/endpoint/endpoint.rb, line 451</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier">delete</span>( <span class="ruby-identifier">ident</span>, <span class="ruby-identifier">query_hash</span> = <span class="ruby-keyword">nil</span> )
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">delete</span>( <span class="ruby-identifier">ident</span>, <span class="ruby-identifier">query_hash</span> = <span class="ruby-keyword">nil</span> )
   <span class="ruby-identifier">raise</span> <span class="ruby-string">&quot;Subclasses must implement Hoodoo::Client::Endpoint\#delete&quot;</span>
 <span class="ruby-keyword">end</span></pre>
             </div>
@@ -588,7 +588,7 @@ instead) on the returned instance to detect and resolve error conditions
 
         <div class="description">
             <p>Obtain a list of resource instance representations.</p>
-<dl class="rdoc-list note-list"><dt>query_hash
+<dl class="rdoc-list note-list"><dt><code>query_hash</code>
 <dd>
 <p>See the constructor for more. This is the only way to search or filter the
 list, via the target Resource&#39;s documented supported search/filter
@@ -624,7 +624,7 @@ to enumerate over the list of resource instances with automatic pagination.</p>
             </p>
             <div id="method-i-list_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/client/endpoint/endpoint.rb, line 370</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier">list</span>( <span class="ruby-identifier">query_hash</span> = <span class="ruby-keyword">nil</span> )
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">list</span>( <span class="ruby-identifier">query_hash</span> = <span class="ruby-keyword">nil</span> )
   <span class="ruby-identifier">raise</span> <span class="ruby-string">&quot;Subclasses must implement Hoodoo::Client::Endpoint\#list&quot;</span>
 <span class="ruby-keyword">end</span></pre>
             </div>
@@ -638,10 +638,10 @@ to enumerate over the list of resource instances with automatic pagination.</p>
 
         <div class="description">
             <p>Obtain a resource instance representation.</p>
-<dl class="rdoc-list note-list"><dt>ident
+<dl class="rdoc-list note-list"><dt><code>ident</code>
 <dd>
 <p>See the constructor for details.</p>
-</dd><dt>query_hash
+</dd><dt><code>query_hash</code>
 <dd>
 <p>See the constructor for details.</p>
 </dd></dl>
@@ -669,7 +669,7 @@ instead) on the returned instance to detect and resolve error conditions
             </p>
             <div id="method-i-show_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/client/endpoint/endpoint.rb, line 390</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier">show</span>( <span class="ruby-identifier">ident</span>, <span class="ruby-identifier">query_hash</span> = <span class="ruby-keyword">nil</span> )
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">show</span>( <span class="ruby-identifier">ident</span>, <span class="ruby-identifier">query_hash</span> = <span class="ruby-keyword">nil</span> )
   <span class="ruby-identifier">raise</span> <span class="ruby-string">&quot;Subclasses must implement Hoodoo::Client::Endpoint\#show&quot;</span>
 <span class="ruby-keyword">end</span></pre>
             </div>
@@ -683,10 +683,10 @@ instead) on the returned instance to detect and resolve error conditions
 
         <div class="description">
             <p>Update a resource instance.</p>
-<dl class="rdoc-list note-list"><dt>ident
+<dl class="rdoc-list note-list"><dt><code>ident</code>
 <dd>
 <p>See the constructor for details.</p>
-</dd><dt>body_hash
+</dd><dt><code>body_hash</code>
 <dd>
 <p>See the constructor for details.</p>
 </dd><dt><code>query_hash</code>
@@ -717,7 +717,7 @@ instead) on the returned instance to detect and resolve error conditions
             </p>
             <div id="method-i-update_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/client/endpoint/endpoint.rb, line 431</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier">update</span>( <span class="ruby-identifier">ident</span>, <span class="ruby-identifier">body_hash</span>, <span class="ruby-identifier">query_hash</span> = <span class="ruby-keyword">nil</span> )
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">update</span>( <span class="ruby-identifier">ident</span>, <span class="ruby-identifier">body_hash</span>, <span class="ruby-identifier">query_hash</span> = <span class="ruby-keyword">nil</span> )
   <span class="ruby-identifier">raise</span> <span class="ruby-string">&quot;Subclasses must implement Hoodoo::Client::Endpoint\#update&quot;</span>
 <span class="ruby-keyword">end</span></pre>
             </div>
@@ -757,7 +757,7 @@ want and validate any required options, raising errors if need be.</p>
             </p>
             <div id="method-i-configure_with_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/client/endpoint/endpoint.rb, line 253</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier">configure_with</span>( <span class="ruby-identifier">resource</span>, <span class="ruby-identifier">version</span>, <span class="ruby-identifier">options</span> )
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">configure_with</span>( <span class="ruby-identifier">resource</span>, <span class="ruby-identifier">version</span>, <span class="ruby-identifier">options</span> )
   <span class="ruby-identifier">raise</span> <span class="ruby-string">&quot;Subclasses must implement Hoodoo::Client::Endpoint\#configure_with&quot;</span>
 <span class="ruby-keyword">end</span></pre>
             </div>
@@ -796,7 +796,7 @@ copied.</p>
             </p>
             <div id="method-i-copy_updated_options_to_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/client/endpoint/endpoint.rb, line 303</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier">copy_updated_options_to</span>( <span class="ruby-identifier">target_endpoint</span> )
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">copy_updated_options_to</span>( <span class="ruby-identifier">target_endpoint</span> )
   <span class="ruby-identifier">target_endpoint</span>.<span class="ruby-identifier">session_id</span> = <span class="ruby-keyword">self</span>.<span class="ruby-identifier">session_id</span> <span class="ruby-keyword">unless</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">session_id</span>.<span class="ruby-identifier">nil?</span>
   <span class="ruby-identifier">target_endpoint</span>.<span class="ruby-identifier">locale</span>     = <span class="ruby-keyword">self</span>.<span class="ruby-identifier">locale</span>     <span class="ruby-keyword">unless</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">locale</span>.<span class="ruby-identifier">nil?</span>
 
@@ -842,11 +842,11 @@ Found&#39; for the target resource, version and given action.</p>
             </p>
             <div id="method-i-generate_404_response_for_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/client/endpoint/endpoint.rb, line 280</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier">generate_404_response_for</span>( <span class="ruby-identifier">action</span> )
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">generate_404_response_for</span>( <span class="ruby-identifier">action</span> )
   <span class="ruby-identifier">data</span> = <span class="ruby-identifier">response_class_for</span>( <span class="ruby-identifier">action</span> ).<span class="ruby-identifier">new</span>
   <span class="ruby-identifier">data</span>.<span class="ruby-identifier">platform_errors</span>.<span class="ruby-identifier">add_error</span>(
     <span class="ruby-string">&#39;platform.not_found&#39;</span>,
-    <span class="ruby-string">&#39;reference&#39;</span> =<span class="ruby-operator">&gt;</span> { <span class="ruby-value">:entity_name</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-node">&quot;v#{ @version } of #{ @resource } interface endpoint&quot;</span> }
+    <span class="ruby-string">&#39;reference&#39;</span> <span class="ruby-operator">=&gt;</span> { <span class="ruby-value">:entity_name</span> <span class="ruby-operator">=&gt;</span> <span class="ruby-node">&quot;v#{ @version } of #{ @resource } interface endpoint&quot;</span> }
   )
 
   <span class="ruby-keyword">return</span> <span class="ruby-identifier">data</span>
@@ -888,7 +888,7 @@ for more.</p>
             </p>
             <div id="method-i-inject_enumeration_state_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/client/endpoint/endpoint.rb, line 331</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier">inject_enumeration_state</span>( <span class="ruby-identifier">augmented_array</span>, <span class="ruby-identifier">query_hash</span> )
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">inject_enumeration_state</span>( <span class="ruby-identifier">augmented_array</span>, <span class="ruby-identifier">query_hash</span> )
   <span class="ruby-identifier">endpoint</span>   = <span class="ruby-keyword">self</span>
   <span class="ruby-identifier">query_hash</span> = <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Utilities</span>.<span class="ruby-identifier">stringify</span>( <span class="ruby-identifier">query_hash</span> <span class="ruby-operator">||</span> {} )
   <span class="ruby-identifier">batch_size</span> = [ <span class="ruby-value">1</span>, <span class="ruby-identifier">augmented_array</span>.<span class="ruby-identifier">size</span> ].<span class="ruby-identifier">max</span>
@@ -932,7 +932,7 @@ references, not instances).</p>
             </p>
             <div id="method-i-response_class_for_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/client/endpoint/endpoint.rb, line 266</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier">response_class_for</span>( <span class="ruby-identifier">action</span> )
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">response_class_for</span>( <span class="ruby-identifier">action</span> )
   <span class="ruby-keyword">return</span> <span class="ruby-identifier">action</span>.<span class="ruby-identifier">equal?</span>( <span class="ruby-value">:list</span> ) <span class="ruby-operator">?</span> <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Client</span><span class="ruby-operator">::</span><span class="ruby-constant">AugmentedArray</span> <span class="ruby-operator">:</span> <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Client</span><span class="ruby-operator">::</span><span class="ruby-constant">AugmentedHash</span>
 <span class="ruby-keyword">end</span></pre>
             </div>
