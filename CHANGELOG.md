@@ -1,5 +1,9 @@
 # Hoodoo v2.x
 
+## 2.8.0 (2018-08-07)
+
+* New "feature" of sorts, for [`#new_in`](https://cdn.rawgit.com/LoyaltyNZ/hoodoo/master/docs/rdoc/classes/Hoodoo/ActiveRecord/Creator/ClassMethods.html#method-i-new_in) - it no longer requires manual or automated dating support to be included or enabled. Setting the `created_at` value of a resource can have use cases outside of the need to support historic representations.
+
 ## 2.7.0 (2018-08-06)
 
 * General maintenance pass, updating development and runtime dependencies and including `bundle-audit`.

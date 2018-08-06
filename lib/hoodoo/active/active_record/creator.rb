@@ -120,10 +120,7 @@ module Hoodoo
           #       things we currently require - set "created_at"/"updated_at".
           #
           unless context.request.dated_from.nil?
-            instance.created_at = instance.updated_at = context.request.dated_from if (
-              ( self.include?( Hoodoo::ActiveRecord::Dated         ) && self.dating_enabled?()        ) ||
-              ( self.include?( Hoodoo::ActiveRecord::ManuallyDated ) && self.manual_dating_enabled?() )
-            )
+            instance.created_at = instance.updated_at = context.request.dated_from
           end
 
           return instance
