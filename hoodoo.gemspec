@@ -19,15 +19,16 @@ Gem::Specification.new do | s |
 
   s.required_ruby_version = '>= 2.2.10'
 
+  s.add_runtime_dependency     'rack',             '~>  2.0'
   s.add_runtime_dependency     'dalli',            '~>  2.7' # Memcached client
 
   s.add_development_dependency 'bundle-audit'
   s.add_development_dependency 'redis',            '~>  4.0' # Redis client
   s.add_development_dependency 'rake',             '~> 12.0'
   s.add_development_dependency 'simplecov-rcov',   '~>  0.2'
-
   s.add_development_dependency 'rdoc',             '~>  6.0' # See also 'sdoc' in Gemfile
   s.add_development_dependency 'rack-test',        '~>  1.1'
+  s.add_development_dependency 'alchemy-flux',     '= 1.2.1' # Since 1.3+ drop Ruby 2.2 support
   s.add_development_dependency 'rspec',            '~>  3.8'
   s.add_development_dependency 'rspec-mocks',      '~>  3.8'
   s.add_development_dependency 'webmock',          '~>  3.4'
