@@ -1,5 +1,9 @@
 # Hoodoo v2.x
 
+## 2.9.0 (2018-08-21)
+
+* Support wildcards in [identity maps](https://github.com/LoyaltyNZ/hoodoo/blob/master/docs/api_specification/README.md#caller.resource.interface.identity_maps) - as well as an Array of permitted values, the string `"*"` can be used as a permit-all wildcard. This is obviously as dangerous as it is powerful and should only be used with great caution.
+
 ## 2.8.0 (2018-08-07)
 
 * New "feature" of sorts, for [`#new_in`](https://cdn.rawgit.com/LoyaltyNZ/hoodoo/master/docs/rdoc/classes/Hoodoo/ActiveRecord/Creator/ClassMethods.html#method-i-new_in) - it no longer requires manual or automated dating support to be included or enabled. Setting the `created_at` value of a resource can have use cases outside of the need to support historic representations.
