@@ -986,7 +986,7 @@ The response to a `POST` will include a generated `authentication_secret`. ***Th
 
 The optional `authorised_identities` entry in the `scoping` section of the Caller resource describes an _identity map_ used by the implementation of the [`X-Assume-Identity-Of`](#http_x_assume_identity_of) secured HTTP header. This header lets an API caller specify an alternative identity for use in that one call. The key/value pairs expressed in the HTTP header's value are validated against the identity map.
 
-The identity map operates on a whitelist basis. Given that the associated HTTP header's aim is to change key/value pairs inside the session identity, the map specifies the keys you can specify and provides lists of the values permitted for those keys. The map can be deeply nested, so that particular values of particular keys may in turn allow only particular other values of other keys.
+The identity map operates on a whitelist basis, with wildcard support through character `*`. Given that the associated HTTP header's aim is to change key/value pairs inside the session identity, the map specifies the keys you can specify and provides lists of the values permitted for those keys. The map can be deeply nested, so that particular values of particular keys may in turn allow only particular other values of other keys.
 
 Due to the arbitrary potential key and value contents of the map given the generic use of identity information is up to the implementation of the Caller and Session resources and the meaning therein is API domain-specific, there is no formalised Type defined for the identity map; it is best described by example.
 
@@ -1008,7 +1008,12 @@ In the simple case, we could just list these out in a flat identity map. The sco
 }
 ```
 
-Note now each key's value _must_ be an array - even if it only has one entry - of the allowed identities that can be assumed for each of those named entries. The keys in the identity map match the keys permitted in the key-value pairs given with the HTTP header; the arrays of values in the identity map give the permitted individual values for the key-value pairs given with the HTTP header. Thus:
+Note that each key's value must be either:
+
+* An array - even if it only has one entry - of the allowed identities that can be assumed for the named entry.
+* The string `"*"` (an asterisk) - a wildcard indicating that any identity can be assumed for the named entry. This is powerful but very dangerous and should only be used for special cases such as highly secured "superuser"-like Callers, and even then, only with great caution.
+
+The keys in the identity map match the keys permitted in the key-value pairs given with the HTTP header; the arrays of values in the identity map give the permitted individual values for the key-value pairs given with the HTTP header or a wildcard string matches any value. For example, given the above example identity map definition, the following HTTP header is permitted:
 
 ```
 X-Assume-Identity-Of: account_id=account1&member_id=member3&device_id=device9
@@ -1020,7 +1025,7 @@ Partial identity overrides are permitted:
 X-Assume-Identity-Of: account_id=account94
 ```
 
-In this example, our model for the account/member/device example is a hierarchy. The 'flat' identity map above allows an errant API caller to assume an identity where, say, the given member does not belong to the given account. Given you must know the permitted values up-front, you must also know the hierarchy up-front; you can provide a more nested identity map that describes it:
+In the next example, our model for the account/member/device example is a hierarchy. The 'flat' identity map above allows an errant API caller to assume an identity where, say, the given member does not belong to the given account. Given you must know the permitted values up-front, you must also know the hierarchy up-front; you can provide a more nested identity map that describes it:
 
 ```json
 {
@@ -1086,9 +1091,9 @@ X-Assume-Identity-Of: member_id=account12
 So an identity map consists of an Object with:
 
 * Keys that describe same-named keys allowed in the [`X-Assume-Identity-Of`](#http_x_assume_identity_of) header value's key/value pair keys.
-* Values that at the furthest depth of used nesting must be arrays of permitted values in the header value's key/value pair values.
+* Values that at the lowest depth of nesting used must be either arrays of permitted values in the header value's key/value pair values, or the string `"*"` as a permit-all wildcard.
 * Values that alternatively are sub-objects describing a deeper level of nesting. In those sub-objects, keys describe the permitted header value's key/value pair values, and the values describe the nested identity map fragment to use if that value is detected.
-* To put it another way, you can see from the above that there's nesting pattern of alternating "permitted key, permitted value(s), permitted key, permitted value(s)..." all the way down to the final deepest part anywhere in the map which must be an array of permitted values.
+* To put it another way, you can see from the above that there's nesting pattern of alternating "permitted key, permitted value(s), permitted key, permitted value(s)..." all the way down to the final deepest part anywhere in the map which must be an array of permitted values or a wildcard.
 
 Placing a given header value's permitted key at more than one level in the map may provoke undefined behaviour, or at best be very confusing! This is not recommended. For example:
 
