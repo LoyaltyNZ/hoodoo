@@ -1577,73 +1577,56 @@ module Hoodoo; module Services
       # data in another (especially the records of which services were
       # announced by, and therefore must be local to, an instance).
 
-      if self.class.on_queue?
+      @discoverer ||= Hoodoo::Services::Discovery::ByConvention.new
 
-        @discoverer ||= Hoodoo::Services::Discovery::ByFlux.new
+      # Rack provides no formal way to find out our host or port before a
+      # request arrives, because in part it might change due to clustering.
+      # For local development on an assumed single instance server, we can
+      # ask Ruby itself for all Rack::Server instances, expecting just one.
+      # If there isn't just one, we rely on the Rack monkey patch or a
+      # hard coded default.
 
-        services.each do | service |
-          interface = service.interface_class
+      host = nil
+      port = nil
 
-          @discoverer.announce(
-            interface.resource,
-            interface.version,
-            { :services => services }
-          )
+      if defined?( ::Rack ) && defined?( ::Rack::Server )
+        servers = ObjectSpace.each_object( ::Rack::Server )
+
+        if servers.count == 1
+          server = servers.first
+          host   = server.options[ :Host ]
+          port   = server.options[ :Port ]
         end
+      end
 
-      else
+      host ||= @@recorded_host if defined?( @@recorded_host )
+      port ||= @@recorded_port if defined?( @@recorded_port )
 
-        @discoverer ||= Hoodoo::Services::Discovery::ByDRb.new
+      # Under test, ensure a simulation of an available host and port is
+      # always available for discovery-related tests.
 
-        # Rack provides no formal way to find out our host or port before a
-        # request arrives, because in part it might change due to clustering.
-        # For local development on an assumed single instance server, we can
-        # ask Ruby itself for all Rack::Server instances, expecting just one.
-        # If there isn't just one, we rely on the Rack monkey patch or a
-        # hard coded default.
+      if ( self.class.environment.test? )
+        host ||= '127.0.0.1'
+        port ||= '9292'
+      end
 
-        host = nil
-        port = nil
+      # Announce the resource endpoints. We might not be able to annouce
+      # the remote availability of this endpoint if the host/port are not
+      # determined; but that might just be because we are running under
+      # "racksh" and we wouldn't want to announce remotely anyway.
 
-        if defined?( ::Rack ) && defined?( ::Rack::Server )
-          servers = ObjectSpace.each_object( ::Rack::Server )
+      services.each do | service |
+        interface = service.interface_class
 
-          if servers.count == 1
-            server = servers.first
-            host   = server.options[ :Host ]
-            port   = server.options[ :Port ]
-          end
-        end
-
-        host ||= @@recorded_host if defined?( @@recorded_host )
-        port ||= @@recorded_port if defined?( @@recorded_port )
-
-        # Under test, ensure a simulation of an available host and port is
-        # always available for discovery-related tests.
-
-        if ( self.class.environment.test? )
-          host ||= '127.0.0.1'
-          port ||= '9292'
-        end
-
-        # Announce the resource endpoints. We might not be able to annouce
-        # the remote availability of this endpoint if the host/port are not
-        # determined; but that might just be because we are running under
-        # "racksh" and we wouldn't want to announce remotely anyway.
-
-        services.each do | service |
-          interface = service.interface_class
-
-          @discoverer.announce(
-            interface.resource,
-            interface.version,
-            {
-              :host => host,
-              :port => port,
-              :path => service.base_path
-            }
-          )
-        end
+        @discoverer.announce(
+          interface.resource,
+          interface.version,
+          {
+            :host => host,
+            :port => port,
+            :path => service.base_path
+          }
+        )
       end
     end
 
