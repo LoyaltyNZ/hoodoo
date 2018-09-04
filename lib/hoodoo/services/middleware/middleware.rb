@@ -1663,6 +1663,18 @@ module Hoodoo; module Services
       session      = nil
       session_id   = interaction.rack_request.env[ 'HTTP_X_SESSION_ID' ]
 
+      if session_id.nil? || session_id.strip.empty?
+        authorization = interaction.rack_request.env[ 'HTTP_AUTHORIZATION' ]
+
+        unless authorization.nil?
+          authorization = authorization.split( /\s/ )
+
+          if authorization.count == 2 && authorization.first.strip.downcase == 'bearer'
+            session_id = authorization.last.to_s.strip
+          end
+        end
+      end
+
       if session_id != nil && ( test_session.nil? || test_session.session_id != session_id )
         session = Hoodoo::Services::Session.new(
           :memcached_host => self.class.memcached_host(),
