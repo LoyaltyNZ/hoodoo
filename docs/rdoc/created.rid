@@ -1,10 +1,10 @@
-Tue, 07 Aug 2018 08:23:53 +1200
+Tue, 21 Aug 2018 13:17:28 +1200
 README.md	Tue, 22 May 2018 08:34:42 +1200
 lib/hoodoo.rb	Thu, 02 Nov 2017 08:44:50 +1300
 lib/hoodoo/active.rb	Thu, 12 Oct 2017 08:31:46 +1300
 lib/hoodoo/active/active_model/uuid_validator.rb	Thu, 29 Mar 2018 08:39:52 +1300
 lib/hoodoo/active/active_record/base.rb	Thu, 12 Oct 2017 08:31:46 +1300
-lib/hoodoo/active/active_record/creator.rb	Tue, 07 Aug 2018 08:22:18 +1200
+lib/hoodoo/active/active_record/creator.rb	Wed, 08 Aug 2018 15:00:12 +1200
 lib/hoodoo/active/active_record/dated.rb	Thu, 29 Mar 2018 08:39:52 +1300
 lib/hoodoo/active/active_record/error_mapping.rb	Thu, 12 Oct 2017 08:31:46 +1300
 lib/hoodoo/active/active_record/finder.rb	Mon, 16 Apr 2018 14:22:45 +1200
@@ -20,7 +20,7 @@ lib/hoodoo/client.rb	Thu, 12 Oct 2017 08:31:46 +1300
 lib/hoodoo/client/augmented_array.rb	Thu, 12 Oct 2017 08:31:46 +1300
 lib/hoodoo/client/augmented_base.rb	Thu, 12 Oct 2017 08:31:46 +1300
 lib/hoodoo/client/augmented_hash.rb	Thu, 12 Oct 2017 08:31:46 +1300
-lib/hoodoo/client/client.rb	Tue, 07 Aug 2018 08:22:05 +1200
+lib/hoodoo/client/client.rb	Tue, 21 Aug 2018 12:54:27 +1200
 lib/hoodoo/client/endpoint/endpoint.rb	Fri, 01 Jun 2018 14:37:15 +1200
 lib/hoodoo/client/endpoint/endpoints/amqp.rb	Thu, 12 Oct 2017 08:31:46 +1300
 lib/hoodoo/client/endpoint/endpoints/auto_session.rb	Thu, 12 Oct 2017 08:31:46 +1300
@@ -104,7 +104,7 @@ lib/hoodoo/services/middleware/exception_reporting/exception_reporting.rb	Thu, 1
 lib/hoodoo/services/middleware/exception_reporting/reporters/airbrake_reporter.rb	Thu, 29 Mar 2018 08:39:52 +1300
 lib/hoodoo/services/middleware/exception_reporting/reporters/raygun_reporter.rb	Thu, 12 Oct 2017 08:31:46 +1300
 lib/hoodoo/services/middleware/interaction.rb	Thu, 29 Mar 2018 08:39:52 +1300
-lib/hoodoo/services/middleware/middleware.rb	Tue, 07 Aug 2018 08:23:03 +1200
+lib/hoodoo/services/middleware/middleware.rb	Tue, 21 Aug 2018 12:59:49 +1200
 lib/hoodoo/services/middleware/rack_monkey_patch.rb	Thu, 12 Oct 2017 08:31:46 +1300
 lib/hoodoo/services/services/context.rb	Fri, 01 Jun 2018 13:14:55 +1200
 lib/hoodoo/services/services/implementation.rb	Thu, 12 Oct 2017 08:31:46 +1300
@@ -126,4 +126,4 @@ lib/hoodoo/utilities.rb	Thu, 12 Oct 2017 08:31:46 +1300
 lib/hoodoo/utilities/string_inquirer.rb	Thu, 12 Oct 2017 08:31:46 +1300
 lib/hoodoo/utilities/utilities.rb	Tue, 22 May 2018 08:34:42 +1200
 lib/hoodoo/utilities/uuid.rb	Thu, 12 Oct 2017 08:31:46 +1300
-lib/hoodoo/version.rb	Tue, 07 Aug 2018 08:23:34 +1200
+lib/hoodoo/version.rb	Tue, 21 Aug 2018 13:05:33 +1200

@@ -25,6 +25,17 @@ describe Hoodoo::TransientStore::Mocks::Redis do
     end
   end
 
+  context 'deprecated interfaces in Redis' do
+    it 'supports Array-like "set" and "get"' do
+      mock_redis_instance = Hoodoo::TransientStore::Mocks::Redis.new
+      key                 = Hoodoo::UUID.generate()
+      value               = Hoodoo::UUID.generate()
+
+      mock_redis_instance[ key ] = value
+      expect( mock_redis_instance[ key ] ).to eq( value )
+    end
+  end
+
   context 'approximate old behaviour by' do
     it 'using the mock client in test mode if there is an empty host' do
       expect_any_instance_of( Hoodoo::TransientStore::Mocks::Redis ).to receive( :initialize ).once.and_call_original()
