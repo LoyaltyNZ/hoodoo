@@ -1,5 +1,10 @@
 # Hoodoo v2.x
 
+## 2.10.0 (2018-12-04)
+
+* Allows [Hoodoo::Utilities.is_in_future?](https://cdn.rawgit.com/LoyaltyNZ/hoodoo/master/docs/rdoc/classes/Hoodoo/Utilities.html#method-c-is_in_future-3F) to compare a timestamp against a timestamp other than `DateTime.now` (e.g. for backdated context).
+* Maintenance `bundle update`.
+
 ## 2.9.0 (2018-08-21)
 
 * Support wildcards in [identity maps](https://github.com/LoyaltyNZ/hoodoo/blob/master/docs/api_specification/README.md#caller.resource.interface.identity_maps) - as well as an Array of permitted values, the string `"*"` can be used as a permit-all wildcard. This is obviously as dangerous as it is powerful and should only be used with great caution.

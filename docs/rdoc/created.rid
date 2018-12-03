@@ -1,4 +1,4 @@
-Tue, 04 Dec 2018 10:07:34 +1300
+Tue, 04 Dec 2018 12:09:06 +1300
 README.md	Thu, 13 Sep 2018 11:42:28 +1200
 lib/hoodoo.rb	Thu, 13 Sep 2018 11:42:28 +1200
 lib/hoodoo/active.rb	Thu, 13 Sep 2018 11:42:28 +1200
@@ -124,6 +124,6 @@ lib/hoodoo/transient_store/transient_store/memcached_redis_mirror.rb	Thu, 13 Sep
 lib/hoodoo/transient_store/transient_store/redis.rb	Thu, 13 Sep 2018 11:42:28 +1200
 lib/hoodoo/utilities.rb	Thu, 13 Sep 2018 11:42:28 +1200
 lib/hoodoo/utilities/string_inquirer.rb	Thu, 13 Sep 2018 11:42:28 +1200
-lib/hoodoo/utilities/utilities.rb	Tue, 04 Dec 2018 10:07:24 +1300
+lib/hoodoo/utilities/utilities.rb	Tue, 04 Dec 2018 10:15:38 +1300
 lib/hoodoo/utilities/uuid.rb	Thu, 13 Sep 2018 11:42:28 +1200
-lib/hoodoo/version.rb	Thu, 13 Sep 2018 11:42:28 +1200
+lib/hoodoo/version.rb	Tue, 04 Dec 2018 12:08:43 +1300
