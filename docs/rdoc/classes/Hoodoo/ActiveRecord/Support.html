@@ -19,7 +19,7 @@
     <meta property="og:description" content="Most of the ActiveRecord support code provides mixins with a public API.">
 
     <meta name="keywords" content="Hoodoo::ActiveRecord::Support class">
-    <meta name="keywords" content="framework_search_and_filter_data, process_to_map, full_scope_for, add_undated_scope_to">
+    <meta name="keywords" content="framework_search_and_filter_data, process_to_map, full_scope_for, add_undated_scope_to, translate_errors_on">
 </head>
 
 <body>
@@ -88,6 +88,14 @@ them in future and update your calling code.</p>
             <ul>
                 <li>
                     <a href="#method-c-process_to_map">process_to_map</a>
+                </li>
+            </ul>
+        </dd>
+        <dt>T</dt>
+        <dd>
+            <ul>
+                <li>
+                    <a href="#method-c-translate_errors_on">translate_errors_on</a>
                 </li>
             </ul>
         </dd>
@@ -351,6 +359,157 @@ Returns a similar Hash with all-String keys and a Proc for every value.</p>
   <span class="ruby-keyword">end</span>
 
   <span class="ruby-keyword">return</span> <span class="ruby-identifier">map</span>
+<span class="ruby-keyword">end</span></pre>
+            </div>
+        </div>
+    </div>
+    <div class="method">
+        <div class="title method-title" id="method-c-translate_errors_on">
+            <b>translate_errors_on</b>( model_instance, hoodoo_errors = nil )
+            <a href="../../../classes/Hoodoo/ActiveRecord/Support.html#method-c-translate_errors_on" name="method-c-translate_errors_on" class="permalink">Link</a>
+        </div>
+
+        <div class="description">
+            <p>When given an <a href="../ActiveRecord.html">ActiveRecord</a> model
+instance which may have errors set on it as a result of a prior validate or
+save call, map any found errors from <a
+href="../ActiveRecord.html">ActiveRecord</a> to a <a
+href="../Errors.html">Hoodoo::Errors</a> instance. The mapping is
+comprehensive; it even checks the data type of errant columns and tries to
+find a <code>generic...</code> family error to use for mapped result (e.g.
+<code>generic.invalid_string</code> or
+<code>generic.invalid_integer</code>).</p>
+
+<p>Usually, the Hoodoo:ActiveRecord::ErrorMapping mixin is included into an <a
+href="../ActiveRecord.html">ActiveRecord</a> model directly and this method
+is therefore not used directly;
+Hoodoo:ActiveRecord::ErrorMapping.adds_errors_to? or similar is called
+instead.</p>
+
+<h2 id="method-c-translate_errors_on-label-Associations">Associations</h2>
+
+<p>When a model has associations and nested attributes are accepted for those
+associations, a validity query on an instance constructed with nested
+attributes will cause <a href="../ActiveRecord.html">ActiveRecord</a> to
+traverse all such attributes and aggregate specific errors on the parent
+object. This is specifically different from
+<code>validates_associated</code>, wherein associations constructed and
+attached through any means are validated independently, with validation
+errors independently added to those objects and the parent only gaining a
+generic “foo is invalid” error.</p>
+
+<p>In such cases, the error mapper will attempt to path-traverse the
+error&#39;s column references to determine the association&#39;s column
+type and produce a fully mapped error with a reference to the full path.
+Service authors are encouraged to use this approach if associations are
+involved, as it yields the most comprehensive mapped error collection.</p>
+
+<p>In the example below, note how the Child model does not need to include <a
+href="../../Hoodoo.html">Hoodoo</a> error mapping (though it can do so
+harmlessly if it so wishes) because it is the Parent model that drives the
+mapping of all the validations aggregated by <a
+href="../ActiveRecord.html">ActiveRecord</a> into an instance of Parent due
+to <code>accepts_nested_attributes_for</code>.</p>
+
+<p>So, given this:</p>
+
+<pre><code>def Parent &lt; ActiveRecord::Base
+  has_many :children
+  accepts_nested_attributes_for :children
+end
+
+def Child &lt; ActiveRecord::Base
+  belongs_to :parent
+
+  # ...then add ActiveRecord validations - e.g.:
+
+  validates :some_child_field, :length =&gt; { :maximum =&gt; 5 }
+end
+</code></pre>
+
+<p>…then if a Parent were to be constructed thus:</p>
+
+<pre><code>parent = Parent.new( {
+  &quot;parent_field_1&quot; = &quot;foo&quot;,
+  &quot;parent_field_2&quot; = &quot;bar&quot;,
+  &quot;children_attributes&quot; = [
+    { &quot;some_child_field&quot; = &quot;child_1_foo&quot; },
+    { &quot;some_child_field&quot; = &quot;child_2_foo&quot; },
+    # ...
+  ],
+  # ...
+} )
+</code></pre>
+
+<p>…then <code>translate_errors_on( parent )</code> could return a <a
+href="../Errors.html">Hoodoo::Errors</a> collection containing entries such
+as:</p>
+
+<pre><code>{
+  &quot;code&quot;      =&gt; &quot;generic.invalid_string&quot;,
+  &quot;message    =&gt; &quot;is too long (maximum is 5 characters)&quot;,
+  &quot;reference&quot; =&gt; &quot;children.some_child_field&quot;
+}
+</code></pre>
+<dl class="rdoc-list note-list"><dt><code>model_instance</code>
+<dd>
+<p>The <a href="../ActiveRecord.html">ActiveRecord</a> model which may have
+errors set as a result of a prior validation failure.</p>
+</dd><dt><code>hoodoo_errors</code>
+<dd>
+<p>Optional <a href="../Errors.html">Hoodoo::Errors</a> instance. If provided,
+any mapped errors are added onto this existing set. If omitted, the method
+returns a new collection.</p>
+</dd></dl>
+
+<p>Returns a new <a href="../Errors.html">Hoodoo::Errors</a> collection (which
+may have no errors in it, if the model had not validation errors) or the
+value given in the <code>hoodoo_errors</code> parameter with zero or more
+new errors added.</p>
+        </div>
+
+
+
+        <div class="sourcecode">
+
+            <p class="source-link">
+                Source:
+                <a href="javascript:toggleSource('method-c-translate_errors_on_source')" id="l_method-c-translate_errors_on_source">show</a>
+            </p>
+            <div id="method-c-translate_errors_on_source" class="dyn-source">
+                <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/support.rb, line 270</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">translate_errors_on</span>( <span class="ruby-identifier">model_instance</span>, <span class="ruby-identifier">hoodoo_errors</span> = <span class="ruby-keyword">nil</span> )
+  <span class="ruby-identifier">hoodoo_errors</span> <span class="ruby-operator">||=</span> <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Errors</span>.<span class="ruby-identifier">new</span>
+
+  <span class="ruby-keyword">if</span> <span class="ruby-identifier">model_instance</span>.<span class="ruby-identifier">errors</span>.<span class="ruby-identifier">any?</span>
+    <span class="ruby-identifier">model_instance</span>.<span class="ruby-identifier">errors</span>.<span class="ruby-identifier">messages</span>.<span class="ruby-identifier">each_pair</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span> <span class="ruby-identifier">attribute_name</span>, <span class="ruby-identifier">message_array</span> <span class="ruby-operator">|</span>
+      <span class="ruby-identifier">attribute_name</span> = <span class="ruby-identifier">attribute_name</span>.<span class="ruby-identifier">to_s</span>
+
+      <span class="ruby-identifier">attribute_type</span> = <span class="ruby-identifier">determine_deep_attribute_type</span>( <span class="ruby-identifier">model_instance</span>, <span class="ruby-identifier">attribute_name</span> )
+      <span class="ruby-identifier">attribute_name</span> = <span class="ruby-string">&#39;model instance&#39;</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">attribute_name</span> <span class="ruby-operator">==</span> <span class="ruby-string">&#39;base&#39;</span>
+
+      <span class="ruby-identifier">message_array</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span> <span class="ruby-identifier">message</span> <span class="ruby-operator">|</span>
+        <span class="ruby-identifier">error_code</span> = <span class="ruby-keyword">case</span> <span class="ruby-identifier">message</span>
+          <span class="ruby-keyword">when</span> <span class="ruby-string">&#39;has already been taken&#39;</span>
+            <span class="ruby-string">&#39;generic.invalid_duplication&#39;</span>
+          <span class="ruby-keyword">else</span>
+            <span class="ruby-identifier">attribute_type</span> <span class="ruby-operator">==</span> <span class="ruby-string">&#39;text&#39;</span> <span class="ruby-operator">?</span> <span class="ruby-string">&#39;generic.invalid_string&#39;</span> <span class="ruby-operator">:</span> <span class="ruby-node">&quot;generic.invalid_#{ attribute_type }&quot;</span>
+        <span class="ruby-keyword">end</span>
+
+        <span class="ruby-keyword">unless</span> <span class="ruby-identifier">hoodoo_errors</span>.<span class="ruby-identifier">descriptions</span>.<span class="ruby-identifier">recognised?</span>( <span class="ruby-identifier">error_code</span> )
+          <span class="ruby-identifier">error_code</span> = <span class="ruby-string">&#39;generic.invalid_parameters&#39;</span>
+        <span class="ruby-keyword">end</span>
+
+        <span class="ruby-identifier">hoodoo_errors</span>.<span class="ruby-identifier">add_error</span>(
+          <span class="ruby-identifier">error_code</span>,
+          <span class="ruby-value">:message</span>   <span class="ruby-operator">=&gt;</span> <span class="ruby-identifier">message</span>,
+          <span class="ruby-value">:reference</span> <span class="ruby-operator">=&gt;</span> { <span class="ruby-value">:field_name</span> <span class="ruby-operator">=&gt;</span> <span class="ruby-identifier">attribute_name</span> }
+        )
+      <span class="ruby-keyword">end</span>
+    <span class="ruby-keyword">end</span>
+  <span class="ruby-keyword">end</span>
+
+  <span class="ruby-keyword">return</span> <span class="ruby-identifier">hoodoo_errors</span>
 <span class="ruby-keyword">end</span></pre>
             </div>
         </div>

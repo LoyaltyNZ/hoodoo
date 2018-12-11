@@ -1,5 +1,9 @@
 # Hoodoo v2.x
 
+## 2.11.0 (2018-12-12)
+
+* Moved the [Hoodoo::ActiveRecord::ErrorMapping](https://cdn.rawgit.com/LoyaltyNZ/hoodoo/master/docs/rdoc/classes/Hoodoo/ActiveRecord/ErrorMapping.html) mixin core mapping code out to support method [Hoodoo::ActiveRecord::Support#translate_errors_on](https://cdn.rawgit.com/LoyaltyNZ/hoodoo/master/docs/rdoc/classes/Hoodoo/ActiveRecord/Support.html#method-c-translate_errors_on) so that it can be called for arbitrary ActiveRecord model instances, whether or not they use the Hoodoo error mapping mixin.
+
 ## 2.10.0 (2018-12-04)
 
 * Allows [Hoodoo::Utilities.is_in_future?](https://cdn.rawgit.com/LoyaltyNZ/hoodoo/master/docs/rdoc/classes/Hoodoo/Utilities.html#method-c-is_in_future-3F) to compare a timestamp against a timestamp other than `DateTime.now` (e.g. for backdated context).
