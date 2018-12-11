@@ -446,30 +446,6 @@ describe Hoodoo::ActiveRecord::Support do
       ] )
     end
 
-    it 'handles varying validation types via the alternative interface' do
-      m = RSpecModelErrorMappingTest.new( {
-        :boolean  => true,
-        :date     => Time.now,
-        :datetime => Time.now,
-        :decimal  => 2.3,
-        :float    => 2.3,
-        :integer  => 42,
-        :string   => "hello - this is far too long for the maximum field length",
-        :text     => "hello",
-        :time     => Time.now,
-        :array    => [ 'hello' ]
-      } )
-
-      m.validate()
-      expect( described_class.translate_errors_on( m ).errors ).to eq( [
-        {
-          "code" => "generic.invalid_string",
-          "message" => "is too long (maximum is 16 characters)",
-          "reference" => "string"
-        }
-      ] )
-    end
-
     it 'handles arrays' do
       m = RSpecModelErrorMappingTest.new( {
         :boolean  => true,
