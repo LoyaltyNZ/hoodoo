@@ -1,4 +1,4 @@
-Wed, 12 Dec 2018 10:19:17 +1300
+Wed, 12 Dec 2018 15:48:52 +1300
 README.md	Tue, 22 May 2018 08:34:42 +1200
 lib/hoodoo.rb	Thu, 02 Nov 2017 08:44:50 +1300
 lib/hoodoo/active.rb	Wed, 12 Dec 2018 09:44:19 +1300
@@ -6,13 +6,13 @@ lib/hoodoo/active/active_model/uuid_validator.rb	Thu, 29 Mar 2018 08:39:52 +1300
 lib/hoodoo/active/active_record/base.rb	Thu, 12 Oct 2017 08:31:46 +1300
 lib/hoodoo/active/active_record/creator.rb	Wed, 08 Aug 2018 15:00:12 +1200
 lib/hoodoo/active/active_record/dated.rb	Thu, 29 Mar 2018 08:39:52 +1300
-lib/hoodoo/active/active_record/error_mapping.rb	Wed, 12 Dec 2018 09:44:26 +1300
+lib/hoodoo/active/active_record/error_mapping.rb	Wed, 12 Dec 2018 11:16:27 +1300
 lib/hoodoo/active/active_record/finder.rb	Mon, 16 Apr 2018 14:22:45 +1200
 lib/hoodoo/active/active_record/manually_dated.rb	Mon, 06 Aug 2018 09:04:05 +1200
 lib/hoodoo/active/active_record/search_helper.rb	Thu, 29 Mar 2018 08:39:52 +1300
 lib/hoodoo/active/active_record/secure.rb	Fri, 01 Jun 2018 13:14:55 +1200
 lib/hoodoo/active/active_record/security_helper.rb	Fri, 01 Jun 2018 13:14:55 +1200
-lib/hoodoo/active/active_record/support.rb	Wed, 12 Dec 2018 10:01:03 +1300
+lib/hoodoo/active/active_record/support.rb	Wed, 12 Dec 2018 11:16:27 +1300
 lib/hoodoo/active/active_record/translated.rb	Thu, 12 Oct 2017 08:31:46 +1300
 lib/hoodoo/active/active_record/uuid.rb	Thu, 29 Mar 2018 08:39:52 +1300
 lib/hoodoo/active/active_record/writer.rb	Fri, 01 Jun 2018 13:14:55 +1200
@@ -126,4 +126,4 @@ lib/hoodoo/utilities.rb	Thu, 12 Oct 2017 08:31:46 +1300
 lib/hoodoo/utilities/string_inquirer.rb	Thu, 12 Oct 2017 08:31:46 +1300
 lib/hoodoo/utilities/utilities.rb	Tue, 04 Dec 2018 12:28:43 +1300
 lib/hoodoo/utilities/uuid.rb	Thu, 12 Oct 2017 08:31:46 +1300
-lib/hoodoo/version.rb	Wed, 12 Dec 2018 10:05:53 +1300
+lib/hoodoo/version.rb	Wed, 12 Dec 2018 15:48:41 +1300

@@ -10,9 +10,9 @@ GIT
 PATH
   remote: .
   specs:
-    hoodoo (2.11.0)
+    hoodoo (2.11.1)
       dalli (~> 2.7)
-      rack (~> 2.0)
+      rack
 
 GEM
   remote: https://rubygems.org/
