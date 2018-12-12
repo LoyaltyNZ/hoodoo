@@ -1,5 +1,9 @@
 # Hoodoo v2.x
 
+## 2.11.1 (2018-12-12)
+
+* Hoodoo v2.0.0's release back in 2017 included a requirement to use Rack 2 or later. While this is important for security reasons on anything using the Hoodoo middleware, it does meant that software using just the _client_ or other non-middleware gem components is forced to use Rack 2 as well. This constraint has been relaxed, though _caveat emptor_; if writing a service, it'll be up to you to ensure Rack 2 is present.
+
 ## 2.11.0 (2018-12-12)
 
 * Moved the [Hoodoo::ActiveRecord::ErrorMapping](https://cdn.rawgit.com/LoyaltyNZ/hoodoo/master/docs/rdoc/classes/Hoodoo/ActiveRecord/ErrorMapping.html) mixin core mapping code out to support method [Hoodoo::ActiveRecord::Support#translate_errors_on](https://cdn.rawgit.com/LoyaltyNZ/hoodoo/master/docs/rdoc/classes/Hoodoo/ActiveRecord/Support.html#method-c-translate_errors_on) so that it can be called for arbitrary ActiveRecord model instances, whether or not they use the Hoodoo error mapping mixin.
