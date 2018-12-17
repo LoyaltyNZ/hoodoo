@@ -243,18 +243,15 @@ module Hoodoo; module Services
       @@environment ||= Hoodoo::StringInquirer.new( ENV[ 'RACK_ENV' ] || 'development' )
     end
 
+    # This method is deprecated. Use ::has_session_store? instead.
+    #
     # Return a boolean value for whether Memcached is explicitly defined as
     # the Hoodoo::TransientStore engine. In previous versions, a +nil+ response
     # used to indicate local development without a queue available, but that is
     # not a valid assumption in modern code.
     #
-    # This method is deprecated and use of #has_session_store? is
-    # preferred.
-    #
     def self.has_memcached?
-      Hoodoo::Services::Middleware.logger.warn(
-        'Hoodoo::Services::Middleware::Middleware#has_memcached? is deprecated - use #has_session_store?'
-      )
+      $stderr.puts( 'Hoodoo::Services::Middleware::Middleware#has_memcached? is deprecated - use #has_session_store?' )
 
       m = self.memcached_host()
       m.nil? == false && m.empty? == false
@@ -268,6 +265,8 @@ module Hoodoo; module Services
       config.nil? == false && config.empty? == false
     end
 
+    # This method is deprecated. Use ::session_store_uri instead.
+    #
     # Return a Memcached host (IP address/port combination) as a String if
     # defined in environment variable MEMCACHED_HOST (with MEMCACHE_URL also
     # accepted as a legacy fallback).
@@ -290,32 +289,67 @@ module Hoodoo; module Services
       @@memcached_host = nil
     end
 
-    # Return configuration for the selected Hoodoo::TransientStore engine,
-    # either as a flat String (IP address/ port combination) or a serialised
-    # JSON string with symbolised keys, defining a URI for each supported
-    # storage engine defined (required if +ENV[ 'SESSION_STORE_ENGINE' ]+
-    # defines a multi-engine strategy).
+    # Return configuration for the selected Hoodoo::TransientStore engine, as
+    # a flat String (IP address/ port combination) or a serialised JSON string
+    # with symbolised keys, defining a URI for each supported storage engine
+    # defined (required if <tt>ENV[ 'SESSION_STORE_ENGINE' ]</yy> defines a
+    # multi-engine strategy).
     #
     # Checks for the engine agnostic environment variable +SESSION_STORE_URI+
     # first then uses #memcached_host as a legacy fallback.
     #
     def self.session_store_uri
-      ENV[ 'SESSION_STORE_URI' ] || self.memcached_host()
+
+      # See also ::clear_session_store_configuration_cache!
+      #
+      @@session_store_uri ||= ( ENV[ 'SESSION_STORE_URI' ] || self.memcached_host() )
+
     end
 
     # Return a symbolised key for the transient storage engine as defined in
     # the environment variable +SESSION_STORE_ENGINE+ (with +:memcached+ as a
-    # legacy fallback if #memcached_host is defined).
+    # legacy fallback if ::has_memcached? is +true+, else default is +nil+).
     #
-    # +ENV[ 'SESSION_STORE_ENGINE' ]+:: An entry from
-    #                                   ::supported_storage_engines.
+    # The +SESSION_STORE_ENGINE+ environment variable must contain an entry
+    # from Hoodoo::TransientStore::supported_storage_engines. This collection
+    # is initialised by either requiring the top-level +hoodoo+ file to pull
+    # in everything, requiring <tt>hoodoo/transient_store</tt> to pull in all
+    # currently defined transient store engines or requiring the following
+    # in order to pull in a specific engine - in this example, redis:
+    #
+    #         require 'hoodoo/transient_store/transient_store'
+    #         require 'hoodoo/transient_store/transient_store/base'
+    #         require 'hoodoo/transient_store/transient_store/redis'
+    #
+    # If the engine requested appears to be unsupported, this method returns
+    # +nil+.
     #
     def self.session_store_engine
-      if ENV[ 'SESSION_STORE_ENGINE' ]
-        ENV[ 'SESSION_STORE_ENGINE' ].to_sym
-      elsif self.has_memcached?
-        :memcached
+      if (
+        ! defined?( @@session_store_engine ) ||
+        @@session_store_engine.nil?          ||
+        @@session_store_engine.empty?
+      )
+        default = self.has_memcached? ? 'memcached' : ''
+        engine = ( ENV[ 'SESSION_STORE_ENGINE' ] || default ).to_sym()
+
+        if Hoodoo::TransientStore::supported_storage_engines.include?( engine )
+          @@session_store_engine = engine
+        else
+          @@session_store_engine = nil
+        end
       end
+
+      @@session_store_engine
+    end
+
+    # This method is intended really just for testing purposes; it clears the
+    # internal cache of session storage engine data read from environment
+    # variables.
+    #
+    def self.clear_session_store_configuration_cache!
+      @@session_store_engine = nil
+      @@session_store_uri    = nil
     end
 
     # Are we running on the queue, else (implied) a local HTTP server?
@@ -1693,8 +1727,8 @@ module Hoodoo; module Services
       end
     end
 
-    # Load a session from the selected Hoodoo::TransientStore on the basis of a
-    # session ID header in the current interaction's Rack request data.
+    # Load a session from the selected Hoodoo::TransientStore on the basis of
+    # a session ID header in the current interaction's Rack request data.
     #
     # On exit, the interaction context may have been updated. Be sure to
     # check +interaction.context.response.halt_processing?+ to see if

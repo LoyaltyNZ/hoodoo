@@ -121,7 +121,7 @@ module Hoodoo
 
       # Declares the transient storage engine this session will write to.
       # Both this and +storage_host_uri+ are used within
-      # Hoodoo::TransientStore::new which provides an abstraction.
+      # Hoodoo::TransientStore::new.
       #
       attr_accessor :storage_engine
 
@@ -150,7 +150,9 @@ module Hoodoo
       # +caller_fingerprint:: Optional Caller fingerprint UUID. Defaults to
       #                       +nil+.
       #
-      # +storage_engine+::    An entry from ::supported_storage_engines.
+      # +storage_engine+::    An entry (Symbol) from
+      #                       Hoodoo::TransientStore::supported_storage_engines.
+      #                       Defaults to +:memcached+.
       #
       # +storage_host_uri+::  URI for Hoodoo::TransientStore engine
       #                       connections.

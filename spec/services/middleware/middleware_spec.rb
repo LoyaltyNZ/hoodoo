@@ -179,11 +179,13 @@ describe Hoodoo::Services::Middleware do
 
   context 'utility methods' do
     before :each do
+      Hoodoo::Services::Middleware.clear_session_store_configuration_cache!
       Hoodoo::Services::Middleware.clear_memcached_configuration_cache!
       Hoodoo::Services::Middleware.clear_queue_configuration_cache!
     end
 
     after :each do
+      Hoodoo::Services::Middleware.clear_session_store_configuration_cache!
       Hoodoo::Services::Middleware.clear_memcached_configuration_cache!
       Hoodoo::Services::Middleware.clear_queue_configuration_cache!
     end
@@ -218,11 +220,13 @@ describe Hoodoo::Services::Middleware do
       ENV[ 'MEMCACHED_HOST'       ] = nil
       ENV[ 'SESSION_STORE_URI'    ] = nil
       ENV[ 'SESSION_STORE_ENGINE' ] = nil
+      Hoodoo::Services::Middleware.clear_session_store_configuration_cache!
       expect( Hoodoo::Services::Middleware.has_session_store?   ).to eq( false )
       expect( Hoodoo::Services::Middleware.session_store_engine ).to be_nil
       expect( Hoodoo::Services::Middleware.session_store_uri    ).to be_nil
       ENV[ 'SESSION_STORE_URI'    ] = 'foo'
       ENV[ 'SESSION_STORE_ENGINE' ] = 'redis'
+      Hoodoo::Services::Middleware.clear_session_store_configuration_cache!
       expect( Hoodoo::Services::Middleware.has_session_store?   ).to eq( true   )
       expect( Hoodoo::Services::Middleware.session_store_uri    ).to eq( 'foo'  )
       expect( Hoodoo::Services::Middleware.session_store_engine ).to eq( :redis )
@@ -235,9 +239,11 @@ describe Hoodoo::Services::Middleware do
       old_engine = ENV[ 'SESSION_STORE_ENGINE' ]
       ENV[ 'MEMCACHED_HOST'       ] = nil
       ENV[ 'SESSION_STORE_ENGINE' ] = nil
+      Hoodoo::Services::Middleware.clear_session_store_configuration_cache!
       expect( Hoodoo::Services::Middleware.has_memcached? ).to eq(false)
       expect( Hoodoo::Services::Middleware.session_store_engine ).to be_nil
       ENV[ 'MEMCACHED_HOST'       ] = 'foo'
+      Hoodoo::Services::Middleware.clear_session_store_configuration_cache!
       expect( Hoodoo::Services::Middleware.has_memcached? ).to eq(true)
       expect( Hoodoo::Services::Middleware.session_store_engine ).to eq(:memcached)
       ENV[ 'MEMCACHED_HOST'       ] = old_uri
