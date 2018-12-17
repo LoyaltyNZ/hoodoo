@@ -137,27 +137,28 @@ module Hoodoo
       #
       # Options are:
       #
-      # +session_id+::        UUID of this session. If unset, a new UUID is
-      #                       generated for you. You can read the UUID with
-      #                       the #session_id accessor method.
+      # +session_id+::         UUID of this session. If unset, a new UUID is
+      #                        generated for you. You can read the UUID with
+      #                        the #session_id accessor method.
       #
-      # +caller_id+::         UUID of the Caller instance associated with this
-      #                       session. This can be set either now or later, but
-      #                       the session cannot be saved without it.
+      # +caller_id+::          UUID of the Caller instance associated with this
+      #                        session. This can be set either now or later,
+      #                        but the session cannot be saved without it.
       #
-      # +caller_version+::    Version of the Caller instance. Defaults to zero.
+      # +caller_version+::     Version of the Caller instance. Defaults to
+      #                        zero.
       #
-      # +caller_fingerprint:: Optional Caller fingerprint UUID. Defaults to
-      #                       +nil+.
+      # +caller_fingerprint+:: Optional Caller fingerprint UUID. Defaults to
+      #                        +nil+.
       #
-      # +storage_engine+::    An entry (Symbol) from
-      #                       Hoodoo::TransientStore::supported_storage_engines.
-      #                       Defaults to +:memcached+.
+      # +storage_engine+::     An entry (Symbol) from
+      #                        Hoodoo::TransientStore::supported_storage_engines.
+      #                        Defaults to +:memcached+.
       #
-      # +storage_host_uri+::  URI for Hoodoo::TransientStore engine
-      #                       connections.
+      # +storage_host_uri+::   URI for Hoodoo::TransientStore engine
+      #                        connections.
       #
-      # +memcached_host+::    Host for Memcached connections (deprecated).
+      # +memcached_host+::     Host for Memcached connections (deprecated).
       #
       def initialize( options = {} )
         @created_at = Time.now.utc
