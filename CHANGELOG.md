@@ -1,5 +1,31 @@
 # Hoodoo v2.x
 
+## 2.12.0 (2018-12-17)
+
+* Extends [Session](https://cdn.rawgit.com/LoyaltyNZ/hoodoo/master/docs/rdoc/classes/Hoodoo/Services/Session.html) storage functionality to allow use of any supported [TransientStore](https://cdn.rawgit.com/LoyaltyNZ/hoodoo/master/docs/rdoc/classes/Hoodoo/TransientStore.html) storage engine. Previously, Hoodoo only supported session storage through `memcached`.
+
+  - For code driving the session engine directly, this release deprecates the specific `memcached` options key `:memcached_host` in [Hoodoo::Services::Session#initialize](https://cdn.rawgit.com/LoyaltyNZ/hoodoo/master/docs/rdoc/classes/Hoodoo/Services/Session.html#method-c-new) and replaces it with more technology agnostic options keys `:storage_host_uri` and `:storage_engine`.
+
+  - In the middleware, session storage details can be set by services via new environment variables `SESSION_STORE_ENGINE` and `SESSION_STORE_URI`. See the RDoc documentation for new class methods [`#session_store_engine`](https://cdn.rawgit.com/LoyaltyNZ/hoodoo/master/docs/rdoc/classes/Hoodoo/Services/Middleware.html#method-c-session_store_engine) and [`#session_store_uri`](https://cdn.rawgit.com/LoyaltyNZ/hoodoo/master/docs/rdoc/classes/Hoodoo/Services/Middleware.html#method-c-session_store_uri) for details; this pair of methods replaces the now-deprecated [`#memcached_host`](https://cdn.rawgit.com/LoyaltyNZ/hoodoo/master/docs/rdoc/classes/Hoodoo/Services/Middleware.html#method-c-memcached_host), though this continues to be supported for backwards compatibility.
+
+      For example, this configures a Redis engine:
+
+      ```ruby
+      ENV[ 'SESSION_STORE_ENGINE' ] = 'redis'
+      ENV[ 'SESSION_STORE_URI'    ] = 'https://example.com:4567'
+      ```
+
+      ...while this configures a mirrored Redis and Memcached strategy:
+
+      ```ruby
+      ENV[ 'SESSION_STORE_ENGINE' ] = 'redis_memcached_mirror'
+      ENV[ 'SESSION_STORE_URI'    ] = "{\"memcached\": \"localhost:11211\", \"redis\": \"redis://localhost:6379\"}"
+      ```
+
+  - New enquiry class method [`#has_session_store?`](https://cdn.rawgit.com/LoyaltyNZ/hoodoo/master/docs/rdoc/classes/Hoodoo/Services/Middleware.html#method-c-has_session_store-3F) replaces now-deprecated [`#has_memcached?`](https://cdn.rawgit.com/LoyaltyNZ/hoodoo/master/docs/rdoc/classes/Hoodoo/Services/Middleware.html#method-c-has_memcached-3F), though this also continues to be supported for backwards compatibility.
+
+  - Memcached is used by default when the new environment variables are unset, making this a non-breaking change via fallback to old behaviour.
+
 ## 2.11.1 (2018-12-12)
 
 * Hoodoo v2.0.0's release back in 2017 included a requirement to use Rack 2 or later. While this is important for security reasons on anything using the Hoodoo middleware, it does meant that software using just the _client_ or other non-middleware gem components is forced to use Rack 2 as well. This constraint has been relaxed, though _caveat emptor_; if writing a service, it'll be up to you to ensure Rack 2 is present.

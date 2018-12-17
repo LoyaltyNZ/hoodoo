@@ -53,7 +53,7 @@ module Hoodoo
       #
       # If you _change_ a Caller version in a Session, you _really_ should
       # call #save_to_store as soon as possible afterwards so that the
-      # change gets recognised in the transient store.
+      # change gets recognised in the Hoodoo::TransientStore.
       #
       attr_accessor :caller_version
 
@@ -119,13 +119,17 @@ module Hoodoo
       #
       attr_reader :expires_at
 
-      # Connection IP address/port String for Memcached.
+      # Declares the transient storage engine this session will write to.
+      # Both this and +storage_host_uri+ are used within
+      # Hoodoo::TransientStore::new.
       #
-      # If you are using Memcached for a session store, you can set the
-      # Memcached connection host either through this accessor, or via the
+      attr_accessor :storage_engine
+
+      # Connection IP address/port String for the selected storage engine. The
+      # connection host can be set either through this accessor, or via the
       # object's constructor.
       #
-      attr_accessor :memcached_host
+      attr_accessor :storage_host_uri
 
       # Create a new instance.
       #
@@ -133,26 +137,35 @@ module Hoodoo
       #
       # Options are:
       #
-      # +session_id+::        UUID of this session. If unset, a new UUID is
-      #                       generated for you. You can read the UUID with
-      #                       the #session_id accessor method.
+      # +session_id+::         UUID of this session. If unset, a new UUID is
+      #                        generated for you. You can read the UUID with
+      #                        the #session_id accessor method.
       #
-      # +caller_id+::         UUID of the Caller instance associated with this
-      #                       session. This can be set either now or later, but
-      #                       the session cannot be saved without it.
+      # +caller_id+::          UUID of the Caller instance associated with this
+      #                        session. This can be set either now or later,
+      #                        but the session cannot be saved without it.
       #
-      # +caller_version+::    Version of the Caller instance; defaults to zero.
+      # +caller_version+::     Version of the Caller instance. Defaults to
+      #                        zero.
       #
-      # +caller_fingerprint:: Optional Caller fingerprint UUID. Default to
-      #                       +nil+.
+      # +caller_fingerprint+:: Optional Caller fingerprint UUID. Defaults to
+      #                        +nil+.
       #
-      # +memcached_host+:: Host for Memcached connections.
+      # +storage_engine+::     An entry (Symbol) from
+      #                        Hoodoo::TransientStore::supported_storage_engines.
+      #                        Defaults to +:memcached+.
+      #
+      # +storage_host_uri+::   URI for Hoodoo::TransientStore engine
+      #                        connections.
+      #
+      # +memcached_host+::     Host for Memcached connections (deprecated).
       #
       def initialize( options = {} )
         @created_at = Time.now.utc
 
         self.session_id         = options[ :session_id         ] || Hoodoo::UUID.generate()
-        self.memcached_host     = options[ :memcached_host     ]
+        self.storage_engine     = options[ :storage_engine     ] || :memcached
+        self.storage_host_uri   = options[ :storage_host_uri   ] || options[ :memcached_host ]
         self.caller_id          = options[ :caller_id          ]
         self.caller_version     = options[ :caller_version     ] || 0
         self.caller_fingerprint = options[ :caller_fingerprint ]
@@ -277,7 +290,7 @@ module Hoodoo
       # * +:not_found+: The session was not found.
       #
       # * +:fail+: The session data could not be loaded (unexpected storage
-      #            engine failure).
+      #   engine failure).
       #
       def load_from_store!( sid )
         begin
@@ -347,7 +360,7 @@ module Hoodoo
       #   local Caller data must therefore already be out of date.
       #
       # * +:fail+: The Caller could not be updated (unexpected storage engine
-      #            failure).
+      #   failure).
       #
       def update_caller_version_in_store( cid, cv, store = nil )
         begin
@@ -372,6 +385,45 @@ module Hoodoo
         end
 
         return :fail
+      end
+
+      # Deprecated interface (use #storage_host_uri instead),
+      # dating back to when the Session engine was hard-coded to Memcached.
+      #
+      # Supports backwards compatibility of options key +memcached_host+,
+      # aliases +storage_host_uri+.
+      #
+      # Provides same functionality as +alias_method+, however includes a
+      # deprecation warning.
+      #
+      # Similar to:
+      #
+      #   alias_method( :memcached_host, :storage_host_uri )
+      #
+      def memcached_host
+        Hoodoo::Services::Middleware.logger.warn(
+          'Hoodoo::Services::Session#memcached_host is deprecated - use #storage_host_uri'
+        )
+
+        storage_host_uri()
+      end
+
+      # Deprecated interface (use #storage_host_uri= instead),
+      # dating back to when the Session engine was hard-coded to Memcached.
+      #
+      # Provides same functionality as +alias_method+, however includes a
+      # deprecation warning.
+      #
+      # Similar to:
+      #
+      #   alias_method( :memcached_host=, :storage_host_uri= )
+      #
+      def memcached_host=( uri )
+        Hoodoo::Services::Middleware.logger.warn(
+          'Hoodoo::Services::Session#memcached_host= is deprecated - use #storage_host_uri='
+        )
+
+        self.storage_host_uri = uri
       end
 
       # Deprecated interface (use #update_caller_version_in_store instead),
@@ -421,7 +473,7 @@ module Hoodoo
       # * +:ok+: The Session was deleted from the transient store successfully.
       #
       # * +:fail+: The session data could not be deleted (unexpected storage
-      #            engine failure).
+      #   engine failure).
       #
       def delete_from_store
         begin
@@ -641,16 +693,18 @@ module Hoodoo
 
     private
 
-      # Connect to the storage engine. Returns a Hoodoo:TransientStore
+      # Connect to the storage engine, using the +storage_engine+ and
+      # +storage_host_uri+ attributes. Returns a Hoodoo:TransientStore
       # instance. Raises an exception if no connection can be established.
       #
       def get_store
-        host = self.memcached_host()
+        engine = self.storage_engine()
+        host   = self.storage_host_uri()
 
         begin
           @@stores         ||= {}
           @@stores[ host ] ||= Hoodoo::TransientStore.new(
-            storage_engine:    :memcached,
+            storage_engine:    engine,
             storage_host_uri:  host,
             default_namespace: 'nz_co_loyalty_hoodoo_session_'
           )
@@ -658,7 +712,7 @@ module Hoodoo
           raise 'Unknown storage engine failure' if @@stores[ host ].nil?
 
         rescue => exception
-          raise "Hoodoo::Services::Session\#get_store: Cannot connect to Memcached at '#{ host }': #{ exception.to_s }"
+          raise "Hoodoo::Services::Session\#get_store: Cannot connect to #{ engine } at '#{ host }': #{ exception }"
 
         end
 

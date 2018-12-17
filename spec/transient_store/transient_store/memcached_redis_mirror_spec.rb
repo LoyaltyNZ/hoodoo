@@ -15,10 +15,10 @@ describe Hoodoo::TransientStore::MemcachedRedisMirror do
     @memcached_uri      = 'localhost:11211'
     @redis_uri          = 'redis://localhost:6379'
     @namespace          = Hoodoo::UUID.generate()
-    @storage_engine_uri = {
+    @storage_engine_uri = JSON.generate({
       :memcached => @memcached_uri,
       :redis     => @redis_uri
-    }
+    })
 
     # Use pure mock back-ends behind the Memcached and Redis abstraction
     # layers; real back-end tests are done for them in their unit tests.
@@ -56,8 +56,15 @@ describe Hoodoo::TransientStore::MemcachedRedisMirror do
     end
 
     it 'creates Memcached and Redis instances' do
-      expect( Hoodoo::TransientStore::Memcached ).to receive( :new )
-      expect( Hoodoo::TransientStore::Redis     ).to receive( :new )
+      expect( Hoodoo::TransientStore::Memcached ).to receive( :new ).with(
+        namespace: @namespace,
+        storage_host_uri: @memcached_uri
+      )
+
+      expect( Hoodoo::TransientStore::Redis ).to receive( :new ).with(
+        namespace: @namespace,
+        storage_host_uri: @redis_uri
+      )
 
       Hoodoo::TransientStore::MemcachedRedisMirror.new(
         storage_host_uri: @storage_engine_uri,
