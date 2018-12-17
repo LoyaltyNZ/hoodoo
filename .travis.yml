@@ -12,14 +12,6 @@ matrix:
 #
 sudo: false
 
-# Travis CI should be ashamed by this:
-#
-#   https://github.com/travis-ci/travis-ci/issues/8969
-#
-before_install:
-  - gem update --system
-  - gem install bundler
-
 # http://docs.travis-ci.com/user/caching/
 #
 cache: bundler
@@ -32,6 +24,7 @@ services:
   - redis-server
 
 script:
+  - "bundle exec bundle-audit update && bundle exec bundle-audit check"
   - TZ=Pacific/Auckland DATABASE_USER=postgres bundle exec rspec spec --backtrace
 
 # https://docs.travis-ci.com/user/deployment/rubygems

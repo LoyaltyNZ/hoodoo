@@ -106,7 +106,11 @@ href="http://guides.rubyonrails.org/active_record_validations.html">guides.rubyo
 invalid) else <code>false</code> if everything is OK (model instance is
 valid).</p>
 
-<h2 id="method-i-adds_errors_to-3F-label-Mapping+ActiveRecord+errors+to+API+errors">Mapping <a href="../ActiveRecord.html">ActiveRecord</a> errors to API errors</h2>
+<p>Uses Hoodoo::ActiveRecord::Support#translate_errors_on to perform the
+mapping. For detailed information on how the mapping works, please see that
+method.</p>
+
+<h2 id="method-i-adds_errors_to-3F-label-Mapping+ActiveRecord+errors+to+Hoodoo+errors">Mapping <a href="../ActiveRecord.html">ActiveRecord</a> errors to <a href="../../Hoodoo.html">Hoodoo</a> errors</h2>
 
 <p>The method makes an idiomatic example for “check errors in the model, map
 them to platform errors in my service&#39;s response and return the result”
@@ -180,70 +184,6 @@ only happens when we know we are in an error recovery situation anyway, in
 which case it isn&#39;t as important to operate in as efficient a manner as
 possible - provided one assumes that the non-error path is the much more
 common case!</p>
-
-<h2 id="method-i-adds_errors_to-3F-label-Associations">Associations</h2>
-
-<p>When a model has associations and nested attributes are accepted for those
-associations, a validity query on an instance constructed with nested
-attributes will cause <a href="../ActiveRecord.html">ActiveRecord</a> to
-traverse all such attributes and aggregate specific errors on the parent
-object. This is specifically different from
-<code>validates_associated</code>, wherein associations constructed and
-attached through any means are validated independently, with validation
-errors independently added to those objects and the parent only gaining a
-generic “foo is invalid” error.</p>
-
-<p>In such cases, the error mapper will attempt to path-traverse the
-error&#39;s column references to determine the association&#39;s column
-type and produce a fully mapped error with a reference to the full path.
-Service authors are encouraged to use this approach if associations are
-involved, as it yields the most comprehensive mapped error collection.</p>
-
-<p>In the example below, note how the Child model does not need to include <a
-href="../../Hoodoo.html">Hoodoo</a> error mapping (though it can do so
-harmlessly if it so wishes) because it is the Parent model that drives the
-mapping of all the validations aggregated by <a
-href="../ActiveRecord.html">ActiveRecord</a> into an instance of Parent due
-to <code>accepts_nested_attributes_for</code>.</p>
-
-<p>So, given this:</p>
-
-<pre><code>def Parent &lt; ActiveRecord::Base
-  include Hoodoo::ActiveRecord::ErrorMapping
-
-  has_many :children
-  accepts_nested_attributes_for :children
-end
-
-def Child &lt; ActiveRecord::Base
-  belongs_to :parent
-
-  # ...then add ActiveRecord validations - e.g.:
-
-  validates :some_child_field, :length =&gt; { :maximum =&gt; 5 }
-end</code></pre>
-
-<p>…then if a Parent were to be constructed thus:</p>
-
-<pre><code>parent = Parent.new( {
-  &quot;parent_field_1&quot; = &quot;foo&quot;,
-  &quot;parent_field_2&quot; = &quot;bar&quot;,
-  &quot;children_attributes&quot; = [
-    { &quot;some_child_field&quot; = &quot;child_1_foo&quot; },
-    { &quot;some_child_field&quot; = &quot;child_2_foo&quot; },
-    # ...
-  ],
-  # ...
-} )</code></pre>
-
-<p>…then <code>parent.adds_errors_to?( some_collection )</code> could lead to
-<code>some_collection</code> containing errors such as:</p>
-
-<pre><code>{
-  &quot;code&quot;      =&gt; &quot;generic.invalid_string&quot;,
-  &quot;message    =&gt; &quot;is too long (maximum is 5 characters)&quot;,
-  &quot;reference&quot; =&gt; &quot;children.some_child_field&quot;
-}</code></pre>
 <dl class="rdoc-list note-list"><dt><code>collection</code>
 <dd>
 <p>A <a href="../Errors.html">Hoodoo::Errors</a> instance, typically obtained
@@ -270,36 +210,10 @@ model, by adding equivalent structured errors to the collection.</p>
                 <a href="javascript:toggleSource('method-i-adds_errors_to-3F_source')" id="l_method-i-adds_errors_to-3F_source">show</a>
             </p>
             <div id="method-i-adds_errors_to-3F_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/error_mapping.rb, line 185</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier">adds_errors_to?</span>( <span class="ruby-identifier">collection</span> )
-
+                <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/error_mapping.rb, line 131</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">adds_errors_to?</span>( <span class="ruby-identifier">collection</span> )
   <span class="ruby-keyword">self</span>.<span class="ruby-identifier">validate</span>()
-
-  <span class="ruby-keyword">self</span>.<span class="ruby-identifier">errors</span>.<span class="ruby-identifier">messages</span>.<span class="ruby-identifier">each_pair</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span> <span class="ruby-identifier">attribute_name</span>, <span class="ruby-identifier">message_array</span> <span class="ruby-operator">|</span>
-    <span class="ruby-identifier">attribute_name</span> = <span class="ruby-identifier">attribute_name</span>.<span class="ruby-identifier">to_s</span>
-
-    <span class="ruby-identifier">attribute_type</span> = <span class="ruby-identifier">nz_co_loyalty_determine_deep_attribute_type</span>( <span class="ruby-identifier">attribute_name</span> )
-    <span class="ruby-identifier">attribute_name</span> = <span class="ruby-string">&#39;model instance&#39;</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">attribute_name</span> <span class="ruby-operator">==</span> <span class="ruby-string">&#39;base&#39;</span>
-
-    <span class="ruby-identifier">message_array</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span> <span class="ruby-identifier">message</span> <span class="ruby-operator">|</span>
-      <span class="ruby-identifier">error_code</span> = <span class="ruby-keyword">case</span> <span class="ruby-identifier">message</span>
-        <span class="ruby-keyword">when</span> <span class="ruby-string">&#39;has already been taken&#39;</span>
-          <span class="ruby-string">&#39;generic.invalid_duplication&#39;</span>
-        <span class="ruby-keyword">else</span>
-          <span class="ruby-identifier">attribute_type</span> <span class="ruby-operator">==</span> <span class="ruby-string">&#39;text&#39;</span> <span class="ruby-operator">?</span> <span class="ruby-string">&#39;generic.invalid_string&#39;</span> <span class="ruby-operator">:</span> <span class="ruby-node">&quot;generic.invalid_#{ attribute_type }&quot;</span>
-      <span class="ruby-keyword">end</span>
-
-      <span class="ruby-keyword">unless</span> <span class="ruby-identifier">collection</span>.<span class="ruby-identifier">descriptions</span>.<span class="ruby-identifier">recognised?</span>( <span class="ruby-identifier">error_code</span> )
-        <span class="ruby-identifier">error_code</span> = <span class="ruby-string">&#39;generic.invalid_parameters&#39;</span>
-      <span class="ruby-keyword">end</span>
-
-      <span class="ruby-identifier">collection</span>.<span class="ruby-identifier">add_error</span>(
-        <span class="ruby-identifier">error_code</span>,
-        <span class="ruby-value">:message</span>   =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">message</span>,
-        <span class="ruby-value">:reference</span> =<span class="ruby-operator">&gt;</span> { <span class="ruby-value">:field_name</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">attribute_name</span> }
-      )
-    <span class="ruby-keyword">end</span>
-  <span class="ruby-keyword">end</span>
+  <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">ActiveRecord</span><span class="ruby-operator">::</span><span class="ruby-constant">Support</span>.<span class="ruby-identifier">translate_errors_on</span>( <span class="ruby-keyword">self</span>, <span class="ruby-identifier">collection</span> )
 
   <span class="ruby-keyword">return</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">errors</span>.<span class="ruby-identifier">any?</span>
 <span class="ruby-keyword">end</span></pre>
@@ -367,8 +281,8 @@ code, too:</p>
                 <a href="javascript:toggleSource('method-i-platform_errors_source')" id="l_method-i-platform_errors_source">show</a>
             </p>
             <div id="method-i-platform_errors_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/error_mapping.rb, line 250</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier">platform_errors</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/error_mapping.rb, line 170</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">platform_errors</span>
   <span class="ruby-identifier">collection</span> = <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Errors</span>.<span class="ruby-identifier">new</span>
   <span class="ruby-keyword">self</span>.<span class="ruby-identifier">adds_errors_to?</span>( <span class="ruby-identifier">collection</span> )
 

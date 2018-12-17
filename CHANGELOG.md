@@ -1,5 +1,43 @@
 # Hoodoo v2.x
 
+## 2.11.1 (2018-12-12)
+
+* Hoodoo v2.0.0's release back in 2017 included a requirement to use Rack 2 or later. While this is important for security reasons on anything using the Hoodoo middleware, it does meant that software using just the _client_ or other non-middleware gem components is forced to use Rack 2 as well. This constraint has been relaxed, though _caveat emptor_; if writing a service, it'll be up to you to ensure Rack 2 is present.
+
+## 2.11.0 (2018-12-12)
+
+* Moved the [Hoodoo::ActiveRecord::ErrorMapping](https://cdn.rawgit.com/LoyaltyNZ/hoodoo/master/docs/rdoc/classes/Hoodoo/ActiveRecord/ErrorMapping.html) mixin core mapping code out to support method [Hoodoo::ActiveRecord::Support#translate_errors_on](https://cdn.rawgit.com/LoyaltyNZ/hoodoo/master/docs/rdoc/classes/Hoodoo/ActiveRecord/Support.html#method-c-translate_errors_on) so that it can be called for arbitrary ActiveRecord model instances, whether or not they use the Hoodoo error mapping mixin.
+
+## 2.10.0 (2018-12-04)
+
+* Allows [Hoodoo::Utilities.is_in_future?](https://cdn.rawgit.com/LoyaltyNZ/hoodoo/master/docs/rdoc/classes/Hoodoo/Utilities.html#method-c-is_in_future-3F) to compare a timestamp against a timestamp other than `DateTime.now` (e.g. for backdated context).
+* Maintenance `bundle update`.
+
+## 2.9.0 (2018-08-21)
+
+* Support wildcards in [identity maps](https://github.com/LoyaltyNZ/hoodoo/blob/master/docs/api_specification/README.md#caller.resource.interface.identity_maps) - as well as an Array of permitted values, the string `"*"` can be used as a permit-all wildcard. This is obviously as dangerous as it is powerful and should only be used with great caution.
+
+## 2.8.0 (2018-08-07)
+
+* New "feature" of sorts, for [`#new_in`](https://cdn.rawgit.com/LoyaltyNZ/hoodoo/master/docs/rdoc/classes/Hoodoo/ActiveRecord/Creator/ClassMethods.html#method-i-new_in) - it no longer requires manual or automated dating support to be included or enabled. Setting the `created_at` value of a resource can have use cases outside of the need to support historic representations.
+
+## 2.7.0 (2018-08-06)
+
+* General maintenance pass, updating development and runtime dependencies and including `bundle-audit`.
+
+## 2.6.1 (2018-06-01)
+
+* Fix edge case in `enumerate_all` method within [Hoodoo::Client::PaginatedEnumeration](https://cdn.rawgit.com/LoyaltyNZ/hoodoo/master/docs/rdoc/classes/Hoodoo/Client/PaginatedEnumeration.html) which caused bad behaviour should the caller use key `:offset` (Symbol) rather than `"offset"` (String) in a `#list` call's query options Hash.
+
+## 2.6.0 (2018-05-23)
+
+* Add in a security exemption mechanism to the ActiveRecord security layer. The options passed into [Hoodoo::ActiveRecord::Secure::ClassMethods#secure_with](https://cdn.rawgit.com/LoyaltyNZ/hoodoo/master/docs/rdoc/classes/Hoodoo/ActiveRecord/Secure/ClassMethods.html#method-i-secure_with) now accept an exemptions key described in a subsection under the main [Hoodoo::ActiveRecord::Secure::ClassMethods#secure](https://cdn.rawgit.com/LoyaltyNZ/hoodoo/master/docs/rdoc/classes/Hoodoo/ActiveRecord/Secure/ClassMethods.html#method-i-secure) method documentation.
+* This mechanism allows **with due caution** wildcards and similar to be used in the session layer, which is very useful for superuser-like Caller scopes. Long lists of must-match values would not need to be maintained nor would there be a risk of scalability issues arising from very large SQL queries. A wildcard in the security layer is extremely powerful but equally dangerous, so this is something only to be used after very careful consideration.
+* The new security features above are based around Procs which get called with relevant session scoping values and indicate via a boolean value whether or not the data qualifies for an exemption. An example is checking a field from session scope to see if there is a wildcard character present. For convenience, the [Hoodoo::ActiveRecord::Secure](https://cdn.rawgit.com/LoyaltyNZ/hoodoo/master/docs/rdoc/classes/Hoodoo/ActiveRecord/Secure.html) module defines Object-equals-asterisk and Array-includes-asterisk exemption Procs in constants `OBJECT_EQLS_STAR` and `ENUMERABLE_INCLUDES_STAR` respectively.
+* If these are unsuitable, the new [Hoodoo::ActiveRecord::Secure::SecurityHelper](https://cdn.rawgit.com/LoyaltyNZ/hoodoo/master/hoodoo/docs/rdoc/classes/Hoodoo/ActiveRecord/Finder/SecurityHelper.html) module provides various constructor methods to assist with Proc creation. If none of these are suitable either, please examine the implementation of the methods in order to understand how to write a robust custom Proc by hand.
+* New alias of `#update_in` for [Hoodoo::ActiveRecord::Writer::ClassMethods#persist_in](https://cdn.rawgit.com/LoyaltyNZ/hoodoo/master/docs/rdoc/classes/Hoodoo/ActiveRecord/Writer/ClassMethods.html#method-i-persist_in) (and the [instance equivalent](https://cdn.rawgit.com/LoyaltyNZ/hoodoo/master/docs/rdoc/classes/Hoodoo/ActiveRecord/Writer.html#method-i-persist_in)). This is syntax sugar. It was added because authors of `#update` methods in resource implementation classes may find this a more natural name to use (and more discoverable in the documentation).
+* New alias of `#endpoint` for [Hoodoo::Client#resource](https://cdn.rawgit.com/LoyaltyNZ/hoodoo/master/docs/rdoc/classes/Hoodoo/Client.html#method-i-resource) and the inter-resource call equivalent, [Hoodoo::Services::Context#resource](https://cdn.rawgit.com/LoyaltyNZ/hoodoo/master/docs/rdoc/classes/Hoodoo/Services/Context.html#method-i-resource). This is syntax sugar. It was added becuse callers may prefer to think of the method as providing an object that's basically a proxy for the resource implementation, or an endpoint that lets one talk to the resource implementation. The name of the method used is up to the caller's preference.
+
 ## 2.5.1 (2018-05-18)
 
 * The hash in the implementation for v2.5.0 was not directly compatible with passing into a Hoodoo endpoint for things like proxying calls; this made it clumsy, when it was meant to assist. Fixed this, though it does mean anyone already using the code will have to update their implementation.

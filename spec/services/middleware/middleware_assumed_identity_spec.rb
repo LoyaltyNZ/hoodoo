@@ -152,279 +152,436 @@ describe Hoodoo::Services::Middleware do
     end
 
     context 'with flat rules' do
-      before :each do
-        @test_session.scoping.authorised_http_headers = [ 'X-Assume-Identity-Of' ]
-        @test_session.scoping.authorised_identities   =
-        {
-          'account_id' => [ '20', '21', '22' ],
-          'member_id'  => [ '1', '2', '3', '4', '5', '6' ],
-          'device_id'  => [ 'A', 'B' ]
-        }
-
-        Hoodoo::Services::Middleware.set_test_session( @test_session )
-      end
-
-      it 'rejects bad account ID' do
-        result = show( { 'account_id' => 'bad' }, 403 )
-
-        expect( result[ 'kind' ] ).to eq( 'Errors' )
-        expect( result[ 'errors' ][ 0 ][ 'code'      ] ).to eq( 'platform.forbidden' )
-        expect( result[ 'errors' ][ 0 ][ 'message'   ] ).to eq( 'X-Assume-Identity-Of header value requests a prohibited identity quantity' )
-        expect( result[ 'errors' ][ 0 ][ 'reference' ] ).to eq( 'account_id,bad' )
-      end
-
-      it 'rejects bad member ID' do
-        result = show( { 'member_id' => 'bad' }, 403 )
-
-        expect( result[ 'kind' ] ).to eq( 'Errors' )
-        expect( result[ 'errors' ][ 0 ][ 'code'      ] ).to eq( 'platform.forbidden' )
-        expect( result[ 'errors' ][ 0 ][ 'message'   ] ).to eq( 'X-Assume-Identity-Of header value requests a prohibited identity quantity' )
-        expect( result[ 'errors' ][ 0 ][ 'reference' ] ).to eq( 'member_id,bad' )
-      end
-
-      it 'rejects bad device ID' do
-        result = show( { 'device_id' => 'bad' }, 403 )
-
-        expect( result[ 'kind' ] ).to eq( 'Errors' )
-        expect( result[ 'errors' ][ 0 ][ 'code'      ] ).to eq( 'platform.forbidden' )
-        expect( result[ 'errors' ][ 0 ][ 'message'   ] ).to eq( 'X-Assume-Identity-Of header value requests a prohibited identity quantity' )
-        expect( result[ 'errors' ][ 0 ][ 'reference' ] ).to eq( 'device_id,bad' )
-      end
-
-      # Belt-and-braces check that multiple bad items are still rejected,
-      # but don't have any expectations about which one gets picked out
-      # in the 'reference' field.
-      #
-      it 'rejects bad combinations' do
-        result = show( { 'account_id' => 'bad', 'member_id' => 'bad', 'device_id' => 'bad' }, 403 )
-
-        expect( result[ 'kind' ] ).to eq( 'Errors' )
-        expect( result[ 'errors' ][ 0 ][ 'code'    ] ).to eq( 'platform.forbidden' )
-        expect( result[ 'errors' ][ 0 ][ 'message' ] ).to eq( 'X-Assume-Identity-Of header value requests a prohibited identity quantity' )
-      end
-
-      it 'rejects bad IDs amongst good' do
-        result = show( { 'account_id' => '21', 'member_id' => 'bad', 'device_id' => 'A' }, 403 )
-
-        expect( result[ 'kind' ] ).to eq( 'Errors' )
-        expect( result[ 'errors' ][ 0 ][ 'code'      ] ).to eq( 'platform.forbidden' )
-        expect( result[ 'errors' ][ 0 ][ 'message'   ] ).to eq( 'X-Assume-Identity-Of header value requests a prohibited identity quantity' )
-        expect( result[ 'errors' ][ 0 ][ 'reference' ] ).to eq( 'member_id,bad' )
-      end
-
-      # Each 'show' must be in its own test so that the test session data
-      # gets reset in between; otherwise, the *same* session identity is
-      # being successively merged/updated under test, since it's a single
-      # object that's reused rather than a new loaded-in session.
-      #
-      it 'accepts one good ID (1)' do
-        result = show( { 'account_id' => '22' }, 200 )
-      end
-      it 'accepts one good ID (2)' do
-        result = show( { 'member_id'  => '1'  }, 200 )
-      end
-      it 'accepts one good ID (3)' do
-        result = show( { 'device_id'  => 'B'  }, 200 )
-      end
-
-      it 'accepts many good IDs' do
-        result = show( { 'account_id' => '22', 'member_id' => '1', 'device_id' => 'B' }, 200 )
-      end
-
-      it 'accepts encoded names' do
-        get(
-          '/v1/rspec_assumed_identity/hello',
-          nil,
+      context 'and no wildcards' do
+        before :each do
+          @test_session.scoping.authorised_http_headers = [ 'X-Assume-Identity-Of' ]
+          @test_session.scoping.authorised_identities   =
           {
-            'CONTENT_TYPE'              => 'application/json; charset=utf-8',
-            'HTTP_X_ASSUME_IDENTITY_OF' => 'a%63%63ount_id=22'
+            'account_id' => [ '20', '21', '22' ],
+            'member_id'  => [ '1', '2', '3', '4', '5', '6' ],
+            'device_id'  => [ 'A', 'B' ]
           }
-        )
 
-        expect( last_response.status ).to eq( 200 )
+          Hoodoo::Services::Middleware.set_test_session( @test_session )
+        end
+
+        it 'rejects bad account ID' do
+          result = show( { 'account_id' => 'bad' }, 403 )
+
+          expect( result[ 'kind' ] ).to eq( 'Errors' )
+          expect( result[ 'errors' ][ 0 ][ 'code'      ] ).to eq( 'platform.forbidden' )
+          expect( result[ 'errors' ][ 0 ][ 'message'   ] ).to eq( 'X-Assume-Identity-Of header value requests a prohibited identity quantity' )
+          expect( result[ 'errors' ][ 0 ][ 'reference' ] ).to eq( 'account_id,bad' )
+        end
+
+        it 'rejects bad member ID' do
+          result = show( { 'member_id' => 'bad' }, 403 )
+
+          expect( result[ 'kind' ] ).to eq( 'Errors' )
+          expect( result[ 'errors' ][ 0 ][ 'code'      ] ).to eq( 'platform.forbidden' )
+          expect( result[ 'errors' ][ 0 ][ 'message'   ] ).to eq( 'X-Assume-Identity-Of header value requests a prohibited identity quantity' )
+          expect( result[ 'errors' ][ 0 ][ 'reference' ] ).to eq( 'member_id,bad' )
+        end
+
+        it 'rejects bad device ID' do
+          result = show( { 'device_id' => 'bad' }, 403 )
+
+          expect( result[ 'kind' ] ).to eq( 'Errors' )
+          expect( result[ 'errors' ][ 0 ][ 'code'      ] ).to eq( 'platform.forbidden' )
+          expect( result[ 'errors' ][ 0 ][ 'message'   ] ).to eq( 'X-Assume-Identity-Of header value requests a prohibited identity quantity' )
+          expect( result[ 'errors' ][ 0 ][ 'reference' ] ).to eq( 'device_id,bad' )
+        end
+
+        # Belt-and-braces check that multiple bad items are still rejected,
+        # but don't have any expectations about which one gets picked out
+        # in the 'reference' field.
+        #
+        it 'rejects bad combinations' do
+          result = show( { 'account_id' => 'bad', 'member_id' => 'bad', 'device_id' => 'bad' }, 403 )
+
+          expect( result[ 'kind' ] ).to eq( 'Errors' )
+          expect( result[ 'errors' ][ 0 ][ 'code'    ] ).to eq( 'platform.forbidden' )
+          expect( result[ 'errors' ][ 0 ][ 'message' ] ).to eq( 'X-Assume-Identity-Of header value requests a prohibited identity quantity' )
+        end
+
+        it 'rejects bad IDs amongst good' do
+          result = show( { 'account_id' => '21', 'member_id' => 'bad', 'device_id' => 'A' }, 403 )
+
+          expect( result[ 'kind' ] ).to eq( 'Errors' )
+          expect( result[ 'errors' ][ 0 ][ 'code'      ] ).to eq( 'platform.forbidden' )
+          expect( result[ 'errors' ][ 0 ][ 'message'   ] ).to eq( 'X-Assume-Identity-Of header value requests a prohibited identity quantity' )
+          expect( result[ 'errors' ][ 0 ][ 'reference' ] ).to eq( 'member_id,bad' )
+        end
+
+        # Each 'show' must be in its own test so that the test session data
+        # gets reset in between; otherwise, the *same* session identity is
+        # being successively merged/updated under test, since it's a single
+        # object that's reused rather than a new loaded-in session.
+        #
+        it 'accepts one good ID (1)' do
+          result = show( { 'account_id' => '22' }, 200 )
+        end
+        it 'accepts one good ID (2)' do
+          result = show( { 'member_id'  => '1'  }, 200 )
+        end
+        it 'accepts one good ID (3)' do
+          result = show( { 'device_id'  => 'B'  }, 200 )
+        end
+        it 'accepts many good IDs' do
+          result = show( { 'account_id' => '22', 'member_id' => '1', 'device_id' => 'B' }, 200 )
+        end
+
+        it 'accepts encoded names' do
+          get(
+            '/v1/rspec_assumed_identity/hello',
+            nil,
+            {
+              'CONTENT_TYPE'              => 'application/json; charset=utf-8',
+              'HTTP_X_ASSUME_IDENTITY_OF' => 'a%63%63ount_id=22'
+            }
+          )
+
+          expect( last_response.status ).to eq( 200 )
+        end
+
+        it 'accepts encoded values' do
+          get(
+            '/v1/rspec_assumed_identity/hello',
+            nil,
+            {
+              'CONTENT_TYPE'              => 'application/json; charset=utf-8',
+              'HTTP_X_ASSUME_IDENTITY_OF' => 'account_id=%32%32'
+            }
+          )
+
+          expect( last_response.status ).to eq( 200 )
+        end
+
+        it 'rejects an unknown name' do
+          result = show( { 'another_id' => 'A155C' }, 403 )
+
+          expect( result[ 'kind' ] ).to eq( 'Errors' )
+          expect( result[ 'errors' ][ 0 ][ 'code'      ] ).to eq( 'platform.forbidden' )
+          expect( result[ 'errors' ][ 0 ][ 'message'   ] ).to eq( 'X-Assume-Identity-Of header value requests prohibited identity name(s)' )
+          expect( result[ 'errors' ][ 0 ][ 'reference' ] ).to eq( 'another_id' )
+        end
+
+        it 'rejects unknown names' do
+          result = show( { 'another_id' => 'A155C', 'additional_id' => 'iiv' }, 403 )
+
+          expect( result[ 'kind' ] ).to eq( 'Errors' )
+          expect( result[ 'errors' ][ 0 ][ 'code'      ] ).to eq( 'platform.forbidden' )
+          expect( result[ 'errors' ][ 0 ][ 'message'   ] ).to eq( 'X-Assume-Identity-Of header value requests prohibited identity name(s)' )
+          expect( result[ 'errors' ][ 0 ][ 'reference' ] ).to eq( 'additional_id\\,another_id' )
+        end
+
+        it 'rejects an unknown name amongst a known name' do
+          result = show( { 'another_id' => 'A155C', 'account_id' => '22' }, 403 )
+
+          expect( result[ 'kind' ] ).to eq( 'Errors' )
+          expect( result[ 'errors' ][ 0 ][ 'code'      ] ).to eq( 'platform.forbidden' )
+          expect( result[ 'errors' ][ 0 ][ 'message'   ] ).to eq( 'X-Assume-Identity-Of header value requests prohibited identity name(s)' )
+          expect( result[ 'errors' ][ 0 ][ 'reference' ] ).to eq( 'another_id' )
+        end
+
+        it 'rejects an unknown name amongst known names' do
+          result = show( { 'another_id' => 'A155C', 'account_id' => '22', 'member_id' => '1' }, 403 )
+
+          expect( result[ 'kind' ] ).to eq( 'Errors' )
+          expect( result[ 'errors' ][ 0 ][ 'code'      ] ).to eq( 'platform.forbidden' )
+          expect( result[ 'errors' ][ 0 ][ 'message'   ] ).to eq( 'X-Assume-Identity-Of header value requests prohibited identity name(s)' )
+          expect( result[ 'errors' ][ 0 ][ 'reference' ] ).to eq( 'another_id' )
+        end
       end
 
-      it 'accepts encoded values' do
-        get(
-          '/v1/rspec_assumed_identity/hello',
-          nil,
+      context 'and wildcards' do
+        before :each do
+          @test_session.scoping.authorised_http_headers = [ 'X-Assume-Identity-Of' ]
+          @test_session.scoping.authorised_identities   =
           {
-            'CONTENT_TYPE'              => 'application/json; charset=utf-8',
-            'HTTP_X_ASSUME_IDENTITY_OF' => 'account_id=%32%32'
+            'account_id' => [ '20', '21', '22' ],
+            'member_id'  => '*',
+            'device_id'  => [ 'A', 'B' ]
           }
-        )
 
-        expect( last_response.status ).to eq( 200 )
-      end
+          Hoodoo::Services::Middleware.set_test_session( @test_session )
+        end
 
-      it 'rejects an unknown name' do
-        result = show( { 'another_id' => 'A155C' }, 403 )
+        it 'rejects bad account ID' do
+          result = show( { 'account_id' => 'bad' }, 403 )
 
-        expect( result[ 'kind' ] ).to eq( 'Errors' )
-        expect( result[ 'errors' ][ 0 ][ 'code'      ] ).to eq( 'platform.forbidden' )
-        expect( result[ 'errors' ][ 0 ][ 'message'   ] ).to eq( 'X-Assume-Identity-Of header value requests prohibited identity name(s)' )
-        expect( result[ 'errors' ][ 0 ][ 'reference' ] ).to eq( 'another_id' )
-      end
+          expect( result[ 'kind' ] ).to eq( 'Errors' )
+          expect( result[ 'errors' ][ 0 ][ 'code'      ] ).to eq( 'platform.forbidden' )
+          expect( result[ 'errors' ][ 0 ][ 'message'   ] ).to eq( 'X-Assume-Identity-Of header value requests a prohibited identity quantity' )
+          expect( result[ 'errors' ][ 0 ][ 'reference' ] ).to eq( 'account_id,bad' )
+        end
 
-      it 'rejects unknown names' do
-        result = show( { 'another_id' => 'A155C', 'additional_id' => 'iiv' }, 403 )
+        it 'rejects bad device ID' do
+          result = show( { 'device_id' => 'bad' }, 403 )
 
-        expect( result[ 'kind' ] ).to eq( 'Errors' )
-        expect( result[ 'errors' ][ 0 ][ 'code'      ] ).to eq( 'platform.forbidden' )
-        expect( result[ 'errors' ][ 0 ][ 'message'   ] ).to eq( 'X-Assume-Identity-Of header value requests prohibited identity name(s)' )
-        expect( result[ 'errors' ][ 0 ][ 'reference' ] ).to eq( 'additional_id\\,another_id' )
-      end
+          expect( result[ 'kind' ] ).to eq( 'Errors' )
+          expect( result[ 'errors' ][ 0 ][ 'code'      ] ).to eq( 'platform.forbidden' )
+          expect( result[ 'errors' ][ 0 ][ 'message'   ] ).to eq( 'X-Assume-Identity-Of header value requests a prohibited identity quantity' )
+          expect( result[ 'errors' ][ 0 ][ 'reference' ] ).to eq( 'device_id,bad' )
+        end
 
-      it 'rejects an unknown name amongst a known name' do
-        result = show( { 'another_id' => 'A155C', 'account_id' => '22' }, 403 )
+        it 'rejects bad combinations' do
+          result = show( { 'account_id' => 'bad', 'member_id' => 'hit_wildcard', 'device_id' => 'bad' }, 403 )
 
-        expect( result[ 'kind' ] ).to eq( 'Errors' )
-        expect( result[ 'errors' ][ 0 ][ 'code'      ] ).to eq( 'platform.forbidden' )
-        expect( result[ 'errors' ][ 0 ][ 'message'   ] ).to eq( 'X-Assume-Identity-Of header value requests prohibited identity name(s)' )
-        expect( result[ 'errors' ][ 0 ][ 'reference' ] ).to eq( 'another_id' )
-      end
+          expect( result[ 'kind' ] ).to eq( 'Errors' )
+          expect( result[ 'errors' ][ 0 ][ 'code'    ] ).to eq( 'platform.forbidden' )
+          expect( result[ 'errors' ][ 0 ][ 'message' ] ).to eq( 'X-Assume-Identity-Of header value requests a prohibited identity quantity' )
+        end
 
-      it 'rejects an unknown name amongst known names' do
-        result = show( { 'another_id' => 'A155C', 'account_id' => '22', 'member_id' => '1' }, 403 )
+        it 'rejects bad IDs amongst good' do
+          result = show( { 'account_id' => '21', 'member_id' => 'hit_wildcard', 'device_id' => 'bad' }, 403 )
 
-        expect( result[ 'kind' ] ).to eq( 'Errors' )
-        expect( result[ 'errors' ][ 0 ][ 'code'      ] ).to eq( 'platform.forbidden' )
-        expect( result[ 'errors' ][ 0 ][ 'message'   ] ).to eq( 'X-Assume-Identity-Of header value requests prohibited identity name(s)' )
-        expect( result[ 'errors' ][ 0 ][ 'reference' ] ).to eq( 'another_id' )
+          expect( result[ 'kind' ] ).to eq( 'Errors' )
+          expect( result[ 'errors' ][ 0 ][ 'code'      ] ).to eq( 'platform.forbidden' )
+          expect( result[ 'errors' ][ 0 ][ 'message'   ] ).to eq( 'X-Assume-Identity-Of header value requests a prohibited identity quantity' )
+          expect( result[ 'errors' ][ 0 ][ 'reference' ] ).to eq( 'device_id,bad' )
+        end
+
+        it 'accepts wildcard combinations' do
+          result = show( { 'account_id' => '21', 'member_id' => 'hit_wildcard', 'device_id' => 'A' }, 200 )
+        end
+
+        it 'accepts one good ID (1)' do
+          result = show( { 'account_id' => '22' }, 200 )
+        end
+        it 'accepts one good ID (2)' do
+          result = show( { 'member_id'  => 'hit_wildcard'  }, 200 )
+        end
+        it 'accepts one good ID (3)' do
+          result = show( { 'device_id'  => 'B'  }, 200 )
+        end
+        it 'accepts many good IDs' do
+          result = show( { 'account_id' => '22', 'member_id' => '1', 'device_id' => 'B' }, 200 )
+        end
       end
     end
 
     context 'with deep rules' do
-      before :each do
-        @test_session.scoping.authorised_http_headers = [ 'X-Assume-Identity-Of' ]
-        @test_session.scoping.authorised_identities   =
-        {
-          'account_id' =>
+      context 'and no wildcards' do
+        before :each do
+          @test_session.scoping.authorised_http_headers = [ 'X-Assume-Identity-Of' ]
+          @test_session.scoping.authorised_identities   =
           {
-            '20' => { 'member_id' => [ '1', '2' ] },
-            '21' => { 'member_id' => [ '3', '4' ] },
-            '22' =>
+            'account_id' =>
             {
-              'member_id' =>
+              '20' => { 'member_id' => [ '1', '2' ] },
+              '21' => { 'member_id' => [ '3', '4' ] },
+              '22' =>
               {
-                '5' => { 'device_id' => [ 'A' ] },
-                '6' => { 'device_id' => [ 'B' ] }
+                'member_id' =>
+                {
+                  '5' => { 'device_id' => [ 'A' ] },
+                  '6' => { 'device_id' => [ 'B' ] }
+                }
               }
             }
           }
-        }
 
-        Hoodoo::Services::Middleware.set_test_session( @test_session )
+          Hoodoo::Services::Middleware.set_test_session( @test_session )
+        end
+
+        it 'rejects bad account ID' do
+          result = show( { 'account_id' => 'bad' }, 403 )
+
+          expect( result[ 'kind' ] ).to eq( 'Errors' )
+          expect( result[ 'errors' ][ 0 ][ 'code'      ] ).to eq( 'platform.forbidden' )
+          expect( result[ 'errors' ][ 0 ][ 'message'   ] ).to eq( 'X-Assume-Identity-Of header value requests a prohibited identity quantity' )
+          expect( result[ 'errors' ][ 0 ][ 'reference' ] ).to eq( 'account_id,bad' )
+        end
+
+        it 'rejects bad member ID' do
+          result = show( { 'account_id' => '20', 'member_id' => 'bad' }, 403 )
+
+          expect( result[ 'kind' ] ).to eq( 'Errors' )
+          expect( result[ 'errors' ][ 0 ][ 'code'      ] ).to eq( 'platform.forbidden' )
+          expect( result[ 'errors' ][ 0 ][ 'message'   ] ).to eq( 'X-Assume-Identity-Of header value requests a prohibited identity quantity' )
+          expect( result[ 'errors' ][ 0 ][ 'reference' ] ).to eq( 'member_id,bad' )
+        end
+
+        it 'rejects bad device ID' do
+          result = show( { 'account_id' => '22', 'member_id' => '5', 'device_id' => 'bad' }, 403 )
+
+          expect( result[ 'kind' ] ).to eq( 'Errors' )
+          expect( result[ 'errors' ][ 0 ][ 'code'      ] ).to eq( 'platform.forbidden' )
+          expect( result[ 'errors' ][ 0 ][ 'message'   ] ).to eq( 'X-Assume-Identity-Of header value requests a prohibited identity quantity' )
+          expect( result[ 'errors' ][ 0 ][ 'reference' ] ).to eq( 'device_id,bad' )
+        end
+
+        it 'rejects attempt to use device ID when not listed in rules' do
+          result = show( { 'account_id' => '21', 'member_id' => '4', 'device_id' => 'A' }, 403 )
+
+          expect( result[ 'kind' ] ).to eq( 'Errors' )
+          expect( result[ 'errors' ][ 0 ][ 'code'      ] ).to eq( 'platform.forbidden' )
+          expect( result[ 'errors' ][ 0 ][ 'message'   ] ).to eq( 'X-Assume-Identity-Of header value requests prohibited identity name(s)' )
+          expect( result[ 'errors' ][ 0 ][ 'reference' ] ).to eq( 'device_id' )
+        end
+
+        it 'rejects an ID that is present but listed under a different key' do
+          result = show( { 'account_id' => '20', 'member_id' => '4' }, 403 )
+
+          expect( result[ 'kind' ] ).to eq( 'Errors' )
+          expect( result[ 'errors' ][ 0 ][ 'code'      ] ).to eq( 'platform.forbidden' )
+          expect( result[ 'errors' ][ 0 ][ 'message'   ] ).to eq( 'X-Assume-Identity-Of header value requests a prohibited identity quantity' )
+          expect( result[ 'errors' ][ 0 ][ 'reference' ] ).to eq( 'member_id,4' )
+        end
+
+        it 'rejects an ID that is present but not top-level' do
+          result = show( { 'member_id' => '1' }, 403 )
+
+          expect( result[ 'kind' ] ).to eq( 'Errors' )
+          expect( result[ 'errors' ][ 0 ][ 'code'      ] ).to eq( 'platform.forbidden' )
+          expect( result[ 'errors' ][ 0 ][ 'message'   ] ).to eq( 'X-Assume-Identity-Of header value requests prohibited identity name(s)' )
+          expect( result[ 'errors' ][ 0 ][ 'reference' ] ).to eq( 'member_id' )
+        end
+
+        it 'accepts a subset of good IDs (1)' do
+          result = show( { 'account_id' => '22' }, 200 )
+        end
+        it 'accepts a subset of good IDs (2)' do
+          result = show( { 'account_id' => '22', 'member_id' => '5' }, 200 )
+        end
+        it 'accepts many good IDs (1)' do
+          result = show( { 'account_id' => '20', 'member_id' => '2' }, 200 )
+        end
+        it 'accepts many good IDs (2)' do
+          result = show( { 'account_id' => '22', 'member_id' => '6', 'device_id' => 'B' }, 200 )
+        end
+
+        it 'rejects an unknown name' do
+          result = show( { 'another_id' => 'A155C' }, 403 )
+
+          expect( result[ 'kind' ] ).to eq( 'Errors' )
+          expect( result[ 'errors' ][ 0 ][ 'code'      ] ).to eq( 'platform.forbidden' )
+          expect( result[ 'errors' ][ 0 ][ 'message'   ] ).to eq( 'X-Assume-Identity-Of header value requests prohibited identity name(s)' )
+          expect( result[ 'errors' ][ 0 ][ 'reference' ] ).to eq( 'another_id' )
+        end
+
+        it 'rejects unknown names' do
+          result = show( { 'another_id' => 'A155C', 'additional_id' => 'iiv' }, 403 )
+
+          expect( result[ 'kind' ] ).to eq( 'Errors' )
+          expect( result[ 'errors' ][ 0 ][ 'code'      ] ).to eq( 'platform.forbidden' )
+          expect( result[ 'errors' ][ 0 ][ 'message'   ] ).to eq( 'X-Assume-Identity-Of header value requests prohibited identity name(s)' )
+          expect( result[ 'errors' ][ 0 ][ 'reference' ] ).to eq( 'additional_id\\,another_id' )
+        end
+
+        it 'rejects an unknown name amongst a known name' do
+          result = show( { 'another_id' => 'A155C', 'account_id' => '22' }, 403 )
+
+          expect( result[ 'kind' ] ).to eq( 'Errors' )
+          expect( result[ 'errors' ][ 0 ][ 'code'      ] ).to eq( 'platform.forbidden' )
+          expect( result[ 'errors' ][ 0 ][ 'message'   ] ).to eq( 'X-Assume-Identity-Of header value requests prohibited identity name(s)' )
+          expect( result[ 'errors' ][ 0 ][ 'reference' ] ).to eq( 'another_id' )
+        end
+
+        it 'rejects an unknown name amongst known names' do
+          result = show( { 'another_id' => 'A155C', 'account_id' => '22', 'member_id' => '6' }, 403 )
+
+          expect( result[ 'kind' ] ).to eq( 'Errors' )
+          expect( result[ 'errors' ][ 0 ][ 'code'      ] ).to eq( 'platform.forbidden' )
+          expect( result[ 'errors' ][ 0 ][ 'message'   ] ).to eq( 'X-Assume-Identity-Of header value requests prohibited identity name(s)' )
+          expect( result[ 'errors' ][ 0 ][ 'reference' ] ).to eq( 'another_id' )
+        end
       end
 
-      it 'rejects bad account ID' do
-        result = show( { 'account_id' => 'bad' }, 403 )
+      context 'and wildcards' do
+        before :each do
+          @test_session.scoping.authorised_http_headers = [ 'X-Assume-Identity-Of' ]
+          @test_session.scoping.authorised_identities   =
+          {
+            'account_id' =>
+            {
+              '20' => { 'member_id' => [ '1', '2' ] },
+              '21' => { 'member_id' => '*' },
+              '22' =>
+              {
+                'member_id' =>
+                {
+                  '5' => { 'device_id' => [ 'A' ] },
+                  '6' => { 'device_id' => [ 'B' ] }
+                }
+              }
+            }
+          }
 
-        expect( result[ 'kind' ] ).to eq( 'Errors' )
-        expect( result[ 'errors' ][ 0 ][ 'code'      ] ).to eq( 'platform.forbidden' )
-        expect( result[ 'errors' ][ 0 ][ 'message'   ] ).to eq( 'X-Assume-Identity-Of header value requests a prohibited identity quantity' )
-        expect( result[ 'errors' ][ 0 ][ 'reference' ] ).to eq( 'account_id,bad' )
+          Hoodoo::Services::Middleware.set_test_session( @test_session )
+        end
+
+        it 'rejects bad account ID' do
+          result = show( { 'account_id' => 'bad' }, 403 )
+
+          expect( result[ 'kind' ] ).to eq( 'Errors' )
+          expect( result[ 'errors' ][ 0 ][ 'code'      ] ).to eq( 'platform.forbidden' )
+          expect( result[ 'errors' ][ 0 ][ 'message'   ] ).to eq( 'X-Assume-Identity-Of header value requests a prohibited identity quantity' )
+          expect( result[ 'errors' ][ 0 ][ 'reference' ] ).to eq( 'account_id,bad' )
+        end
+
+        it 'rejects bad member ID' do
+          result = show( { 'account_id' => '20', 'member_id' => 'bad' }, 403 )
+
+          expect( result[ 'kind' ] ).to eq( 'Errors' )
+          expect( result[ 'errors' ][ 0 ][ 'code'      ] ).to eq( 'platform.forbidden' )
+          expect( result[ 'errors' ][ 0 ][ 'message'   ] ).to eq( 'X-Assume-Identity-Of header value requests a prohibited identity quantity' )
+          expect( result[ 'errors' ][ 0 ][ 'reference' ] ).to eq( 'member_id,bad' )
+        end
+
+        it 'rejects bad device ID' do
+          result = show( { 'account_id' => '22', 'member_id' => '5', 'device_id' => 'bad' }, 403 )
+
+          expect( result[ 'kind' ] ).to eq( 'Errors' )
+          expect( result[ 'errors' ][ 0 ][ 'code'      ] ).to eq( 'platform.forbidden' )
+          expect( result[ 'errors' ][ 0 ][ 'message'   ] ).to eq( 'X-Assume-Identity-Of header value requests a prohibited identity quantity' )
+          expect( result[ 'errors' ][ 0 ][ 'reference' ] ).to eq( 'device_id,bad' )
+        end
+
+        it 'rejects attempt to use device ID when not listed in rules' do
+          result = show( { 'account_id' => '21', 'member_id' => '4', 'device_id' => 'A' }, 403 )
+
+          expect( result[ 'kind' ] ).to eq( 'Errors' )
+          expect( result[ 'errors' ][ 0 ][ 'code'      ] ).to eq( 'platform.forbidden' )
+          expect( result[ 'errors' ][ 0 ][ 'message'   ] ).to eq( 'X-Assume-Identity-Of header value requests prohibited identity name(s)' )
+          expect( result[ 'errors' ][ 0 ][ 'reference' ] ).to eq( 'device_id' )
+        end
+
+        it 'rejects an ID that is present but listed under a different key' do
+          result = show( { 'account_id' => '20', 'member_id' => '4' }, 403 )
+
+          expect( result[ 'kind' ] ).to eq( 'Errors' )
+          expect( result[ 'errors' ][ 0 ][ 'code'      ] ).to eq( 'platform.forbidden' )
+          expect( result[ 'errors' ][ 0 ][ 'message'   ] ).to eq( 'X-Assume-Identity-Of header value requests a prohibited identity quantity' )
+          expect( result[ 'errors' ][ 0 ][ 'reference' ] ).to eq( 'member_id,4' )
+        end
+
+        it 'rejects an ID that is present but not top-level' do
+          result = show( { 'member_id' => '1' }, 403 )
+
+          expect( result[ 'kind' ] ).to eq( 'Errors' )
+          expect( result[ 'errors' ][ 0 ][ 'code'      ] ).to eq( 'platform.forbidden' )
+          expect( result[ 'errors' ][ 0 ][ 'message'   ] ).to eq( 'X-Assume-Identity-Of header value requests prohibited identity name(s)' )
+          expect( result[ 'errors' ][ 0 ][ 'reference' ] ).to eq( 'member_id' )
+        end
+
+        it 'accepts a subset of good IDs (1)' do
+          result = show( { 'account_id' => '22' }, 200 )
+        end
+        it 'accepts a subset of good IDs (2)' do
+          result = show( { 'account_id' => '22', 'member_id' => '5' }, 200 )
+        end
+        it 'accepts many good IDs (1)' do
+          result = show( { 'account_id' => '20', 'member_id' => '2' }, 200 )
+        end
+        it 'accepts many good IDs (2)' do
+          result = show( { 'account_id' => '22', 'member_id' => '6', 'device_id' => 'B' }, 200 )
+        end
+        it 'accepts wildcard names' do
+          result = show( { 'account_id' => '21', 'member_id' => 'hit_wildcard' }, 200 )
+        end
       end
-
-      it 'rejects bad member ID' do
-        result = show( { 'account_id' => '20', 'member_id' => 'bad' }, 403 )
-
-        expect( result[ 'kind' ] ).to eq( 'Errors' )
-        expect( result[ 'errors' ][ 0 ][ 'code'      ] ).to eq( 'platform.forbidden' )
-        expect( result[ 'errors' ][ 0 ][ 'message'   ] ).to eq( 'X-Assume-Identity-Of header value requests a prohibited identity quantity' )
-        expect( result[ 'errors' ][ 0 ][ 'reference' ] ).to eq( 'member_id,bad' )
-      end
-
-      it 'rejects bad device ID' do
-        result = show( { 'account_id' => '22', 'member_id' => '5', 'device_id' => 'bad' }, 403 )
-
-        expect( result[ 'kind' ] ).to eq( 'Errors' )
-        expect( result[ 'errors' ][ 0 ][ 'code'      ] ).to eq( 'platform.forbidden' )
-        expect( result[ 'errors' ][ 0 ][ 'message'   ] ).to eq( 'X-Assume-Identity-Of header value requests a prohibited identity quantity' )
-        expect( result[ 'errors' ][ 0 ][ 'reference' ] ).to eq( 'device_id,bad' )
-      end
-
-      it 'rejects attempt to use device ID when not listed in rules' do
-        result = show( { 'account_id' => '21', 'member_id' => '4', 'device_id' => 'A' }, 403 )
-
-        expect( result[ 'kind' ] ).to eq( 'Errors' )
-        expect( result[ 'errors' ][ 0 ][ 'code'      ] ).to eq( 'platform.forbidden' )
-        expect( result[ 'errors' ][ 0 ][ 'message'   ] ).to eq( 'X-Assume-Identity-Of header value requests prohibited identity name(s)' )
-        expect( result[ 'errors' ][ 0 ][ 'reference' ] ).to eq( 'device_id' )
-      end
-
-      it 'rejects an ID that is present but listed under a different key' do
-        result = show( { 'account_id' => '20', 'member_id' => '4' }, 403 )
-
-        expect( result[ 'kind' ] ).to eq( 'Errors' )
-        expect( result[ 'errors' ][ 0 ][ 'code'      ] ).to eq( 'platform.forbidden' )
-        expect( result[ 'errors' ][ 0 ][ 'message'   ] ).to eq( 'X-Assume-Identity-Of header value requests a prohibited identity quantity' )
-        expect( result[ 'errors' ][ 0 ][ 'reference' ] ).to eq( 'member_id,4' )
-      end
-
-      it 'rejects an ID that is present but not top-level' do
-        result = show( { 'member_id' => '1' }, 403 )
-
-        expect( result[ 'kind' ] ).to eq( 'Errors' )
-        expect( result[ 'errors' ][ 0 ][ 'code'      ] ).to eq( 'platform.forbidden' )
-        expect( result[ 'errors' ][ 0 ][ 'message'   ] ).to eq( 'X-Assume-Identity-Of header value requests prohibited identity name(s)' )
-        expect( result[ 'errors' ][ 0 ][ 'reference' ] ).to eq( 'member_id' )
-      end
-
-      # Each 'show' must be in its own test so that the test session data
-      # gets reset in between; otherwise, the *same* session identity is
-      # being successively merged/updated under test, since it's a single
-      # object that's reused rather than a new loaded-in session.
-      #
-      it 'accepts a subset of good IDs (1)' do
-        result = show( { 'account_id' => '22' }, 200 )
-      end
-      it 'accepts a subset of good IDs (2)' do
-        result = show( { 'account_id' => '22', 'member_id' => '5' }, 200 )
-      end
-      it 'accepts many good IDs (1)' do
-        result = show( { 'account_id' => '20', 'member_id' => '2' }, 200 )
-      end
-      it 'accepts many good IDs (2)' do
-        result = show( { 'account_id' => '22', 'member_id' => '6', 'device_id' => 'B' }, 200 )
-      end
-
-      it 'rejects an unknown name' do
-        result = show( { 'another_id' => 'A155C' }, 403 )
-
-        expect( result[ 'kind' ] ).to eq( 'Errors' )
-        expect( result[ 'errors' ][ 0 ][ 'code'      ] ).to eq( 'platform.forbidden' )
-        expect( result[ 'errors' ][ 0 ][ 'message'   ] ).to eq( 'X-Assume-Identity-Of header value requests prohibited identity name(s)' )
-        expect( result[ 'errors' ][ 0 ][ 'reference' ] ).to eq( 'another_id' )
-      end
-
-      it 'rejects unknown names' do
-        result = show( { 'another_id' => 'A155C', 'additional_id' => 'iiv' }, 403 )
-
-        expect( result[ 'kind' ] ).to eq( 'Errors' )
-        expect( result[ 'errors' ][ 0 ][ 'code'      ] ).to eq( 'platform.forbidden' )
-        expect( result[ 'errors' ][ 0 ][ 'message'   ] ).to eq( 'X-Assume-Identity-Of header value requests prohibited identity name(s)' )
-        expect( result[ 'errors' ][ 0 ][ 'reference' ] ).to eq( 'additional_id\\,another_id' )
-      end
-
-      it 'rejects an unknown name amongst a known name' do
-        result = show( { 'another_id' => 'A155C', 'account_id' => '22' }, 403 )
-
-        expect( result[ 'kind' ] ).to eq( 'Errors' )
-        expect( result[ 'errors' ][ 0 ][ 'code'      ] ).to eq( 'platform.forbidden' )
-        expect( result[ 'errors' ][ 0 ][ 'message'   ] ).to eq( 'X-Assume-Identity-Of header value requests prohibited identity name(s)' )
-        expect( result[ 'errors' ][ 0 ][ 'reference' ] ).to eq( 'another_id' )
-      end
-
-      it 'rejects an unknown name amongst known names' do
-        result = show( { 'another_id' => 'A155C', 'account_id' => '22', 'member_id' => '6' }, 403 )
-
-        expect( result[ 'kind' ] ).to eq( 'Errors' )
-        expect( result[ 'errors' ][ 0 ][ 'code'      ] ).to eq( 'platform.forbidden' )
-        expect( result[ 'errors' ][ 0 ][ 'message'   ] ).to eq( 'X-Assume-Identity-Of header value requests prohibited identity name(s)' )
-        expect( result[ 'errors' ][ 0 ][ 'reference' ] ).to eq( 'another_id' )
-      end
-
     end
 
     context 'with malformed rules' do

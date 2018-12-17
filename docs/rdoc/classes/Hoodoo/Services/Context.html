@@ -19,7 +19,7 @@
     <meta property="og:description" content="A collection of objects which describe the context in which a service is being called.">
 
     <meta name="keywords" content="Hoodoo::Services::Context class">
-    <meta name="keywords" content="new, resource">
+    <meta name="keywords" content="new, resource, endpoint">
 </head>
 
 <body>
@@ -51,6 +51,14 @@ results of its processing via the associated response object.</p>
     <!-- Method ref -->
     <div class="sectiontitle">Methods</div>
     <dl class="methods">
+        <dt>E</dt>
+        <dd>
+            <ul>
+                <li>
+                    <a href="#method-i-endpoint">endpoint</a>
+                </li>
+            </ul>
+        </dd>
         <dt>N</dt>
         <dd>
             <ul>
@@ -157,7 +165,7 @@ context instance this provides.</p>
             </p>
             <div id="method-c-new_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/services/services/context.rb, line 55</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier">initialize</span>( <span class="ruby-identifier">session</span>, <span class="ruby-identifier">request</span>, <span class="ruby-identifier">response</span>, <span class="ruby-identifier">owning_interaction</span> )
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">initialize</span>( <span class="ruby-identifier">session</span>, <span class="ruby-identifier">request</span>, <span class="ruby-identifier">response</span>, <span class="ruby-identifier">owning_interaction</span> )
   <span class="ruby-ivar">@session</span>            = <span class="ruby-identifier">session</span>
   <span class="ruby-ivar">@request</span>            = <span class="ruby-identifier">request</span>
   <span class="ruby-ivar">@response</span>           = <span class="ruby-identifier">response</span>
@@ -168,6 +176,25 @@ context instance this provides.</p>
     </div>
 
     <div class="sectiontitle">Instance Public methods</div>
+    <div class="method">
+        <div class="title method-title" id="method-i-endpoint">
+            <b>endpoint</b>( resource, version = 1, options = {} )
+            <a href="../../../classes/Hoodoo/Services/Context.html#method-i-endpoint" name="method-i-endpoint" class="permalink">Link</a>
+        </div>
+
+        <div class="description">
+            <p>Alias of <a href="Context.html#method-i-resource">resource</a>, as syntax
+sugar for those who prefer to think of the return value as an endpoint that
+is used to contact a resource, rather than a remote abstraction of the
+resource as an entity.</p>
+        </div>
+
+
+        <div class="aka">
+            Alias for: <a href="Context.html#method-i-resource">resource</a>
+        </div>
+
+    </div>
     <div class="method">
         <div class="title method-title" id="method-i-resource">
             <b>resource</b>( resource, version = 1, options = {} )
@@ -242,6 +269,10 @@ behaviour.</p>
 </dd></dl>
         </div>
 
+        <div class="aka">
+            Also aliased as:
+            <a href="Context.html#method-i-endpoint">endpoint</a>
+        </div>
 
 
         <div class="sourcecode">
@@ -252,7 +283,7 @@ behaviour.</p>
             </p>
             <div id="method-i-resource_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/services/services/context.rb, line 117</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier">resource</span>( <span class="ruby-identifier">resource</span>, <span class="ruby-identifier">version</span> = <span class="ruby-value">1</span>, <span class="ruby-identifier">options</span> = {} )
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">resource</span>( <span class="ruby-identifier">resource</span>, <span class="ruby-identifier">version</span> = <span class="ruby-value">1</span>, <span class="ruby-identifier">options</span> = {} )
   <span class="ruby-identifier">middleware</span> = <span class="ruby-ivar">@owning_interaction</span>.<span class="ruby-identifier">owning_middleware_instance</span>
   <span class="ruby-identifier">endpoint</span>   = <span class="ruby-identifier">middleware</span>.<span class="ruby-identifier">inter_resource_endpoint_for</span>(
     <span class="ruby-identifier">resource</span>,

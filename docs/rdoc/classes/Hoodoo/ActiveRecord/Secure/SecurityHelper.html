@@ -1,0 +1,322 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+    <title>Hoodoo::ActiveRecord::Secure::SecurityHelper</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <link rel="stylesheet" href="../../../../css/reset.css" type="text/css" media="screen" />
+<link rel="stylesheet" href="../../../../css/main.css" type="text/css" media="screen" />
+<link rel="stylesheet" href="../../../../css/github.css" type="text/css" media="screen" />
+<script src="../../../../js/jquery-1.3.2.min.js" type="text/javascript" charset="utf-8"></script>
+<script src="../../../../js/main.js" type="text/javascript" charset="utf-8"></script>
+<script src="../../../../js/highlight.pack.js" type="text/javascript" charset="utf-8"></script>
+
+
+    <meta property="og:title" value="Hoodoo::ActiveRecord::Secure::SecurityHelper">
+
+    <meta name="description" content="Help build security exemption Procs to pass into Hoodoo::ActiveRecord::Secure::ClassMethods#secure_with via its options Hash.">
+    <meta property="og:description" content="Help build security exemption Procs to pass into Hoodoo::ActiveRecord::Secure::ClassMethods#secure_with via its options Hash.">
+
+    <meta name="keywords" content="Hoodoo::ActiveRecord::Secure::SecurityHelper class">
+    <meta name="keywords" content="eqls_wildcard, includes_wildcard, matches_wildcard, matches_wildcard_enumerable">
+</head>
+
+<body>
+    <div class="banner">
+        <h1>
+            <span class="type">Class</span>
+            Hoodoo::ActiveRecord::Secure::SecurityHelper
+            <span class="parent">&lt;
+                Object
+            </span>
+        </h1>
+        <ul class="files">
+            <li><a href="../../../../files/lib/hoodoo/active/active_record/security_helper_rb.html">lib/hoodoo/active/active_record/security_helper.rb</a></li>
+        </ul>
+    </div>
+    <div id="bodyContent">
+        <div id="content">
+    <div class="description">
+        
+<p>Help build security exemption Procs to pass into <a
+href="ClassMethods.html#method-i-secure_with">Hoodoo::ActiveRecord::Secure::ClassMethods#secure_with</a>
+via its options Hash. The following extends an example given in the
+documentation (at the time of writing here) for the underlying
+implementation method <a
+href="ClassMethods.html#method-i-secure">Hoodoo::ActiveRecord::Secure::ClassMethods#secure</a>:</p>
+
+<pre><code>class Audit &lt; ActiveRecord::Base
+  include Hoodoo::ActiveRecord::Secure
+
+  secure_with(
+    {
+      :creating_caller_uuid =&gt; :authorised_caller_uuids
+    },
+    {
+      :exemptions =&gt; Hoodoo::ActiveRecord::Secure::SecurityHelper::includes_wildcard( &#39;*&#39; )
+    }
+  )
+end
+</code></pre>
+
+<p>Note that the <a href="../Secure.html">Hoodoo::ActiveRecord::Secure</a>
+module includes some belper constants to aid brevity for common cases such
+as the single value <code>#eql?</code> or enumerable <code>#include?</code>
+matchers checking for a &#39;*&#39; as an indiscriminate wildcard - see for
+example Hoodoo::ActiveRecord::Secure::ENUMERABLE_INCLUDES_STAR.</p>
+
+    </div>
+
+
+
+
+    <!-- Method ref -->
+    <div class="sectiontitle">Methods</div>
+    <dl class="methods">
+        <dt>E</dt>
+        <dd>
+            <ul>
+                <li>
+                    <a href="#method-c-eqls_wildcard">eqls_wildcard</a>
+                </li>
+            </ul>
+        </dd>
+        <dt>I</dt>
+        <dd>
+            <ul>
+                <li>
+                    <a href="#method-c-includes_wildcard">includes_wildcard</a>
+                </li>
+            </ul>
+        </dd>
+        <dt>M</dt>
+        <dd>
+            <ul>
+                <li>
+                    <a href="#method-c-matches_wildcard">matches_wildcard</a>,
+                </li>
+                <li>
+                    <a href="#method-c-matches_wildcard_enumerable">matches_wildcard_enumerable</a>
+                </li>
+            </ul>
+        </dd>
+    </dl>
+
+
+
+
+    <!-- Section constants -->
+    <div class="sectiontitle">Constants</div>
+    <table border='0' cellpadding='5'>
+        <tr valign='top' id='RUBY_FAST_WILDCARD_PROC_CONTENTS'>
+            <td class="attr-name">RUBY_FAST_WILDCARD_PROC_CONTENTS</td>
+            <td>=</td>
+            <td class="attr-value"><pre>%q{
+security_value.match?( wildcard_regexp ) rescue false
+}</pre></td>
+        </tr>
+        <tr valign='top'>
+            <td>&nbsp;</td>
+            <td colspan="2" class="attr-desc"><p>Internally used by <a
+href="SecurityHelper.html#method-c-matches_wildcard">::matches_wildcard</a>
+for Ruby 2.4.0+ performance.</p></td>
+        </tr>
+        <tr valign='top' id='RUBY_SLOW_WILDCARD_PROC_CONTENTS'>
+            <td class="attr-name">RUBY_SLOW_WILDCARD_PROC_CONTENTS</td>
+            <td>=</td>
+            <td class="attr-value"><pre>%q{
+wildcard_regexp.match( security_value ) != nil rescue false
+}</pre></td>
+        </tr>
+        <tr valign='top'>
+            <td>&nbsp;</td>
+            <td colspan="2" class="attr-desc"><p>Internally used by <a
+href="SecurityHelper.html#method-c-matches_wildcard">::matches_wildcard</a>
+for Ruby &lt; 2.4 compatibility.</p></td>
+        </tr>
+    </table>
+
+
+<!-- Methods -->
+
+    <div class="sectiontitle">Class Public methods</div>
+    <div class="method">
+        <div class="title method-title" id="method-c-eqls_wildcard">
+            <b>eqls_wildcard</b>( wildcard_value )
+            <a href="../../../../classes/Hoodoo/ActiveRecord/Secure/SecurityHelper.html#method-c-eqls_wildcard" name="method-c-eqls_wildcard" class="permalink">Link</a>
+        </div>
+
+        <div class="description">
+            <p>Match a given wildcard, typically a String, to a single value via
+<code>#eql?</code>.</p>
+<dl class="rdoc-list note-list"><dt><code>wildcard_value</code>
+<dd>
+<p>Wildcard value to match, e.g. <code>&#39;*&#39;</code>.</p>
+</dd></dl>
+
+<p>Returns a Proc suitable for passing to the <code>:exemptions</code> option
+for <a
+href="ClassMethods.html#method-i-secure_with">Hoodoo::ActiveRecord::Secure::ClassMethods#secure_with</a>.</p>
+        </div>
+
+
+
+        <div class="sourcecode">
+
+            <p class="source-link">
+                Source:
+                <a href="javascript:toggleSource('method-c-eqls_wildcard_source')" id="l_method-c-eqls_wildcard_source">show</a>
+            </p>
+            <div id="method-c-eqls_wildcard_source" class="dyn-source">
+                <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/security_helper.rb, line 64</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">eqls_wildcard</span>( <span class="ruby-identifier">wildcard_value</span> )
+  <span class="ruby-constant">Proc</span>.<span class="ruby-identifier">new</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span> <span class="ruby-identifier">security_value</span> <span class="ruby-operator">|</span>
+    <span class="ruby-identifier">security_value</span>.<span class="ruby-identifier">eql?</span>( <span class="ruby-identifier">wildcard_value</span> ) <span class="ruby-keyword">rescue</span> <span class="ruby-keyword">false</span>
+  <span class="ruby-keyword">end</span>
+<span class="ruby-keyword">end</span></pre>
+            </div>
+        </div>
+    </div>
+    <div class="method">
+        <div class="title method-title" id="method-c-includes_wildcard">
+            <b>includes_wildcard</b>( wildcard_value )
+            <a href="../../../../classes/Hoodoo/ActiveRecord/Secure/SecurityHelper.html#method-c-includes_wildcard" name="method-c-includes_wildcard" class="permalink">Link</a>
+        </div>
+
+        <div class="description">
+            <p>Match a given wildcard, typically a String, inside an Enumerable subclass
+via <code>#include?</code>.</p>
+<dl class="rdoc-list note-list"><dt><code>wildcard_value</code>
+<dd>
+<p>Wildcard value to match, e.g. <code>&#39;*&#39;</code>.</p>
+</dd></dl>
+
+<p>Returns a Proc suitable for passing to the <code>:exemptions</code> option
+for <a
+href="ClassMethods.html#method-i-secure_with">Hoodoo::ActiveRecord::Secure::ClassMethods#secure_with</a>.</p>
+        </div>
+
+
+
+        <div class="sourcecode">
+
+            <p class="source-link">
+                Source:
+                <a href="javascript:toggleSource('method-c-includes_wildcard_source')" id="l_method-c-includes_wildcard_source">show</a>
+            </p>
+            <div id="method-c-includes_wildcard_source" class="dyn-source">
+                <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/security_helper.rb, line 78</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">includes_wildcard</span>( <span class="ruby-identifier">wildcard_value</span> )
+  <span class="ruby-constant">Proc</span>.<span class="ruby-identifier">new</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span> <span class="ruby-identifier">security_values</span> <span class="ruby-operator">|</span>
+    <span class="ruby-identifier">security_values</span>.<span class="ruby-identifier">is_a?</span>( <span class="ruby-constant">Enumerable</span> ) <span class="ruby-operator">&amp;&amp;</span>
+    <span class="ruby-identifier">security_values</span>.<span class="ruby-identifier">include?</span>( <span class="ruby-identifier">wildcard_value</span> ) <span class="ruby-keyword">rescue</span> <span class="ruby-keyword">false</span>
+  <span class="ruby-keyword">end</span>
+<span class="ruby-keyword">end</span></pre>
+            </div>
+        </div>
+    </div>
+    <div class="method">
+        <div class="title method-title" id="method-c-matches_wildcard">
+            <b>matches_wildcard</b>( wildcard_regexp )
+            <a href="../../../../classes/Hoodoo/ActiveRecord/Secure/SecurityHelper.html#method-c-matches_wildcard" name="method-c-matches_wildcard" class="permalink">Link</a>
+        </div>
+
+        <div class="description">
+            <p>Match a given wildcard Regexp to a value via <code>#match?</code>.</p>
+<dl class="rdoc-list note-list"><dt><code>wildcard_value</code>
+<dd>
+<p>Wildcard Regexp to use, e.g. <code>/.*/</code>. Strings are coerced to
+Regexps without any escaping but doing so reduces performance.</p>
+</dd></dl>
+
+<p>Returns a Proc suitable for passing to the <code>:exemptions</code> option
+for <a
+href="ClassMethods.html#method-i-secure_with">Hoodoo::ActiveRecord::Secure::ClassMethods#secure_with</a>.</p>
+        </div>
+
+
+
+        <div class="sourcecode">
+
+            <p class="source-link">
+                Source:
+                <a href="javascript:toggleSource('method-c-matches_wildcard_source')" id="l_method-c-matches_wildcard_source">show</a>
+            </p>
+            <div id="method-c-matches_wildcard_source" class="dyn-source">
+                <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/security_helper.rb, line 94</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">matches_wildcard</span>( <span class="ruby-identifier">wildcard_regexp</span> )
+  <span class="ruby-identifier">wildcard_regexp</span> = <span class="ruby-constant">Regexp</span>.<span class="ruby-identifier">new</span>( <span class="ruby-identifier">wildcard_regexp</span> ) <span class="ruby-keyword">unless</span> <span class="ruby-identifier">wildcard_regexp</span>.<span class="ruby-identifier">is_a?</span>( <span class="ruby-constant">Regexp</span> )
+
+  <span class="ruby-comment"># Use security_value&#39;s #match? (if present) to ensure that we have</span>
+  <span class="ruby-comment"># an expected &quot;matchable&quot; type. This is only available in Ruby 2.4</span>
+  <span class="ruby-comment"># or later, so a patch is performed below for earlier Rubies.</span>
+  <span class="ruby-comment">#</span>
+  <span class="ruby-constant">Proc</span>.<span class="ruby-identifier">new</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span> <span class="ruby-identifier">security_value</span> <span class="ruby-operator">|</span>
+
+    <span class="ruby-comment"># Ruby 2.4.0 and later introduce the Regexp#match? family, which</span>
+    <span class="ruby-comment"># is the fastest way to determine a simple does-or-does-not match</span>
+    <span class="ruby-comment"># condition. Ruby 2.3.x and earlier need different, slower code.</span>
+    <span class="ruby-comment">#</span>
+    <span class="ruby-keyword">if</span> <span class="ruby-string">&#39;&#39;</span>.<span class="ruby-identifier">respond_to?</span>( <span class="ruby-value">:match?</span> )
+      <span class="ruby-identifier">eval</span>( <span class="ruby-constant">RUBY_FAST_WILDCARD_PROC_CONTENTS</span> )
+    <span class="ruby-keyword">else</span>
+      <span class="ruby-identifier">eval</span>( <span class="ruby-constant">RUBY_SLOW_WILDCARD_PROC_CONTENTS</span> )
+    <span class="ruby-keyword">end</span>
+  <span class="ruby-keyword">end</span>
+<span class="ruby-keyword">end</span></pre>
+            </div>
+        </div>
+    </div>
+    <div class="method">
+        <div class="title method-title" id="method-c-matches_wildcard_enumerable">
+            <b>matches_wildcard_enumerable</b>( wildcard_regexp )
+            <a href="../../../../classes/Hoodoo/ActiveRecord/Secure/SecurityHelper.html#method-c-matches_wildcard_enumerable" name="method-c-matches_wildcard_enumerable" class="permalink">Link</a>
+        </div>
+
+        <div class="description">
+            <p>Match a given wildcard Regexp to any value in an enumerable object via
+iteration and <code>#match?</code>. Exists with <code>true</code> as soon
+as any match is made.</p>
+<dl class="rdoc-list note-list"><dt><code>wildcard_value</code>
+<dd>
+<p>Wildcard Regexp to use, e.g. <code>/.*/</code>. Strings are coerced to
+Regexps without any escaping but doing so reduces performance.</p>
+</dd></dl>
+
+<p>Returns a Proc suitable for passing to the <code>:exemptions</code> option
+for <a
+href="ClassMethods.html#method-i-secure_with">Hoodoo::ActiveRecord::Secure::ClassMethods#secure_with</a>.</p>
+        </div>
+
+
+
+        <div class="sourcecode">
+
+            <p class="source-link">
+                Source:
+                <a href="javascript:toggleSource('method-c-matches_wildcard_enumerable_source')" id="l_method-c-matches_wildcard_enumerable_source">show</a>
+            </p>
+            <div id="method-c-matches_wildcard_enumerable_source" class="dyn-source">
+                <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/security_helper.rb, line 126</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">matches_wildcard_enumerable</span>( <span class="ruby-identifier">wildcard_regexp</span> )
+  <span class="ruby-identifier">match_proc</span> = <span class="ruby-keyword">self</span>.<span class="ruby-identifier">matches_wildcard</span>( <span class="ruby-identifier">wildcard_regexp</span> )
+
+  <span class="ruby-constant">Proc</span>.<span class="ruby-identifier">new</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span> <span class="ruby-identifier">security_values</span> <span class="ruby-operator">|</span>
+    <span class="ruby-keyword">begin</span>
+      <span class="ruby-identifier">security_values</span>.<span class="ruby-identifier">any?</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span> <span class="ruby-identifier">security_value</span> <span class="ruby-operator">|</span>
+        <span class="ruby-identifier">match_proc</span>.<span class="ruby-identifier">call</span>( <span class="ruby-identifier">security_value</span> )
+      <span class="ruby-keyword">end</span>
+    <span class="ruby-keyword">rescue</span>
+      <span class="ruby-keyword">false</span>
+    <span class="ruby-keyword">end</span>
+  <span class="ruby-keyword">end</span>
+<span class="ruby-keyword">end</span></pre>
+            </div>
+        </div>
+    </div>
+</div>
+
+    </div>
+  </body>
+</html>

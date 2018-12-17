@@ -325,7 +325,7 @@ href="../UUID.html">UUID</a>.</p></td>
 
         <div class="description">
             <p>Create a new instance.</p>
-<dl class="rdoc-list note-list"><dt>options
+<dl class="rdoc-list note-list"><dt><code>options</code>
 <dd>
 <p>Optional Hash of options, described below.</p>
 </dd></dl>
@@ -365,7 +365,7 @@ saved without it.</p>
             </p>
             <div id="method-c-new_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/services/services/session.rb, line 151</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier">initialize</span>( <span class="ruby-identifier">options</span> = {} )
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">initialize</span>( <span class="ruby-identifier">options</span> = {} )
   <span class="ruby-ivar">@created_at</span> = <span class="ruby-constant">Time</span>.<span class="ruby-identifier">now</span>.<span class="ruby-identifier">utc</span>
 
   <span class="ruby-keyword">self</span>.<span class="ruby-identifier">session_id</span>         = <span class="ruby-identifier">options</span>[ <span class="ruby-value">:session_id</span>         ] <span class="ruby-operator">||</span> <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">UUID</span>.<span class="ruby-identifier">generate</span>()
@@ -439,7 +439,7 @@ inter-resource call cannot proceed; it&#39;s an internal fault.</p>
             </p>
             <div id="method-i-augment_with_permissions_for_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/services/services/session.rb, line 600</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier">augment_with_permissions_for</span>( <span class="ruby-identifier">interaction</span> )
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">augment_with_permissions_for</span>( <span class="ruby-identifier">interaction</span> )
 
   <span class="ruby-comment"># Set up some convenience variables</span>
 
@@ -520,7 +520,8 @@ the transient store successfully.</p>
 <p><code>:fail</code>: The session data could not be deleted (unexpected
 storage</p>
 
-<pre><code>engine failure).</code></pre>
+<pre><code>engine failure).
+</code></pre>
 </li></ul>
         </div>
 
@@ -538,11 +539,11 @@ storage</p>
             </p>
             <div id="method-i-delete_from_store_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/services/services/session.rb, line 426</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier">delete_from_store</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">delete_from_store</span>
   <span class="ruby-keyword">begin</span>
 
     <span class="ruby-identifier">store</span>  = <span class="ruby-identifier">get_store</span>()
-    <span class="ruby-identifier">result</span> = <span class="ruby-identifier">store</span>.<span class="ruby-identifier">delete</span>( <span class="ruby-identifier">key</span><span class="ruby-operator">:</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">session_id</span> )
+    <span class="ruby-identifier">result</span> = <span class="ruby-identifier">store</span>.<span class="ruby-identifier">delete</span>( <span class="ruby-value">key:</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">session_id</span> )
 
     <span class="ruby-keyword">case</span> <span class="ruby-identifier">result</span>
       <span class="ruby-keyword">when</span> <span class="ruby-keyword">true</span>
@@ -553,7 +554,7 @@ storage</p>
         <span class="ruby-identifier">raise</span> <span class="ruby-identifier">result</span>
     <span class="ruby-keyword">end</span>
 
-  <span class="ruby-keyword">rescue</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">exception</span>
+  <span class="ruby-keyword">rescue</span> <span class="ruby-operator">=&gt;</span> <span class="ruby-identifier">exception</span>
 
     <span class="ruby-comment"># Log error and return nil if the session can&#39;t be parsed</span>
     <span class="ruby-comment">#</span>
@@ -593,7 +594,7 @@ if it has either not expired, or has no expiry date set yet.</p>
             </p>
             <div id="method-i-expired-3F_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/services/services/session.rb, line 466</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier">expired?</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">expired?</span>
   <span class="ruby-identifier">exp</span> = <span class="ruby-keyword">self</span>.<span class="ruby-identifier">expires_at</span>()
   <span class="ruby-identifier">now</span> = <span class="ruby-constant">Time</span>.<span class="ruby-identifier">now</span>.<span class="ruby-identifier">utc</span>
 
@@ -629,7 +630,7 @@ href="Session.html#attribute-i-permissions">permissions</a>.</p>
             </p>
             <div id="method-i-from_h-21_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/services/services/session.rb, line 522</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier">from_h!</span>( <span class="ruby-identifier">hash</span> )
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">from_h!</span>( <span class="ruby-identifier">hash</span> )
   <span class="ruby-identifier">hash</span> = <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Utilities</span>.<span class="ruby-identifier">stringify</span>( <span class="ruby-identifier">hash</span> )
 
   <span class="ruby-node">%w(
@@ -654,7 +655,7 @@ href="Session.html#attribute-i-permissions">permissions</a>.</p>
     <span class="ruby-keyword">if</span> <span class="ruby-identifier">hash</span>.<span class="ruby-identifier">has_key?</span>( <span class="ruby-identifier">property</span> )
       <span class="ruby-keyword">begin</span>
         <span class="ruby-identifier">instance_variable_set</span>( <span class="ruby-node">&quot;@#{ property }&quot;</span>, <span class="ruby-constant">Time</span>.<span class="ruby-identifier">parse</span>( <span class="ruby-identifier">hash</span>[ <span class="ruby-identifier">property</span> ] ).<span class="ruby-identifier">utc</span>() )
-      <span class="ruby-keyword">rescue</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">e</span>
+      <span class="ruby-keyword">rescue</span> <span class="ruby-operator">=&gt;</span> <span class="ruby-identifier">e</span>
         <span class="ruby-comment"># Invalid time given; keep existing date</span>
       <span class="ruby-keyword">end</span>
     <span class="ruby-keyword">end</span>
@@ -697,7 +698,7 @@ href="Session.html#attribute-i-identity">identity</a>.</p>
             </p>
             <div id="method-i-identity-3D_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/services/services/session.rb, line 73</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier">identity=</span>( <span class="ruby-identifier">hash</span> )
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">identity=</span>( <span class="ruby-identifier">hash</span> )
   <span class="ruby-ivar">@identity</span> = <span class="ruby-constant">OpenStruct</span>.<span class="ruby-identifier">new</span>( <span class="ruby-identifier">hash</span> )
 <span class="ruby-keyword">end</span></pre>
             </div>
@@ -751,7 +752,8 @@ associated stored Caller version in the transient store.</p>
 <p><code>:fail</code>: The session data could not be loaded (unexpected
 storage</p>
 
-<pre><code>engine failure).</code></pre>
+<pre><code>engine failure).
+</code></pre>
 </li></ul>
         </div>
 
@@ -769,10 +771,10 @@ storage</p>
             </p>
             <div id="method-i-load_from_store-21_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/services/services/session.rb, line 282</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier">load_from_store!</span>( <span class="ruby-identifier">sid</span> )
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">load_from_store!</span>( <span class="ruby-identifier">sid</span> )
   <span class="ruby-keyword">begin</span>
     <span class="ruby-identifier">store</span>        = <span class="ruby-identifier">get_store</span>()
-    <span class="ruby-identifier">session_hash</span> = <span class="ruby-identifier">store</span>.<span class="ruby-identifier">get</span>( <span class="ruby-identifier">key</span><span class="ruby-operator">:</span> <span class="ruby-identifier">sid</span>, <span class="ruby-identifier">allow_throw</span><span class="ruby-operator">:</span> <span class="ruby-keyword">true</span> )
+    <span class="ruby-identifier">session_hash</span> = <span class="ruby-identifier">store</span>.<span class="ruby-identifier">get</span>( <span class="ruby-value">key:</span> <span class="ruby-identifier">sid</span>, <span class="ruby-value">allow_throw:</span> <span class="ruby-keyword">true</span> )
 
     <span class="ruby-keyword">if</span> <span class="ruby-identifier">session_hash</span>.<span class="ruby-identifier">nil?</span>
       <span class="ruby-keyword">return</span> <span class="ruby-value">:not_found</span>
@@ -789,7 +791,7 @@ storage</p>
       <span class="ruby-keyword">end</span>
     <span class="ruby-keyword">end</span>
 
-  <span class="ruby-keyword">rescue</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">exception</span>
+  <span class="ruby-keyword">rescue</span> <span class="ruby-operator">=&gt;</span> <span class="ruby-identifier">exception</span>
 
     <span class="ruby-comment"># Log error and return nil if the session can&#39;t be parsed</span>
     <span class="ruby-comment">#</span>
@@ -872,7 +874,7 @@ session is already outdated.</p>
             </p>
             <div id="method-i-save_to_store_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/services/services/session.rb, line 182</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier">save_to_store</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">save_to_store</span>
   <span class="ruby-keyword">if</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">caller_id</span>.<span class="ruby-identifier">nil?</span>
     <span class="ruby-identifier">raise</span> <span class="ruby-string">&#39;Hoodoo::Services::Session\#save_to_store: Cannot save this session as it has no assigned Caller UUID&#39;</span>
   <span class="ruby-keyword">end</span>
@@ -921,9 +923,9 @@ session is already outdated.</p>
     <span class="ruby-comment"># *after* the time we record.</span>
 
     <span class="ruby-ivar">@expires_at</span> = ( <span class="ruby-operator">::</span><span class="ruby-constant">Time</span>.<span class="ruby-identifier">now</span> <span class="ruby-operator">+</span> <span class="ruby-constant">TTL</span> ).<span class="ruby-identifier">utc</span>()
-    <span class="ruby-identifier">result</span>      = <span class="ruby-identifier">store</span>.<span class="ruby-identifier">set</span>( <span class="ruby-identifier">key</span><span class="ruby-operator">:</span>              <span class="ruby-keyword">self</span>.<span class="ruby-identifier">session_id</span>,
-                             <span class="ruby-identifier">payload</span><span class="ruby-operator">:</span>          <span class="ruby-keyword">self</span>.<span class="ruby-identifier">to_h</span>(),
-                             <span class="ruby-identifier">maximum_lifespan</span><span class="ruby-operator">:</span> <span class="ruby-constant">TTL</span> )
+    <span class="ruby-identifier">result</span>      = <span class="ruby-identifier">store</span>.<span class="ruby-identifier">set</span>( <span class="ruby-value">key:</span>              <span class="ruby-keyword">self</span>.<span class="ruby-identifier">session_id</span>,
+                             <span class="ruby-value">payload:</span>          <span class="ruby-keyword">self</span>.<span class="ruby-identifier">to_h</span>(),
+                             <span class="ruby-value">maximum_lifespan:</span> <span class="ruby-constant">TTL</span> )
 
     <span class="ruby-keyword">case</span> <span class="ruby-identifier">result</span>
       <span class="ruby-keyword">when</span> <span class="ruby-keyword">true</span>
@@ -934,7 +936,7 @@ session is already outdated.</p>
         <span class="ruby-identifier">raise</span> <span class="ruby-identifier">result</span>
     <span class="ruby-keyword">end</span>
 
-  <span class="ruby-keyword">rescue</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">exception</span>
+  <span class="ruby-keyword">rescue</span> <span class="ruby-operator">=&gt;</span> <span class="ruby-identifier">exception</span>
 
     <span class="ruby-comment"># Log error and return nil if the session can&#39;t be parsed</span>
     <span class="ruby-comment">#</span>
@@ -971,7 +973,7 @@ href="Session.html#attribute-i-scoping">scoping</a>.</p>
             </p>
             <div id="method-i-scoping-3D_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/services/services/session.rb, line 97</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier">scoping=</span>( <span class="ruby-identifier">hash</span> )
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">scoping=</span>( <span class="ruby-identifier">hash</span> )
   <span class="ruby-ivar">@scoping</span> = <span class="ruby-constant">OpenStruct</span>.<span class="ruby-identifier">new</span>( <span class="ruby-identifier">hash</span> )
 <span class="ruby-keyword">end</span></pre>
             </div>
@@ -999,7 +1001,7 @@ href="Session.html#method-i-from_h-21">from_h!</a>.</p>
             </p>
             <div id="method-i-to_h_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/services/services/session.rb, line 476</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier">to_h</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">to_h</span>
   <span class="ruby-identifier">hash</span> = {}
 
   <span class="ruby-node">%w(
@@ -1070,7 +1072,7 @@ result in logged warnings.</p>
             </p>
             <div id="method-i-update_caller_version_in_memcached_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/services/services/session.rb, line 385</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier">update_caller_version_in_memcached</span>( <span class="ruby-identifier">cid</span>, <span class="ruby-identifier">cv</span>, <span class="ruby-identifier">store</span> = <span class="ruby-keyword">nil</span> )
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">update_caller_version_in_memcached</span>( <span class="ruby-identifier">cid</span>, <span class="ruby-identifier">cv</span>, <span class="ruby-identifier">store</span> = <span class="ruby-keyword">nil</span> )
   <span class="ruby-keyword">unless</span> <span class="ruby-identifier">store</span>.<span class="ruby-identifier">nil?</span>
     <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Services</span><span class="ruby-operator">::</span><span class="ruby-constant">Middleware</span>.<span class="ruby-identifier">logger</span>.<span class="ruby-identifier">warn</span>(
       <span class="ruby-string">&#39;Hoodoo::Services::Session#update_caller_version_in_memcached is deprecated - use #update_caller_version_in_store&#39;</span>
@@ -1081,9 +1083,9 @@ result in logged warnings.</p>
     <span class="ruby-comment"># change that engine&#39;s client to the provided Dalli::Client instance.</span>
 
     <span class="ruby-identifier">temp_store</span> = <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">TransientStore</span>.<span class="ruby-identifier">new</span>(
-      <span class="ruby-identifier">storage_engine</span><span class="ruby-operator">:</span>    <span class="ruby-value">:memcached</span>,
-      <span class="ruby-identifier">storage_host_uri</span><span class="ruby-operator">:</span>  <span class="ruby-keyword">self</span>.<span class="ruby-identifier">memcached_host</span>(),
-      <span class="ruby-identifier">default_namespace</span><span class="ruby-operator">:</span> <span class="ruby-string">&#39;nz_co_loyalty_hoodoo_session_&#39;</span>
+      <span class="ruby-value">storage_engine:</span>    <span class="ruby-value">:memcached</span>,
+      <span class="ruby-value">storage_host_uri:</span>  <span class="ruby-keyword">self</span>.<span class="ruby-identifier">memcached_host</span>(),
+      <span class="ruby-value">default_namespace:</span> <span class="ruby-string">&#39;nz_co_loyalty_hoodoo_session_&#39;</span>
     )
 
     <span class="ruby-identifier">memcached_engine</span>        = <span class="ruby-identifier">temp_store</span>.<span class="ruby-identifier">storage_engine_instance</span>()
@@ -1144,7 +1146,8 @@ local Caller data must therefore already be out of date.</p>
 <p><code>:fail</code>: The Caller could not be updated (unexpected storage
 engine</p>
 
-<pre><code>failure).</code></pre>
+<pre><code>failure).
+</code></pre>
 </li></ul>
         </div>
 
@@ -1158,7 +1161,7 @@ engine</p>
             </p>
             <div id="method-i-update_caller_version_in_store_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/services/services/session.rb, line 352</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier">update_caller_version_in_store</span>( <span class="ruby-identifier">cid</span>, <span class="ruby-identifier">cv</span>, <span class="ruby-identifier">store</span> = <span class="ruby-keyword">nil</span> )
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">update_caller_version_in_store</span>( <span class="ruby-identifier">cid</span>, <span class="ruby-identifier">cv</span>, <span class="ruby-identifier">store</span> = <span class="ruby-keyword">nil</span> )
   <span class="ruby-keyword">begin</span>
     <span class="ruby-identifier">store</span>        <span class="ruby-operator">||=</span> <span class="ruby-identifier">get_store</span>()
     <span class="ruby-identifier">cached_version</span> = <span class="ruby-identifier">load_caller_version_from_store</span>( <span class="ruby-identifier">store</span>, <span class="ruby-identifier">cid</span> )
@@ -1169,7 +1172,7 @@ engine</p>
       <span class="ruby-keyword">return</span> <span class="ruby-value">:ok</span>
     <span class="ruby-keyword">end</span>
 
-  <span class="ruby-keyword">rescue</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">exception</span>
+  <span class="ruby-keyword">rescue</span> <span class="ruby-operator">=&gt;</span> <span class="ruby-identifier">exception</span>
 
     <span class="ruby-comment"># Log error and return nil if the session can&#39;t be parsed</span>
     <span class="ruby-comment">#</span>

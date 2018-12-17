@@ -74,7 +74,7 @@ href="../../../Services/Middleware.html">Hoodoo::Services::Middleware</a>.</p>
         <div class="description">
             <p>Add custom attributes to the NewRelic transaction. The original
 implementation is called via <code>super</code>.</p>
-<dl class="rdoc-list note-list"><dt>interaction
+<dl class="rdoc-list note-list"><dt><code>interaction</code>
 <dd>
 <p><a
 href="../../../Services/Middleware/Interaction.html">Hoodoo::Services::Middleware::Interaction</a>
@@ -97,14 +97,14 @@ are unset, body data is <em>not</em> logged.</p>
             </p>
             <div id="method-i-monkey_log_inbound_request_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/monkey/patch/newrelic_middleware_analytics.rb, line 71</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier">monkey_log_inbound_request</span>( <span class="ruby-identifier">interaction</span> )
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">monkey_log_inbound_request</span>( <span class="ruby-identifier">interaction</span> )
 
   <span class="ruby-comment"># Add custom attributes to the NewRelic transaction.</span>
   <span class="ruby-comment">#</span>
   <span class="ruby-operator">::</span><span class="ruby-constant">NewRelic</span><span class="ruby-operator">::</span><span class="ruby-constant">Agent</span>.<span class="ruby-identifier">add_custom_attributes</span>(
     {
-      <span class="ruby-value">:target_action</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">interaction</span>.<span class="ruby-identifier">requested_action</span>,
-      <span class="ruby-value">:target_path</span>   =<span class="ruby-operator">&gt;</span> <span class="ruby-constant">CGI</span>.<span class="ruby-identifier">unescape</span>( <span class="ruby-identifier">interaction</span>.<span class="ruby-identifier">rack_request</span>.<span class="ruby-identifier">path</span>() )
+      <span class="ruby-value">:target_action</span> <span class="ruby-operator">=&gt;</span> <span class="ruby-identifier">interaction</span>.<span class="ruby-identifier">requested_action</span>,
+      <span class="ruby-value">:target_path</span>   <span class="ruby-operator">=&gt;</span> <span class="ruby-constant">CGI</span>.<span class="ruby-identifier">unescape</span>( <span class="ruby-identifier">interaction</span>.<span class="ruby-identifier">rack_request</span>.<span class="ruby-identifier">path</span>() )
     }
   )
 

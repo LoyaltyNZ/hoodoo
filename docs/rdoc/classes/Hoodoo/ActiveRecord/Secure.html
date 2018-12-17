@@ -30,6 +30,7 @@
         </h1>
         <ul class="files">
             <li><a href="../../../files/lib/hoodoo/active/active_record/secure_rb.html">lib/hoodoo/active/active_record/secure.rb</a></li>
+            <li><a href="../../../files/lib/hoodoo/active/active_record/security_helper_rb.html">lib/hoodoo/active/active_record/security_helper.rb</a></li>
         </ul>
     </div>
     <div id="bodyContent">
@@ -60,6 +61,11 @@ href="http://guides.rubyonrails.org/active_record_basics.html">guides.rubyonrail
             <span class="type">MODULE</span>
               <a href="Secure/ClassMethods.html">Hoodoo::ActiveRecord::Secure::ClassMethods</a>
         </li>
+
+        <li>
+            <span class="type">CLASS</span>
+              <a href="Secure/SecurityHelper.html">Hoodoo::ActiveRecord::Secure::SecurityHelper</a>
+        </li>
     </ul>
 
     <!-- Method ref -->
@@ -81,6 +87,30 @@ href="http://guides.rubyonrails.org/active_record_basics.html">guides.rubyonrail
 
 
 
+    <!-- Section constants -->
+    <div class="sectiontitle">Constants</div>
+    <table border='0' cellpadding='5'>
+        <tr valign='top' id='OBJECT_EQLS_STAR'>
+            <td class="attr-name">OBJECT_EQLS_STAR</td>
+            <td>=</td>
+            <td class="attr-value"><pre>Hoodoo::ActiveRecord::Secure::SecurityHelper::eqls_wildcard( &#39;*&#39; )</pre></td>
+        </tr>
+        <tr valign='top'>
+            <td>&nbsp;</td>
+            <td colspan="2" class="attr-desc"><p>Convenience constant defining an equals-single-security-value wildcard
+security exemption using the String &#39;*&#39;.</p></td>
+        </tr>
+        <tr valign='top' id='ENUMERABLE_INCLUDES_STAR'>
+            <td class="attr-name">ENUMERABLE_INCLUDES_STAR</td>
+            <td>=</td>
+            <td class="attr-value"><pre>Hoodoo::ActiveRecord::Secure::SecurityHelper::includes_wildcard( &#39;*&#39; )</pre></td>
+        </tr>
+        <tr valign='top'>
+            <td>&nbsp;</td>
+            <td colspan="2" class="attr-desc"><p>Convenience constant defining an included-in-enumerable-security-value
+wildcard security excemption using the String &#39;*&#39;.</p></td>
+        </tr>
+    </table>
 
 
 <!-- Methods -->
@@ -118,13 +148,13 @@ this module.</p>
                 <a href="javascript:toggleSource('method-c-included_source')" id="l_method-c-included_source">show</a>
             </p>
             <div id="method-c-included_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/secure.rb, line 37</span>
-<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">included</span>( <span class="ruby-identifier">model</span> )
+                <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/secure.rb, line 39</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">included</span>( <span class="ruby-identifier">model</span> )
   <span class="ruby-identifier">model</span>.<span class="ruby-identifier">class_attribute</span>(
     <span class="ruby-value">:nz_co_loyalty_hoodoo_secure_with</span>,
     {
-      <span class="ruby-value">:instance_predicate</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-keyword">false</span>,
-      <span class="ruby-value">:instance_accessor</span>  =<span class="ruby-operator">&gt;</span> <span class="ruby-keyword">false</span>
+      <span class="ruby-value">:instance_predicate</span> <span class="ruby-operator">=&gt;</span> <span class="ruby-keyword">false</span>,
+      <span class="ruby-value">:instance_accessor</span>  <span class="ruby-operator">=&gt;</span> <span class="ruby-keyword">false</span>
     }
   )
 
@@ -161,8 +191,8 @@ this module.</p>
                 <a href="javascript:toggleSource('method-c-instantiate_source')" id="l_method-c-instantiate_source">show</a>
             </p>
             <div id="method-c-instantiate_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/secure.rb, line 57</span>
-<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">instantiate</span>( <span class="ruby-identifier">model</span> )
+                <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/secure.rb, line 59</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">instantiate</span>( <span class="ruby-identifier">model</span> )
   <span class="ruby-identifier">model</span>.<span class="ruby-identifier">extend</span>( <span class="ruby-constant">ClassMethods</span> )
 <span class="ruby-keyword">end</span></pre>
             </div>

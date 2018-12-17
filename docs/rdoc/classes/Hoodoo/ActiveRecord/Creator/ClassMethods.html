@@ -132,7 +132,7 @@ those parameters.</p>
             </p>
             <div id="method-i-new_in_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/creator.rb, line 114</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier">new_in</span>( <span class="ruby-identifier">context</span>, <span class="ruby-identifier">attributes</span> = <span class="ruby-keyword">nil</span>, <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span> )
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">new_in</span>( <span class="ruby-identifier">context</span>, <span class="ruby-identifier">attributes</span> = <span class="ruby-keyword">nil</span>, <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span> )
 
   <span class="ruby-identifier">instance</span> = <span class="ruby-keyword">self</span>.<span class="ruby-identifier">new</span>( <span class="ruby-identifier">attributes</span>, <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span> )
 
@@ -141,10 +141,7 @@ those parameters.</p>
   <span class="ruby-comment">#       things we currently require - set &quot;created_at&quot;/&quot;updated_at&quot;.</span>
   <span class="ruby-comment">#</span>
   <span class="ruby-keyword">unless</span> <span class="ruby-identifier">context</span>.<span class="ruby-identifier">request</span>.<span class="ruby-identifier">dated_from</span>.<span class="ruby-identifier">nil?</span>
-    <span class="ruby-identifier">instance</span>.<span class="ruby-identifier">created_at</span> = <span class="ruby-identifier">instance</span>.<span class="ruby-identifier">updated_at</span> = <span class="ruby-identifier">context</span>.<span class="ruby-identifier">request</span>.<span class="ruby-identifier">dated_from</span> <span class="ruby-keyword">if</span> (
-      ( <span class="ruby-keyword">self</span>.<span class="ruby-identifier">include?</span>( <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">ActiveRecord</span><span class="ruby-operator">::</span><span class="ruby-constant">Dated</span>         ) <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">dating_enabled?</span>()        ) <span class="ruby-operator">||</span>
-      ( <span class="ruby-keyword">self</span>.<span class="ruby-identifier">include?</span>( <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">ActiveRecord</span><span class="ruby-operator">::</span><span class="ruby-constant">ManuallyDated</span> ) <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">manual_dating_enabled?</span>() )
-    )
+    <span class="ruby-identifier">instance</span>.<span class="ruby-identifier">created_at</span> = <span class="ruby-identifier">instance</span>.<span class="ruby-identifier">updated_at</span> = <span class="ruby-identifier">context</span>.<span class="ruby-identifier">request</span>.<span class="ruby-identifier">dated_from</span>
   <span class="ruby-keyword">end</span>
 
   <span class="ruby-keyword">return</span> <span class="ruby-identifier">instance</span>

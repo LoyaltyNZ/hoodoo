@@ -369,7 +369,7 @@ expecting to use.</p>
             </p>
             <div id="method-c-define_accessors_for_header_equivalents_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/client/headers.rb, line 233</span>
-<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">define_accessors_for_header_equivalents</span>( <span class="ruby-identifier">klass</span> )
+<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">define_accessors_for_header_equivalents</span>( <span class="ruby-identifier">klass</span> )
   <span class="ruby-identifier">klass</span>.<span class="ruby-identifier">class_eval</span> <span class="ruby-keyword">do</span>
     <span class="ruby-constant">HEADER_TO_PROPERTY</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span> <span class="ruby-identifier">rack_header</span>, <span class="ruby-identifier">description</span> <span class="ruby-operator">|</span>
       <span class="ruby-identifier">attr_reader</span>( <span class="ruby-identifier">description</span>[ <span class="ruby-value">:property</span> ] )
@@ -442,7 +442,7 @@ encountered (in enumeration order, whatever that might be) is stored.</p>
             </p>
             <div id="method-c-x_header_to_options_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/client/headers.rb, line 282</span>
-<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">x_header_to_options</span>( <span class="ruby-identifier">hashlike_source</span> )
+<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">x_header_to_options</span>( <span class="ruby-identifier">hashlike_source</span> )
   <span class="ruby-identifier">hashlike_source</span> <span class="ruby-operator">||=</span> {}
   <span class="ruby-identifier">options</span>           = {}
 

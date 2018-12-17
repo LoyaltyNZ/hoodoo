@@ -150,7 +150,7 @@ allow 127.0.0.1
             </p>
             <div id="method-i-flush_services_for_test_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/services/discovery/discoverers/by_drb/by_drb.rb, line 27</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier">flush_services_for_test</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">flush_services_for_test</span>
   <span class="ruby-identifier">drb_service</span>().<span class="ruby-identifier">flush</span>()
 <span class="ruby-keyword">end</span></pre>
             </div>
@@ -212,7 +212,7 @@ the return value is correspondingly <code>nil</code>.</p>
             </p>
             <div id="method-i-announce_remote_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/services/discovery/discoverers/by_drb/by_drb.rb, line 78</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier">announce_remote</span>( <span class="ruby-identifier">resource</span>, <span class="ruby-identifier">version</span>, <span class="ruby-identifier">options</span> = {} )
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">announce_remote</span>( <span class="ruby-identifier">resource</span>, <span class="ruby-identifier">version</span>, <span class="ruby-identifier">options</span> = {} )
 
   <span class="ruby-identifier">host</span> = <span class="ruby-identifier">options</span>[ <span class="ruby-value">:host</span> ]
   <span class="ruby-identifier">port</span> = <span class="ruby-identifier">options</span>[ <span class="ruby-value">:port</span> ]
@@ -245,7 +245,7 @@ the return value is correspondingly <code>nil</code>.</p>
         <div class="description">
             <p>Configure an instance. Call via Hoodoo::Services::Discovery::Base#new.
 Parameters:</p>
-<dl class="rdoc-list note-list"><dt>options
+<dl class="rdoc-list note-list"><dt><code>options</code>
 <dd>
 <p>Options hash as described below.</p>
 </dd></dl>
@@ -274,7 +274,7 @@ behaviour applies. If present, the <code>drb_port</code> option is ignored.</p>
             </p>
             <div id="method-i-configure_with_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/services/discovery/discoverers/by_drb/by_drb.rb, line 50</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier">configure_with</span>( <span class="ruby-identifier">options</span> )
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">configure_with</span>( <span class="ruby-identifier">options</span> )
   <span class="ruby-ivar">@drb_port</span> = <span class="ruby-identifier">options</span>[ <span class="ruby-value">:drb_port</span> ]
   <span class="ruby-ivar">@drb_uri</span>  = <span class="ruby-identifier">options</span>[ <span class="ruby-value">:drb_uri</span>  ]
 <span class="ruby-keyword">end</span></pre>
@@ -312,7 +312,7 @@ instance if the endpoint is found, else <code>nil</code>.</p>
             </p>
             <div id="method-i-discover_remote_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/services/discovery/discoverers/by_drb/by_drb.rb, line 109</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier">discover_remote</span>( <span class="ruby-identifier">resource</span>, <span class="ruby-identifier">version</span> )
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">discover_remote</span>( <span class="ruby-identifier">resource</span>, <span class="ruby-identifier">version</span> )
   <span class="ruby-identifier">endpoint_uri_string</span> = <span class="ruby-identifier">drb_service</span>().<span class="ruby-identifier">find</span>( <span class="ruby-identifier">resource</span>, <span class="ruby-identifier">version</span> )
   <span class="ruby-keyword">return</span> <span class="ruby-identifier">result_for</span>( <span class="ruby-identifier">resource</span>, <span class="ruby-identifier">version</span>, <span class="ruby-identifier">endpoint_uri_string</span> )
 <span class="ruby-keyword">end</span></pre>

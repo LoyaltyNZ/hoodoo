@@ -20,16 +20,15 @@ module Hoodoo
       #       and_return( Hoodoo::TransientStore::Mocks::Redis.new )
       #     )
       #
-      # ...whenever you need to stub out real Memcached. You will
-      # probably want to add:
+      # ...whenever you need to stub out real Redis. You will# probably want
+      # to add:
       #
       #     before :all do # (or ":each")
       #       Hoodoo::TransientStore::Mocks::Redis.reset()
       #     end
       #
-      # ...to "clean out Memcached" before or between tests. You can
-      # check the contents of mock Memcached by examining ::store's
-      # hash of data.
+      # ...to "clean out Redis" before or between tests. You can check the
+      # contents of mock Redis by examining ::store's hash of data.
       #
       # The test coverage for Hoodoo::TransientStore selects this backend in
       # passing. Generally speaking you should favour Hoodoo::TransientStore
@@ -39,7 +38,7 @@ module Hoodoo
       class Redis
         @@store = {}
 
-        # For test analysis, return the hash of 'memcached' mock data.
+        # For test analysis, return the hash of 'Redis' mock data.
         #
         # Entries are referenced by the key you used to originally
         # store them; values are hashes with ":expires_at" giving an

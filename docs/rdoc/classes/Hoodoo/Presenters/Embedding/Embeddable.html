@@ -113,7 +113,7 @@ those instead.</p>
             </p>
             <div id="method-c-new_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/presenters/embedding.rb, line 29</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier">initialize</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">initialize</span>
   <span class="ruby-ivar">@hash</span> = {}
 <span class="ruby-keyword">end</span></pre>
             </div>
@@ -158,7 +158,7 @@ href="../UUID.html">UUID</a> Strings.</p>
             </p>
             <div id="method-i-add_many_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/presenters/embedding.rb, line 73</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier">add_many</span>( <span class="ruby-identifier">key</span>, <span class="ruby-identifier">array_of_rendered_resources_or_uuids</span> )
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">add_many</span>( <span class="ruby-identifier">key</span>, <span class="ruby-identifier">array_of_rendered_resources_or_uuids</span> )
   <span class="ruby-identifier">validate_many</span>( <span class="ruby-identifier">array_of_rendered_resources_or_uuids</span> )
   <span class="ruby-ivar">@hash</span>[ <span class="ruby-identifier">key</span> ] = <span class="ruby-identifier">array_of_rendered_resources_or_uuids</span>
 <span class="ruby-keyword">end</span></pre>
@@ -201,7 +201,7 @@ href="../UUID.html">UUID</a> <a href="../String.html">String</a>.</p>
             </p>
             <div id="method-i-add_one_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/presenters/embedding.rb, line 50</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier">add_one</span>( <span class="ruby-identifier">key</span>, <span class="ruby-identifier">rendered_resource_or_uuid</span> )
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">add_one</span>( <span class="ruby-identifier">key</span>, <span class="ruby-identifier">rendered_resource_or_uuid</span> )
   <span class="ruby-identifier">validate_one</span>( <span class="ruby-identifier">rendered_resource_or_uuid</span> )
   <span class="ruby-ivar">@hash</span>[ <span class="ruby-identifier">key</span> ] = <span class="ruby-identifier">rendered_resource_or_uuid</span>
 <span class="ruby-keyword">end</span></pre>
@@ -216,7 +216,7 @@ href="../UUID.html">UUID</a> <a href="../String.html">String</a>.</p>
 
         <div class="description">
             <p>Delete all data associated with the given key.</p>
-<dl class="rdoc-list note-list"><dt>key
+<dl class="rdoc-list note-list"><dt><code>key</code>
 <dd>
 <p>As provided to a prior call to <a
 href="Embeddable.html#method-i-add_one">add_one</a> or <a
@@ -236,7 +236,7 @@ in this case either.</p>
             </p>
             <div id="method-i-remove_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/presenters/embedding.rb, line 84</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier">remove</span>( <span class="ruby-identifier">key</span> )
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">remove</span>( <span class="ruby-identifier">key</span> )
   <span class="ruby-ivar">@hash</span>.<span class="ruby-identifier">delete</span>( <span class="ruby-identifier">key</span> )
 <span class="ruby-keyword">end</span></pre>
             </div>
@@ -268,7 +268,7 @@ href="Embeddable.html#method-i-remove">remove</a>.</p>
             </p>
             <div id="method-i-retrieve_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/presenters/embedding.rb, line 93</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier">retrieve</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">retrieve</span>
   <span class="ruby-ivar">@hash</span>
 <span class="ruby-keyword">end</span></pre>
             </div>

@@ -2313,6 +2313,9 @@ module Hoodoo; module Services
             return nil
           end
 
+        elsif rules_value == '*'
+          identity_overrides[ rules_key ] = input_value
+
         elsif rules_value.is_a?( Hash )
           if rules_value.has_key?( input_value )
             identity_overrides[ rules_key ] = input_value

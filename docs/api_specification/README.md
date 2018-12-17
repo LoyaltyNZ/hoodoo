@@ -1,8 +1,9 @@
 # Hoodoo API Specification
 
-_Release 7, 2017-11-03_
+_Release 8, 2018-07-27_
 
 [](TOCS)
+
 * [Overview](#ao)
 * [API call basics](#apicb)
   * [Generalised representation](#apicbgr)
@@ -67,6 +68,7 @@ _Release 7, 2017-11-03_
       * [Interface](#errors.resource.interface)
       * [Representation](#errors.resource.representation)
 * [Change history](#change_history)
+
 [](TOCE)
 
 ## <a name="ao"></a>Overview
@@ -563,11 +565,13 @@ See also [`X-Dated-From`](#http_x_dated_from).
 
 The `X-Dated-From` HTTP header is only relevant for HTTP `POST` operations which create resource instances.
 
-This feature is only supported by resources that also support the [`X-Dated-At`](#http_x_dated_at) header. Such resources can be updated, so they may change over time but allow historical versions of their representations to be returned. If an attempt is made to read a resource representation at a date-time from before it was created, the system will return a "not found" response. With the `X-Dated-From` header, you can modify this creation date from the default, which is the instantaneous server date-time of 'now' at the point the resource instance is persisted, to a date-time of your choosing.
+This feature is only guaranteed to be supported by resources that also support the [`X-Dated-At`](#http_x_dated_at) header. Such resources can be updated, so they may change over time but allow historical versions of their representations to be returned. If an attempt is made to read a resource representation at a date-time from before it was created, the system will return a "not found" response. With the `X-Dated-From` header, you can modify this creation date from the default, which is the instantaneous server date-time of 'now' at the point the resource instance is persisted, to a date-time of your choosing.
+
+Some resources may support `X-Dated-From` even if they do not support historical representation. Such a resource is really just allowing the caller to specify the resulting value of the `created_at` field. This can be useful when resources are related to some real-world concept, with a resource instance's creation time linked to the associated real-world concept's own creation time.
 
 Note the subtle difference between this header and things like e.g. a `backdated_to` field in a resource. The former is only for resources that support historical representation, while the latter is for immutable resources that don't require historical representation but _do_ depend upon other resources that change over time.
 
-If the header is given when creating a resource which does not support historical representation, the system will simply create a "at-processing-time" representation of that resource - the header value is ignored. Resources which _do_ support the header must explicitly state so in their documented interface descriptions.
+Resources which support this header must explicitly state so in their documented interface descriptions. If the header is given when creating a resource which does not support it, the system will simply create a "at-processing-time" representation of that resource, with a `created_at` field value of "now" - the header value is ignored.
 
 As with `X-Dated-At,` specifying date/times in the future is _not permitted_ so you must follow the same [usage guidelines](#http_x_dated_at).
 
@@ -982,7 +986,7 @@ The response to a `POST` will include a generated `authentication_secret`. ***Th
 
 The optional `authorised_identities` entry in the `scoping` section of the Caller resource describes an _identity map_ used by the implementation of the [`X-Assume-Identity-Of`](#http_x_assume_identity_of) secured HTTP header. This header lets an API caller specify an alternative identity for use in that one call. The key/value pairs expressed in the HTTP header's value are validated against the identity map.
 
-The identity map operates on a whitelist basis. Given that the associated HTTP header's aim is to change key/value pairs inside the session identity, the map specifies the keys you can specify and provides lists of the values permitted for those keys. The map can be deeply nested, so that particular values of particular keys may in turn allow only particular other values of other keys.
+The identity map operates on a whitelist basis, with wildcard support through character `*`. Given that the associated HTTP header's aim is to change key/value pairs inside the session identity, the map specifies the keys you can specify and provides lists of the values permitted for those keys. The map can be deeply nested, so that particular values of particular keys may in turn allow only particular other values of other keys.
 
 Due to the arbitrary potential key and value contents of the map given the generic use of identity information is up to the implementation of the Caller and Session resources and the meaning therein is API domain-specific, there is no formalised Type defined for the identity map; it is best described by example.
 
@@ -1004,7 +1008,12 @@ In the simple case, we could just list these out in a flat identity map. The sco
 }
 ```
 
-Note now each key's value _must_ be an array - even if it only has one entry - of the allowed identities that can be assumed for each of those named entries. The keys in the identity map match the keys permitted in the key-value pairs given with the HTTP header; the arrays of values in the identity map give the permitted individual values for the key-value pairs given with the HTTP header. Thus:
+Note that each key's value must be either:
+
+* An array - even if it only has one entry - of the allowed identities that can be assumed for the named entry.
+* The string `"*"` (an asterisk) - a wildcard indicating that any identity can be assumed for the named entry. This is powerful but very dangerous and should only be used for special cases such as highly secured "superuser"-like Callers, and even then, only with great caution.
+
+The keys in the identity map match the keys permitted in the key-value pairs given with the HTTP header; the arrays of values in the identity map give the permitted individual values for the key-value pairs given with the HTTP header or a wildcard string matches any value. For example, given the above example identity map definition, the following HTTP header is permitted:
 
 ```
 X-Assume-Identity-Of: account_id=account1&member_id=member3&device_id=device9
@@ -1016,7 +1025,7 @@ Partial identity overrides are permitted:
 X-Assume-Identity-Of: account_id=account94
 ```
 
-In this example, our model for the account/member/device example is a hierarchy. The 'flat' identity map above allows an errant API caller to assume an identity where, say, the given member does not belong to the given account. Given you must know the permitted values up-front, you must also know the hierarchy up-front; you can provide a more nested identity map that describes it:
+In the next example, our model for the account/member/device example is a hierarchy. The 'flat' identity map above allows an errant API caller to assume an identity where, say, the given member does not belong to the given account. Given you must know the permitted values up-front, you must also know the hierarchy up-front; you can provide a more nested identity map that describes it:
 
 ```json
 {
@@ -1082,9 +1091,9 @@ X-Assume-Identity-Of: member_id=account12
 So an identity map consists of an Object with:
 
 * Keys that describe same-named keys allowed in the [`X-Assume-Identity-Of`](#http_x_assume_identity_of) header value's key/value pair keys.
-* Values that at the furthest depth of used nesting must be arrays of permitted values in the header value's key/value pair values.
+* Values that at the lowest depth of nesting used must be either arrays of permitted values in the header value's key/value pair values, or the string `"*"` as a permit-all wildcard.
 * Values that alternatively are sub-objects describing a deeper level of nesting. In those sub-objects, keys describe the permitted header value's key/value pair values, and the values describe the nested identity map fragment to use if that value is detected.
-* To put it another way, you can see from the above that there's nesting pattern of alternating "permitted key, permitted value(s), permitted key, permitted value(s)..." all the way down to the final deepest part anywhere in the map which must be an array of permitted values.
+* To put it another way, you can see from the above that there's nesting pattern of alternating "permitted key, permitted value(s), permitted key, permitted value(s)..." all the way down to the final deepest part anywhere in the map which must be an array of permitted values or a wildcard.
 
 Placing a given header value's permitted key at more than one level in the map may provoke undefined behaviour, or at best be very confusing! This is not recommended. For example:
 
@@ -1350,3 +1359,4 @@ It is likely to be helpful if you augment this with your own selection of search
 | 2017-08-17 | Release 5 | ADH    | Describe new standard optional resource field `created_by`, for resource fingerprints. |
 | 2017-10-13 | Release 6 | ADH    | Hoodoo 2; describe new framework-level search/query string of `created_by`. |
 | 2017-11-03 | Release 7 | ADH    | Add +generic.contemporary_exists+ error and associated information. |
+| 2018-07-27 | Release 8 | ADH    | Extension of conditions under which `X-Dated-From` HTTP header may be supported by a resource. |
