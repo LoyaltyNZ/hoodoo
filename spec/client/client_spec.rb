@@ -388,6 +388,13 @@ describe Hoodoo::Client do
         expect( result.platform_errors.has_errors? ).to eq( false )
         expect( result[ 'kind' ] ).to eq( 'Errors' )
       end
+
+      it 'returns a 404 for show(nil)', :wont_create_net_http do
+        result = @endpoint.show( nil )
+
+        expect( result.platform_errors ).to have_errors
+        expect( result.platform_errors.errors[ 0 ][ 'code' ] ).to eq( 'platform.not_found' )
+      end
     end
 
     before :each do
@@ -459,9 +466,19 @@ describe Hoodoo::Client do
           proxy_uri: proxy_uri
         )
 
-        original_new = Net::HTTP.method( :new )
+        set_vars_for(
+          auto_session: false,
+          session_id:   @old_test_session.session_id,
+          discoverer:   discoverer
+        )
+      end
 
-        expect( Net::HTTP ).to receive( :new ).at_least( :once ) do | host, port, proxy_host, proxy_port, proxy_user, proxy_pass |
+      before :each, :wont_create_net_http => true do
+        expect( Net::HTTP ).not_to receive( :new )
+      end
+
+      before :each, :wont_create_net_http => false do
+        expect( Net::HTTP ).to receive( :new ).at_least( :once ).and_wrap_original do | original_new, host, port, proxy_host, proxy_port, proxy_user, proxy_pass |
           expect( host       ).to eq( 'localhost' )
           expect( port       ).to eq( @port       )
           expect( proxy_host ).to eq( 'proxyhost' )
@@ -471,12 +488,6 @@ describe Hoodoo::Client do
 
           original_new.call( host, port )
         end
-
-        set_vars_for(
-          auto_session: false,
-          session_id:   @old_test_session.session_id,
-          discoverer:   discoverer
-        )
       end
 
       it_behaves_like Hoodoo::Client
