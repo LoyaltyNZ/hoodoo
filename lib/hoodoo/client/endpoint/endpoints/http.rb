@@ -56,7 +56,14 @@ module Hoodoo
 
           # See Hoodoo::Client::Endpoint#show.
           #
+          # In RESTful HTTP, `GET /resources/#{ident = nil}` gets evaluated
+          # as `GET /resources/`, which is of course interpreted as a #list
+          # request. Since this is undesirable behaviour, the +ident+ must be
+          # populated, and this will return `404 Not Found` if it is not.
+          #
           def show( ident, query_hash = nil )
+            return generate_404_response_for( :show ) if ident.nil?
+
             d            = @description.dup
             d.action     = :show
             d.ident      = ident
