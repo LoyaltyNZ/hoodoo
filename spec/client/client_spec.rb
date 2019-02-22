@@ -394,6 +394,7 @@ describe Hoodoo::Client do
 
         expect( result.platform_errors.has_errors? ).to eq( true )
         expect( result.platform_errors.errors[ 0 ][ 'code' ] ).to eq( 'platform.not_found' )
+        expect( result.platform_errors.errors[ 0 ][ 'reference' ] ).to eq( 'nil identifier given on :show action' )
       end
     end
 

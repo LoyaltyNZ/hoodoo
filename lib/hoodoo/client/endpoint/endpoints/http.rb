@@ -62,7 +62,15 @@ module Hoodoo
           # populated, and this will return `404 Not Found` if it is not.
           #
           def show( ident, query_hash = nil )
-            return generate_404_response_for( :show ) if ident.nil?
+            if ident.nil?
+              data = response_class_for( :show ).new
+              data.platform_errors.add_error(
+                'platform.not_found',
+                'reference' => {entity_name: 'nil identifier given on :show action'}
+              )
+
+              return data
+            end
 
             d            = @description.dup
             d.action     = :show
