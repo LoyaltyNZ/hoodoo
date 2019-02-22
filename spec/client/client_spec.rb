@@ -392,7 +392,7 @@ describe Hoodoo::Client do
       it 'returns a 404 for show(nil)', :wont_create_net_http do
         result = @endpoint.show( nil )
 
-        expect( result.platform_errors ).to have_errors
+        expect( result.platform_errors.has_errors? ).to eq( true )
         expect( result.platform_errors.errors[ 0 ][ 'code' ] ).to eq( 'platform.not_found' )
       end
     end
@@ -458,6 +458,11 @@ describe Hoodoo::Client do
     end
 
     context 'and with an HTTP proxy via custom discoverer' do
+      around :each do | example |
+        @example_wont_create_net_http = example.metadata[ :wont_create_net_http ]
+        example.run
+      end
+
       before :each do
         base_uri   = "http://localhost:#{ @port }"
         proxy_uri  = 'http://foo:bar@proxyhost:1234'
@@ -466,28 +471,26 @@ describe Hoodoo::Client do
           proxy_uri: proxy_uri
         )
 
+        if @example_wont_create_net_http
+          expect( Net::HTTP ).not_to receive( :new )
+        else
+          expect( Net::HTTP ).to receive( :new ).at_least( :once ).and_wrap_original do | original_new, host, port, proxy_host, proxy_port, proxy_user, proxy_pass |
+            expect( host       ).to eq( 'localhost' )
+            expect( port       ).to eq( @port       )
+            expect( proxy_host ).to eq( 'proxyhost' )
+            expect( proxy_port ).to eq( 1234        )
+            expect( proxy_user ).to eq( 'foo'       )
+            expect( proxy_pass ).to eq( 'bar'       )
+
+            original_new.call( host, port )
+          end
+        end
+
         set_vars_for(
           auto_session: false,
           session_id:   @old_test_session.session_id,
           discoverer:   discoverer
         )
-      end
-
-      before :each, :wont_create_net_http => true do
-        expect( Net::HTTP ).not_to receive( :new )
-      end
-
-      before :each, :wont_create_net_http => false do
-        expect( Net::HTTP ).to receive( :new ).at_least( :once ).and_wrap_original do | original_new, host, port, proxy_host, proxy_port, proxy_user, proxy_pass |
-          expect( host       ).to eq( 'localhost' )
-          expect( port       ).to eq( @port       )
-          expect( proxy_host ).to eq( 'proxyhost' )
-          expect( proxy_port ).to eq( 1234        )
-          expect( proxy_user ).to eq( 'foo'       )
-          expect( proxy_pass ).to eq( 'bar'       )
-
-          original_new.call( host, port )
-        end
       end
 
       it_behaves_like Hoodoo::Client
