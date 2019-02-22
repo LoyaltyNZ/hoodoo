@@ -1,5 +1,9 @@
 # Hoodoo v2.x
 
+## 2.12.1 (2019-02-22)
+
+* Disallows calls to `show` with `nil` identifiers. Previously these got interpreted as `list` calls; now they return `404 Not Found`.
+
 ## 2.12.0 (2018-12-17)
 
 * Extends [Session](https://cdn.rawgit.com/LoyaltyNZ/hoodoo/master/docs/rdoc/classes/Hoodoo/Services/Session.html) storage functionality to allow use of any supported [TransientStore](https://cdn.rawgit.com/LoyaltyNZ/hoodoo/master/docs/rdoc/classes/Hoodoo/TransientStore.html) storage engine. Previously, Hoodoo only supported session storage through `memcached`.

@@ -127,7 +127,7 @@ href="../Endpoint.html#method-i-create">Hoodoo::Client::Endpoint#create</a>.</p>
                 <a href="javascript:toggleSource('method-i-create_source')" id="l_method-i-create_source">show</a>
             </p>
             <div id="method-i-create_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/client/endpoint/endpoints/http.rb, line 70</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/client/endpoint/endpoints/http.rb, line 85</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">create</span>( <span class="ruby-identifier">body_hash</span>, <span class="ruby-identifier">query_hash</span> = <span class="ruby-keyword">nil</span> )
   <span class="ruby-identifier">d</span>            = <span class="ruby-ivar">@description</span>.<span class="ruby-identifier">dup</span>
   <span class="ruby-identifier">d</span>.<span class="ruby-identifier">action</span>     = <span class="ruby-value">:create</span>
@@ -159,7 +159,7 @@ href="../Endpoint.html#method-i-delete">Hoodoo::Client::Endpoint#delete</a>.</p>
                 <a href="javascript:toggleSource('method-i-delete_source')" id="l_method-i-delete_source">show</a>
             </p>
             <div id="method-i-delete_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/client/endpoint/endpoints/http.rb, line 93</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/client/endpoint/endpoints/http.rb, line 108</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">delete</span>( <span class="ruby-identifier">ident</span>, <span class="ruby-identifier">query_hash</span> = <span class="ruby-keyword">nil</span> )
   <span class="ruby-identifier">d</span>            = <span class="ruby-ivar">@description</span>.<span class="ruby-identifier">dup</span>
   <span class="ruby-identifier">d</span>.<span class="ruby-identifier">action</span>     = <span class="ruby-value">:delete</span>
@@ -211,6 +211,12 @@ href="../Endpoint.html#method-i-list">Hoodoo::Client::Endpoint#list</a>.</p>
         <div class="description">
             <p>See <a
 href="../Endpoint.html#method-i-show">Hoodoo::Client::Endpoint#show</a>.</p>
+
+<p>In RESTful <a href="HTTP.html">HTTP</a>, `GET /resources/#{ident = nil}`
+gets evaluated as `GET /resources/`, which is of course interpreted as a <a
+href="HTTP.html#method-i-list">list</a> request. Since this is undesirable
+behaviour, the <code>ident</code> must be populated, and this will return
+`404 Not Found` if it is not.</p>
         </div>
 
 
@@ -222,8 +228,18 @@ href="../Endpoint.html#method-i-show">Hoodoo::Client::Endpoint#show</a>.</p>
                 <a href="javascript:toggleSource('method-i-show_source')" id="l_method-i-show_source">show</a>
             </p>
             <div id="method-i-show_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/client/endpoint/endpoints/http.rb, line 59</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/client/endpoint/endpoints/http.rb, line 64</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">show</span>( <span class="ruby-identifier">ident</span>, <span class="ruby-identifier">query_hash</span> = <span class="ruby-keyword">nil</span> )
+  <span class="ruby-keyword">if</span> <span class="ruby-identifier">ident</span>.<span class="ruby-identifier">nil?</span>
+    <span class="ruby-identifier">data</span> = <span class="ruby-identifier">response_class_for</span>( <span class="ruby-value">:show</span> ).<span class="ruby-identifier">new</span>
+    <span class="ruby-identifier">data</span>.<span class="ruby-identifier">platform_errors</span>.<span class="ruby-identifier">add_error</span>(
+      <span class="ruby-string">&#39;platform.not_found&#39;</span>,
+      <span class="ruby-string">&#39;reference&#39;</span> <span class="ruby-operator">=&gt;</span> {<span class="ruby-value">entity_name:</span> <span class="ruby-string">&#39;nil identifier given on :show action&#39;</span>}
+    )
+
+    <span class="ruby-keyword">return</span> <span class="ruby-identifier">data</span>
+  <span class="ruby-keyword">end</span>
+
   <span class="ruby-identifier">d</span>            = <span class="ruby-ivar">@description</span>.<span class="ruby-identifier">dup</span>
   <span class="ruby-identifier">d</span>.<span class="ruby-identifier">action</span>     = <span class="ruby-value">:show</span>
   <span class="ruby-identifier">d</span>.<span class="ruby-identifier">ident</span>      = <span class="ruby-identifier">ident</span>
@@ -254,7 +270,7 @@ href="../Endpoint.html#method-i-update">Hoodoo::Client::Endpoint#update</a>.</p>
                 <a href="javascript:toggleSource('method-i-update_source')" id="l_method-i-update_source">show</a>
             </p>
             <div id="method-i-update_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/client/endpoint/endpoints/http.rb, line 81</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/client/endpoint/endpoints/http.rb, line 96</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">update</span>( <span class="ruby-identifier">ident</span>, <span class="ruby-identifier">body_hash</span>, <span class="ruby-identifier">query_hash</span> = <span class="ruby-keyword">nil</span> )
   <span class="ruby-identifier">d</span>            = <span class="ruby-ivar">@description</span>.<span class="ruby-identifier">dup</span>
   <span class="ruby-identifier">d</span>.<span class="ruby-identifier">action</span>     = <span class="ruby-value">:update</span>

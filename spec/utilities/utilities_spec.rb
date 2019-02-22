@@ -678,11 +678,11 @@ describe Hoodoo::Utilities do
     it 'rejects invalid input with an exception' do
       expect {
         Hoodoo::Utilities.rationalise_datetime( "hello" )
-      }.to raise_exception
+      }.to raise_exception( /Invalid parameter 'hello'/ )
 
       expect {
         Hoodoo::Utilities.rationalise_datetime( Array.new )
-      }.to raise_exception
+      }.to raise_exception( /Invalid parameter '\[\]'/ )
     end
   end
 end
