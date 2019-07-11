@@ -1,5 +1,9 @@
 # Hoodoo v2.x
 
+## 2.12.2 (2019-07-11)
+
+* Support `hash` as a valid property type for keys.
+
 ## 2.12.1 (2019-02-22)
 
 * Disallows calls to `show` with `nil` identifiers. Previously these got interpreted as `list` calls; now they return `404 Not Found`.
