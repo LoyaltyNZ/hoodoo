@@ -680,7 +680,7 @@ describe Hoodoo::Presenters::Hash do
 
   ############################################################################
 
-  context 'specific key with a hash as ' do
+  context 'specific key with a hash as the type' do
     context '#render' do
       it 'renders required fields correctly' do
         input_data = { 'key_with_hash_type' => {
