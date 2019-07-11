@@ -747,6 +747,10 @@ module Hoodoo
       #   Hoodoo::Presenters::Text
       # [:uuid]
       #   Hoodoo::Presenters::UUID
+      # [:hash]
+      #   Hoodoo::Presenters::Hash
+      # [:object]
+      #   Hoodoo::Presenters::Object
       #
       def type_option_to_class( type )
         case type
@@ -776,6 +780,10 @@ module Hoodoo
             Hoodoo::Presenters::Text
           when :uuid
             Hoodoo::Presenters::UUID
+          when :object
+            Hoodoo::Presenters::Object
+          when :hash
+            Hoodoo::Presenters::Hash
           else
             raise "Unsupported 'type' option value of '#{ type }' in Hoodoo::Presenters::BaseDSL"
         end

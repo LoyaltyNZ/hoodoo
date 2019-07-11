@@ -663,6 +663,94 @@ describe Hoodoo::Presenters::Hash do
 
   ############################################################################
 
+  class TestHashKeyWithHashType < Hoodoo::Presenters::Base
+    schema do
+      hash :key_with_hash_type do
+        key :specific_hash, :type => :hash do
+          key :optional_field, required: false
+          key :required_field, required: true
+        end
+        key :generic_hash, :type => :hash do
+          keys :length => 6
+        end
+      end
+    end
+  end
+
+
+  ############################################################################
+
+  context 'specific key with a hash as ' do
+    context '#render' do
+      it 'renders required fields correctly' do
+        input_data = { 'key_with_hash_type' => {
+          'specific_hash' => {'required_field' => 'foo'}
+        } }
+        expected_data = { 'key_with_hash_type' => {
+          'specific_hash' => {'required_field' => 'foo'}
+        } }
+
+        expect( TestHashKeyWithHashType.render( input_data ) ).to eq( expected_data )
+      end
+
+      it 'renders optional fields correctly' do
+        input_data = { 'key_with_hash_type' => {
+          'specific_hash' => {'required_field' => 'foo', 'optional_field' => 'bar'},
+          'generic_hash' => {'foo' => 'bar', 'somekey' => 'somevalue'}
+        } }
+        expected_data = { 'key_with_hash_type' => {
+          'specific_hash' => {'required_field' => 'foo', 'optional_field' => 'bar'},
+          'generic_hash' => {'foo' => 'bar', 'somekey' => 'somevalue'}
+        } }
+
+        expect( TestHashKeyWithHashType.render( input_data ) ).to eq( expected_data )
+      end
+    end
+
+    context '#validate' do
+      it 'succeeds if the key is optional and absent' do
+        expect( TestHashKeyWithHashType.validate( {} ).errors.size ).to( eql( 0 ) )
+      end
+
+      it 'succeeds if the key is present and its specific required keys are present' do
+        input_data = { 'key_with_hash_type' => {
+          'specific_hash' => {'required_field' => 'foo'}
+        } }
+        expect( TestHashKeyWithHashType.validate( input_data ).errors.size ).to( eql( 0 ) )
+      end
+
+      it 'succeeds if the key is present and its specific required and optional keys are present' do
+        input_data = { 'key_with_hash_type' => {
+          'specific_hash' => {'required_field' => 'foo', 'optional_field' => 'bar'}
+        } }
+        expect( TestHashKeyWithHashType.validate( input_data ).errors.size ).to( eql( 0 ) )
+      end
+
+      it 'fails if the key is present and its specific required keys are missing' do
+        input_data = { 'key_with_hash_type' => {
+          'specific_hash' => {'optional_field' => 'bar'}
+        } }
+        expect( TestHashKeyWithHashType.validate( input_data ).errors.size ).to( eql( 1 ) )
+      end
+
+      it 'succeeds if the key is present and its generic keys are valid' do
+        input_data = { 'key_with_hash_type' => {
+          'generic_hash' => {'foo' => 'bar'}
+        } }
+        expect( TestHashKeyWithHashType.validate( input_data ).errors.size ).to( eql( 0 ) )
+      end
+
+      it 'fails if the key is present and its generic keys are invalid' do
+        input_data = { 'key_with_hash_type' => {
+          'generic_hash' => {'keynametoolong' => 'bar'}
+        } }
+        expect( TestHashKeyWithHashType.validate( input_data ).errors.size ).to( eql( 1 ) )
+      end
+    end
+  end
+
+  ############################################################################
+
   class TestHashGenericKeyPresenterNoValues < Hoodoo::Presenters::Base
     schema do
       hash :generic do
