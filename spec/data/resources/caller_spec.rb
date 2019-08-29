@@ -80,6 +80,12 @@ describe Hoodoo::Data::Resources::Caller do
               },
               "else"    => "deny"
             }
+          },
+          "default" => {
+            "actions" => {
+              "show" => "allow"
+            },
+            "else"    => "deny"
           }
         },
         "scoping"    => {
@@ -116,6 +122,12 @@ describe Hoodoo::Data::Resources::Caller do
               },
               "else"    => "deny"
             }
+          },
+          "default" => {
+            "actions" => {
+              "show" => "allow"
+            },
+            "else"    => "deny"
           }
         },
         "scoping"    => {
@@ -148,7 +160,12 @@ describe Hoodoo::Data::Resources::Caller do
         'created_at'  => Hoodoo::Utilities.standard_datetime( created_at ),
         'kind'        => 'Caller',
         "identity"    => {},
-        "permissions" => { "resources" => {} },
+        "permissions" => {
+          "resources" => {},
+          "default"   => {
+            "else" => "deny"
+          }
+        },
         "scoping"     => {},
         "language"    => "en-nz"
       }

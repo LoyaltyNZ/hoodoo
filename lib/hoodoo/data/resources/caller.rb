@@ -26,7 +26,7 @@ module Hoodoo
           end
 
           object :permissions, :required => true do
-            type :PermissionsResources, :required => true
+            type :PermissionsFull, :required => true
           end
 
           hash :scoping, :required => true do

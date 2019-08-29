@@ -1,5 +1,9 @@
 # Hoodoo v2.x
 
+## 2.12.3 (2019-08-29)
+
+* Allow Caller resource to validate and render top-level default permissions.
+
 ## 2.12.2 (2019-07-11)
 
 * Support `hash` as a valid property type for keys.
