@@ -604,7 +604,7 @@ describe Hoodoo::Utilities do
     end
 
     after :each do
-      @old_tz.blank? ? ENV.delete( 'TZ' ) : ENV[ 'TZ' ] = @old_tz
+      (@old_tz.nil? || @old_tz == '') ? ENV.delete( 'TZ' ) : ENV[ 'TZ' ] = @old_tz
     end
 
     it 'accepts a non-UTC Time and renders a UTC date-time' do

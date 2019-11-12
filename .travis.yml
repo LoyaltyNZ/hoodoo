@@ -1,6 +1,7 @@
 # Hoodoo requires Ruby 2.2 or later with Rack 2.x.y.
 #
 language: ruby
+dist: trusty
 matrix:
   include:
     - rvm: 2.5.1
