@@ -1,5 +1,10 @@
 # Hoodoo v2.x
 
+## 2.12.3 (2019-11-12)
+
+* Bug fix, removed dependency on the Rails  `blank?` method.
+
+
 ## 2.12.2 (2019-07-11)
 
 * Support `hash` as a valid property type for keys.
