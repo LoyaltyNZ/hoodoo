@@ -361,6 +361,7 @@ describe '#schema' do
           @input,
           Hoodoo::UUID.generate,
           Time.now,
+          Time.now,
           'en-gb',
           Hoodoo::UUID.generate
         )
@@ -372,6 +373,7 @@ describe '#schema' do
         rendered = Hoodoo::Data::Resources::World.render(
           @input,
           Hoodoo::UUID.generate,
+          Time.now,
           Time.now,
           nil
         )
@@ -707,6 +709,7 @@ describe '#schema' do
           'id' => @uuid,
           'kind' => 'World',
           'created_at' => Hoodoo::Utilities.standard_datetime( @time ),
+          'updated_at' => Hoodoo::Utilities.standard_datetime( @time ),
           'language' => 'en-gb',
           'errors_id' => @input['errors_id'],
           'test_tags' => 'foo,bar,baz',
@@ -729,6 +732,7 @@ describe '#schema' do
             @input,
             @uuid,
             @time,
+            @time,
             'en-gb'
           )
         ).to( eq( @output ) )
@@ -742,6 +746,7 @@ describe '#schema' do
           Hoodoo::Data::Resources::World.render(
             @input,
             @uuid,
+            @time,
             @time,
             'en-gb',
             fingerprint
@@ -774,6 +779,7 @@ describe '#schema' do
           data,
           uuid,
           nil,
+          @time,
           'en-gb'
         )
       }.to raise_error(RuntimeError, "Can't render a Resource with a nil 'created_at'")

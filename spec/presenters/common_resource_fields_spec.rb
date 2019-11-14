@@ -6,13 +6,15 @@ describe Hoodoo::Presenters::CommonResourceFields do
 
     expect(schema.is_internationalised?()).to eq(false)
 
-    expect(schema.properties.count).to eq(7)
+    expect(schema.properties.count).to eq(8)
 
     expect(schema.properties['id']).to be_a(Hoodoo::Presenters::UUID)
     expect(schema.properties['id'].required).to eq(true)
     expect(schema.properties['id'].resource).to be_nil
     expect(schema.properties['created_at']).to be_a(Hoodoo::Presenters::DateTime)
     expect(schema.properties['created_at'].required).to eq(true)
+    expect(schema.properties['updated_at']).to be_a(Hoodoo::Presenters::DateTime)
+    expect(schema.properties['updated_at'].required).to eq(false)
     expect(schema.properties['kind']).to be_a(Hoodoo::Presenters::Text)
     expect(schema.properties['kind'].required).to eq(true)
     expect(schema.properties['language']).to be_a(Hoodoo::Presenters::Text)

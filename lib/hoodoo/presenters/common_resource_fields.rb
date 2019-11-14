@@ -18,6 +18,7 @@ module Hoodoo
       schema do
         uuid     :id,         :required => true
         datetime :created_at, :required => true
+        datetime :updated_at, :required => false
         text     :kind,       :required => true
         text     :language
 

@@ -1,5 +1,9 @@
 # Hoodoo v2.x
 
+## 2.12.4 (2019-11-15)
+
+* Add `updated_at` to common resource schema fields.
+
 ## 2.12.3 (2019-11-12)
 
 * Bug fix, removed dependency on the Rails `blank?` method.
