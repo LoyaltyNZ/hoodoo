@@ -191,9 +191,12 @@ end
   <span class="ruby-keyword">end</span>
 
   <span class="ruby-ivar">@specific</span>   = <span class="ruby-keyword">true</span>
-  <span class="ruby-identifier">value_klass</span> = <span class="ruby-identifier">block_given?</span>               <span class="ruby-operator">?</span>
-                <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Presenters</span><span class="ruby-operator">::</span><span class="ruby-constant">Object</span> <span class="ruby-operator">:</span>
-                <span class="ruby-identifier">type_option_to_class</span>( <span class="ruby-identifier">options</span>.<span class="ruby-identifier">delete</span>( <span class="ruby-value">:type</span> ) )
+
+  <span class="ruby-comment"># If an explicit type is given, use that. Otherwise, default to Field</span>
+  <span class="ruby-comment"># if no block is given, or Object is a block is given.</span>
+  <span class="ruby-comment">#</span>
+  <span class="ruby-identifier">value_klass</span> = <span class="ruby-operator">!</span>(<span class="ruby-identifier">options</span>[<span class="ruby-value">:type</span>].<span class="ruby-identifier">nil?</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">options</span>[<span class="ruby-value">:type</span>] <span class="ruby-operator">==</span> <span class="ruby-string">&#39;&#39;</span>) <span class="ruby-operator">?</span> <span class="ruby-identifier">type_option_to_class</span>( <span class="ruby-identifier">options</span>.<span class="ruby-identifier">delete</span>( <span class="ruby-value">:type</span> ) ) <span class="ruby-operator">:</span>
+                  (<span class="ruby-identifier">block_given?</span> <span class="ruby-operator">?</span> <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Presenters</span><span class="ruby-operator">::</span><span class="ruby-constant">Object</span> <span class="ruby-operator">:</span> <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Presenters</span><span class="ruby-operator">::</span><span class="ruby-constant">Field</span>)
 
   <span class="ruby-comment"># If we&#39;re defining specific keys and some of those keys have fields</span>
   <span class="ruby-comment"># with defaults, we need to merge those up to provide a whole-Hash</span>
@@ -304,7 +307,7 @@ just a single text field. This JSON would validate against the definition:</p>
                 <a href="javascript:toggleSource('method-i-keys_source')" id="l_method-i-keys_source">show</a>
             </p>
             <div id="method-i-keys_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/presenters/types/hash.rb, line 148</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/presenters/types/hash.rb, line 151</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">keys</span>( <span class="ruby-identifier">options</span> = {}, <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span> )
   <span class="ruby-keyword">unless</span> <span class="ruby-ivar">@specific</span>.<span class="ruby-identifier">nil?</span>
     <span class="ruby-identifier">raise</span> <span class="ruby-string">&quot;Can&#39;t use \#key and then \#keys in the same hash definition, or use \#keys more than once&quot;</span>
@@ -367,7 +370,7 @@ yielding the rendered hash.</p>
                 <a href="javascript:toggleSource('method-i-render_source')" id="l_method-i-render_source">show</a>
             </p>
             <div id="method-i-render_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/presenters/types/hash.rb, line 286</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/presenters/types/hash.rb, line 289</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">render</span>( <span class="ruby-identifier">data</span>, <span class="ruby-identifier">target</span> )
 
   <span class="ruby-comment"># Data provided is explicitly nil or not a hash? Don&#39;t need to render</span>
@@ -453,7 +456,7 @@ href="../Errors.html">Hoodoo::Errors</a> instance.</p>
                 <a href="javascript:toggleSource('method-i-validate_source')" id="l_method-i-validate_source">show</a>
             </p>
             <div id="method-i-validate_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/presenters/types/hash.rb, line 183</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/presenters/types/hash.rb, line 186</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">validate</span>( <span class="ruby-identifier">data</span>, <span class="ruby-identifier">path</span> = <span class="ruby-string">&#39;&#39;</span> )
   <span class="ruby-identifier">errors</span> = <span class="ruby-keyword">super</span>( <span class="ruby-identifier">data</span>, <span class="ruby-identifier">path</span> )
   <span class="ruby-keyword">return</span> <span class="ruby-identifier">errors</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">has_errors?</span> <span class="ruby-operator">||</span> ( <span class="ruby-operator">!</span> <span class="ruby-ivar">@required</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">data</span>.<span class="ruby-identifier">nil?</span> )
@@ -574,7 +577,7 @@ sub-fields too. See Hoodoo::Presenters::Base#walk for why.</p>
                 <a href="javascript:toggleSource('method-i-walk_source')" id="l_method-i-walk_source">show</a>
             </p>
             <div id="method-i-walk_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/presenters/types/hash.rb, line 354</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/presenters/types/hash.rb, line 357</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">walk</span>( <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span> )
   <span class="ruby-identifier">block</span>.<span class="ruby-identifier">call</span>( <span class="ruby-keyword">self</span> )
 
