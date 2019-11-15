@@ -1,4 +1,4 @@
-Fri, 15 Nov 2019 13:59:42 +1300
+Fri, 15 Nov 2019 14:35:46 +1300
 README.md	Thu, 02 May 2019 21:13:35 +1200
 lib/hoodoo.rb	Thu, 02 May 2019 21:13:35 +1200
 lib/hoodoo/active.rb	Thu, 02 May 2019 21:13:35 +1200
@@ -66,9 +66,9 @@ lib/hoodoo/monkey/patch/datadog_traced_amqp.rb	Thu, 02 May 2019 21:13:35 +1200
 lib/hoodoo/monkey/patch/newrelic_middleware_analytics.rb	Thu, 02 May 2019 21:13:35 +1200
 lib/hoodoo/monkey/patch/newrelic_traced_amqp.rb	Thu, 02 May 2019 21:13:35 +1200
 lib/hoodoo/presenters.rb	Thu, 02 May 2019 21:13:35 +1200
-lib/hoodoo/presenters/base.rb	Fri, 15 Nov 2019 13:06:24 +1300
+lib/hoodoo/presenters/base.rb	Fri, 15 Nov 2019 14:34:45 +1300
 lib/hoodoo/presenters/base_dsl.rb	Fri, 15 Nov 2019 11:18:03 +1300
-lib/hoodoo/presenters/common_resource_fields.rb	Fri, 15 Nov 2019 11:19:00 +1300
+lib/hoodoo/presenters/common_resource_fields.rb	Fri, 15 Nov 2019 14:30:31 +1300
 lib/hoodoo/presenters/embedding.rb	Thu, 02 May 2019 21:13:35 +1200
 lib/hoodoo/presenters/types/array.rb	Thu, 02 May 2019 21:13:35 +1200
 lib/hoodoo/presenters/types/boolean.rb	Thu, 02 May 2019 21:13:35 +1200
@@ -126,4 +126,4 @@ lib/hoodoo/utilities.rb	Thu, 02 May 2019 21:13:35 +1200
 lib/hoodoo/utilities/string_inquirer.rb	Thu, 02 May 2019 21:13:35 +1200
 lib/hoodoo/utilities/utilities.rb	Thu, 02 May 2019 21:13:36 +1200
 lib/hoodoo/utilities/uuid.rb	Thu, 02 May 2019 21:13:36 +1200
-lib/hoodoo/version.rb	Fri, 15 Nov 2019 11:28:10 +1300
+lib/hoodoo/version.rb	Fri, 15 Nov 2019 14:30:31 +1300
