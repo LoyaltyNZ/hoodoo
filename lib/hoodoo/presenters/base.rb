@@ -82,9 +82,6 @@ module Hoodoo
       #                has been provided. This is a Ruby DateTime instance or
       #                similar, _NOT_ a string!
       #
-      # +updated_at+:: Optional Date/Time of instance update. This is a Ruby 
-      #                DateTime instance or similar, _NOT_ a string!
-      #
       # +language+::   Optional language. If the type/resource being rendered
       #                is internationalised but this is omitted, then a value
       #                of "en-nz" is used as a default.
@@ -93,13 +90,16 @@ module Hoodoo
       #                were used to create the Session under which the
       #                resource instance was created. Absent if omitted.
       #
+      # +updated_at+:: Optional Date/Time of instance update. This is a Ruby
+      #                DateTime instance or similar, _NOT_ a string!
+      #
       def self.render( data,
                        uuid       = nil,
                        created_at = nil,
-                       updated_at = nil,
                        language   = 'en-nz',
-                       created_by = nil )
-
+                       created_by = nil,
+                       updated_at = nil
+                      )
         target = {}
         data   = data || {}
 
@@ -209,7 +209,7 @@ module Hoodoo
         embeds       = options[ :embeds       ]
         references   = options[ :references   ]
 
-        target = self.render( data, uuid, created_at, updated_at, language, created_by )
+        target = self.render( data, uuid, created_at, language, created_by, updated_at )
 
         if defined?( ::ActiveRecord ) && secured_with.is_a?( ::ActiveRecord::Base )
           result_hash     = {}
