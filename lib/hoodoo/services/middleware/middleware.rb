@@ -132,12 +132,14 @@ module Hoodoo; module Services
     MAXIMUM_PAYLOAD_SIZE = 1048576 # 1MB Should Be Enough For Anyone
 
     # Maximum *logged* payload (inbound data) size.
+    # Keep consistent with max payload size so data is not lost from the logs.
     #
-    MAXIMUM_LOGGED_PAYLOAD_SIZE = 1024
+    MAXIMUM_LOGGED_PAYLOAD_SIZE = MAXIMUM_PAYLOAD_SIZE
 
     # Maximum *logged* response (outbound data) size.
+    # Keep consistent with max payload size so data is not lost from the logs.
     #
-    MAXIMUM_LOGGED_RESPONSE_SIZE = 1024
+    MAXIMUM_LOGGED_RESPONSE_SIZE = MAXIMUM_PAYLOAD_SIZE
 
     # The default test session; a Hoodoo::Services::Session instance with the
     # following characteristics:

@@ -1,5 +1,10 @@
 # Hoodoo v2.x
 
+## 2.12.5 (2020-01-10)
+
+* Increase logged payload size in the `Middleware` to ensure payload data is not lost from the logs.
+* Maintenance bundle update
+
 ## 2.12.4 (2019-11-15)
 
 * Add `updated_at` to common resource schema fields.
