@@ -39,17 +39,11 @@
         <div id="content">
     <div class="description">
         
-<p>Discover - after a fashion - resource endpoint locations by convention,
-based on Rails-like pluralisation rules. For HTTP-based endpoints. Requires
-ActiveSupport.</p>
+<p>Discover - after a fashion - resource endpoint locations by convention, based on Rails-like pluralisation rules. For HTTP-based endpoints. Requires ActiveSupport.</p>
 
-<p><a
-href="https://rubygems.org/gems/activesupport">rubygems.org/gems/activesupport</a></p>
+<p><a href="https://rubygems.org/gems/activesupport">rubygems.org/gems/activesupport</a></p>
 
-<p>See <a href="ByConvention.html#method-i-configure_with">configure_with</a>
-for details of required instantiation options. See <a
-href="ByConvention.html#method-i-discover_remote">discover_remote</a> for
-the returned data type.</p>
+<p>See <a href="ByConvention.html#method-i-configure_with"><code>configure_with</code></a> for details of required instantiation options. See <a href="ByConvention.html#method-i-discover_remote"><code>discover_remote</code></a> for the returned data type.</p>
 
     </div>
 
@@ -100,19 +94,15 @@ the returned data type.</p>
         </div>
 
         <div class="description">
-            <p>Announce the location of an instance. This is really a no-op that runs
-through and returns the result of <a
-href="ByConvention.html#method-i-discover_remote">discover_remote</a>.</p>
+            <p>Announce the location of an instance. This is really a no-op that runs through and returns the result of <a href="ByConvention.html#method-i-discover_remote"><code>discover_remote</code></a>.</p>
 
 <p>Call via Hoodoo::Services::Discovery::Base#announce.</p>
 <dl class="rdoc-list note-list"><dt><code>resource</code>
 <dd>
-<p>Passed to <a
-href="ByConvention.html#method-i-discover_remote">discover_remote</a>.</p>
+<p>Passed to <a href="ByConvention.html#method-i-discover_remote"><code>discover_remote</code></a>.</p>
 </dd><dt><code>version</code>
 <dd>
-<p>Passed to <a
-href="ByConvention.html#method-i-discover_remote">discover_remote</a>.</p>
+<p>Passed to <a href="ByConvention.html#method-i-discover_remote"><code>discover_remote</code></a>.</p>
 </dd><dt><code>options</code>
 <dd>
 <p>Ignored.</p>
@@ -142,8 +132,7 @@ href="ByConvention.html#method-i-discover_remote">discover_remote</a>.</p>
         </div>
 
         <div class="description">
-            <p>Configure an instance. Call via Hoodoo::Services::Discovery::Base#new.
-Parameters:</p>
+            <p>Configure an instance. Call via Hoodoo::Services::Discovery::Base#new. Parameters:</p>
 <dl class="rdoc-list note-list"><dt><code>options</code>
 <dd>
 <p>Options hash as described below.</p>
@@ -152,58 +141,29 @@ Parameters:</p>
 <p>Options are:</p>
 <dl class="rdoc-list note-list"><dt><code>base_uri</code>
 <dd>
-<p>A String giving the base URI at which resource endpoint implementations can
-be found. The protocol (HTTP or HTTPS), host and port are of interest. The
-path will be overwritten with by-convention values for individual
-resources.</p>
+<p>A String giving the base URI at which resource endpoint implementations can be found. The protocol (HTTP or HTTPS), host and port are of interest. The path will be overwritten with by-convention values for individual resources.</p>
 </dd><dt><code>proxy_uri</code>
 <dd>
-<p>An optional full URI of an HTTP proxy to use if the base URI commands use
-of HTTP or HTTPS. Ruby will itself read <code>ENV['HTTP_PROXY']</code> if
-set; this option <em>overrides</em> that variable. Set as a String, as with
-<code>base_uri</code>.</p>
+<p>An optional full URI of an HTTP proxy to use if the base URI commands use of HTTP or HTTPS. Ruby will itself read <code>ENV['HTTP_PROXY']</code> if set; this option <em>overrides</em> that variable. Set as a String, as with <code>base_uri</code>.</p>
 </dd><dt><code>ca_file</code>
 <dd>
-<p>An optional String indicating a relative or absolute file path to the
-location of a <code>.pem</code> format Certificate Authority file (trust
-store), which may include multliple certificates. The certificates in the
-file will be used by Net::HTTP to validate the SSL ceritificate chain
-presented by remote servers, when calling endpoints over HTTPS with <a
-href="../../Client.html">Hoodoo::Client</a>.</p>
+<p>An optional String indicating a relative or absolute file path to the location of a <code>.pem</code> format Certificate Authority file (trust store), which may include multliple certificates. The certificates in the file will be used by Net::HTTP to validate the SSL ceritificate chain presented by remote servers, when calling endpoints over HTTPS with <a href="../../Client.html"><code>Hoodoo::Client</code></a>.</p>
 
-<p>The default <code>nil</code> value should be used in nearly all cases and
-uses Ruby OpenSSL defaults which are generally Operating System provided.</p>
+<p>The default <code>nil</code> value should be used in nearly all cases and uses Ruby OpenSSL defaults which are generally Operating System provided.</p>
 </dd><dt><code>http_timeout</code>
 <dd>
-<p>Optional Float providing a Net::HTTP read timeout value, when calling
-endpoints over HTTPS with <a href="../../Client.html">Hoodoo::Client</a>.
-This is a value in seconds (default 60) that the client allows for any TCP
-read operation. It operates at the HTTP transport level and is independent
-of any higher level timeouts that might be set up.</p>
+<p>Optional Float providing a Net::HTTP read timeout value, when calling endpoints over HTTPS with <a href="../../Client.html"><code>Hoodoo::Client</code></a>. This is a value in seconds (default 60) that the client allows for any TCP read operation. It operates at the HTTP transport level and is independent of any higher level timeouts that might be set up.</p>
 </dd><dt><code>http_open_timeout</code>
 <dd>
-<p>Optional Float providing a Net::HTTP open timeout value, when calling
-endpoints over HTTPS with <a href="../../Client.html">Hoodoo::Client</a>.
-This is a value in seconds (default 60) that the client allows for any TCP
-connection attempt. It operates at the HTTP transport level and is
-independent of any higher level timeouts that might be set up.</p>
+<p>Optional Float providing a Net::HTTP open timeout value, when calling endpoints over HTTPS with <a href="../../Client.html"><code>Hoodoo::Client</code></a>. This is a value in seconds (default 60) that the client allows for any TCP connection attempt. It operates at the HTTP transport level and is independent of any higher level timeouts that might be set up.</p>
 </dd><dt><code>routing</code>
 <dd>
-<p>An optional parameter which gives custom routing for exception cases where
-the by-convention map doesn&#39;t work. This is usually because there is a
-resource singleton which lives logically at a singular named route rather
-than plural route, e.g. <code>/v1/health</code> rather than
-<code>/v1/healths</code>.</p>
+<p>An optional parameter which gives custom routing for exception cases where the by-convention map doesn&#39;t work. This is usually because there is a resource singleton which lives logically at a singular named route rather than plural route, e.g. <code>/v1/health</code> rather than <code>/v1/healths</code>.</p>
 </dd></dl>
 
-<p>The <code>routing</code> parameter is a Hash of Resource names <em>as</em>
-<em>Symbols</em>, then values which are Hash of API Version <em>as</em>
-<em>Integers</em> with values that are the Strings giving the full
-alternative routing path.</p>
+<p>The <code>routing</code> parameter is a Hash of Resource names <em>as</em> <em>Symbols</em>, then values which are Hash of API Version <em>as</em> <em>Integers</em> with values that are the Strings giving the full alternative routing path.</p>
 
-<p>For example, by convention API version 2 of a Health resource would be
-routed to “/v2/healths”. You would override this to a singular route with
-this <code>routing</code> parameter Hash:</p>
+<p>For example, by convention API version 2 of a Health resource would be routed to “/v2/healths”. You would override this to a singular route with this <code>routing</code> parameter Hash:</p>
 
 <pre><code>{
   :Health =&gt; {
@@ -212,16 +172,9 @@ this <code>routing</code> parameter Hash:</p>
 }
 </code></pre>
 
-<p>This would leave version 1 of the endpoint (or any other version for that
-matter) still at the by-convention “v&lt;x&gt;/healths” path.</p>
+<p>This would leave version 1 of the endpoint (or any other version for that matter) still at the by-convention “v&lt;x&gt;/healths” path.</p>
 
-<p>Changing the “v&lt;x&gt;” convention for the version part of the path will
-break <a href="../../../Hoodoo.html">Hoodoo</a> compatibility, but this is
-still allowed in the override in case you have unusual configurations or
-HTTP layer rewrites that redirect requests to paths that do map down to <a
-href="../../../Hoodoo.html">Hoodoo</a>, or perhaps map to a Hoodoo-like
-system that&#39;s not actually <a href="../../../Hoodoo.html">Hoodoo</a>
-itself but implemented in a compatible fashion.</p>
+<p>Changing the “v&lt;x&gt;” convention for the version part of the path will break <a href="../../../Hoodoo.html"><code>Hoodoo</code></a> compatibility, but this is still allowed in the override in case you have unusual configurations or HTTP layer rewrites that redirect requests to paths that do map down to <a href="../../../Hoodoo.html"><code>Hoodoo</code></a>, or perhaps map to a Hoodoo-like system that&#39;s not actually <a href="../../../Hoodoo.html"><code>Hoodoo</code></a> itself but implemented in a compatible fashion.</p>
         </div>
 
 
@@ -253,22 +206,16 @@ itself but implemented in a compatible fashion.</p>
         </div>
 
         <div class="description">
-            <p>Using the base URI string from the options in <a
-href="ByConvention.html#method-i-configure_with">#configure_with</a>,
-underscore and pluralize the resource name with ActiveSupport to produce a
-path. For example:</p>
+            <p>Using the base URI string from the options in <a href="ByConvention.html#method-i-configure_with"><code>configure_with</code></a>, underscore and pluralize the resource name with ActiveSupport to produce a path. For example:</p>
 <ul><li>
 <p>Version 3 of resource Member results in <code>/v3/members</code></p>
 </li><li>
 <p>Version 2 of resource FarmAnimal results in <code>/v2/farm_animals</code></p>
 </li></ul>
 
-<p>Returns a <a href="ForHTTP.html">Hoodoo::Services::Discovery::ForHTTP</a>
-instance.</p>
+<p>Returns a <a href="ForHTTP.html"><code>Hoodoo::Services::Discovery::ForHTTP</code></a> instance.</p>
 
-<p>The use of ActiveSupport means that pluralisation is subject to the well
-known Rails limitations and quirks. The behaviour can be overridden using
-the optional <code>routing</code> parameter in the constructor.</p>
+<p>The use of ActiveSupport means that pluralisation is subject to the well known Rails limitations and quirks. The behaviour can be overridden using the optional <code>routing</code> parameter in the constructor.</p>
 
 <p>Call via Hoodoo::Services::Discovery::Base#discover.</p>
 <dl class="rdoc-list note-list"><dt><code>resource</code>

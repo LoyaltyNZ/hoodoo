@@ -39,7 +39,7 @@
         <div id="content">
     <div class="description">
         
-<p>A JSON <a href="Object.html">Object</a> schema member.</p>
+<p>A JSON <a href="Object.html"><code>Object</code></a> schema member.</p>
 
     </div>
 
@@ -104,8 +104,7 @@
                 [RW]
             </td>
             <td class='attr-name'>properties</td>
-            <td class='attr-desc'><p>The properties of this object; a <a href="Hash.html">Hash</a> of
-<code>Field</code> instances keyed by field name.</p></td>
+            <td class='attr-desc'><p>The properties of this object; a <a href="Hash.html"><code>Hash</code></a> of <code>Field</code> instances keyed by field name.</p></td>
         </tr>
     </table>
 
@@ -119,8 +118,7 @@
         </div>
 
         <div class="description">
-            <p>Initialize an <a href="Object.html">Object</a> instance with the
-appropriate name and options.</p>
+            <p>Initialize an <a href="Object.html"><code>Object</code></a> instance with the appropriate name and options.</p>
 <dl class="rdoc-list note-list"><dt><code>name</code>
 <dd>
 <p>The JSON key.</p>
@@ -158,17 +156,13 @@ appropriate name and options.</p>
         </div>
 
         <div class="description">
-            <p>Render inbound data into a target hash according to the schema, applying
-defaults where defined for fields with no value supplied in the inbound
-data.</p>
+            <p>Render inbound data into a target hash according to the schema, applying defaults where defined for fields with no value supplied in the inbound data.</p>
 <dl class="rdoc-list note-list"><dt><code>data</code>
 <dd>
 <p>Inbound data to render.</p>
 </dd><dt><code>target</code>
 <dd>
-<p>For internal callers only in theory. The target hash into which rendering
-should occur. This may then be merged into outer level hashes as part of
-nested items defined in the schema.</p>
+<p>For internal callers only in theory. The target hash into which rendering should occur. This may then be merged into outer level hashes as part of nested items defined in the schema.</p>
 </dd></dl>
         </div>
 
@@ -224,21 +218,13 @@ nested items defined in the schema.</p>
         </div>
 
         <div class="description">
-            <p>Check if data is a valid <a href="Object.html">Object</a> and return a <a
-href="../Errors.html">Hoodoo::Errors</a> instance with zero (valid) or more
-(has validation problems) errors inside.</p>
+            <p>Check if data is a valid <a href="Object.html"><code>Object</code></a> and return a <a href="../Errors.html"><code>Hoodoo::Errors</code></a> instance with zero (valid) or more (has validation problems) errors inside.</p>
 <dl class="rdoc-list note-list"><dt><code>data</code>
 <dd>
-<p><a href="../Data.html">Data</a> to check (and check nested properties
-therein). Expected to be nil (unless field is required) or a <a
-href="Hash.html">Hash</a>.</p>
+<p><a href="../Data.html"><code>Data</code></a> to check (and check nested properties therein). Expected to be nil (unless field is required) or a <a href="Hash.html"><code>Hash</code></a>.</p>
 </dd><dt><code>path</code>
 <dd>
-<p>For internal callers only in theory - the human-readable nesting path to
-this “level”, as an array. Omitted at the top level. In :errors =&gt; {
-:foo =&gt; { … } }, validation of “:foo” would be at path “[ :errors ]”.
-Validation of the contents of the object at “:foo” would be under “[
-:errors, :foo ]”.</p>
+<p>For internal callers only in theory - the human-readable nesting path to this “level”, as an array. Omitted at the top level. In :errors =&gt; { :foo =&gt; { … } }, validation of “:foo” would be at path “[ :errors ]”. Validation of the contents of the object at “:foo” would be under “[ :errors, :foo ]”.</p>
 </dd></dl>
         </div>
 
@@ -281,8 +267,7 @@ Validation of the contents of the object at “:foo” would be under “[
         </div>
 
         <div class="description">
-            <p>Invoke a given block, passing this item; call recursively for any defined
-sub-fields too. See Hoodoo::Presenters::Base#walk for why.</p>
+            <p>Invoke a given block, passing this item; call recursively for any defined sub-fields too. See Hoodoo::Presenters::Base#walk for why.</p>
 <dl class="rdoc-list note-list"><dt>&amp;block
 <dd>
 <p>Mandatory block, which is passed &#39;self&#39; when called.</p>

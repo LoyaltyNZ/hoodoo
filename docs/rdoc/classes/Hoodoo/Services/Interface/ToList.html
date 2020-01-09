@@ -39,14 +39,7 @@
         <div id="content">
     <div class="description">
         
-<p>A class containing a series of accessors that describe allowed parameters
-in a “list” call for a service implementation. The middleware uses this
-validate incoming query strings for lists and reject requests that ask for
-unsupported things. When instantiated the class sets itself up with
-defaults that match those described by the your platform&#39;s API. When
-passed to a <a
-href="ToListDSL.html">Hoodoo::Services::Interface::ToListDSL</a> instance,
-the DSL methods, if called, update the values stored herein.</p>
+<p>A class containing a series of accessors that describe allowed parameters in a “list” call for a service implementation. The middleware uses this validate incoming query strings for lists and reject requests that ask for unsupported things. When instantiated the class sets itself up with defaults that match those described by the your platform&#39;s API. When passed to a <a href="ToListDSL.html"><code>Hoodoo::Services::Interface::ToListDSL</code></a> instance, the DSL methods, if called, update the values stored herein.</p>
 
     </div>
 
@@ -93,16 +86,14 @@ the DSL methods, if called, update the values stored herein.</p>
                 [RW]
             </td>
             <td class='attr-name'>do_not_filter</td>
-            <td class='attr-desc'><p>Array of prohibited framework filter keys as Strings; empty for none
-defined.</p></td>
+            <td class='attr-desc'><p>Array of prohibited framework filter keys as Strings; empty for none defined.</p></td>
         </tr>
         <tr valign='top' id='attribute-i-do_not_search'>
             <td class='attr-rw'>
                 [RW]
             </td>
             <td class='attr-name'>do_not_search</td>
-            <td class='attr-desc'><p>Array of prohibited framework search keys as Strings; empty for none
-defined.</p></td>
+            <td class='attr-desc'><p>Array of prohibited framework search keys as Strings; empty for none defined.</p></td>
         </tr>
         <tr valign='top' id='attribute-i-filter'>
             <td class='attr-rw'>
@@ -130,9 +121,7 @@ defined.</p></td>
                 [RW]
             </td>
             <td class='attr-name'>sort</td>
-            <td class='attr-desc'><p>Sort hash. Keys are supported sort fields, values are arrays of supported
-sort directions. The first array entry is the default sort order for the
-sort field.</p></td>
+            <td class='attr-desc'><p>Sort hash. Keys are supported sort fields, values are arrays of supported sort directions. The first array entry is the default sort order for the sort field.</p></td>
         </tr>
     </table>
 

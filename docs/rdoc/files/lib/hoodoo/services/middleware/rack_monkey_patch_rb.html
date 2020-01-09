@@ -37,23 +37,11 @@
 <dd>
 <p>Heyre Be Dragyns.</p>
 
-<p>For local development, the service middleware needs to know where other
-resource endpoints are in terms of HTTP host and port, so that remote
-inter-resource calls can work without up-front static configuration of
-service host/port data. To have to manage a fixed list of local development
-ports in the face of arbitrary resource endpoint divisions would be a big
-pain and cause developers much frustration.</p>
+<p>For local development, the service middleware needs to know where other resource endpoints are in terms of HTTP host and port, so that remote inter-resource calls can work without up-front static configuration of service host/port data. To have to manage a fixed list of local development ports in the face of arbitrary resource endpoint divisions would be a big pain and cause developers much frustration.</p>
 
-<p>This means that whenever a service starts up, it needs to know the HTTP
-host and port under which it is running, then tell the middleware about it.</p>
+<p>This means that whenever a service starts up, it needs to know the HTTP host and port under which it is running, then tell the middleware about it.</p>
 
-<p>In the absence of a formal interface in <a
-href="../../../../../classes/Rack.html">Rack</a> for this, then we could do
-still that relatively nicely by looking up the <a
-href="../../../../../classes/Rack.html">Rack</a> server in ObjectSpace and
-asking it for its options - except some of the web server adapters do
-really dumb things like “options.delete(:Host)” to read items out,
-destroying the info we need.</p>
+<p>In the absence of a formal interface in <a href="../../../../../classes/Rack.html"><code>Rack</code></a> for this, then we could do still that relatively nicely by looking up the <a href="../../../../../classes/Rack.html"><code>Rack</code></a> server in ObjectSpace and asking it for its options - except some of the web server adapters do really dumb things like “options.delete(:Host)” to read items out, destroying the info we need.</p>
 
 <p>So instead, we have to monkey patch :-(</p>
 </dd></dl>

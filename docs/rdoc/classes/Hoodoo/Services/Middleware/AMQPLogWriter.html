@@ -39,14 +39,9 @@
         <div id="content">
     <div class="description">
         
-<p>Log writer which sends structured messages to an AMQP-based queue via the
-Alchemy Flux gem. A <a
-href="../../Logger/FastWriter.html">Hoodoo::Logger::FastWriter</a>
-subclass, since though talking to the queue might be comparatively slow,
-Flux uses Event Machine for this so there&#39;s no need to add another
-Thread for this logger.</p>
+<p>Log writer which sends structured messages to an AMQP-based queue via the Alchemy Flux gem. A <a href="../../Logger/FastWriter.html"><code>Hoodoo::Logger::FastWriter</code></a> subclass, since though talking to the queue might be comparatively slow, Flux uses Event Machine for this so there&#39;s no need to add another Thread for this logger.</p>
 
-<p>See also <a href="../../Logger.html">Hoodoo::Logger</a>.</p>
+<p>See also <a href="../../Logger.html"><code>Hoodoo::Logger</code></a>.</p>
 
     </div>
 
@@ -95,26 +90,12 @@ Thread for this logger.</p>
 <p>The Alchemy endpoint to use for sending messages to the AMQP-based queue.</p>
 </dd><dt><code>routing_key</code>
 <dd>
-<p>The routing key (as a String) to use. Optional. If omitted, reads
-<code>ENV['AMQ_LOGGING_ENDPOINT']</code> or if that is unset, defaults to
-<code>platform.logging</code>.</p>
+<p>The routing key (as a String) to use. Optional. If omitted, reads <code>ENV['AMQ_LOGGING_ENDPOINT']</code> or if that is unset, defaults to <code>platform.logging</code>.</p>
 </dd></dl>
 
-<p>If you&#39;re running with <a href="../../../Rack.html">Rack</a> on top of
-Alchemy, then the <code>call</code> method&#39;s <code>env</code> parameter
-containing the <a href="../../../Rack.html">Rack</a> environment
-<em>MUST</em> have a key of <code>alchemy.service</code> with a value
-that&#39;s the AlchemyFlux::Service instance handling queue communication.
-This is assigned to the <code>alchemy</code> parameter. The logger will
-then use this active Alchemy service to send messages to its configured
-routing key.</p>
+<p>If you&#39;re running with <a href="../../../Rack.html"><code>Rack</code></a> on top of Alchemy, then the <code>call</code> method&#39;s <code>env</code> parameter containing the <a href="../../../Rack.html"><code>Rack</code></a> environment <em>MUST</em> have a key of <code>alchemy.service</code> with a value that&#39;s the AlchemyFlux::Service instance handling queue communication. This is assigned to the <code>alchemy</code> parameter. The logger will then use this active Alchemy service to send messages to its configured routing key.</p>
 
-<p>If <code>ENV['AMQ_ANALYTICS_LOGGING_ENDPOINT']</code> is defined then its
-value is used for a routing key in the case, very specifically, of a
-message logged with a <code>code</code> of <code>analytics</code>. If the
-variable is not set, the same routing key is used for all messages
-regardless of code; else that particular code can be streamed off to
-another Rabbit queue via the given alternative routing key.</p>
+<p>If <code>ENV['AMQ_ANALYTICS_LOGGING_ENDPOINT']</code> is defined then its value is used for a routing key in the case, very specifically, of a message logged with a <code>code</code> of <code>analytics</code>. If the variable is not set, the same routing key is used for all messages regardless of code; else that particular code can be streamed off to another Rabbit queue via the given alternative routing key.</p>
         </div>
 
 
@@ -148,30 +129,18 @@ another Rabbit queue via the given alternative routing key.</p>
         </div>
 
         <div class="description">
-            <p>Custom implementation of the <a
-href="../../Logger/WriterMixin.html#method-i-report">Hoodoo::Logger::WriterMixin#report</a>
-interface. See that method for parameter details.</p>
+            <p>Custom implementation of the <a href="../../Logger/WriterMixin.html#method-i-report"><code>Hoodoo::Logger::WriterMixin#report</code></a> interface. See that method for parameter details.</p>
 
-<p>The middleware custom logger has expectations about the data payload. It
-expects these optional but recommended (where the information is available
-/ has been generated) keys/values:</p>
+<p>The middleware custom logger has expectations about the data payload. It expects these optional but recommended (where the information is available / has been generated) keys/values:</p>
 <dl class="rdoc-list note-list"><dt><code>:id</code>
 <dd>
-<p>A <a href="../../UUID.html">UUID</a> (via <a
-href="../../UUID.html#method-c-generate">Hoodoo::UUID.generate</a>) to use
-for this log message - if absent, one is generated automatically.</p>
+<p>A <a href="../../UUID.html"><code>UUID</code></a> (via <a href="../../UUID.html#method-c-generate"><code>Hoodoo::UUID::generate</code></a>) to use for this log message - if absent, one is generated automatically.</p>
 </dd><dt><code>:session</code>
 <dd>
-<p>Description of the current request session when available; a <a
-href="../Session.html">Hoodoo::Services::Session</a> as a Hash (via to_h;
-keys as Strings). The Caller <a href="../../UUID.html">UUID</a>, identity
-Participant <a href="../../UUID.html">UUID</a> and identity Outlet <a
-href="../../UUID.html">UUID</a> are sent as independent, searchable fields
-in the log payload.</p>
+<p>Description of the current request session when available; a <a href="../Session.html"><code>Hoodoo::Services::Session</code></a> as a Hash (via to_h; keys as Strings). The Caller <a href="../../UUID.html"><code>UUID</code></a>, identity Participant <a href="../../UUID.html"><code>UUID</code></a> and identity Outlet <a href="../../UUID.html"><code>UUID</code></a> are sent as independent, searchable fields in the log payload.</p>
 </dd><dt><code>interaction_id</code>
 <dd>
-<p>The interaction ID for this client&#39;s call. This is also sent as an
-independent, searchable field in the log payload.</p>
+<p>The interaction ID for this client&#39;s call. This is also sent as an independent, searchable field in the log payload.</p>
 </dd></dl>
         </div>
 

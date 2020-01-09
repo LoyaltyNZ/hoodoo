@@ -15,8 +15,8 @@
 
     <meta property="og:title" value="Hoodoo::ActiveRecord::Writer::ClassMethods">
 
-    <meta name="description" content="Collection of class methods that get defined on an including class via Hoodoo::ActiveRecord::Writer.included.">
-    <meta property="og:description" content="Collection of class methods that get defined on an including class via Hoodoo::ActiveRecord::Writer.included.">
+    <meta name="description" content="Collection of class methods that get defined on an including class via Hoodoo::ActiveRecord::Writer::included.">
+    <meta property="og:description" content="Collection of class methods that get defined on an including class via Hoodoo::ActiveRecord::Writer::included.">
 
     <meta name="keywords" content="Hoodoo::ActiveRecord::Writer::ClassMethods class">
     <meta name="keywords" content="persist_in">
@@ -36,8 +36,7 @@
         <div id="content">
     <div class="description">
         
-<p>Collection of class methods that get defined on an including class via <a
-href="../Writer.html#method-c-included">Hoodoo::ActiveRecord::Writer.included</a>.</p>
+<p>Collection of class methods that get defined on an including class via <a href="../Writer.html#method-c-included"><code>Hoodoo::ActiveRecord::Writer::included</code></a>.</p>
 
     </div>
 
@@ -72,17 +71,9 @@ href="../Writer.html#method-c-included">Hoodoo::ActiveRecord::Writer.included</a
         </div>
 
         <div class="description">
-            <p>A class-based equivalent of the <a
-href="../Writer.html#method-i-persist_in">Hoodoo::ActiveRecord::Writer#persist_in</a>
-method which creates a record using
-Hoodoo::ActiveRecord::Creator::ClassMethods::new_in, then calls <a
-href="../Writer.html#method-i-persist_in">Hoodoo::ActiveRecord::Writer#persist_in</a>
-to persist the data; see that for full details.</p>
+            <p>A class-based equivalent of the <a href="../Writer.html#method-i-persist_in"><code>Hoodoo::ActiveRecord::Writer#persist_in</code></a> method which creates a record using Hoodoo::ActiveRecord::Creator::ClassMethods::new_in, then calls <a href="../Writer.html#method-i-persist_in"><code>Hoodoo::ActiveRecord::Writer#persist_in</code></a> to persist the data; see that for full details.</p>
 
-<p>As a class-based method, the return value and error handling semantics
-differ from the instance-based counterpart. Instead of checking the return
-value of <code>persist_in</code> for success or failure, use
-ActiveRecord&#39;s “persisted?”:</p>
+<p>As a class-based method, the return value and error handling semantics differ from the instance-based counterpart. Instead of checking the return value of <code>persist_in</code> for success or failure, use ActiveRecord&#39;s “persisted?”:</p>
 
 <pre><code>def create( context )
   attributes = mapping_of( context.request.body )
@@ -107,20 +98,13 @@ end
 <h2 id="method-i-persist_in-label-Parameters">Parameters</h2>
 <dl class="rdoc-list note-list"><dt><code>context</code>
 <dd>
-<p><a href="../../Services/Context.html">Hoodoo::Services::Context</a>
-instance describing a call context. This is typically a value passed to one
-of the <a
-href="../../Services/Implementation.html">Hoodoo::Services::Implementation</a>
-instance methods that a resource subclass implements.</p>
+<p><a href="../../Services/Context.html"><code>Hoodoo::Services::Context</code></a> instance describing a call context. This is typically a value passed to one of the <a href="../../Services/Implementation.html"><code>Hoodoo::Services::Implementation</code></a> instance methods that a resource subclass implements.</p>
 </dd><dt><code>attributes</code>
 <dd>
-<p>Attributes hash to be passed to this model class&#39;s constructor, via
-<code>self.new( attributes )</code>.</p>
+<p>Attributes hash to be passed to this model class&#39;s constructor, via <code>self.new( attributes )</code>.</p>
 </dd></dl>
 
-<p>See also the <a
-href="../Writer.html#method-i-persist_in">Hoodoo::ActiveRecord::Writer#persist_in</a>
-instance method equivalent of this class method.</p>
+<p>See also the <a href="../Writer.html#method-i-persist_in"><code>Hoodoo::ActiveRecord::Writer#persist_in</code></a> instance method equivalent of this class method.</p>
         </div>
 
 

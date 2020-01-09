@@ -36,9 +36,7 @@
         <div id="content">
     <div class="description">
         
-<p>Ruby mixin providing an enumeration mechanism, allowing the caller to
-iterate over all the resource instances in the list, automatically
-performing the necessary pagination behind the scenes.</p>
+<p>Ruby mixin providing an enumeration mechanism, allowing the caller to iterate over all the resource instances in the list, automatically performing the necessary pagination behind the scenes.</p>
 
     </div>
 
@@ -70,11 +68,7 @@ performing the necessary pagination behind the scenes.</p>
                 [RW]
             </td>
             <td class='attr-name'>next_page_proc</td>
-            <td class='attr-desc'><p>Proc called by <a
-href="PaginatedEnumeration.html#method-i-enumerate_all">#enumerate_all</a>
-to provide the next &#39;page&#39; of values to be enumerated through.
-Returns an <a
-href="AugmentedArray.html">Hoodoo::Client::AugmentedArray</a>.</p></td>
+            <td class='attr-desc'><p>Proc called by <a href="PaginatedEnumeration.html#method-i-enumerate_all"><code>enumerate_all</code></a> to provide the next &#39;page&#39; of values to be enumerated through. Returns an <a href="AugmentedArray.html"><code>Hoodoo::Client::AugmentedArray</code></a>.</p></td>
         </tr>
     </table>
 
@@ -88,8 +82,7 @@ href="AugmentedArray.html">Hoodoo::Client::AugmentedArray</a>.</p></td>
         </div>
 
         <div class="description">
-            <p>Yields each resource instance, automatically paginating through the entire
-set of resources.</p>
+            <p>Yields each resource instance, automatically paginating through the entire set of resources.</p>
 
 <p>Provide a block to process each resource instance. For example:</p>
 
@@ -103,10 +96,7 @@ set of resources.</p>
 end
 </code></pre>
 
-<p>Each iteration yields a <a
-href="AugmentedHash.html">Hoodoo::Client::AugmentedHash</a> representation
-of the requested resource instance. The caller must check for errors on the
-value yielded with each iteration, as per the example above.</p>
+<p>Each iteration yields a <a href="AugmentedHash.html"><code>Hoodoo::Client::AugmentedHash</code></a> representation of the requested resource instance. The caller must check for errors on the value yielded with each iteration, as per the example above.</p>
         </div>
 
 

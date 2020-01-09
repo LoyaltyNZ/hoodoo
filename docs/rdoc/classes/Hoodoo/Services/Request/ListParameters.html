@@ -39,9 +39,7 @@
         <div id="content">
     <div class="description">
         
-<p>Encapsulation of all parameters related only to modifying a list of
-results. Other parameters may modify lists too, but they also modify other
-representations (e.g. single-resource &#39;show&#39;).</p>
+<p>Encapsulation of all parameters related only to modifying a list of results. Other parameters may modify lists too, but they also modify other representations (e.g. single-resource &#39;show&#39;).</p>
 
     </div>
 
@@ -89,8 +87,7 @@ representations (e.g. single-resource &#39;show&#39;).</p>
                 [RW]
             </td>
             <td class='attr-name'>filter_data</td>
-            <td class='attr-desc'><p>List filter key/value pairs as a hash, all keys/values strings; {} if
-there&#39;s no filter data in the request URI query string.</p></td>
+            <td class='attr-desc'><p>List filter key/value pairs as a hash, all keys/values strings; {} if there&#39;s no filter data in the request URI query string.</p></td>
         </tr>
         <tr valign='top' id='attribute-i-limit'>
             <td class='attr-rw'>
@@ -111,16 +108,14 @@ there&#39;s no filter data in the request URI query string.</p></td>
                 [RW]
             </td>
             <td class='attr-name'>search_data</td>
-            <td class='attr-desc'><p>List search key/value pairs as a hash, all keys/values strings; {} if
-there&#39;s no search data in the request URI query string.</p></td>
+            <td class='attr-desc'><p>List search key/value pairs as a hash, all keys/values strings; {} if there&#39;s no search data in the request URI query string.</p></td>
         </tr>
         <tr valign='top' id='attribute-i-sort_data'>
             <td class='attr-rw'>
                 [RW]
             </td>
             <td class='attr-name'>sort_data</td>
-            <td class='attr-desc'><p>A Hash of String keys and values, where each key is a field for sorting and
-each value is the direction to sort that field.</p></td>
+            <td class='attr-desc'><p>A Hash of String keys and values, where each key is a field for sorting and each value is the direction to sort that field.</p></td>
         </tr>
     </table>
 
@@ -166,10 +161,7 @@ each value is the direction to sort that field.</p></td>
         </div>
 
         <div class="description">
-            <p>Load list parameters from a given Hash, of the form set by <a
-href="ListParameters.html#method-i-to_h">to_h</a>. Overwrites any
-corresponding internal attributes and takes full deep copies of sort,
-search and filter values.</p>
+            <p>Load list parameters from a given Hash, of the form set by <a href="ListParameters.html#method-i-to_h"><code>to_h</code></a>. Overwrites any corresponding internal attributes and takes full deep copies of sort, search and filter values.</p>
         </div>
 
 
@@ -223,39 +215,26 @@ search and filter values.</p>
         </div>
 
         <div class="description">
-            <p>Represent the list data as a Hash, for uses such as persistence or loading
-into another session instance. The returned Hash is a full deep copy of any
-internal data; changing it will not alter the <a
-href="ListParameters.html">ListParameters</a> object state.</p>
+            <p>Represent the list data as a Hash, for uses such as persistence or loading into another session instance. The returned Hash is a full deep copy of any internal data; changing it will not alter the <a href="ListParameters.html"><code>ListParameters</code></a> object state.</p>
 
-<p>Top-level keys in the Hash are Strings corresponding to fields supported by
-the query Hash in <a
-href="../../Client/Endpoint.html#method-i-list">Hoodoo::Client::Endpoint#list</a>,
-intentionally compatible so that pass-through / proxy scenarios from
-resource implementation to another resource are assisted:</p>
+<p>Top-level keys in the Hash are Strings corresponding to fields supported by the query Hash in <a href="../../Client/Endpoint.html#method-i-list"><code>Hoodoo::Client::Endpoint#list</code></a>, intentionally compatible so that pass-through / proxy scenarios from resource implementation to another resource are assisted:</p>
 <ul><li>
 <p><code>offset</code></p>
 </li><li>
 <p><code>limit</code></p>
 </li><li>
-<p><code>sort</code> (keys from the Hash under attribute <a
-href="ListParameters.html#attribute-i-sort_data">sort_data</a>)</p>
+<p><code>sort</code> (keys from the Hash under attribute <a href="ListParameters.html#attribute-i-sort_data"><code>sort_data</code></a>)</p>
 </li><li>
-<p><code>direction</code> (values from the Hash under <a
-href="ListParameters.html#attribute-i-sort_data">sort_data</a>)</p>
+<p><code>direction</code> (values from the Hash under <a href="ListParameters.html#attribute-i-sort_data"><code>sort_data</code></a>)</p>
 </li><li>
-<p><code>search</code> (deep-duplicated value of attribute <a
-href="ListParameters.html#attribute-i-search_data">search_data</a>)</p>
+<p><code>search</code> (deep-duplicated value of attribute <a href="ListParameters.html#attribute-i-search_data"><code>search_data</code></a>)</p>
 </li><li>
-<p><code>filter</code> (deep-duplicated value of attribute <a
-href="ListParameters.html#attribute-i-filter_data">filter_data</a>)</p>
+<p><code>filter</code> (deep-duplicated value of attribute <a href="ListParameters.html#attribute-i-filter_data"><code>filter_data</code></a>)</p>
 </li></ul>
 
-<p>Sort, direction, search and filter data, if not empty, also have String
-keys / values. A single sort-direction key-value pair will be flattened to
-a simple value, while multiple sort-direction pairs are given as Arrays.</p>
+<p>Sort, direction, search and filter data, if not empty, also have String keys / values. A single sort-direction key-value pair will be flattened to a simple value, while multiple sort-direction pairs are given as Arrays.</p>
 
-<p>See also <a href="ListParameters.html#method-i-from_h-21">from_h!</a>.</p>
+<p>See also <a href="ListParameters.html#method-i-from_h-21"><code>from_h!</code></a>.</p>
         </div>
 
 

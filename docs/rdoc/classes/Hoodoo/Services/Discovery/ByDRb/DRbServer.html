@@ -39,10 +39,7 @@
         <div id="content">
     <div class="description">
         
-<p>A registry of service endpoints, implenented as a DRB server class. An
-internal implementation detail of <a
-href="../../Middleware.html">Hoodoo::Services::Middleware</a>, in most
-respects.</p>
+<p>A registry of service endpoints, implenented as a DRB server class. An internal implementation detail of <a href="../../Middleware.html"><code>Hoodoo::Services::Middleware</code></a>, in most respects.</p>
 
     </div>
 
@@ -149,14 +146,12 @@ respects.</p>
         </div>
 
         <div class="description">
-            <p>Start the DRb server. Does not return (joins the DRb thread). If the server
-is already running, expect an “address in use” connection exception from
-DRb.</p>
+            <p>Start the DRb server. Does not return (joins the DRb thread). If the server is already running, expect an “address in use” connection exception from DRb.</p>
 
 <p>$SAFE will be set to 1 (unless it is already higher) in this thread.</p>
 <dl class="rdoc-list note-list"><dt><code>port</code>
 <dd>
-<p>Passed to <a href="DRbServer.html#method-c-uri">::uri</a> method.</p>
+<p>Passed to <a href="DRbServer.html#method-c-uri"><code>::uri</code></a> method.</p>
 </dd></dl>
         </div>
 
@@ -217,16 +212,10 @@ DRb.</p>
         </div>
 
         <div class="description">
-            <p>URI for DRb server used during local machine development as a registry of
-service endpoints. Whichever service starts first runs the server which
-others connect to if subsequently started.</p>
+            <p>URI for DRb server used during local machine development as a registry of service endpoints. Whichever service starts first runs the server which others connect to if subsequently started.</p>
 <dl class="rdoc-list note-list"><dt><code>port</code>
 <dd>
-<p>Optional integer port number for DRb service. If specified, this is used;
-else the <code>HOODOO_DISCOVERY_BY_DRB_PORT_OVERRIDE</code> environment
-variable is used; else a default of 8787 is chosen. Passing
-<code>nil</code> explicitly also leads to the use of the environment
-variable or default value.</p>
+<p>Optional integer port number for DRb service. If specified, this is used; else the <code>HOODOO_DISCOVERY_BY_DRB_PORT_OVERRIDE</code> environment variable is used; else a default of 8787 is chosen. Passing <code>nil</code> explicitly also leads to the use of the environment variable or default value.</p>
 </dd></dl>
         </div>
 
@@ -265,8 +254,7 @@ variable or default value.</p>
         </div>
 
         <div class="description">
-            <p>Add an endpoint to the list. If the endpoint was already added, it will be
-overwritten with the new data.</p>
+            <p>Add an endpoint to the list. If the endpoint was already added, it will be overwritten with the new data.</p>
 <dl class="rdoc-list note-list"><dt><code>resource</code>
 <dd>
 <p>Resource as a String or Symbol, e.g. “Product”</p>
@@ -275,10 +263,7 @@ overwritten with the new data.</p>
 <p>Endpoint&#39;s implemented API version as an Integer, e.g. 1</p>
 </dd><dt><code>uri</code>
 <dd>
-<p>URI at which this service may be accessed, including the endpoint path
-(e.g. “<a
-href="http://localhost:3002/v1/products">localhost:3002/v1/products</a>”),
-as a String.</p>
+<p>URI at which this service may be accessed, including the endpoint path (e.g. “<a href="http://localhost:3002/v1/products">localhost:3002/v1/products</a>”), as a String.</p>
 </dd></dl>
         </div>
 
@@ -305,8 +290,7 @@ as a String.</p>
         </div>
 
         <div class="description">
-            <p>Find an endpoint in the list. Returns URI at which the service may be
-accessed as a String, or &#39;nil&#39; if not found.</p>
+            <p>Find an endpoint in the list. Returns URI at which the service may be accessed as a String, or &#39;nil&#39; if not found.</p>
 <dl class="rdoc-list note-list"><dt><code>resource</code>
 <dd>
 <p>Resource as a String or Symbol, e.g. “Product”</p>
@@ -339,8 +323,7 @@ accessed as a String, or &#39;nil&#39; if not found.</p>
         </div>
 
         <div class="description">
-            <p>Flush out the repository, clearing all stored service records. This is
-usually for test purposes only.</p>
+            <p>Flush out the repository, clearing all stored service records. This is usually for test purposes only.</p>
         </div>
 
 

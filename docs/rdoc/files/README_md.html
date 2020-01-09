@@ -28,20 +28,13 @@
         <div id="content">
     <div class="description">
         
-<h1 id="label-Hoodoo"><a href="../classes/Hoodoo.html">Hoodoo</a></h1>
+<h1 id="label-Hoodoo"><a href="../classes/Hoodoo.html"><code>Hoodoo</code></a></h1>
 
-<p><a href="https://rubygems.org/gems/hoodoo"><img
-src="https://badge.fury.io/rb/hoodoo.svg"></a> <a
-href="https://travis-ci.org/LoyaltyNZ/hoodoo"><img
-src="https://travis-ci.org/LoyaltyNZ/hoodoo.svg?branch=master"></a> <a
-href="http://www.gnu.org/licenses/lgpl-3.0.en.html"><img
-src="https://img.shields.io/badge/license-LGPL--3.0-blue.svg"></a></p>
+<p><a href="https://rubygems.org/gems/hoodoo"><img src="https://badge.fury.io/rb/hoodoo.svg"></a> <a href="https://travis-ci.org/LoyaltyNZ/hoodoo"><img src="https://travis-ci.org/LoyaltyNZ/hoodoo.svg?branch=master"></a> <a href="http://www.gnu.org/licenses/lgpl-3.0.en.html"><img src="https://img.shields.io/badge/license-LGPL--3.0-blue.svg"></a></p>
 
-<p>Simplify the implementation of services within an API-based software
-platform.</p>
+<p>Simplify the implementation of services within an API-based software platform.</p>
 
-<p>See <a href="https://loyaltynz.github.io/hoodoo/">Hoodoo Guides</a> for
-extensive documentation and examples.</p>
+<p>See <a href="https://loyaltynz.github.io/hoodoo/">Hoodoo Guides</a> for extensive documentation and examples.</p>
 
 <h2 id="label-Usage">Usage</h2>
 
@@ -57,62 +50,26 @@ extensive documentation and examples.</p>
 
 <p>Functionality includes:</p>
 <ul><li>
-<p><em>Middleware:</em> The heart of services; Rack-based service applications
-(think Sinatra, Grape, Rails…) – <a
-href="../classes/Hoodoo/Services/Middleware.html">Hoodoo::Services::Middleware</a>;
-but start at <a
-href="../classes/Hoodoo/Services/Service.html">Hoodoo::Services::Service</a>
-and see also <a
-href="../classes/Hoodoo/Services/Interface.html">Hoodoo::Services::Interface</a>,
-<a
-href="../classes/Hoodoo/Services/Implementation.html">Hoodoo::Services::Implementation</a>
-and related classes <a
-href="../classes/Hoodoo/Services/Request.html">Hoodoo::Services::Request</a>,
-<a
-href="../classes/Hoodoo/Services/Response.html">Hoodoo::Services::Response</a>,
-<a
-href="../classes/Hoodoo/Services/Session.html">Hoodoo::Services::Session</a>,
-<a
-href="../classes/Hoodoo/Services/Context.html">Hoodoo::Services::Context</a></p>
+<p><em>Middleware:</em> The heart of services; Rack-based service applications (think Sinatra, Grape, Rails…) – <a href="../classes/Hoodoo/Services/Middleware.html"><code>Hoodoo::Services::Middleware</code></a>; but start at <a href="../classes/Hoodoo/Services/Service.html"><code>Hoodoo::Services::Service</code></a> and see also <a href="../classes/Hoodoo/Services/Interface.html"><code>Hoodoo::Services::Interface</code></a>, <a href="../classes/Hoodoo/Services/Implementation.html"><code>Hoodoo::Services::Implementation</code></a> and related classes <a href="../classes/Hoodoo/Services/Request.html"><code>Hoodoo::Services::Request</code></a>, <a href="../classes/Hoodoo/Services/Response.html"><code>Hoodoo::Services::Response</code></a>, <a href="../classes/Hoodoo/Services/Session.html"><code>Hoodoo::Services::Session</code></a>, <a href="../classes/Hoodoo/Services/Context.html"><code>Hoodoo::Services::Context</code></a></p>
 </li><li>
-<p><em>Generic Presenter Layer:</em> Input and output validation and rendering
-– <a
-href="../classes/Hoodoo/Presenters/Base.html">Hoodoo::Presenters::Base</a>,
-<a
-href="../classes/Hoodoo/Presenters/BaseDSL.html">Hoodoo::Presenters::BaseDSL</a></p>
+<p><em>Generic Presenter Layer:</em> Input and output validation and rendering – <a href="../classes/Hoodoo/Presenters/Base.html"><code>Hoodoo::Presenters::Base</code></a>, <a href="../classes/Hoodoo/Presenters/BaseDSL.html"><code>Hoodoo::Presenters::BaseDSL</code></a></p>
 </li><li>
-<p><em>Unified Error Helpers:</em> Adds standard platform error capability to
-any API/class – <a
-href="../classes/Hoodoo/ErrorDescriptions.html">Hoodoo::ErrorDescriptions</a>,
-<a href="../classes/Hoodoo/Errors.html">Hoodoo::Errors</a></p>
+<p><em>Unified Error Helpers:</em> Adds standard platform error capability to any API/class – <a href="../classes/Hoodoo/ErrorDescriptions.html"><code>Hoodoo::ErrorDescriptions</code></a>, <a href="../classes/Hoodoo/Errors.html"><code>Hoodoo::Errors</code></a></p>
 </li><li>
-<p><em>Unified Logger:</em> A single logger for use with platform or local
-logs – <a href="../classes/Hoodoo/Logger.html">Hoodoo::Logger</a></p>
+<p><em>Unified Logger:</em> A single logger for use with platform or local logs – <a href="../classes/Hoodoo/Logger.html"><code>Hoodoo::Logger</code></a></p>
 </li><li>
-<p><em>Platform Sessions:</em> Authentication of sessions, session context –
-<a
-href="../classes/Hoodoo/Services/Session.html">Hoodoo::Services::Session</a></p>
+<p><em>Platform Sessions:</em> Authentication of sessions, session context – <a href="../classes/Hoodoo/Services/Session.html"><code>Hoodoo::Services::Session</code></a></p>
 </li><li>
-<p><em>Platform Events:</em> Publishes Platform Events when running on a
-queue-based infrastructure – Hoodoo::Events::PlatformEvent</p>
+<p><em>Platform Events:</em> Publishes Platform Events when running on a queue-based infrastructure – Hoodoo::Events::PlatformEvent</p>
 </li><li>
-<p><em>ActiveRecord Assistance</em>: If using ActiveRecord (optional),
-provides support methods/mixins for models to help bridge the gap between
-API resources and persistence – <a
-href="../classes/Hoodoo/ActiveRecord.html">Hoodoo::ActiveRecord</a></p>
+<p><em>ActiveRecord Assistance</em>: If using ActiveRecord (optional), provides support methods/mixins for models to help bridge the gap between API resources and persistence – <a href="../classes/Hoodoo/ActiveRecord.html"><code>Hoodoo::ActiveRecord</code></a></p>
 </li></ul>
 
 <p>Master documentation is through RDoc (see below).</p>
 
 <h2 id="label-Workflow+-2F+branches">Workflow / branches</h2>
 
-<p>Development occurs on either <code>master</code> directly, or temporary
-<code>hotfix</code> or <code>feature</code> branches which are subsequently
-merged to <code>master</code>. This model is used because Gem versions,
-once <a href="../classes/Hoodoo.html">Hoodoo</a> is stored in a public Gem
-repository, will allow other software to decide what changes to import or
-ignore. The Gem version is not usually altered while <a
-href="../classes/Hoodoo.html">Hoodoo</a> stays within a private repository.</p>
+<p>Development occurs on either <code>master</code> directly, or temporary <code>hotfix</code> or <code>feature</code> branches which are subsequently merged to <code>master</code>. This model is used because Gem versions, once <a href="../classes/Hoodoo.html"><code>Hoodoo</code></a> is stored in a public Gem repository, will allow other software to decide what changes to import or ignore. The Gem version is not usually altered while <a href="../classes/Hoodoo.html"><code>Hoodoo</code></a> stays within a private repository.</p>
 
 <p>See also <code>CONTRIBUTING.md</code>.</p>
 
@@ -130,30 +87,19 @@ href="../classes/Hoodoo.html">Hoodoo</a> stays within a private repository.</p>
 
 <h2 id="label-Documentation+-28RDoc-29">Documentation (RDoc)</h2>
 
-<p>The <a href="../classes/Hoodoo.html">Hoodoo</a> public API is documented
-through source code comments with examples and workflow indications. RDoc
-turns these into HTML. See earlier for some pointers to classes of interest
-that will be linked to the relevant class documentation if you read all of
-this through the RDoc output.</p>
+<p>The <a href="../classes/Hoodoo.html"><code>Hoodoo</code></a> public API is documented through source code comments with examples and workflow indications. RDoc turns these into HTML. See earlier for some pointers to classes of interest that will be linked to the relevant class documentation if you read all of this through the RDoc output.</p>
 
-<p>If working on an installed copy of the gem through normal channels, you
-should be able to issue this command:</p>
+<p>If working on an installed copy of the gem through normal channels, you should be able to issue this command:</p>
 
 <pre><code>gem server
 </code></pre>
 
-<p>…and browse to port 8808 on <code>localhost</code> to get an index of all
-gem documentation, including that for <a
-href="../classes/Hoodoo.html">Hoodoo</a>. Out of the box from GitHub, RDoc
-precompiled documentation is available but there is a risk it might be out
-of date. If working on development of the gem in a GitHub repository clone,
-you can generate or entirely regenerate RDoc files (re-RDoc) with:</p>
+<p>…and browse to port 8808 on <code>localhost</code> to get an index of all gem documentation, including that for <a href="../classes/Hoodoo.html"><code>Hoodoo</code></a>. Out of the box from GitHub, RDoc precompiled documentation is available but there is a risk it might be out of date. If working on development of the gem in a GitHub repository clone, you can generate or entirely regenerate RDoc files (re-RDoc) with:</p>
 
 <pre><code>bundle exec rake rerdoc
 </code></pre>
 
-<p>Some additional higher level hand written documentation may also be present
-as Markdown data inside the <code>docs</code> folder.</p>
+<p>Some additional higher level hand written documentation may also be present as Markdown data inside the <code>docs</code> folder.</p>
 
 <h2 id="label-Contributors">Contributors</h2>
 <ul><li>
@@ -204,17 +150,11 @@ as Markdown data inside the <code>docs</code> folder.</p>
 
 <h2 id="label-Licence">Licence</h2>
 
-<p>Please see the <code>LICENSE</code> and <code>hoodoo.gemspec</code> file
-for licence details. Those files are authoritative. At the time of writing
-- though this note might get out of date - <a
-href="../classes/Hoodoo.html">Hoodoo</a> is released under the LGPL v3;
-see:</p>
+<p>Please see the <code>LICENSE</code> and <code>hoodoo.gemspec</code> file for licence details. Those files are authoritative. At the time of writing - though this note might get out of date - <a href="../classes/Hoodoo.html"><code>Hoodoo</code></a> is released under the LGPL v3; see:</p>
 <ul><li>
-<p><a
-href="http://www.gnu.org/licenses/lgpl-3.0-standalone.html">www.gnu.org/licenses/lgpl-3.0-standalone.html</a></p>
+<p><a href="http://www.gnu.org/licenses/lgpl-3.0-standalone.html">www.gnu.org/licenses/lgpl-3.0-standalone.html</a></p>
 </li><li>
-<p><a
-href="https://tldrlegal.com/license/gnu-lesser-general-public-license-v3-(lgpl-3">tldrlegal.com/license/gnu-lesser-general-public-license-v3-(lgpl-3</a>)</p>
+<p><a href="https://tldrlegal.com/license/gnu-lesser-general-public-license-v3-(lgpl-3">tldrlegal.com/license/gnu-lesser-general-public-license-v3-(lgpl-3</a>)</p>
 </li></ul>
 
     </div>

@@ -39,22 +39,11 @@
         <div id="content">
     <div class="description">
         
-<p>Most of the <a href="../ActiveRecord.html">ActiveRecord</a> support code
-provides mixins with a public API. That public interface makes it obvious
-what the mixin&#39;s defined method names will be, helping to avoid
-collisions/shadowing. Sometimes, those methods want to share code but
-private methods don&#39;t work well in that context - their names could
-unwittingly collide with names in the including class, written by an author
-not aware of those essentially hidden but vital interfaces.</p>
+<p>Most of the <a href="../ActiveRecord.html"><code>ActiveRecord</code></a> support code provides mixins with a public API. That public interface makes it obvious what the mixin&#39;s defined method names will be, helping to avoid collisions/shadowing. Sometimes, those methods want to share code but private methods don&#39;t work well in that context - their names could unwittingly collide with names in the including class, written by an author not aware of those essentially hidden but vital interfaces.</p>
 
-<p>This is a support class specifically designed to solve this issue. It&#39;s
-really a public, independent expression of a series of specialised methods
-that would otherwise have normally been private.</p>
+<p>This is a support class specifically designed to solve this issue. It&#39;s really a public, independent expression of a series of specialised methods that would otherwise have normally been private.</p>
 
-<p>Although this code forms part of the <a href="../../Hoodoo.html">Hoodoo</a>
-public API, its unusual status means that you should not really call any of
-these methods unless you&#39;re prepared to track unexpected API changes in
-them in future and update your calling code.</p>
+<p>Although this code forms part of the <a href="../../Hoodoo.html"><code>Hoodoo</code></a> public API, its unusual status means that you should not really call any of these methods unless you&#39;re prepared to track unexpected API changes in them in future and update your calling code.</p>
 
     </div>
 
@@ -116,42 +105,21 @@ them in future and update your calling code.</p>
         </div>
 
         <div class="description">
-            <p>Back-end of sorts for <a
-href="Support.html#method-c-full_scope_for">::full_scope_for</a>. Given a
-base scope (e.g. &#39;<code>Model.all</code>&#39;), applies all available
-appropriate scoping additions included by that model, such as <a
-href="Secure.html">Hoodoo::ActiveRecord::Secure</a> and <a
-href="Translated.html">Hoodoo::ActiveRecord::Translated</a>,
-<em>except</em> for the dating modules <a
-href="Dated.html">Hoodoo::ActiveRecord::Dated</a> and <a
-href="ManuallyDated.html">Hoodoo::ActiveRecord::ManuallyDated</a>.</p>
+            <p>Back-end of sorts for <a href="Support.html#method-c-full_scope_for"><code>::full_scope_for</code></a>. Given a base scope (e.g. &#39;<code>Model.all</code>&#39;), applies all available appropriate scoping additions included by that model, such as <a href="Secure.html"><code>Hoodoo::ActiveRecord::Secure</code></a> and <a href="Translated.html"><code>Hoodoo::ActiveRecord::Translated</code></a>, <em>except</em> for the dating modules <a href="Dated.html"><code>Hoodoo::ActiveRecord::Dated</code></a> and <a href="ManuallyDated.html"><code>Hoodoo::ActiveRecord::ManuallyDated</code></a>.</p>
 
-<p>If you wish to use dating as well, call <a
-href="Support.html#method-c-full_scope_for">::full_scope_for</a> instead.</p>
+<p>If you wish to use dating as well, call <a href="Support.html#method-c-full_scope_for"><code>::full_scope_for</code></a> instead.</p>
 <dl class="rdoc-list note-list"><dt><code>base_scope</code>
 <dd>
-<p>The ActiveRecord::Relation instance providing the base scope to which
-additions will be made.</p>
+<p>The ActiveRecord::Relation instance providing the base scope to which additions will be made.</p>
 </dd><dt><code>klass</code>
 <dd>
-<p>The <a href="Base.html">ActiveRecord::Base</a> subclass <em>class</em> (not
-instance) which is making the call here. This is the entity which is
-checked for module inclusions to determine how the query chain should be
-assembled.</p>
+<p>The <a href="Base.html"><code>ActiveRecord::Base</code></a> subclass <em>class</em> (not instance) which is making the call here. This is the entity which is checked for module inclusions to determine how the query chain should be assembled.</p>
 </dd><dt><code>context</code>
 <dd>
-<p><a href="../Services/Context.html">Hoodoo::Services::Context</a> instance
-describing a call context. This is typically a value passed to one of the
-<a
-href="../Services/Implementation.html">Hoodoo::Services::Implementation</a>
-instance methods that a resource subclass implements.</p>
+<p><a href="../Services/Context.html"><code>Hoodoo::Services::Context</code></a> instance describing a call context. This is typically a value passed to one of the <a href="../Services/Implementation.html"><code>Hoodoo::Services::Implementation</code></a> instance methods that a resource subclass implements.</p>
 </dd></dl>
 
-<p>Returns the given input scope, with additional conditions added for any <a
-href="../../Hoodoo.html">Hoodoo</a> <a
-href="../ActiveRecord.html">ActiveRecord</a> extension modules included by
-the <a href="../ActiveRecord.html">ActiveRecord</a> model class that the
-scope targets.</p>
+<p>Returns the given input scope, with additional conditions added for any <a href="../../Hoodoo.html"><code>Hoodoo</code></a> <a href="../ActiveRecord.html"><code>ActiveRecord</code></a> extension modules included by the <a href="../ActiveRecord.html"><code>ActiveRecord</code></a> model class that the scope targets.</p>
         </div>
 
 
@@ -185,14 +153,7 @@ scope targets.</p>
         </div>
 
         <div class="description">
-            <p>Returns a (newly generated) Hash of search keys mapping to helper Procs
-which are in the same format as would be passed to <a
-href="Finder/ClassMethods.html#method-i-search_with">Hoodoo::ActiveRecord::Finder::ClassMethods#search_with</a>
-or <a
-href="Finder/ClassMethods.html#method-i-filter_with">Hoodoo::ActiveRecord::Finder::ClassMethods#filter_with</a>,
-describing the default framework search parameters. The middleware defines
-keys, but each ORM adapter module must specify how those keys actually get
-used to search inside supported database engines.</p>
+            <p>Returns a (newly generated) Hash of search keys mapping to helper Procs which are in the same format as would be passed to <a href="Finder/ClassMethods.html#method-i-search_with"><code>Hoodoo::ActiveRecord::Finder::ClassMethods#search_with</code></a> or <a href="Finder/ClassMethods.html#method-i-filter_with"><code>Hoodoo::ActiveRecord::Finder::ClassMethods#filter_with</code></a>, describing the default framework search parameters. The middleware defines keys, but each ORM adapter module must specify how those keys actually get used to search inside supported database engines.</p>
         </div>
 
 
@@ -252,12 +213,7 @@ used to search inside supported database engines.</p>
         </div>
 
         <div class="description">
-            <p>Given an <a href="../ActiveRecord.html">ActiveRecord</a> class and <a
-href="../../Hoodoo.html">Hoodoo</a> request context, work out which <a
-href="../../Hoodoo.html">Hoodoo</a> support modules are included within
-this class and call base methods to provide a fully specified basic query
-chain obeying all the necessary aspects of the <a
-href="../ActiveRecord.html">ActiveRecord</a> model class and the request.</p>
+            <p>Given an <a href="../ActiveRecord.html"><code>ActiveRecord</code></a> class and <a href="../../Hoodoo.html"><code>Hoodoo</code></a> request context, work out which <a href="../../Hoodoo.html"><code>Hoodoo</code></a> support modules are included within this class and call base methods to provide a fully specified basic query chain obeying all the necessary aspects of the <a href="../ActiveRecord.html"><code>ActiveRecord</code></a> model class and the request.</p>
 
 <p>Each of the following are called if the owning module is included:</p>
 <ul><li>
@@ -265,30 +221,19 @@ href="../ActiveRecord.html">ActiveRecord</a> model class and the request.</p>
 </li><li>
 <p>Hoodoo::ActiveRecord::Translated#translated</p>
 </li><li>
-<p>Hoodoo::ActiveRecord::Dated#dated (if “dating_enabled?” is
-<code>true</code>)</p>
+<p>Hoodoo::ActiveRecord::Dated#dated (if “dating_enabled?” is <code>true</code>)</p>
 </li><li>
-<p>Hoodoo::ActiveRecord::ManuallyDated#manually_dated (if
-“manual_dating_enabled?” is <code>true</code>)</p>
+<p>Hoodoo::ActiveRecord::ManuallyDated#manually_dated (if “manual_dating_enabled?” is <code>true</code>)</p>
 </li></ul>
 <dl class="rdoc-list note-list"><dt><code>klass</code>
 <dd>
-<p>The <a href="Base.html">ActiveRecord::Base</a> subclass <em>class</em> (not
-instance) which is making the call here. This is the entity which is
-checked for module inclusions to determine how the query chain should be
-assembled.</p>
+<p>The <a href="Base.html"><code>ActiveRecord::Base</code></a> subclass <em>class</em> (not instance) which is making the call here. This is the entity which is checked for module inclusions to determine how the query chain should be assembled.</p>
 </dd><dt><code>context</code>
 <dd>
-<p><a href="../Services/Context.html">Hoodoo::Services::Context</a> instance
-describing a call context. This is typically a value passed to one of the
-<a
-href="../Services/Implementation.html">Hoodoo::Services::Implementation</a>
-instance methods that a resource subclass implements.</p>
+<p><a href="../Services/Context.html"><code>Hoodoo::Services::Context</code></a> instance describing a call context. This is typically a value passed to one of the <a href="../Services/Implementation.html"><code>Hoodoo::Services::Implementation</code></a> instance methods that a resource subclass implements.</p>
 </dd></dl>
 
-<p>Returns an ActiveRecord::Relation instance which is anything from a generic
-anonymous scope, all the way through to a secured, translated, backdated
-scope for use with subsequent query refinements.</p>
+<p>Returns an ActiveRecord::Relation instance which is anything from a generic anonymous scope, all the way through to a secured, translated, backdated scope for use with subsequent query refinements.</p>
         </div>
 
 
@@ -327,12 +272,7 @@ scope for use with subsequent query refinements.</p>
         </div>
 
         <div class="description">
-            <p>Takes a Hash of possibly-non-String keys and with <code>nil</code> values
-or Proc instances appropriate for <a
-href="Finder/ClassMethods.html#method-i-search_with">Hoodoo::ActiveRecord::Finder::ClassMethods#search_with</a>
-/ <a
-href="Finder/ClassMethods.html#method-i-filter_with">Hoodoo::ActiveRecord::Finder::ClassMethods#filter_with</a>.
-Returns a similar Hash with all-String keys and a Proc for every value.</p>
+            <p>Takes a Hash of possibly-non-String keys and with <code>nil</code> values or Proc instances appropriate for <a href="Finder/ClassMethods.html#method-i-search_with"><code>Hoodoo::ActiveRecord::Finder::ClassMethods#search_with</code></a> / <a href="Finder/ClassMethods.html#method-i-filter_with"><code>Hoodoo::ActiveRecord::Finder::ClassMethods#filter_with</code></a>. Returns a similar Hash with all-String keys and a Proc for every value.</p>
 <dl class="rdoc-list note-list"><dt><code>hash</code>
 <dd>
 <p>Hash Symbol or String keys and Proc instance or <code>nil</code> values.</p>
@@ -370,46 +310,17 @@ Returns a similar Hash with all-String keys and a Proc for every value.</p>
         </div>
 
         <div class="description">
-            <p>When given an <a href="../ActiveRecord.html">ActiveRecord</a> model
-instance which may have errors set on it as a result of a prior validate or
-save call, map any found errors from <a
-href="../ActiveRecord.html">ActiveRecord</a> to a <a
-href="../Errors.html">Hoodoo::Errors</a> instance. The mapping is
-comprehensive; it even checks the data type of errant columns and tries to
-find a <code>generic...</code> family error to use for mapped result (e.g.
-<code>generic.invalid_string</code> or
-<code>generic.invalid_integer</code>).</p>
+            <p>When given an <a href="../ActiveRecord.html"><code>ActiveRecord</code></a> model instance which may have errors set on it as a result of a prior validate or save call, map any found errors from <a href="../ActiveRecord.html"><code>ActiveRecord</code></a> to a <a href="../Errors.html"><code>Hoodoo::Errors</code></a> instance. The mapping is comprehensive; it even checks the data type of errant columns and tries to find a <code>generic...</code> family error to use for mapped result (e.g. <code>generic.invalid_string</code> or <code>generic.invalid_integer</code>).</p>
 
-<p>Usually, the Hoodoo:ActiveRecord::ErrorMapping mixin is included into an <a
-href="../ActiveRecord.html">ActiveRecord</a> model directly and this method
-is therefore not used directly;
-Hoodoo:ActiveRecord::ErrorMapping.adds_errors_to? or similar is called
-instead.</p>
+<p>Usually, the Hoodoo:ActiveRecord::ErrorMapping mixin is included into an <a href="../ActiveRecord.html"><code>ActiveRecord</code></a> model directly and this method is therefore not used directly; Hoodoo:ActiveRecord::ErrorMapping.adds_errors_to? or similar is called instead.</p>
 
 <h2 id="method-c-translate_errors_on-label-Associations">Associations</h2>
 
-<p>When a model has associations and nested attributes are accepted for those
-associations, a validity query on an instance constructed with nested
-attributes will cause <a href="../ActiveRecord.html">ActiveRecord</a> to
-traverse all such attributes and aggregate specific errors on the parent
-object. This is specifically different from
-<code>validates_associated</code>, wherein associations constructed and
-attached through any means are validated independently, with validation
-errors independently added to those objects and the parent only gaining a
-generic “foo is invalid” error.</p>
+<p>When a model has associations and nested attributes are accepted for those associations, a validity query on an instance constructed with nested attributes will cause <a href="../ActiveRecord.html"><code>ActiveRecord</code></a> to traverse all such attributes and aggregate specific errors on the parent object. This is specifically different from <code>validates_associated</code>, wherein associations constructed and attached through any means are validated independently, with validation errors independently added to those objects and the parent only gaining a generic “foo is invalid” error.</p>
 
-<p>In such cases, the error mapper will attempt to path-traverse the
-error&#39;s column references to determine the association&#39;s column
-type and produce a fully mapped error with a reference to the full path.
-Service authors are encouraged to use this approach if associations are
-involved, as it yields the most comprehensive mapped error collection.</p>
+<p>In such cases, the error mapper will attempt to path-traverse the error&#39;s column references to determine the association&#39;s column type and produce a fully mapped error with a reference to the full path. Service authors are encouraged to use this approach if associations are involved, as it yields the most comprehensive mapped error collection.</p>
 
-<p>In the example below, note how the Child model does not need to include <a
-href="../../Hoodoo.html">Hoodoo</a> error mapping (though it can do so
-harmlessly if it so wishes) because it is the Parent model that drives the
-mapping of all the validations aggregated by <a
-href="../ActiveRecord.html">ActiveRecord</a> into an instance of Parent due
-to <code>accepts_nested_attributes_for</code>.</p>
+<p>In the example below, note how the Child model does not need to include <a href="../../Hoodoo.html"><code>Hoodoo</code></a> error mapping (though it can do so harmlessly if it so wishes) because it is the Parent model that drives the mapping of all the validations aggregated by <a href="../ActiveRecord.html"><code>ActiveRecord</code></a> into an instance of Parent due to <code>accepts_nested_attributes_for</code>.</p>
 
 <p>So, given this:</p>
 
@@ -441,9 +352,7 @@ end
 } )
 </code></pre>
 
-<p>…then <code>translate_errors_on( parent )</code> could return a <a
-href="../Errors.html">Hoodoo::Errors</a> collection containing entries such
-as:</p>
+<p>…then <code>translate_errors_on( parent )</code> could return a <a href="../Errors.html"><code>Hoodoo::Errors</code></a> collection containing entries such as:</p>
 
 <pre><code>{
   &quot;code&quot;      =&gt; &quot;generic.invalid_string&quot;,
@@ -453,19 +362,13 @@ as:</p>
 </code></pre>
 <dl class="rdoc-list note-list"><dt><code>model_instance</code>
 <dd>
-<p>The <a href="../ActiveRecord.html">ActiveRecord</a> model which may have
-errors set as a result of a prior validation failure.</p>
+<p>The <a href="../ActiveRecord.html"><code>ActiveRecord</code></a> model which may have errors set as a result of a prior validation failure.</p>
 </dd><dt><code>hoodoo_errors</code>
 <dd>
-<p>Optional <a href="../Errors.html">Hoodoo::Errors</a> instance. If provided,
-any mapped errors are added onto this existing set. If omitted, the method
-returns a new collection.</p>
+<p>Optional <a href="../Errors.html"><code>Hoodoo::Errors</code></a> instance. If provided, any mapped errors are added onto this existing set. If omitted, the method returns a new collection.</p>
 </dd></dl>
 
-<p>Returns a new <a href="../Errors.html">Hoodoo::Errors</a> collection (which
-may have no errors in it, if the model had not validation errors) or the
-value given in the <code>hoodoo_errors</code> parameter with zero or more
-new errors added.</p>
+<p>Returns a new <a href="../Errors.html"><code>Hoodoo::Errors</code></a> collection (which may have no errors in it, if the model had not validation errors) or the value given in the <code>hoodoo_errors</code> parameter with zero or more new errors added.</p>
         </div>
 
 

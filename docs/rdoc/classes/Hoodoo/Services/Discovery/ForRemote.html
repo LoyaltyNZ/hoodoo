@@ -39,13 +39,9 @@
         <div id="content">
     <div class="description">
         
-<p>Describe a “pseudo” resource endpoint location in terms of an interation
-context and wrapped “real” endpoint instance.</p>
+<p>Describe a “pseudo” resource endpoint location in terms of an interation context and wrapped “real” endpoint instance.</p>
 
-<p>This is a very special case class used for wrapping endpoints in, for
-example, the inter-resource remote call code in the middleware and in the
-auto-session code in <a
-href="../../Client/Endpoint/AutoSession.html">Hoodoo::Client::Endpoint::AutoSession</a>.</p>
+<p>This is a very special case class used for wrapping endpoints in, for example, the inter-resource remote call code in the middleware and in the auto-session code in <a href="../../Client/Endpoint/AutoSession.html"><code>Hoodoo::Client::Endpoint::AutoSession</code></a>.</p>
 
     </div>
 
@@ -91,11 +87,7 @@ href="../../Client/Endpoint/AutoSession.html">Hoodoo::Client::Endpoint::AutoSess
                 [RW]
             </td>
             <td class='attr-name'>wrapped_endpoint</td>
-            <td class='attr-desc'><p>A wrapped Endpoint class, which will be used for the
-<strong>actual</strong> call to the remote resource, after
-pre/post-processing in the context of source_interaction (e.g. augmenting
-session permissions with source-resource-interface-specified additions
-necessary to call the target remote resource).</p></td>
+            <td class='attr-desc'><p>A wrapped Endpoint class, which will be used for the <strong>actual</strong> call to the remote resource, after pre/post-processing in the context of source_interaction (e.g. augmenting session permissions with source-resource-interface-specified additions necessary to call the target remote resource).</p></td>
         </tr>
     </table>
 
@@ -112,14 +104,13 @@ necessary to call the target remote resource).</p></td>
             <p>Create an instance with named parameters as follows:</p>
 <dl class="rdoc-list note-list"><dt><code>resource</code>
 <dd>
-<p>See <a href="ForRemote.html#attribute-i-resource">resource</a>.</p>
+<p>See <a href="ForRemote.html#attribute-i-resource"><code>resource</code></a>.</p>
 </dd><dt><code>version</code>
 <dd>
-<p>See <a href="ForRemote.html#attribute-i-version">version</a>.</p>
+<p>See <a href="ForRemote.html#attribute-i-version"><code>version</code></a>.</p>
 </dd><dt><code>wrapped_endpoint</code>
 <dd>
-<p>See <a
-href="ForRemote.html#attribute-i-wrapped_endpoint">wrapped_endpoint</a>.</p>
+<p>See <a href="ForRemote.html#attribute-i-wrapped_endpoint"><code>wrapped_endpoint</code></a>.</p>
 </dd></dl>
         </div>
 

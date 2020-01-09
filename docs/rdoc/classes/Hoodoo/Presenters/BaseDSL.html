@@ -36,11 +36,7 @@
         <div id="content">
     <div class="description">
         
-<p>A mixin to be used by any presenter that wants to support the <a
-href="../Presenters.html">Hoodoo::Presenters</a> family of schema DSL
-methods. See e.g. <a href="Base.html">Hoodoo::Presenters::Base</a>. Mixed
-in by e.g. <a href="Object.html">Hoodoo::Presenters::Object</a> so that an
-instance can nest definitions of fields inside itself using this DSL.</p>
+<p>A mixin to be used by any presenter that wants to support the <a href="../Presenters.html"><code>Hoodoo::Presenters</code></a> family of schema DSL methods. See e.g. <a href="Base.html"><code>Hoodoo::Presenters::Base</code></a>. Mixed in by e.g. <a href="Object.html"><code>Hoodoo::Presenters::Object</code></a> so that an instance can nest definitions of fields inside itself using this DSL.</p>
 
     </div>
 
@@ -181,16 +177,9 @@ instance can nest definitions of fields inside itself using this DSL.</p>
         </div>
 
         <div class="description">
-            <p>Define a JSON array with the supplied name and options. If there is a block
-provided, then more DSL calls inside the block define how each array entry
-must look; otherwise array entries are not validated / are undefined unless
-the <code>:type</code> option is specified (see below).</p>
+            <p>Define a JSON array with the supplied name and options. If there is a block provided, then more DSL calls inside the block define how each array entry must look; otherwise array entries are not validated / are undefined unless the <code>:type</code> option is specified (see below).</p>
 
-<p>When an array uses <code>:required =&gt; true</code>, this only says that
-at least an empty array must be present, nothing more. If the array uses a
-block with fields that themselves are required, then this is only checked
-for if the array contains one or more entries (and is checked for each of
-those entries).</p>
+<p>When an array uses <code>:required =&gt; true</code>, this only says that at least an empty array must be present, nothing more. If the array uses a block with fields that themselves are required, then this is only checked for if the array contains one or more entries (and is checked for each of those entries).</p>
 <dl class="rdoc-list note-list"><dt><code>name</code>
 <dd>
 <p>The JSON key</p>
@@ -202,90 +191,54 @@ those entries).</p>
 <p>Optional block declaring the fields of each array item</p>
 </dd></dl>
 
-<p><a href="Array.html">Array</a> entries are normally either unvalidated, or
-describe complex types via a block. For simple fields, pass a :type option
-to declare that array entries must be of supported types as follows:</p>
+<p><a href="Array.html"><code>Array</code></a> entries are normally either unvalidated, or describe complex types via a block. For simple fields, pass a :type option to declare that array entries must be of supported types as follows:</p>
 <dl class="rdoc-list label-list"><dt>:array
 <dd>
-<p><a href="Array.html">Hoodoo::Presenters::Array</a> (see <a
-href="BaseDSL.html#method-i-array">array</a>)</p>
+<p><a href="Array.html"><code>Hoodoo::Presenters::Array</code></a> (see <a href="BaseDSL.html#method-i-array"><code>array</code></a>)</p>
 </dd><dt>:boolean
 <dd>
-<p><a href="Boolean.html">Hoodoo::Presenters::Boolean</a> (see <a
-href="BaseDSL.html#method-i-boolean">boolean</a>)</p>
+<p><a href="Boolean.html"><code>Hoodoo::Presenters::Boolean</code></a> (see <a href="BaseDSL.html#method-i-boolean"><code>boolean</code></a>)</p>
 </dd><dt>:date
 <dd>
-<p><a href="Date.html">Hoodoo::Presenters::Date</a> (see <a
-href="BaseDSL.html#method-i-date">date</a>)</p>
+<p><a href="Date.html"><code>Hoodoo::Presenters::Date</code></a> (see <a href="BaseDSL.html#method-i-date"><code>date</code></a>)</p>
 </dd><dt>:date_time
 <dd>
-<p><a href="DateTime.html">Hoodoo::Presenters::DateTime</a> (see <a
-href="BaseDSL.html#method-i-datetime">datetime</a>)</p>
+<p><a href="DateTime.html"><code>Hoodoo::Presenters::DateTime</code></a> (see <a href="BaseDSL.html#method-i-datetime"><code>datetime</code></a>)</p>
 </dd><dt>:decimal
 <dd>
-<p><a href="Decimal.html">Hoodoo::Presenters::Decimal</a> (see <a
-href="BaseDSL.html#method-i-decimal">decimal</a>)</p>
+<p><a href="Decimal.html"><code>Hoodoo::Presenters::Decimal</code></a> (see <a href="BaseDSL.html#method-i-decimal"><code>decimal</code></a>)</p>
 </dd><dt>:enum
 <dd>
-<p><a href="Enum.html">Hoodoo::Presenters::Enum</a> (see <a
-href="BaseDSL.html#method-i-enum">enum</a>)</p>
+<p><a href="Enum.html"><code>Hoodoo::Presenters::Enum</code></a> (see <a href="BaseDSL.html#method-i-enum"><code>enum</code></a>)</p>
 </dd><dt>:float
 <dd>
-<p><a href="Float.html">Hoodoo::Presenters::Float</a> (see <a
-href="BaseDSL.html#method-i-float">float</a>)</p>
+<p><a href="Float.html"><code>Hoodoo::Presenters::Float</code></a> (see <a href="BaseDSL.html#method-i-float"><code>float</code></a>)</p>
 </dd><dt>:integer
 <dd>
-<p><a href="Integer.html">Hoodoo::Presenters::Integer</a> (see <a
-href="BaseDSL.html#method-i-integer">integer</a>)</p>
+<p><a href="Integer.html"><code>Hoodoo::Presenters::Integer</code></a> (see <a href="BaseDSL.html#method-i-integer"><code>integer</code></a>)</p>
 </dd><dt>:string
 <dd>
-<p><a href="String.html">Hoodoo::Presenters::String</a> (see <a
-href="BaseDSL.html#method-i-string">string</a>)</p>
+<p><a href="String.html"><code>Hoodoo::Presenters::String</code></a> (see <a href="BaseDSL.html#method-i-string"><code>string</code></a>)</p>
 </dd><dt>:tags
 <dd>
-<p><a href="Tags.html">Hoodoo::Presenters::Tags</a> (see <a
-href="BaseDSL.html#method-i-tags">tags</a>)</p>
+<p><a href="Tags.html"><code>Hoodoo::Presenters::Tags</code></a> (see <a href="BaseDSL.html#method-i-tags"><code>tags</code></a>)</p>
 </dd><dt>:text
 <dd>
-<p><a href="Text.html">Hoodoo::Presenters::Text</a> (see <a
-href="BaseDSL.html#method-i-text">text</a>)</p>
+<p><a href="Text.html"><code>Hoodoo::Presenters::Text</code></a> (see <a href="BaseDSL.html#method-i-text"><code>text</code></a>)</p>
 </dd><dt>:uuid
 <dd>
-<p><a href="UUID.html">Hoodoo::Presenters::UUID</a> (see <a
-href="BaseDSL.html#method-i-uuid">uuid</a>)</p>
+<p><a href="UUID.html"><code>Hoodoo::Presenters::UUID</code></a> (see <a href="BaseDSL.html#method-i-uuid"><code>uuid</code></a>)</p>
 </dd></dl>
 
-<p>Some of these types require additional parameters, such as
-<code>:precision</code> for <a
-href="Decimal.html">Hoodoo::Presenters::Decimal</a> or <code>:from</code>
-for <a href="Enum.html">Hoodoo::Presenters::Enum</a>. For <em>any</em>
-options that are to apply to the the new <a href="Array.html">Array</a>
-simple type fields, prefix the option with the string <code>field_</code> -
-for example, <code>:field_precision =&gt; 2</code>.</p>
+<p>Some of these types require additional parameters, such as <code>:precision</code> for <a href="Decimal.html"><code>Hoodoo::Presenters::Decimal</code></a> or <code>:from</code> for <a href="Enum.html"><code>Hoodoo::Presenters::Enum</code></a>. For <em>any</em> options that are to apply to the the new <a href="Array.html"><code>Array</code></a> simple type fields, prefix the option with the string <code>field_</code> - for example, <code>:field_precision =&gt; 2</code>.</p>
 
-<p>It does not make sense to attempt to apply field defaults to simple type
-array entries via <code>:field_default</code>; don&#39;t do this.</p>
+<p>It does not make sense to attempt to apply field defaults to simple type array entries via <code>:field_default</code>; don&#39;t do this.</p>
 
-<p>In the case of <code>:type =&gt; :array</code>, the declaring <a
-href="Array.html">Array</a> is saying that its entries are themselves
-individually Arrays. This means that validation will ensure and rendering
-will assume that each of the parent <a href="Array.html">Array</a> entries
-are themselves Arrays, but will not validte the child <a
-href="Array.html">Array</a> contents any further. It is not possible to
-declare an <a href="Array.html">Array</a> with a child <a
-href="Array.html">Array</a> that has further children, or has child-level
-validation; instead you would need to use the block syntax, so that the
-child <a href="Array.html">Array</a> was associated to some named key in
-the arising Object/Hash making up each of the parent entries.</p>
+<p>In the case of <code>:type =&gt; :array</code>, the declaring <a href="Array.html"><code>Array</code></a> is saying that its entries are themselves individually Arrays. This means that validation will ensure and rendering will assume that each of the parent <a href="Array.html"><code>Array</code></a> entries are themselves Arrays, but will not validte the child <a href="Array.html"><code>Array</code></a> contents any further. It is not possible to declare an <a href="Array.html"><code>Array</code></a> with a child <a href="Array.html"><code>Array</code></a> that has further children, or has child-level validation; instead you would need to use the block syntax, so that the child <a href="Array.html"><code>Array</code></a> was associated to some named key in the arising Object/Hash making up each of the parent entries.</p>
 
 <h2 id="method-i-array-label-Block+syntax+example">Block syntax example</h2>
 
-<p>Mandatory JSON field “currencies” would lead to an array where each array
-entry contains the fields defined by Hoodoo::Data::Types::Currency along
-with an up-to-32 character string with field name “notes”, that field also
-being required. Whether or not the fields of the referenced Currency type
-are needed is up to the definition of that type. See <a
-href="BaseDSL.html#method-i-type">type</a> for more information.</p>
+<p>Mandatory JSON field “currencies” would lead to an array where each array entry contains the fields defined by Hoodoo::Data::Types::Currency along with an up-to-32 character string with field name “notes”, that field also being required. Whether or not the fields of the referenced Currency type are needed is up to the definition of that type. See <a href="BaseDSL.html#method-i-type"><code>type</code></a> for more information.</p>
 
 <pre><code>class VeryWealthy &lt; Hoodoo::Presenters::Base
   schema do
@@ -299,8 +252,7 @@ end
 
 <h2 id="method-i-array-label-Simple+type+syntax+without+field+options">Simple type syntax without field options</h2>
 
-<p>An optional <a href="Array.html">Array</a> which consists of simple UUIDs
-as its entries:</p>
+<p>An optional <a href="Array.html"><code>Array</code></a> which consists of simple UUIDs as its entries:</p>
 
 <pre><code>class UUIDCollection &lt; Hoodoo::Presenters::Base
   schema do
@@ -315,13 +267,11 @@ end
 # }
 </code></pre>
 
-<p>Validation of data intended to be rendered through such a schema
-declaration would make sure that each array entry was UUID-like.</p>
+<p>Validation of data intended to be rendered through such a schema declaration would make sure that each array entry was UUID-like.</p>
 
 <h2 id="method-i-array-label-Simple+type+syntax+with+field+options">Simple type syntax with field options</h2>
 
-<p>An optional <a href="Array.html">Array</a> which consists of Decimals with
-precision 2:</p>
+<p>An optional <a href="Array.html"><code>Array</code></a> which consists of Decimals with precision 2:</p>
 
 <pre><code>class DecimalCollection &lt; Hoodoo::Presenters::Base
   schema do
@@ -466,8 +416,7 @@ end
 <p>The JSON key</p>
 </dd><dt><code>options</code>
 <dd>
-<p>A <code>Hash</code> of options, e.g. <code>:required =&gt; true</code> and
-mandatory <code>:precision =&gt; [decimal-precision-number]</code></p>
+<p>A <code>Hash</code> of options, e.g. <code>:required =&gt; true</code> and mandatory <code>:precision =&gt; [decimal-precision-number]</code></p>
 </dd></dl>
         </div>
 
@@ -494,15 +443,13 @@ mandatory <code>:precision =&gt; [decimal-precision-number]</code></p>
         </div>
 
         <div class="description">
-            <p>Define a JSON string which can only have a restricted set of exactly
-matched values, with the supplied name and options.</p>
+            <p>Define a JSON string which can only have a restricted set of exactly matched values, with the supplied name and options.</p>
 <dl class="rdoc-list note-list"><dt><code>name</code>
 <dd>
 <p>The JSON key</p>
 </dd><dt><code>options</code>
 <dd>
-<p>A <code>Hash</code> of options, e.g. <code>:required =&gt; true</code> and
-mandatory <code>:from =&gt; [array-of-allowed-strings-or-symbols]</code></p>
+<p>A <code>Hash</code> of options, e.g. <code>:required =&gt; true</code> and mandatory <code>:from =&gt; [array-of-allowed-strings-or-symbols]</code></p>
 </dd></dl>
         </div>
 
@@ -562,9 +509,7 @@ mandatory <code>:from =&gt; [array-of-allowed-strings-or-symbols]</code></p>
         </div>
 
         <div class="description">
-            <p>Define a JSON object with the supplied name and optional constraints on
-properties (like hash keys) and property values (like hash values) that the
-object may contain, in abstract terms.</p>
+            <p>Define a JSON object with the supplied name and optional constraints on properties (like hash keys) and property values (like hash values) that the object may contain, in abstract terms.</p>
 <dl class="rdoc-list note-list"><dt><code>name</code>
 <dd>
 <p>The JSON key</p>
@@ -580,11 +525,7 @@ object may contain, in abstract terms.</p>
 
 <h3 id="method-i-hash-label-Example+1">Example 1</h3>
 
-<p>A <a href="Hash.html">Hash</a> where keys must be &lt;= 16 characters long
-and values must match a <code>Hoodoo::Data::Types::Currency</code> type
-(with the default <a href="../Data/Types.html">Hoodoo::Data::Types</a>
-namespace use arising from the Symbol passed to the <a
-href="BaseDSL.html#method-i-type">type</a> method).</p>
+<p>A <a href="Hash.html"><code>Hash</code></a> where keys must be &lt;= 16 characters long and values must match a <code>Hoodoo::Data::Types::Currency</code> type (with the default <a href="../Data/Types.html"><code>Hoodoo::Data::Types</code></a> namespace use arising from the Symbol passed to the <a href="BaseDSL.html#method-i-type"><code>type</code></a> method).</p>
 
 <pre><code>class CurrencyHash &lt; Hoodoo::Presenters::Base
   schema do
@@ -597,18 +538,11 @@ href="BaseDSL.html#method-i-type">type</a> method).</p>
 end
 </code></pre>
 
-<p>See <a href="Hash.html#method-i-keys">Hoodoo::Presenters::Hash#keys</a> for
-more information and examples.</p>
+<p>See <a href="Hash.html#method-i-keys"><code>Hoodoo::Presenters::Hash#keys</code></a> for more information and examples.</p>
 
 <h3 id="method-i-hash-label-Example+2">Example 2</h3>
 
-<p>A <a href="Hash.html">Hash</a> where keys must be &#39;one&#39; or
-&#39;two&#39;, each with a value matching the given schema. Here, the
-example assumes that a subclass of <a
-href="Base.html">Hoodoo::Presenters::Base</a> has been defined under the
-name of <code>SomeNamespace::Types::Currency</code>, since this is passed
-as a class reference to the <a href="BaseDSL.html#method-i-type">type</a>
-method.</p>
+<p>A <a href="Hash.html"><code>Hash</code></a> where keys must be &#39;one&#39; or &#39;two&#39;, each with a value matching the given schema. Here, the example assumes that a subclass of <a href="Base.html"><code>Hoodoo::Presenters::Base</code></a> has been defined under the name of <code>SomeNamespace::Types::Currency</code>, since this is passed as a class reference to the <a href="BaseDSL.html#method-i-type"><code>type</code></a> method.</p>
 
 <pre><code>class AltCurrencyHash &lt; Hoodoo::Presenters::Base
   schema do
@@ -626,27 +560,13 @@ method.</p>
 end
 </code></pre>
 
-<p>See <a href="Hash.html#method-i-key">Hoodoo::Presenters::Hash#key</a> for
-more information and examples.</p>
+<p>See <a href="Hash.html#method-i-key"><code>Hoodoo::Presenters::Hash#key</code></a> for more information and examples.</p>
 
 <h2 id="method-i-hash-label-Simple+types">Simple types</h2>
 
-<p>As with <a href="BaseDSL.html#method-i-array">array</a>, simple types can
-be declared for <a href="Hash.html">Hash</a> key values by passing a
-<code>:type</code> option to <a
-href="Hash.html#method-i-key">Hoodoo::Presenters::Hash#key</a> or <a
-href="Hash.html#method-i-keys">Hoodoo::Presenters::Hash#keys</a>. See the
-<a href="BaseDSL.html#method-i-array">array</a> documentation for a list of
-permitted types.</p>
+<p>As with <a href="BaseDSL.html#method-i-array"><code>array</code></a>, simple types can be declared for <a href="Hash.html"><code>Hash</code></a> key values by passing a <code>:type</code> option to <a href="Hash.html#method-i-key"><code>Hoodoo::Presenters::Hash#key</code></a> or <a href="Hash.html#method-i-keys"><code>Hoodoo::Presenters::Hash#keys</code></a>. See the <a href="BaseDSL.html#method-i-array"><code>array</code></a> documentation for a list of permitted types.</p>
 
-<p>For individual specific keys in <a
-href="Hash.html#method-i-key">Hoodoo::Presenters::Hash#key</a>, it
-<em>does</em> make sense sometimes to specify field defaults using either a
-<code>:default</code> or <code>:field_default</code> key (they are
-synonyms). For arbitrary keys via <a
-href="Hash.html#method-i-keys">Hoodoo::Presenters::Hash#keys</a> the
-situation is the same as with array entries and it does <em>not</em> make
-sense to specify field defaults.</p>
+<p>For individual specific keys in <a href="Hash.html#method-i-key"><code>Hoodoo::Presenters::Hash#key</code></a>, it <em>does</em> make sense sometimes to specify field defaults using either a <code>:default</code> or <code>:field_default</code> key (they are synonyms). For arbitrary keys via <a href="Hash.html#method-i-keys"><code>Hoodoo::Presenters::Hash#keys</code></a> the situation is the same as with array entries and it does <em>not</em> make sense to specify field defaults.</p>
 
 <h3 id="method-i-hash-label-Simple+type+example">Simple type example</h3>
 
@@ -668,20 +588,11 @@ sense to specify field defaults.</p>
 end
 </code></pre>
 
-<p>The optional <a href="Hash.html">Hash</a> called <code>name</code> has two
-optional keys which must be called <code>first</code> or <code>last</code>
-and have values that conform to <a
-href="Text.html">Hoodoo::Presenters::Text</a>.</p>
+<p>The optional <a href="Hash.html"><code>Hash</code></a> called <code>name</code> has two optional keys which must be called <code>first</code> or <code>last</code> and have values that conform to <a href="Text.html"><code>Hoodoo::Presenters::Text</code></a>.</p>
 
-<p>The optional <a href="Hash.html">Hash</a> called <code>address</code> has
-arbitrarily named unbounded length keys which where present must conform to
-<a href="Text.html">Hoodoo::Presenters::Text</a>.</p>
+<p>The optional <a href="Hash.html"><code>Hash</code></a> called <code>address</code> has arbitrarily named unbounded length keys which where present must conform to <a href="Text.html"><code>Hoodoo::Presenters::Text</code></a>.</p>
 
-<p>The required <a href="Hash.html">Hash</a> called <code>identifiers</code>
-hash arbitrarily named keys with a maximum length of 8 characters which
-must have values that conform to <a
-href="String.html">Hoodoo::Presenters::String</a> and are each no more than
-32 characters long.</p>
+<p>The required <a href="Hash.html"><code>Hash</code></a> called <code>identifiers</code> hash arbitrarily named keys with a maximum length of 8 characters which must have values that conform to <a href="String.html"><code>Hoodoo::Presenters::String</code></a> and are each no more than 32 characters long.</p>
 
 <p>Therefore the following payload is valid:</p>
 
@@ -796,22 +707,13 @@ Person.validate( data )
         </div>
 
         <div class="description">
-            <p>Declares that this Type or Resource contains fields which will may carry
-human-readable data subject to platform interntionalisation rules. A
-Resource which is internationalised automatically gains a
-<code>language</code> field (part of the Platform API&#39;s Common Fields)
-used in resource representations. A Type which is internationalised gains
-nothing until it is cross-referenced by a Resource definion, at which point
-the cross-referencing resource becomes itself implicitly internationalised
-(so it “taints” the resource). For cross-referencing, see <a
-href="BaseDSL.html#method-i-type">type</a>.</p>
+            <p>Declares that this Type or Resource contains fields which will may carry human-readable data subject to platform interntionalisation rules. A Resource which is internationalised automatically gains a <code>language</code> field (part of the Platform API&#39;s Common Fields) used in resource representations. A Type which is internationalised gains nothing until it is cross-referenced by a Resource definion, at which point the cross-referencing resource becomes itself implicitly internationalised (so it “taints” the resource). For cross-referencing, see <a href="BaseDSL.html#method-i-type"><code>type</code></a>.</p>
 <dl class="rdoc-list note-list"><dt><code>options</code>
 <dd>
 <p>Optional options hash. No options currently defined.</p>
 </dd></dl>
 
-<p>Example - a Member resource with internationalised fields such as the
-member&#39;s name:</p>
+<p>Example - a Member resource with internationalised fields such as the member&#39;s name:</p>
 
 <pre><code>class Member &lt; Hoodoo::Presenters::Base
   schema do
@@ -855,9 +757,7 @@ end
         </div>
 
         <div class="description">
-            <p>An enquiry method related to, but not part of the DSL; returns
-<code>true</code> if the schema instance is internationalised, else
-<code>false</code>.</p>
+            <p>An enquiry method related to, but not part of the DSL; returns <code>true</code> if the schema instance is internationalised, else <code>false</code>.</p>
         </div>
 
 
@@ -889,19 +789,13 @@ end
 <p>The JSON key.</p>
 </dd><dt><code>options</code>
 <dd>
-<p>Optional <code>Hash</code> of options, e.g. <code>:required =&gt;
-true</code></p>
+<p>Optional <code>Hash</code> of options, e.g. <code>:required =&gt; true</code></p>
 </dd><dt>&amp;block
 <dd>
 <p>Block declaring the fields making up the nested object</p>
 </dd></dl>
 
-<p>Example - mandatory JSON field “currencies” would lead to an object which
-had the same fields as Hoodoo::Data::Types::Currency along with an up-to-32
-character string with field name “notes”, that field also being required.
-Whether or not the fields of the referenced Currency type are needed is up
-to the definition of that type. See <a
-href="BaseDSL.html#method-i-type">type</a> for more information.</p>
+<p>Example - mandatory JSON field “currencies” would lead to an object which had the same fields as Hoodoo::Data::Types::Currency along with an up-to-32 character string with field name “notes”, that field also being required. Whether or not the fields of the referenced Currency type are needed is up to the definition of that type. See <a href="BaseDSL.html#method-i-type"><code>type</code></a> for more information.</p>
 
 <pre><code>class Wealthy &lt; Hoodoo::Presenters::Base
   schema do
@@ -940,24 +834,16 @@ end
         </div>
 
         <div class="description">
-            <p>Declare that a resource of a given name is included at this point. This is
-only normally done within the description of the schema for an interface.
-The fields of the given named resource are considered to be defined inline
-at the point of declaration - essentially, it&#39;s macro expansion.</p>
+            <p>Declare that a resource of a given name is included at this point. This is only normally done within the description of the schema for an interface. The fields of the given named resource are considered to be defined inline at the point of declaration - essentially, it&#39;s macro expansion.</p>
 <dl class="rdoc-list note-list"><dt><code>resource_info</code>
 <dd>
-<p>The <a href="Base.html">Hoodoo::Presenters::Base</a> subclass for the
-Resource in question, e.g. <code>Product</code>. The deprecated form of
-this interface takes the name of the type to nest as a symbol, e.g.
-<code>:Product</code>, in which case the Resource must be declared within
-nested modules <a href="../Data/Types.html">Hoodoo::Data::Types</a>.</p>
+<p>The <a href="Base.html"><code>Hoodoo::Presenters::Base</code></a> subclass for the Resource in question, e.g. <code>Product</code>. The deprecated form of this interface takes the name of the type to nest as a symbol, e.g. <code>:Product</code>, in which case the Resource must be declared within nested modules <a href="../Data/Types.html"><code>Hoodoo::Data::Types</code></a>.</p>
 </dd><dt><code>options</code>
 <dd>
 <p>Optional options hash. No options currently defined.</p>
 </dd></dl>
 
-<p>Example - an iterface takes an <code>Outlet</code> resource in its create
-action.</p>
+<p>Example - an iterface takes an <code>Outlet</code> resource in its create action.</p>
 
 <pre><code>class Outlet &lt; Hoodoo::Presenters::Base
   schema do
@@ -976,11 +862,7 @@ class OutletInterface &lt; Hoodoo::Services::Interface
 end
 </code></pre>
 
-<p>It doesn&#39;t make sense to mark a <code>resource</code> &#39;field&#39;
-as <code>:required</code> in the options since the declaration just expands
-to the contents of the referenced resource and it is the definition of that
-resource that determines whether or not its various field(s) are optional /
-required. That is, the following two declarations behave identically:</p>
+<p>It doesn&#39;t make sense to mark a <code>resource</code> &#39;field&#39; as <code>:required</code> in the options since the declaration just expands to the contents of the referenced resource and it is the definition of that resource that determines whether or not its various field(s) are optional / required. That is, the following two declarations behave identically:</p>
 
 <pre><code>resource Outlet
 
@@ -1029,8 +911,7 @@ resource Outlet, :required =&gt; true # Pointless option!
 <p>The JSON key</p>
 </dd><dt><code>options</code>
 <dd>
-<p>A <code>Hash</code> of options, e.g. <code>:required =&gt; true</code> and
-mandatory <code>:length =&gt; [max-length-in-chars]</code></p>
+<p>A <code>Hash</code> of options, e.g. <code>:required =&gt; true</code> and mandatory <code>:length =&gt; [max-length-in-chars]</code></p>
 </dd></dl>
         </div>
 
@@ -1057,15 +938,13 @@ mandatory <code>:length =&gt; [max-length-in-chars]</code></p>
         </div>
 
         <div class="description">
-            <p>Declares that this Type or Resource has a string field of unlimited length
-that contains comma-separated tag strings.</p>
+            <p>Declares that this Type or Resource has a string field of unlimited length that contains comma-separated tag strings.</p>
 <dl class="rdoc-list note-list"><dt><code>field_name</code>
 <dd>
 <p>Name of the field that will hold the tags.</p>
 </dd><dt><code>options</code>
 <dd>
-<p>Optional options hash. See <a
-href="BaseDSL.html">Hoodoo::Presenters::BaseDSL</a>.</p>
+<p>Optional options hash. See <a href="BaseDSL.html"><code>Hoodoo::Presenters::BaseDSL</code></a>.</p>
 </dd></dl>
 
 <p>Example - a Product resource which supports product tagging:</p>
@@ -1107,8 +986,7 @@ end
         </div>
 
         <div class="description">
-            <p>Define a JSON string of unlimited length with the supplied name and
-options.</p>
+            <p>Define a JSON string of unlimited length with the supplied name and options.</p>
 <dl class="rdoc-list note-list"><dt><code>name</code>
 <dd>
 <p>The JSON key</p>
@@ -1141,31 +1019,18 @@ options.</p>
         </div>
 
         <div class="description">
-            <p>Declare that a nested type of a given name is included at this point. This
-is only normally done within an <code>array</code> or <code>object</code>
-declaration. The fields of the given named type are considered to be
-defined inline at the point of declaration - essentially, it&#39;s macro
-expansion.</p>
+            <p>Declare that a nested type of a given name is included at this point. This is only normally done within an <code>array</code> or <code>object</code> declaration. The fields of the given named type are considered to be defined inline at the point of declaration - essentially, it&#39;s macro expansion.</p>
 <dl class="rdoc-list note-list"><dt><code>type_info</code>
 <dd>
-<p>The <a href="Base.html">Hoodoo::Presenters::Base</a> subclass for the Type
-in question, e.g. <code>BasketItem</code>. The deprecated form of this
-interface takes the name of the type to nest as a symbol, e.g.
-<code>:BasketItem</code>, in which case the Type must be declared within
-nested modules <a href="../Data/Types.html">Hoodoo::Data::Types</a>.</p>
+<p>The <a href="Base.html"><code>Hoodoo::Presenters::Base</code></a> subclass for the Type in question, e.g. <code>BasketItem</code>. The deprecated form of this interface takes the name of the type to nest as a symbol, e.g. <code>:BasketItem</code>, in which case the Type must be declared within nested modules <a href="../Data/Types.html"><code>Hoodoo::Data::Types</code></a>.</p>
 </dd><dt><code>options</code>
 <dd>
 <p>Optional options hash. No options currently defined.</p>
 </dd></dl>
 
-<p>It doesn&#39;t make sense to mark a <code>type</code> &#39;field&#39; as
-<code>:required</code> in the options since the declaration just expands to
-the contents of the referenced type and it is the definition of that type
-that determines whether or not its various field(s) are optional or
-required.</p>
+<p>It doesn&#39;t make sense to mark a <code>type</code> &#39;field&#39; as <code>:required</code> in the options since the declaration just expands to the contents of the referenced type and it is the definition of that type that determines whether or not its various field(s) are optional or required.</p>
 
-<p>Example 1 - a basket includes an array of the Type described by class
-<code>BasketItem</code>:</p>
+<p>Example 1 - a basket includes an array of the Type described by class <code>BasketItem</code>:</p>
 
 <pre><code>class Basket &lt; Hoodoo::Presenters::Base
   schema do
@@ -1191,8 +1056,7 @@ end
 }
 </code></pre>
 
-<p>Example 2 - a basket item refers to a product description by having its
-fields inline. So suppose we have this:</p>
+<p>Example 2 - a basket item refers to a product description by having its fields inline. So suppose we have this:</p>
 
 <pre><code>class Product &lt; Hoodoo::Presenters::Base
   schema do
@@ -1221,12 +1085,7 @@ end
 }
 </code></pre>
 
-<p>It is also possible to use this mechanism for inline expansions when you
-have, say, a Resource defined <em>entirely</em> in terms of something
-reused elsewhere as a Type. For example, suppose the product/basket
-information from above included information on a Currency that was used for
-payment. It might reuse a Type; meanwhile we might have a resource for
-managing Currencies, defined entirely through that Type:</p>
+<p>It is also possible to use this mechanism for inline expansions when you have, say, a Resource defined <em>entirely</em> in terms of something reused elsewhere as a Type. For example, suppose the product/basket information from above included information on a Currency that was used for payment. It might reuse a Type; meanwhile we might have a resource for managing Currencies, defined entirely through that Type:</p>
 
 <pre><code>class Currency &lt; Hoodoo::Presenters::Base
   schema do
@@ -1246,12 +1105,7 @@ resource :Currency do
 end
 </code></pre>
 
-<p>This means that the <strong>Resource</strong> of <code>Currency</code> has
-exactly the same fields as the <strong>Type</strong> of Currency. The
-Resource could define other fields too, though this would be risky as the
-Type might gain same-named fields in future, leading to undefined
-behaviour. At such a time, a degree of cut-and-paste and removing the
-<code>type</code> call from the Resource definition would probably be wise.</p>
+<p>This means that the <strong>Resource</strong> of <code>Currency</code> has exactly the same fields as the <strong>Type</strong> of Currency. The Resource could define other fields too, though this would be risky as the Type might gain same-named fields in future, leading to undefined behaviour. At such a time, a degree of cut-and-paste and removing the <code>type</code> call from the Resource definition would probably be wise.</p>
         </div>
 
 
@@ -1289,34 +1143,22 @@ behaviour. At such a time, a degree of cut-and-paste and removing the
         </div>
 
         <div class="description">
-            <p>Declares that this Type or Resource _refers to_ another Resource instance
-via its <a href="UUID.html">UUID</a>. There&#39;s no need to declare the
-presence of the <a href="UUID.html">UUID</a> field _for the instance
-itself_ on all resource definitions as that&#39;s implicit; this <a
-href="BaseDSL.html#method-i-uuid">uuid</a> method is just for relational
-information (AKA associations).</p>
+            <p>Declares that this Type or Resource _refers to_ another Resource instance via its <a href="UUID.html"><code>UUID</code></a>. There&#39;s no need to declare the presence of the <a href="UUID.html"><code>UUID</code></a> field _for the instance itself_ on all resource definitions as that&#39;s implicit; this <a href="BaseDSL.html#method-i-uuid"><code>uuid</code></a> method is just for relational information (AKA associations).</p>
 <dl class="rdoc-list note-list"><dt><code>field_name</code>
 <dd>
-<p>Name of the field that will hold the <a href="UUID.html">UUID</a>.</p>
+<p>Name of the field that will hold the <a href="UUID.html"><code>UUID</code></a>.</p>
 </dd><dt><code>options</code>
 <dd>
 <p>Options hash. See below.</p>
 </dd></dl>
 
-<p>In addition to standard options from <a
-href="BaseDSL.html">Hoodoo::Presenters::BaseDSL</a>, extra option keys and
-values are:</p>
+<p>In addition to standard options from <a href="BaseDSL.html"><code>Hoodoo::Presenters::BaseDSL</code></a>, extra option keys and values are:</p>
 <dl class="rdoc-list note-list"><dt><code>:resource</code>
 <dd>
-<p>The name of a resource (as a symbol, e.g. <code>:Product</code>) that the
-<a href="UUID.html">UUID</a> should refer to. Implementations <em>may</em>
-use this to validate that the resource, where a <a
-href="UUID.html">UUID</a> is provided, really is for a Product instance and
-not something else. Optional.</p>
+<p>The name of a resource (as a symbol, e.g. <code>:Product</code>) that the <a href="UUID.html"><code>UUID</code></a> should refer to. Implementations <em>may</em> use this to validate that the resource, where a <a href="UUID.html"><code>UUID</code></a> is provided, really is for a Product instance and not something else. Optional.</p>
 </dd></dl>
 
-<p>Example - a basket item that refers to an integer quantity of some specific
-Product resource instance:</p>
+<p>Example - a basket item that refers to an integer quantity of some specific Product resource instance:</p>
 
 <pre><code>class BasketItem &lt; Hoodoo::Presenters::Base
   schema do

@@ -36,83 +36,41 @@
         <div id="content">
     <div class="description">
         
-<p><a href="Support.html">Support</a> mixin for models subclassed from <a
-href="Base.html">ActiveRecord::Base</a> providing as-per-API-standard
-dating support.</p>
+<p><a href="Support.html"><code>Support</code></a> mixin for models subclassed from <a href="Base.html"><code>ActiveRecord::Base</code></a> providing as-per-API-standard dating support.</p>
 
-<p>The facilities provided here are powerful but relatively complex, so please
-read through this documentation section in full to understand everything
-you need to do.</p>
+<p>The facilities provided here are powerful but relatively complex, so please read through this documentation section in full to understand everything you need to do.</p>
 
 <h2 id="module-Hoodoo::ActiveRecord::Dated-label-Overview">Overview</h2>
 
-<p>This mixin adds finder methods to the model it is applied to (see <a
-href="Dated/ClassMethods.html#method-i-dated">Hoodoo::ActiveRecord::Dated::ClassMethods#dated</a>
-and <a
-href="Dated/ClassMethods.html#method-i-dated_at">Hoodoo::ActiveRecord::Dated::ClassMethods#dated_at</a>).
-These finders require two database tables in order to function correctly -
-the primary table (the model table) and a history table. When a record is
-updated it should be moved to the history table and a new record inserted
-with the new values. When a record is deleted it should be moved to the
-history table. This can be done manually with application code, or by
-things like SQL triggers (see later).</p>
+<p>This mixin adds finder methods to the model it is applied to (see <a href="Dated/ClassMethods.html#method-i-dated"><code>Hoodoo::ActiveRecord::Dated::ClassMethods#dated</code></a> and <a href="Dated/ClassMethods.html#method-i-dated_at"><code>Hoodoo::ActiveRecord::Dated::ClassMethods#dated_at</code></a>). These finders require two database tables in order to function correctly - the primary table (the model table) and a history table. When a record is updated it should be moved to the history table and a new record inserted with the new values. When a record is deleted it should be moved to the history table. This can be done manually with application code, or by things like SQL triggers (see later).</p>
 
-<p>Dating is only enabled if the including class explicitly calls the <a
-href="Dated/ClassMethods.html#method-i-dating_enabled">Hoodoo::ActiveRecord::Dated::ClassMethods#dating_enabled</a>
-method.</p>
+<p>Dating is only enabled if the including class explicitly calls the <a href="Dated/ClassMethods.html#method-i-dating_enabled"><code>Hoodoo::ActiveRecord::Dated::ClassMethods#dating_enabled</code></a> method.</p>
 
 <h2 id="module-Hoodoo::ActiveRecord::Dated-label-Database+table+requirements">Database table requirements</h2>
 
 <p>In all related tables, all date-time values must be stored as UTC.</p>
 
-<p>The primary table <em>must</em> have a unique column named <code>id</code>
-and two timestamp columns named <code>updated_at</code> and
-<code>created_at</code> which both need to be set by the application code
-(the <a href="../ActiveRecord.html">ActiveRecord</a>
-<code>timestamps</code> macro in a migration file defines appropriate
-columns).</p>
+<p>The primary table <em>must</em> have a unique column named <code>id</code> and two timestamp columns named <code>updated_at</code> and <code>created_at</code> which both need to be set by the application code (the <a href="../ActiveRecord.html"><code>ActiveRecord</code></a> <code>timestamps</code> macro in a migration file defines appropriate columns).</p>
 
-<p>The history table requires the same columns as the primary table with two
-differences:</p>
+<p>The history table requires the same columns as the primary table with two differences:</p>
 <ol><li>
-<p>The history table&#39;s <code>id</code> column must be populated with any
-unique value whilst the history table&#39;s <code>uuid</code> column must
-be populated with the primary table&#39;s <code>id</code> value.</p>
+<p>The history table&#39;s <code>id</code> column must be populated with any unique value whilst the history table&#39;s <code>uuid</code> column must be populated with the primary table&#39;s <code>id</code> value.</p>
 </li><li>
-<p>The history table must have two additional columns,
-<code>effective_start</code> and <code>effective_end</code>. The
-<code>effective_start</code> column determines when the history entry
-becomes effective (inclusive) whilst the <code>effective_end</code>
-determines when the history entry was effective to (exclusive). A record is
-considered to be effective at a particular time if that time is the same or
-after the <code>effective_start</code> and before the
-<code>effective_end</code>.</p>
+<p>The history table must have two additional columns, <code>effective_start</code> and <code>effective_end</code>. The <code>effective_start</code> column determines when the history entry becomes effective (inclusive) whilst the <code>effective_end</code> determines when the history entry was effective to (exclusive). A record is considered to be effective at a particular time if that time is the same or after the <code>effective_start</code> and before the <code>effective_end</code>.</p>
 
-<p>The <code>effective_start</code> must be set to the
-<code>effective_end</code> of the last record with same <code>uuid</code>,
-or to the <code>created_at</code> of the record if there is no previous
-records with the same <code>uuid</code>.</p>
+<p>The <code>effective_start</code> must be set to the <code>effective_end</code> of the last record with same <code>uuid</code>, or to the <code>created_at</code> of the record if there is no previous records with the same <code>uuid</code>.</p>
 
-<p>The <code>effective_end</code> must be set to the current time (UTC) when
-deleting a record or to the updated record&#39;s <code>updated_at</code>
-when updating a record.</p>
+<p>The <code>effective_end</code> must be set to the current time (UTC) when deleting a record or to the updated record&#39;s <code>updated_at</code> when updating a record.</p>
 </li></ol>
 
-<p>Additionally there are two constraints on the history table that must not
-be broken for the finder methods to function correctly:</p>
+<p>Additionally there are two constraints on the history table that must not be broken for the finder methods to function correctly:</p>
 <ol><li>
-<p>When adding a record to the history table its <code>effective_end</code>
-must be after all other records in the history table with the same
-<code>uuid</code>.</p>
+<p>When adding a record to the history table its <code>effective_end</code> must be after all other records in the history table with the same <code>uuid</code>.</p>
 </li><li>
-<p>When inserting a new record to the primary table its <code>id</code> must
-not exist in the history table.</p>
+<p>When inserting a new record to the primary table its <code>id</code> must not exist in the history table.</p>
 </li></ol>
 
-<p>The history table name defaults to the name of the primary table
-concatenated with <code>_history_entries</code>. This can be overriden when
-calling <a
-href="Dated/ClassMethods.html#method-i-dating_enabled">Hoodoo::ActiveRecord::Dated::ClassMethods#dating_enabled</a>.</p>
+<p>The history table name defaults to the name of the primary table concatenated with <code>_history_entries</code>. This can be overriden when calling <a href="Dated/ClassMethods.html#method-i-dating_enabled"><code>Hoodoo::ActiveRecord::Dated::ClassMethods#dating_enabled</code></a>.</p>
 
 <p>Example:</p>
 
@@ -124,24 +82,11 @@ end
 
 <h2 id="module-Hoodoo::ActiveRecord::Dated-label-Migration+assistance">Migration assistance</h2>
 
-<p>Compatible database migration generators are included in
-<code>service_shell</code>. These migrations create the history table and
-add database triggers (PostgreSQL specific) which will handle the creation
-of the appropriate history entry when a record is deleted or updated
-without breaking the history table constraints. See <a
-href="https://github.com/LoyaltyNZ/service_shell/blob/master/bin/generators/effective_date.rb">github.com/LoyaltyNZ/service_shell/blob/master/bin/generators/effective_date.rb</a>
-for more information.</p>
+<p>Compatible database migration generators are included in <code>service_shell</code>. These migrations create the history table and add database triggers (PostgreSQL specific) which will handle the creation of the appropriate history entry when a record is deleted or updated without breaking the history table constraints. See <a href="https://github.com/LoyaltyNZ/service_shell/blob/master/bin/generators/effective_date.rb">github.com/LoyaltyNZ/service_shell/blob/master/bin/generators/effective_date.rb</a> for more information.</p>
 
 <h2 id="module-Hoodoo::ActiveRecord::Dated-label-Model+instance+creation">Model instance creation</h2>
 
-<p>It is <em>VERY</em> <em>IMPORTANT</em> that you use method <a
-href="Creator/ClassMethods.html#method-i-new_in">Hoodoo::ActiveRecord::Creator::ClassMethods#new_in</a>
-to create new resource instances when using dating. You <em>could</em> just
-manually read the `context.request.dated_from` value to ensure that an
-appropriate creation time is set; presently, `created_at` and `updated_at`
-are set from the `dated_from` value. However, using `new_in` for this
-isolates your code from any possible under-the-hood implementation changes
-therein and future-proofs your code.</p>
+<p>It is <em>VERY</em> <em>IMPORTANT</em> that you use method <a href="Creator/ClassMethods.html#method-i-new_in"><code>Hoodoo::ActiveRecord::Creator::ClassMethods.new_in</code></a> to create new resource instances when using dating. You <em>could</em> just manually read the `context.request.dated_from` value to ensure that an appropriate creation time is set; presently, `created_at` and `updated_at` are set from the `dated_from` value. However, using `new_in` for this isolates your code from any possible under-the-hood implementation changes therein and future-proofs your code.</p>
 
     </div>
 
@@ -199,8 +144,7 @@ end
 </code></pre>
 <dl class="rdoc-list note-list"><dt><code>model</code>
 <dd>
-<p>The <a href="Base.html">ActiveRecord::Base</a> descendant that is including
-this module.</p>
+<p>The <a href="Base.html"><code>ActiveRecord::Base</code></a> descendant that is including this module.</p>
 </dd></dl>
         </div>
 
@@ -236,14 +180,10 @@ this module.</p>
         </div>
 
         <div class="description">
-            <p>When instantiated in an <a href="Base.html">ActiveRecord::Base</a>
-subclass, all of the <a
-href="Dated/ClassMethods.html">Hoodoo::ActiveRecord::Dated::ClassMethods</a>
-methods are defined as class methods on the including class.</p>
+            <p>When instantiated in an <a href="Base.html"><code>ActiveRecord::Base</code></a> subclass, all of the <a href="Dated/ClassMethods.html"><code>Hoodoo::ActiveRecord::Dated::ClassMethods</code></a> methods are defined as class methods on the including class.</p>
 <dl class="rdoc-list note-list"><dt><code>model</code>
 <dd>
-<p>The <a href="Base.html">ActiveRecord::Base</a> descendant that is including
-this module.</p>
+<p>The <a href="Base.html"><code>ActiveRecord::Base</code></a> descendant that is including this module.</p>
 </dd></dl>
         </div>
 

@@ -39,8 +39,7 @@
         <div id="content">
     <div class="description">
         
-<p>Describe a resource endpoint location in a way that allows it to be
-contacted over HTTP.</p>
+<p>Describe a resource endpoint location in a way that allows it to be contacted over HTTP.</p>
 
     </div>
 
@@ -72,23 +71,16 @@ contacted over HTTP.</p>
                 [RW]
             </td>
             <td class='attr-name'>ca_file</td>
-            <td class='attr-desc'><p>An optional String indicating a relative or absolute file path to the
-location of a .pem format Certificate Authority file (trust store), which
-may include multliple certificates. The certificates in the file will be
-used by Net::HTTP to validate the SSL Ceritificate Chain presented by
-remote servers, when calling endpoints over HTTPS with <a
-href="../../Client.html">Hoodoo::Client</a>.</p>
+            <td class='attr-desc'><p>An optional String indicating a relative or absolute file path to the location of a .pem format Certificate Authority file (trust store), which may include multliple certificates. The certificates in the file will be used by Net::HTTP to validate the SSL Ceritificate Chain presented by remote servers, when calling endpoints over HTTPS with <a href="../../Client.html"><code>Hoodoo::Client</code></a>.</p>
 
-<p>Default <code>nil</code> value should be used in nearly all cases and uses
-Ruby OpenSSL defaults which are generally Operating System provided.</p></td>
+<p>Default <code>nil</code> value should be used in nearly all cases and uses Ruby OpenSSL defaults which are generally Operating System provided.</p></td>
         </tr>
         <tr valign='top' id='attribute-i-endpoint_uri'>
             <td class='attr-rw'>
                 [RW]
             </td>
             <td class='attr-name'>endpoint_uri</td>
-            <td class='attr-desc'><p>Full URI (as a URI object) at which the resource endpoint implementation
-can be contacted.</p></td>
+            <td class='attr-desc'><p>Full URI (as a URI object) at which the resource endpoint implementation can be contacted.</p></td>
         </tr>
         <tr valign='top' id='attribute-i-http_open_timeout'>
             <td class='attr-rw'>
@@ -97,16 +89,13 @@ can be contacted.</p></td>
             <td class='attr-name'>http_open_timeout</td>
             <td class='attr-desc'><p>Optional Float indicating the Net::HTTP open timeout value.</p>
 
-<p>This is a value in seconds (default 60) for which the client will wait
-while attempting to connect to a server.</p>
+<p>This is a value in seconds (default 60) for which the client will wait while attempting to connect to a server.</p>
 
-<p>If the connection attempt is still running after the timeout, the request
-is aborted and a <code>platform.timeout</code> error returned.</p>
+<p>If the connection attempt is still running after the timeout, the request is aborted and a <code>platform.timeout</code> error returned.</p>
 
-<p>See also <a href="ForHTTP.html#attribute-i-http_timeout">http_timeout</a>.</p>
+<p>See also <a href="ForHTTP.html#attribute-i-http_timeout"><code>http_timeout</code></a>.</p>
 
-<p>This operates at the HTTP transport level and is independent of any higher
-level timeouts that might be set up.</p></td>
+<p>This operates at the HTTP transport level and is independent of any higher level timeouts that might be set up.</p></td>
         </tr>
         <tr valign='top' id='attribute-i-http_timeout'>
             <td class='attr-rw'>
@@ -115,28 +104,20 @@ level timeouts that might be set up.</p></td>
             <td class='attr-name'>http_timeout</td>
             <td class='attr-desc'><p>Optional Float indicating the Net::HTTP read timeout value.</p>
 
-<p>This is a value in seconds (default 60) for which the client will wait
-while attempting to read data from a server in any individual TCP read
-operation. The timeout becomes active immediately after a server connection
-is established.</p>
+<p>This is a value in seconds (default 60) for which the client will wait while attempting to read data from a server in any individual TCP read operation. The timeout becomes active immediately after a server connection is established.</p>
 
-<p>If a read attempt is still running after the timeout, the request is
-aborted and a <code>platform.timeout</code> error returned.</p>
+<p>If a read attempt is still running after the timeout, the request is aborted and a <code>platform.timeout</code> error returned.</p>
 
-<p>See also <a
-href="ForHTTP.html#attribute-i-http_open_timeout">http_open_timeout</a>.</p>
+<p>See also <a href="ForHTTP.html#attribute-i-http_open_timeout"><code>http_open_timeout</code></a>.</p>
 
-<p>This operates at the HTTP transport level and is independent of any higher
-level timeouts that might be set up.</p></td>
+<p>This operates at the HTTP transport level and is independent of any higher level timeouts that might be set up.</p></td>
         </tr>
         <tr valign='top' id='attribute-i-proxy_uri'>
             <td class='attr-rw'>
                 [RW]
             </td>
             <td class='attr-name'>proxy_uri</td>
-            <td class='attr-desc'><p>Full URI (as a URI object) of an HTTP proxy to use as an override to
-<code>ENV['HTTP_PROXY']</code> which Ruby itself will otherwise read. Will
-be <code>nil</code> for no proxy override.</p></td>
+            <td class='attr-desc'><p>Full URI (as a URI object) of an HTTP proxy to use as an override to <code>ENV['HTTP_PROXY']</code> which Ruby itself will otherwise read. Will be <code>nil</code> for no proxy override.</p></td>
         </tr>
         <tr valign='top' id='attribute-i-resource'>
             <td class='attr-rw'>
@@ -167,28 +148,25 @@ be <code>nil</code> for no proxy override.</p></td>
             <p>Create an instance with named parameters as follows:</p>
 <dl class="rdoc-list note-list"><dt><code>resource</code>
 <dd>
-<p>See <a href="ForHTTP.html#attribute-i-resource">resource</a>.</p>
+<p>See <a href="ForHTTP.html#attribute-i-resource"><code>resource</code></a>.</p>
 </dd><dt><code>version</code>
 <dd>
-<p>See <a href="ForHTTP.html#attribute-i-version">version</a>.</p>
+<p>See <a href="ForHTTP.html#attribute-i-version"><code>version</code></a>.</p>
 </dd><dt><code>endpoint_uri</code>
 <dd>
-<p>See <a href="ForHTTP.html#attribute-i-endpoint_uri">endpoint_uri</a>.</p>
+<p>See <a href="ForHTTP.html#attribute-i-endpoint_uri"><code>endpoint_uri</code></a>.</p>
 </dd><dt><code>proxy_uri</code>
 <dd>
-<p>See <a href="ForHTTP.html#attribute-i-proxy_uri">proxy_uri</a>. Optional.</p>
+<p>See <a href="ForHTTP.html#attribute-i-proxy_uri"><code>proxy_uri</code></a>. Optional.</p>
 </dd><dt><code>ca_file</code>
 <dd>
-<p>See <a href="ForHTTP.html#attribute-i-ca_file">ca_file</a>. Optional.</p>
+<p>See <a href="ForHTTP.html#attribute-i-ca_file"><code>ca_file</code></a>. Optional.</p>
 </dd><dt><code>http_timeout</code>
 <dd>
-<p>See <a href="ForHTTP.html#attribute-i-http_timeout">http_timeout</a>.
-Optional.</p>
+<p>See <a href="ForHTTP.html#attribute-i-http_timeout"><code>http_timeout</code></a>. Optional.</p>
 </dd><dt><code>http_open_timeout</code>
 <dd>
-<p>See <a
-href="ForHTTP.html#attribute-i-http_open_timeout">http_open_timeout</a>.
-Optional.</p>
+<p>See <a href="ForHTTP.html#attribute-i-http_open_timeout"><code>http_open_timeout</code></a>. Optional.</p>
 </dd></dl>
         </div>
 

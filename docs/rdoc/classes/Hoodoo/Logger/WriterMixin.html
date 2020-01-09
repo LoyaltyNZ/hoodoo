@@ -36,10 +36,7 @@
         <div id="content">
     <div class="description">
         
-<p>This mixin is used by <a
-href="FastWriter.html">Hoodoo::Logger::FastWriter</a> and <a
-href="SlowWriter.html">Hoodoo::Logger::SlowWriter</a>. See those two
-classes for details.</p>
+<p>This mixin is used by <a href="FastWriter.html"><code>Hoodoo::Logger::FastWriter</code></a> and <a href="SlowWriter.html"><code>Hoodoo::Logger::SlowWriter</code></a>. See those two classes for details.</p>
 
     </div>
 
@@ -74,41 +71,23 @@ classes for details.</p>
         </div>
 
         <div class="description">
-            <p><a href="FastWriter.html">Hoodoo::Logger::FastWriter</a> and <a
-href="SlowWriter.html">Hoodoo::Logger::SlowWriter</a> subclasses implement
-this method.</p>
+            <p><a href="FastWriter.html"><code>Hoodoo::Logger::FastWriter</code></a> and <a href="SlowWriter.html"><code>Hoodoo::Logger::SlowWriter</code></a> subclasses implement this method.</p>
 
-<p>Write a structured log message. Writers sending data somewhere with no
-structure support will need to serialize/flatten the message; others should
-retain data structures like hashes or arrays.</p>
+<p>Write a structured log message. Writers sending data somewhere with no structure support will need to serialize/flatten the message; others should retain data structures like hashes or arrays.</p>
 
-<p>The <a href="WriterMixin.html#method-i-report">report</a> method is only
-invoked if the logging threshold level of the owning logger is set to an
-equal or lower level. Implementations do not, therefore, need to check this
-themselves.</p>
+<p>The <a href="WriterMixin.html#method-i-report"><code>report</code></a> method is only invoked if the logging threshold level of the owning logger is set to an equal or lower level. Implementations do not, therefore, need to check this themselves.</p>
 <dl class="rdoc-list note-list"><dt><code>log_level</code>
 <dd>
-<p>Log level as a symbol - one of, from most trivial to most severe,
-<code>:debug</code>, <code>:info</code>, <code>:warn</code> or
-<code>:error</code>.</p>
+<p>Log level as a symbol - one of, from most trivial to most severe, <code>:debug</code>, <code>:info</code>, <code>:warn</code> or <code>:error</code>.</p>
 </dd><dt><code>component</code>
 <dd>
-<p>Component - for example, a resource name for a specific service
-implementation, &#39;Middleware&#39; for <a
-href="../../Hoodoo.html">Hoodoo</a> itself, or some other name you think is
-useful. String or Symbol.</p>
+<p>Component - for example, a resource name for a specific service implementation, &#39;Middleware&#39; for <a href="../../Hoodoo.html"><code>Hoodoo</code></a> itself, or some other name you think is useful. String or Symbol.</p>
 </dd><dt><code>code</code>
 <dd>
-<p>Component-defined code. Think of this in a manner similar to platform error
-codes, appearing after the “.”; messages related to the same thing should
-share the same code. The intent is to produce log data that someone can
-filter on code to get useful information about that specific aspect of a
-service implementation&#39;s behaviour.</p>
+<p>Component-defined code. Think of this in a manner similar to platform error codes, appearing after the “.”; messages related to the same thing should share the same code. The intent is to produce log data that someone can filter on code to get useful information about that specific aspect of a service implementation&#39;s behaviour.</p>
 </dd><dt><code>data</code>
 <dd>
-<p>A Hash containing the level, component and code-dependent payload data to
-be logged. Converted to a string with <code>inspect</code> for flat output
-use in an unstructured context.</p>
+<p>A Hash containing the level, component and code-dependent payload data to be logged. Converted to a string with <code>inspect</code> for flat output use in an unstructured context.</p>
 </dd></dl>
         </div>
 

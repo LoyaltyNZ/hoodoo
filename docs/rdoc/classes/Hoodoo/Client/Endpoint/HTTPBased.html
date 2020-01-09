@@ -39,18 +39,9 @@
         <div id="content">
     <div class="description">
         
-<p>Base class for endpoints that have an <a href="HTTP.html">HTTP</a> basis to
-their request and responses, even if the underlying transport is not <a
-href="HTTP.html">HTTP</a>. This is basically a collection of library-like
-routines useful to such classes and specifically excludes the part which
-actually makes an <a href="HTTP.html">HTTP</a> call (or <a
-href="AMQP.html">AMQP</a> call, or whatever) to a resource. That&#39;s up
-to the subclass.</p>
+<p>Base class for endpoints that have an <a href="HTTP.html"><code>HTTP</code></a> basis to their request and responses, even if the underlying transport is not <a href="HTTP.html"><code>HTTP</code></a>. This is basically a collection of library-like routines useful to such classes and specifically excludes the part which actually makes an <a href="HTTP.html"><code>HTTP</code></a> call (or <a href="AMQP.html"><code>AMQP</code></a> call, or whatever) to a resource. That&#39;s up to the subclass.</p>
 
-<p>This must never be instantiated directly as an endpoint. Instead,
-instantiate a subclass such as <a
-href="HTTP.html">Hoodoo::Client::Endpoint::HTTP</a> or <a
-href="AMQP.html">Hoodoo::Client::Endpoint::AMQP</a>.</p>
+<p>This must never be instantiated directly as an endpoint. Instead, instantiate a subclass such as <a href="HTTP.html"><code>Hoodoo::Client::Endpoint::HTTP</code></a> or <a href="AMQP.html"><code>Hoodoo::Client::Endpoint::AMQP</code></a>.</p>
 
     </div>
 
@@ -107,13 +98,10 @@ href="AMQP.html">Hoodoo::Client::Endpoint::AMQP</a>.</p>
         </div>
 
         <div class="description">
-            <p>Preprocess a high level request description, returning <a
-href="HTTP.html">HTTP</a> orientated compiled data as a <a
-href="HTTPBased/DataForRequest.html">DataForRequest</a> instance.</p>
+            <p>Preprocess a high level request description, returning <a href="HTTP.html"><code>HTTP</code></a> orientated compiled data as a <a href="HTTPBased/DataForRequest.html"><code>DataForRequest</code></a> instance.</p>
 <dl class="rdoc-list note-list"><dt><code>description_of_request</code>
 <dd>
-<p><a href="HTTPBased/DescriptionOfRequest.html">DescriptionOfRequest</a>
-instance.</p>
+<p><a href="HTTPBased/DescriptionOfRequest.html"><code>DescriptionOfRequest</code></a> instance.</p>
 </dd></dl>
         </div>
 
@@ -242,15 +230,10 @@ instance.</p>
         </div>
 
         <div class="description">
-            <p>Process a raw <a href="HTTP.html">HTTP</a> response description, returning
-an instance of <a
-href="../AugmentedArray.html">Hoodoo::Client::AugmentedArray</a> or <a
-href="../AugmentedHash.html">Hoodoo::Client::AugmentedHash</a> with either
-processed body data inside, or error data associated.</p>
+            <p>Process a raw <a href="HTTP.html"><code>HTTP</code></a> response description, returning an instance of <a href="../AugmentedArray.html"><code>Hoodoo::Client::AugmentedArray</code></a> or <a href="../AugmentedHash.html"><code>Hoodoo::Client::AugmentedHash</code></a> with either processed body data inside, or error data associated.</p>
 <dl class="rdoc-list note-list"><dt><code>description_of_response</code>
 <dd>
-<p><a href="HTTPBased/DescriptionOfResponse.html">DescriptionOfResponse</a>
-instance.</p>
+<p><a href="HTTPBased/DescriptionOfResponse.html"><code>DescriptionOfResponse</code></a> instance.</p>
 </dd></dl>
         </div>
 

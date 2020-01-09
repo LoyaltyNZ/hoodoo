@@ -36,25 +36,14 @@
         <div id="content">
     <div class="description">
         
-<p><a href="Support.html">Support</a> mixin for models subclassed from <a
-href="Base.html">ActiveRecord::Base</a> providing automatic <a
-href="UUID.html">UUID</a> management. See:</p>
+<p><a href="Support.html"><code>Support</code></a> mixin for models subclassed from <a href="Base.html"><code>ActiveRecord::Base</code></a> providing automatic <a href="UUID.html"><code>UUID</code></a> management. See:</p>
 <ul><li>
-<p><a
-href="http://guides.rubyonrails.org/active_record_basics.html">guides.rubyonrails.org/active_record_basics.html</a></p>
+<p><a href="http://guides.rubyonrails.org/active_record_basics.html">guides.rubyonrails.org/active_record_basics.html</a></p>
 </li></ul>
 
-<p>By including this module, an on-create validation is added to the including
-model which assigns a <a href="UUID.html">UUID</a> if none is currently set
-(<code>id</code> is <code>nil</code>). It also adds validations to ensure
-the <code>id</code> is present, unique and a valid <a
-href="UUID.html">UUID</a>. You should always make sure that there are
-accompanying database-level uniqueness and non-null constraints on the
-relevant table&#39;s `id` column, too.</p>
+<p>By including this module, an on-create validation is added to the including model which assigns a <a href="UUID.html"><code>UUID</code></a> if none is currently set (<code>id</code> is <code>nil</code>). It also adds validations to ensure the <code>id</code> is present, unique and a valid <a href="UUID.html"><code>UUID</code></a>. You should always make sure that there are accompanying database-level uniqueness and non-null constraints on the relevant table&#39;s `id` column, too.</p>
 
-<p><strong>IMPORTANT:</strong> See <a
-href="UUID.html#method-c-included">::included</a> for important information
-about database requirements / table creation when using this mixin.</p>
+<p><strong>IMPORTANT:</strong> See <a href="UUID.html#method-c-included"><code>Hoodoo::ActiveRecord::UUID::included</code></a> for important information about database requirements / table creation when using this mixin.</p>
 
     </div>
 
@@ -103,8 +92,7 @@ end
 </code></pre>
 <dl class="rdoc-list note-list"><dt><code>model</code>
 <dd>
-<p>The <a href="Base.html">ActiveRecord::Base</a> descendant that is including
-this module.</p>
+<p>The <a href="Base.html"><code>ActiveRecord::Base</code></a> descendant that is including this module.</p>
 </dd></dl>
         </div>
 
@@ -136,16 +124,12 @@ this module.</p>
 <ul><li>
 <p>Declares &#39;id&#39; as the primary key</p>
 </li><li>
-<p>Self-assigns a <a href="UUID.html">UUID</a> to &#39;id&#39; via an
-on-create validation</p>
+<p>Self-assigns a <a href="UUID.html"><code>UUID</code></a> to &#39;id&#39; via an on-create validation</p>
 </li><li>
-<p>Adds validations to &#39;id&#39; to ensure it is present, unique and a
-valid <a href="UUID.html">UUID</a>.</p>
+<p>Adds validations to &#39;id&#39; to ensure it is present, unique and a valid <a href="UUID.html"><code>UUID</code></a>.</p>
 </li></ul>
 
-<p>The model <strong>MUST</strong> define its database representation in
-migrations so that <code>id</code> is a string based primary key, as
-follows:</p>
+<p>The model <strong>MUST</strong> define its database representation in migrations so that <code>id</code> is a string based primary key, as follows:</p>
 
 <pre><code>create_table :model_table_name, :id =&gt; :string do | t |
   # ...your normal column definitions go here...
@@ -155,8 +139,7 @@ change_column :model_table_name, :id, :string, :limit =&gt; 32
 </code></pre>
 <dl class="rdoc-list note-list"><dt><code>model</code>
 <dd>
-<p>The <a href="Base.html">ActiveRecord::Base</a> descendant that is including
-this module.</p>
+<p>The <a href="Base.html"><code>ActiveRecord::Base</code></a> descendant that is including this module.</p>
 </dd></dl>
         </div>
 

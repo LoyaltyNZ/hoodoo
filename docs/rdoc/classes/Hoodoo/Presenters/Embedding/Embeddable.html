@@ -39,11 +39,7 @@
         <div id="content">
     <div class="description">
         
-<p>The <a href="Embeddable.html">Embeddable</a> base class should not be
-instantiated directly. It provides common functionality for <a
-href="Embeds.html">Hoodoo::Presenters::Embedding::Embeds</a> and <a
-href="References.html">Hoodoo::Presenters::Embedding::References</a> - use
-those instead.</p>
+<p>The <a href="Embeddable.html"><code>Embeddable</code></a> base class should not be instantiated directly. It provides common functionality for <a href="Embeds.html"><code>Hoodoo::Presenters::Embedding::Embeds</code></a> and <a href="References.html"><code>Hoodoo::Presenters::Embedding::References</code></a> - use those instead.</p>
 
     </div>
 
@@ -128,23 +124,15 @@ those instead.</p>
         </div>
 
         <div class="description">
-            <p>Add a collection of resources (for embedding) or UUIDs (for referencing) to
-an embed or reference assembly.</p>
+            <p>Add a collection of resources (for embedding) or UUIDs (for referencing) to an embed or reference assembly.</p>
 <dl class="rdoc-list note-list"><dt><code>key</code>
 <dd>
-<p>The key to use in the resource representation leading to the embedded
-resource object or <a href="../UUID.html">UUID</a> string array. Typically
-follows a plural name convention in your resource API field language of
-choice, e.g. “members” (an API where the resource names and fields are in
-English), “mitglieder” (an API described in German).</p>
+<p>The key to use in the resource representation leading to the embedded resource object or <a href="../UUID.html"><code>UUID</code></a> string array. Typically follows a plural name convention in your resource API field language of choice, e.g. “members” (an API where the resource names and fields are in English), “mitglieder” (an API described in German).</p>
 
-<p>This key must match the value specified in the query string of a request in
-order to ask for the things in question to be embedded / referenced.</p>
+<p>This key must match the value specified in the query string of a request in order to ask for the things in question to be embedded / referenced.</p>
 </dd><dt><code>array_of_rendered_resources_or_uuids</code>
 <dd>
-<p>An <a href="../Array.html">Array</a> of rendered resource representations
-in full, or an <a href="../Array.html">Array</a> of resource <a
-href="../UUID.html">UUID</a> Strings.</p>
+<p>An <a href="../Array.html"><code>Array</code></a> of rendered resource representations in full, or an <a href="../Array.html"><code>Array</code></a> of resource <a href="../UUID.html"><code>UUID</code></a> Strings.</p>
 </dd></dl>
         </div>
 
@@ -172,22 +160,15 @@ href="../UUID.html">UUID</a> Strings.</p>
         </div>
 
         <div class="description">
-            <p>Add a singlular resource (for embedding) or <a href="../UUID.html">UUID</a>
-(for referencing) to an embed or reference assembly.</p>
+            <p>Add a singlular resource (for embedding) or <a href="../UUID.html"><code>UUID</code></a> (for referencing) to an embed or reference assembly.</p>
 <dl class="rdoc-list note-list"><dt><code>key</code>
 <dd>
-<p>The key to use in the resource representation leading to the embedded
-resource object or <a href="../UUID.html">UUID</a> string. Typically
-follows a singular name convention in your resource API field language of
-choice, e.g. “member” (an API where the resource names and fields are in
-English), “mitglied” (an API described in German).</p>
+<p>The key to use in the resource representation leading to the embedded resource object or <a href="../UUID.html"><code>UUID</code></a> string. Typically follows a singular name convention in your resource API field language of choice, e.g. “member” (an API where the resource names and fields are in English), “mitglied” (an API described in German).</p>
 
-<p>This key must match the value specified in the query string of a request in
-order to ask for the thing in question to be embedded / referenced.</p>
+<p>This key must match the value specified in the query string of a request in order to ask for the thing in question to be embedded / referenced.</p>
 </dd><dt><code>rendered_resource_or_uuid</code>
 <dd>
-<p>A rendered resource representation in full, or a resource <a
-href="../UUID.html">UUID</a> <a href="../String.html">String</a>.</p>
+<p>A rendered resource representation in full, or a resource <a href="../UUID.html"><code>UUID</code></a> <a href="../String.html"><code>String</code></a>.</p>
 </dd></dl>
         </div>
 
@@ -218,11 +199,7 @@ href="../UUID.html">UUID</a> <a href="../String.html">String</a>.</p>
             <p>Delete all data associated with the given key.</p>
 <dl class="rdoc-list note-list"><dt><code>key</code>
 <dd>
-<p>As provided to a prior call to <a
-href="Embeddable.html#method-i-add_one">add_one</a> or <a
-href="Embeddable.html#method-i-add_many">add_many</a>. Has no side effects
-if the key has not been previously used in such a call; no error is raised
-in this case either.</p>
+<p>As provided to a prior call to <a href="Embeddable.html#method-i-add_one"><code>add_one</code></a> or <a href="Embeddable.html#method-i-add_many"><code>add_many</code></a>. Has no side effects if the key has not been previously used in such a call; no error is raised in this case either.</p>
 </dd></dl>
         </div>
 
@@ -249,13 +226,7 @@ in this case either.</p>
         </div>
 
         <div class="description">
-            <p>Returns a <a href="../Hash.html">Hash</a> where keys are the keys provided
-in calls to <a href="Embeddable.html#method-i-add_one">add_one</a> or <a
-href="Embeddable.html#method-i-add_many">add_many</a> and values are the
-values provided to those same corresponding calls. Returns an empty <a
-href="../Hash.html">Hash</a> if no such calls have been made or if all the
-keys were subsequently removed with <a
-href="Embeddable.html#method-i-remove">remove</a>.</p>
+            <p>Returns a <a href="../Hash.html"><code>Hash</code></a> where keys are the keys provided in calls to <a href="Embeddable.html#method-i-add_one"><code>add_one</code></a> or <a href="Embeddable.html#method-i-add_many"><code>add_many</code></a> and values are the values provided to those same corresponding calls. Returns an empty <a href="../Hash.html"><code>Hash</code></a> if no such calls have been made or if all the keys were subsequently removed with <a href="Embeddable.html#method-i-remove"><code>remove</code></a>.</p>
         </div>
 
 

@@ -39,7 +39,7 @@
         <div id="content">
     <div class="description">
         
-<p>A JSON <a href="Array.html">Array</a> schema member.</p>
+<p>A JSON <a href="Array.html"><code>Array</code></a> schema member.</p>
 
     </div>
 
@@ -104,8 +104,7 @@
                 [RW]
             </td>
             <td class='attr-name'>properties</td>
-            <td class='attr-desc'><p>The properties of this object, an <code>array</code> of <code>Field</code>
-instances.</p></td>
+            <td class='attr-desc'><p>The properties of this object, an <code>array</code> of <code>Field</code> instances.</p></td>
         </tr>
     </table>
 
@@ -119,20 +118,13 @@ instances.</p></td>
         </div>
 
         <div class="description">
-            <p>Initialize an <a href="Array.html">Array</a> instance with the appropriate
-name and options.</p>
+            <p>Initialize an <a href="Array.html"><code>Array</code></a> instance with the appropriate name and options.</p>
 <dl class="rdoc-list note-list"><dt><code>name</code>
 <dd>
 <p>The JSON key.</p>
 </dd><dt><code>options</code>
 <dd>
-<p>A <code>Hash</code> of options, e.g. <code>:required =&gt; true, :type
-=&gt; :enum, :field_from =&gt; [ 1, 2, 3, 4 ]</code>. If a
-<code>:type</code> field is present, the <a href="Array.html">Array</a>
-contains atomic types of the given kind. Otherwise, either pass a block
-with inner schema DSL calls describing complex array entry schema, or
-nothing for no array content validation. If a block <em>and</em>
-<code>:type</code> option are passed, the block is used and option ignored.</p>
+<p>A <code>Hash</code> of options, e.g. <code>:required =&gt; true, :type =&gt; :enum, :field_from =&gt; [ 1, 2, 3, 4 ]</code>. If a <code>:type</code> field is present, the <a href="Array.html"><code>Array</code></a> contains atomic types of the given kind. Otherwise, either pass a block with inner schema DSL calls describing complex array entry schema, or nothing for no array content validation. If a block <em>and</em> <code>:type</code> option are passed, the block is used and option ignored.</p>
 </dd></dl>
         </div>
 
@@ -191,17 +183,13 @@ nothing for no array content validation. If a block <em>and</em>
         </div>
 
         <div class="description">
-            <p>Render an array into the target hash based on the internal state that
-describes this instance&#39;s current path (position in the heirarchy of
-nested schema entities).</p>
+            <p>Render an array into the target hash based on the internal state that describes this instance&#39;s current path (position in the heirarchy of nested schema entities).</p>
 <dl class="rdoc-list note-list"><dt><code>data</code>
 <dd>
-<p>The <a href="Array.html">Array</a> to render.</p>
+<p>The <a href="Array.html"><code>Array</code></a> to render.</p>
 </dd><dt><code>target</code>
 <dd>
-<p>The <a href="Hash.html">Hash</a> that we render into. A “path” of keys
-leading to nested Hashes is built via +super()+, with the final key entry
-yielding the rendered array.</p>
+<p>The <a href="Hash.html"><code>Hash</code></a> that we render into. A “path” of keys leading to nested Hashes is built via +super()+, with the final key entry yielding the rendered array.</p>
 </dd></dl>
         </div>
 
@@ -288,8 +276,7 @@ yielding the rendered array.</p>
         </div>
 
         <div class="description">
-            <p>Check if data is a valid <a href="Array.html">Array</a> and return a <a
-href="../Errors.html">Hoodoo::Errors</a> instance.</p>
+            <p>Check if data is a valid <a href="Array.html"><code>Array</code></a> and return a <a href="../Errors.html"><code>Hoodoo::Errors</code></a> instance.</p>
         </div>
 
 
@@ -347,8 +334,7 @@ href="../Errors.html">Hoodoo::Errors</a> instance.</p>
         </div>
 
         <div class="description">
-            <p>Invoke a given block, passing this item; call recursively for any defined
-sub-fields too. See Hoodoo::Presenters::Base#walk for why.</p>
+            <p>Invoke a given block, passing this item; call recursively for any defined sub-fields too. See Hoodoo::Presenters::Base#walk for why.</p>
 <dl class="rdoc-list note-list"><dt>&amp;block
 <dd>
 <p>Mandatory block, which is passed &#39;self&#39; when called.</p>

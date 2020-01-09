@@ -39,10 +39,7 @@
         <div id="content">
     <div class="description">
         
-<p><a href="../TransientStore.html">Hoodoo::TransientStore</a> plugin for <a
-href="https://memcached.org">Memcached</a>. The <a
-href="https://github.com/petergoldstein/dalli">Dalli gem</a> is used for
-server communication.</p>
+<p><a href="../TransientStore.html"><code>Hoodoo::TransientStore</code></a> plugin for <a href="https://memcached.org">Memcached</a>. The <a href="https://github.com/petergoldstein/dalli">Dalli gem</a> is used for server communication.</p>
 
     </div>
 
@@ -106,11 +103,7 @@ server communication.</p>
                 [RW]
             </td>
             <td class='attr-name'>client</td>
-            <td class='attr-desc'><p>Overrideable access to this object&#39;s Dalli::Client instance. It is
-inadvisable to couple calling code directly into this interface as it is a
-<a href="Memcached.html">Hoodoo::TransientStore::Memcached</a>
-specialisation, but if deemed absolutely necessary the Dalli client can be
-override with a customised version.</p></td>
+            <td class='attr-desc'><p>Overrideable access to this object&#39;s Dalli::Client instance. It is inadvisable to couple calling code directly into this interface as it is a <a href="Memcached.html"><code>Hoodoo::TransientStore::Memcached</code></a> specialisation, but if deemed absolutely necessary the Dalli client can be override with a customised version.</p></td>
         </tr>
     </table>
 
@@ -124,21 +117,11 @@ override with a customised version.</p></td>
         </div>
 
         <div class="description">
-            <p>See <a href="Base.html#method-c-new">Hoodoo::TransientStore::Base.new</a>
-for details.</p>
+            <p>See <a href="Base.html#method-c-new"><code>Hoodoo::TransientStore::Base::new</code></a> for details.</p>
 
-<p>Do not instantiate this class directly. Use <a
-href="../TransientStore.html#method-c-new">Hoodoo::TransientStore.new</a>.</p>
+<p>Do not instantiate this class directly. Use <a href="../TransientStore.html#method-c-new"><code>Hoodoo::TransientStore::new</code></a>.</p>
 
-<p>The <a href="https://github.com/petergoldstein/dalli">Dalli gem</a> is used
-to talk to <a href="https://memcached.org">Memcached</a> and accepts
-connection UIRs of simple, terse forms such as
-<code>&#39;localhost:11211&#39;</code>. Connections are configured with
-JSON serialisation, compression off and a forced namespace of
-<code>nz_co_loyalty_hoodoo_transient_store_</code> to avoid collision of
-data stored with this object and other data that may be in the <a
-href="Memcached.html">Memcached</a> instance identified by
-<code>storage_host_uri</code>.</p>
+<p>The <a href="https://github.com/petergoldstein/dalli">Dalli gem</a> is used to talk to <a href="https://memcached.org">Memcached</a> and accepts connection UIRs of simple, terse forms such as <code>&#39;localhost:11211&#39;</code>. Connections are configured with JSON serialisation, compression off and a forced namespace of <code>nz_co_loyalty_hoodoo_transient_store_</code> to avoid collision of data stored with this object and other data that may be in the <a href="Memcached.html"><code>Memcached</code></a> instance identified by <code>storage_host_uri</code>.</p>
         </div>
 
 
@@ -167,9 +150,7 @@ href="Memcached.html">Memcached</a> instance identified by
         </div>
 
         <div class="description">
-            <p>See <a
-href="Base.html#method-i-close">Hoodoo::TransientStore::Base#close</a> for
-details.</p>
+            <p>See <a href="Base.html#method-i-close"><code>Hoodoo::TransientStore::Base#close</code></a> for details.</p>
         </div>
 
 
@@ -195,9 +176,7 @@ details.</p>
         </div>
 
         <div class="description">
-            <p>See <a
-href="Base.html#method-i-delete">Hoodoo::TransientStore::Base#delete</a>
-for details.</p>
+            <p>See <a href="Base.html#method-i-delete"><code>Hoodoo::TransientStore::Base#delete</code></a> for details.</p>
         </div>
 
 
@@ -224,8 +203,7 @@ for details.</p>
         </div>
 
         <div class="description">
-            <p>See <a href="Base.html#method-i-get">Hoodoo::TransientStore::Base#get</a>
-for details.</p>
+            <p>See <a href="Base.html#method-i-get"><code>Hoodoo::TransientStore::Base#get</code></a> for details.</p>
         </div>
 
 
@@ -251,8 +229,7 @@ for details.</p>
         </div>
 
         <div class="description">
-            <p>See <a href="Base.html#method-i-set">Hoodoo::TransientStore::Base#set</a>
-for details.</p>
+            <p>See <a href="Base.html#method-i-set"><code>Hoodoo::TransientStore::Base#set</code></a> for details.</p>
         </div>
 
 

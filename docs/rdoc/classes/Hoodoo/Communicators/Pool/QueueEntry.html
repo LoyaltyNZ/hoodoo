@@ -39,9 +39,7 @@
         <div id="content">
     <div class="description">
         
-<p>Internal implementation detail of <a
-href="../Pool.html">Hoodoo::Communicators::Pool</a> which is placed on a
-Ruby Queue and used as part of thread processing for slow communicators.</p>
+<p>Internal implementation detail of <a href="../Pool.html"><code>Hoodoo::Communicators::Pool</code></a> which is placed on a Ruby Queue and used as part of thread processing for slow communicators.</p>
 
     </div>
 
@@ -97,37 +95,28 @@ Ruby Queue and used as part of thread processing for slow communicators.</p>
                 [RW]
             </td>
             <td class='attr-name'>dropped</td>
-            <td class='attr-desc'><p>If not <code>nil</code> or zero, the number of dropped messages that should
-be send to the slow communicator subclass&#39;s <a
-href="QueueEntry.html#attribute-i-dropped">dropped</a> method. See also <a
-href="QueueEntry.html#method-i-dropped-3F">dropped?</a></p></td>
+            <td class='attr-desc'><p>If not <code>nil</code> or zero, the number of dropped messages that should be send to the slow communicator subclass&#39;s <a href="QueueEntry.html#attribute-i-dropped"><code>dropped</code></a> method. See also <a href="QueueEntry.html#method-i-dropped-3F"><code>dropped?</code></a></p></td>
         </tr>
         <tr valign='top' id='attribute-i-payload'>
             <td class='attr-rw'>
                 [RW]
             </td>
             <td class='attr-name'>payload</td>
-            <td class='attr-desc'><p>If the entry represents neither a termination request nor a dropped message
-count (see <a href="QueueEntry.html#method-i-terminate-3F">terminate?</a>
-and <a href="QueueEntry.html#method-i-dropped-3F">dropped?</a>), the
-payload to send to the slow communicator subclass&#39;s communicate method.</p></td>
+            <td class='attr-desc'><p>If the entry represents neither a termination request nor a dropped message count (see <a href="QueueEntry.html#method-i-terminate-3F"><code>terminate?</code></a> and <a href="QueueEntry.html#method-i-dropped-3F"><code>dropped?</code></a>), the payload to send to the slow communicator subclass&#39;s communicate method.</p></td>
         </tr>
         <tr valign='top' id='attribute-i-sync'>
             <td class='attr-rw'>
                 [RW]
             </td>
             <td class='attr-name'>sync</td>
-            <td class='attr-desc'><p>If <code>true</code>, the processing Thread should push one item with any
-payload onto its sync Queue. See also <a
-href="QueueEntry.html#method-i-sync-3F">sync?</a></p></td>
+            <td class='attr-desc'><p>If <code>true</code>, the processing Thread should push one item with any payload onto its sync Queue. See also <a href="QueueEntry.html#method-i-sync-3F"><code>sync?</code></a></p></td>
         </tr>
         <tr valign='top' id='attribute-i-terminate'>
             <td class='attr-rw'>
                 [RW]
             </td>
             <td class='attr-name'>terminate</td>
-            <td class='attr-desc'><p>If <code>true</code>, the processing Thread should exit. See also <a
-href="QueueEntry.html#method-i-terminate-3F">terminate?</a>.</p></td>
+            <td class='attr-desc'><p>If <code>true</code>, the processing Thread should exit. See also <a href="QueueEntry.html#method-i-terminate-3F"><code>terminate?</code></a>.</p></td>
         </tr>
     </table>
 
@@ -143,19 +132,16 @@ href="QueueEntry.html#method-i-terminate-3F">terminate?</a>.</p></td>
         <div class="description">
             <p>Create a new instance, ready to be added to the Queue.</p>
 
-<p><strong>ONLY</strong> <strong>USE</strong> <strong>ONE</strong> of the
-named parameters:</p>
+<p><strong>ONLY</strong> <strong>USE</strong> <strong>ONE</strong> of the named parameters:</p>
 <dl class="rdoc-list note-list"><dt><code>payload</code>
 <dd>
 <p>A parameter to send to communicate in the communicator.</p>
 </dd><dt><code>dropped</code>
 <dd>
-<p>The integer to send to <a
-href="QueueEntry.html#attribute-i-dropped">dropped</a> in the communicator.</p>
+<p>The integer to send to <a href="QueueEntry.html#attribute-i-dropped"><code>dropped</code></a> in the communicator.</p>
 </dd><dt><code>terminate</code>
 <dd>
-<p>Set to <code>true</code> to exit the processing thread when the entry is
-read from the Queue.</p>
+<p>Set to <code>true</code> to exit the processing thread when the entry is read from the Queue.</p>
 </dd><dt><code>sync</code>
 <dd>
 <p>Set to <code>true</code> to push a message onto the sync Queue.</p>
@@ -190,10 +176,7 @@ read from the Queue.</p>
         </div>
 
         <div class="description">
-            <p>Returns <code>true</code> if this queue entry represents a dropped message
-count (see <a href="QueueEntry.html#attribute-i-dropped">dropped</a>), else
-+false (see <a href="QueueEntry.html#method-i-terminate-3F">terminate?</a>
-then <a href="QueueEntry.html#attribute-i-payload">payload</a>).</p>
+            <p>Returns <code>true</code> if this queue entry represents a dropped message count (see <a href="QueueEntry.html#attribute-i-dropped"><code>dropped</code></a>), else +false (see <a href="QueueEntry.html#method-i-terminate-3F"><code>terminate?</code></a> then <a href="QueueEntry.html#attribute-i-payload"><code>payload</code></a>).</p>
         </div>
 
 
@@ -219,8 +202,7 @@ then <a href="QueueEntry.html#attribute-i-payload">payload</a>).</p>
         </div>
 
         <div class="description">
-            <p>Returns <code>true</code> if this queue entry represents a request to push
-a message onto the processing Thread&#39;s sync Queue.</p>
+            <p>Returns <code>true</code> if this queue entry represents a request to push a message onto the processing Thread&#39;s sync Queue.</p>
         </div>
 
 
@@ -246,10 +228,7 @@ a message onto the processing Thread&#39;s sync Queue.</p>
         </div>
 
         <div class="description">
-            <p>Returns <code>true</code> if encountering this queue entry should terminate
-the processing thread, else <code>false</code> (see <a
-href="QueueEntry.html#method-i-dropped-3F">dropped?</a> then <a
-href="QueueEntry.html#attribute-i-payload">payload</a>).</p>
+            <p>Returns <code>true</code> if encountering this queue entry should terminate the processing thread, else <code>false</code> (see <a href="QueueEntry.html#method-i-dropped-3F"><code>dropped?</code></a> then <a href="QueueEntry.html#attribute-i-payload"><code>payload</code></a>).</p>
         </div>
 
 

@@ -39,8 +39,7 @@
         <div id="content">
     <div class="description">
         
-<p>Wrapper class for an AMQP request which conforms to the API that NewRelic
-expects.</p>
+<p>Wrapper class for an AMQP request which conforms to the API that NewRelic expects.</p>
 
     </div>
 
@@ -121,16 +120,10 @@ expects.</p>
         </div>
 
         <div class="description">
-            <p>Wrap the Alchemy Flux <code>http_message</code> aimed at the specified
-<code>full_uri</code>.</p>
+            <p>Wrap the Alchemy Flux <code>http_message</code> aimed at the specified <code>full_uri</code>.</p>
 <dl class="rdoc-list note-list"><dt><code>http_message</code>
 <dd>
-<p>Hash describing the message to send. See e.g.
-Hoodoo::Client::Endpoint::AMQP#do_amqp. Note that the header names inside
-this Hash are the mixed case, HTTP specification style ones like
-<code>X-Interaction-ID</code> and <em>not</em> the <a
-href="../../../../Rack.html">Rack</a> names like
-<code>HTTP_X_INTERACTION_ID</code>.</p>
+<p>Hash describing the message to send. See e.g. Hoodoo::Client::Endpoint::AMQP#do_amqp. Note that the header names inside this Hash are the mixed case, HTTP specification style ones like <code>X-Interaction-ID</code> and <em>not</em> the <a href="../../../../Rack.html"><code>Rack</code></a> names like <code>HTTP_X_INTERACTION_ID</code>.</p>
 </dd><dt><code>full_uri</code>
 <dd>
 <p>Full target URI, as a String.</p>
@@ -163,8 +156,7 @@ href="../../../../Rack.html">Rack</a> names like
         </div>
 
         <div class="description">
-            <p>Key lookup is delegated to the headers Hash per NewRelic&#39;s expectations
-of how a request behaves.</p>
+            <p>Key lookup is delegated to the headers Hash per NewRelic&#39;s expectations of how a request behaves.</p>
 <dl class="rdoc-list note-list"><dt><code>key</code>
 <dd>
 <p>Hash key to look up.</p>
@@ -194,8 +186,7 @@ of how a request behaves.</p>
         </div>
 
         <div class="description">
-            <p>Key setting is delegated to the headers Hash per NewRelic&#39;s
-expectations of how a request behaves.</p>
+            <p>Key setting is delegated to the headers Hash per NewRelic&#39;s expectations of how a request behaves.</p>
 <dl class="rdoc-list note-list"><dt><code>key</code>
 <dd>
 <p>Key of Hash entry to modify.</p>
@@ -230,8 +221,7 @@ expectations of how a request behaves.</p>
         <div class="description">
             <p>String describing this request&#39;s intended host.</p>
 
-<p>See also: <a
-href="AlchemyFluxHTTPRequestWrapper.html#method-i-host_from_header">host_from_header</a>.</p>
+<p>See also: <a href="AlchemyFluxHTTPRequestWrapper.html#method-i-host_from_header"><code>host_from_header</code></a>.</p>
         </div>
 
 
@@ -257,11 +247,9 @@ href="AlchemyFluxHTTPRequestWrapper.html#method-i-host_from_header">host_from_he
         </div>
 
         <div class="description">
-            <p>String descrbing this request&#39;s intended host, according to the
-<code>Host</code> header. May return <code>nil</code> if none is found.</p>
+            <p>String descrbing this request&#39;s intended host, according to the <code>Host</code> header. May return <code>nil</code> if none is found.</p>
 
-<p>See also: <a
-href="AlchemyFluxHTTPRequestWrapper.html#method-i-host">host</a>.</p>
+<p>See also: <a href="AlchemyFluxHTTPRequestWrapper.html#method-i-host"><code>host</code></a>.</p>
         </div>
 
 
@@ -291,8 +279,7 @@ href="AlchemyFluxHTTPRequestWrapper.html#method-i-host">host</a>.</p>
         </div>
 
         <div class="description">
-            <p>String describing this request&#39;s HTTP verb (GET, POST and so-on).
-String case is undefined, so perform case-insensitive comparisions.</p>
+            <p>String describing this request&#39;s HTTP verb (GET, POST and so-on). String case is undefined, so perform case-insensitive comparisions.</p>
         </div>
 
 

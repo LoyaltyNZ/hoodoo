@@ -39,12 +39,7 @@
         <div id="content">
     <div class="description">
         
-<p>A JSON <a href="String.html">String</a> schema member. An enumeration (of
-sorts) - a list of discrete string values that are permitted for the value
-of a field of this type. Matches must be exact (case sensitive, no
-leading/trailing white space etc.). Allowed values are expressed as Ruby
-strings or symbols (converted to and matched as strings) via an array under
-key <code>:from</code> in the options hash provided to the constructor.</p>
+<p>A JSON <a href="String.html"><code>String</code></a> schema member. An enumeration (of sorts) - a list of discrete string values that are permitted for the value of a field of this type. Matches must be exact (case sensitive, no leading/trailing white space etc.). Allowed values are expressed as Ruby strings or symbols (converted to and matched as strings) via an array under key <code>:from</code> in the options hash provided to the constructor.</p>
 
     </div>
 
@@ -84,9 +79,7 @@ key <code>:from</code> in the options hash provided to the constructor.</p>
                 [RW]
             </td>
             <td class='attr-name'>from</td>
-            <td class='attr-desc'><p><a href="Array.html">Array</a> of permitted enumeration values. This may be
-written with non-String values but they will be converted to Strings when
-read back.</p></td>
+            <td class='attr-desc'><p><a href="Array.html"><code>Array</code></a> of permitted enumeration values. This may be written with non-String values but they will be converted to Strings when read back.</p></td>
         </tr>
     </table>
 
@@ -100,15 +93,13 @@ read back.</p></td>
         </div>
 
         <div class="description">
-            <p>Initialize a <a href="String.html">String</a> instance with the appropriate
-name and options.</p>
+            <p>Initialize a <a href="String.html"><code>String</code></a> instance with the appropriate name and options.</p>
 <dl class="rdoc-list note-list"><dt><code>name</code>
 <dd>
 <p>The JSON key.</p>
 </dd><dt><code>options</code>
 <dd>
-<p>A <code>Hash</code> of options, e.g. :required =&gt; true, :from =&gt; [
-:array, :of, :allowed, :enum, :values ].</p>
+<p>A <code>Hash</code> of options, e.g. :required =&gt; true, :from =&gt; [ :array, :of, :allowed, :enum, :values ].</p>
 </dd></dl>
         </div>
 
@@ -145,8 +136,7 @@ name and options.</p>
         </div>
 
         <div class="description">
-            <p>Check if data is a valid <a href="String.html">String</a> and return a <a
-href="../Errors.html">Hoodoo::Errors</a> instance.</p>
+            <p>Check if data is a valid <a href="String.html"><code>String</code></a> and return a <a href="../Errors.html"><code>Hoodoo::Errors</code></a> instance.</p>
         </div>
 
 

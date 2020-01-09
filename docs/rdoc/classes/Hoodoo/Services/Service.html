@@ -39,23 +39,11 @@
         <div id="content">
     <div class="description">
         
-<p><a href="Service.html">Hoodoo::Services::Service</a> is subclassed by
-people writing service implementations; the subclasses are the entrypoint
-for platform services.</p>
+<p><a href="Service.html"><code>Hoodoo::Services::Service</code></a> is subclassed by people writing service implementations; the subclasses are the entrypoint for platform services.</p>
 
-<p>It&#39;s really just a container of one or more interface classes, which
-are all <a href="Interface.html">Hoodoo::Services::Interface</a>
-subclasses. The <a href="../../Rack.html">Rack</a> middleware in <a
-href="Middleware.html">Hoodoo::Services::Middleware</a> uses the <a
-href="Service.html">Hoodoo::Services::Service</a> to find out what
-interfaces it implements. Those interface classes nominate a Ruby class of
-the author&#39;s choice in which they&#39;ve written the implementation for
-that interface. Interfaces also declare themselves to be available at a
-particular URL endpoint (as a path fragment); this is used by the
-middleware to route inbound requests to the correct implementation class.</p>
+<p>It&#39;s really just a container of one or more interface classes, which are all <a href="Interface.html"><code>Hoodoo::Services::Interface</code></a> subclasses. The <a href="../../Rack.html"><code>Rack</code></a> middleware in <a href="Middleware.html"><code>Hoodoo::Services::Middleware</code></a> uses the <a href="Service.html"><code>Hoodoo::Services::Service</code></a> to find out what interfaces it implements. Those interface classes nominate a Ruby class of the author&#39;s choice in which they&#39;ve written the implementation for that interface. Interfaces also declare themselves to be available at a particular URL endpoint (as a path fragment); this is used by the middleware to route inbound requests to the correct implementation class.</p>
 
-<p>Suppose we defined a PurchaseInterface and RefundInterface which we wanted
-both to be available as a Shopping Service:</p>
+<p>Suppose we defined a PurchaseInterface and RefundInterface which we wanted both to be available as a Shopping Service:</p>
 
 <pre><code>class PurchaseImplementation &lt; Hoodoo::Services::Implementation
   # ...
@@ -80,9 +68,7 @@ class RefundInterface &lt; Hoodoo::Services::Interface
 end
 </code></pre>
 
-<p>…then the <strong>entire</strong> <a href="Service.html">Service</a>
-subclass for the Shopping <a href="Service.html">Service</a> could be as
-small as this:</p>
+<p>…then the <strong>entire</strong> <a href="Service.html"><code>Service</code></a> subclass for the Shopping <a href="Service.html"><code>Service</code></a> could be as small as this:</p>
 
 <pre><code>class ShoppingService &lt; Hoodoo::Services::Service
   comprised_of PurchaseInterface,
@@ -90,18 +76,9 @@ small as this:</p>
 end
 </code></pre>
 
-<p>Names of subclasses in the above examples are chosen for clarity and the
-naming approach indicated is recommended, but it&#39;s not mandatory.
-Choose choose whatever you feel best fits your code and style.</p>
+<p>Names of subclasses in the above examples are chosen for clarity and the naming approach indicated is recommended, but it&#39;s not mandatory. Choose choose whatever you feel best fits your code and style.</p>
 
-<p>Conceptually, one might just have a single interface per application for
-very small services, but you may want to logically group more interfaces in
-one service for code clarity/locality. More realistically, efficiency may
-dictate that certain interfaces have such heavy reliance and relationships
-between database contents that sharing the data models between those
-interface classes makes sense; you would group them under the same service
-application, sacrificing full decoupling. As a service author, the choice
-is yours.</p>
+<p>Conceptually, one might just have a single interface per application for very small services, but you may want to logically group more interfaces in one service for code clarity/locality. More realistically, efficiency may dictate that certain interfaces have such heavy reliance and relationships between database contents that sharing the data models between those interface classes makes sense; you would group them under the same service application, sacrificing full decoupling. As a service author, the choice is yours.</p>
 
     </div>
 
@@ -145,10 +122,7 @@ is yours.</p>
         </div>
 
         <div class="description">
-            <p>Return an array of the classes that make up the interfaces for this
-service. Each is a <a href="Interface.html">Hoodoo::Services::Interface</a>
-subclass that was registered by the subclass through a call to
-comprised_of.</p>
+            <p>Return an array of the classes that make up the interfaces for this service. Each is a <a href="Interface.html"><code>Hoodoo::Services::Interface</code></a> subclass that was registered by the subclass through a call to comprised_of.</p>
         </div>
 
 
@@ -176,9 +150,7 @@ comprised_of.</p>
         </div>
 
         <div class="description">
-            <p>Called by subclasses listing one or more <a
-href="Interface.html">Hoodoo::Services::Interface</a> subclasses that make
-up the service implementation as a whole.</p>
+            <p>Called by subclasses listing one or more <a href="Interface.html"><code>Hoodoo::Services::Interface</code></a> subclasses that make up the service implementation as a whole.</p>
 
 <p>Example:</p>
 
@@ -188,9 +160,7 @@ up the service implementation as a whole.</p>
 end
 </code></pre>
 
-<p>See this class&#39;s general <a
-href="Service.html">Hoodoo::Services::Service</a> documentation for more
-details.</p>
+<p>See this class&#39;s general <a href="Service.html"><code>Hoodoo::Services::Service</code></a> documentation for more details.</p>
         </div>
 
 
@@ -231,14 +201,10 @@ details.</p>
         </div>
 
         <div class="description">
-            <p>Since service implementations are not pure <a
-href="../../Rack.html">Rack</a> apps but really service middleware clients,
-they shouldn&#39;t ever have “call” invoked directly. This method is not
-intended to be overridden and just complains if <a
-href="../../Rack.html">Rack</a> ends up calling here directly by accident.</p>
+            <p>Since service implementations are not pure <a href="../../Rack.html"><code>Rack</code></a> apps but really service middleware clients, they shouldn&#39;t ever have “call” invoked directly. This method is not intended to be overridden and just complains if <a href="../../Rack.html"><code>Rack</code></a> ends up calling here directly by accident.</p>
 <dl class="rdoc-list note-list"><dt><code>env</code>
 <dd>
-<p><a href="../../Rack.html">Rack</a> environment (ignored).</p>
+<p><a href="../../Rack.html"><code>Rack</code></a> environment (ignored).</p>
 </dd></dl>
         </div>
 
@@ -265,9 +231,7 @@ href="../../Rack.html">Rack</a> ends up calling here directly by accident.</p>
         </div>
 
         <div class="description">
-            <p>Instance method which calls through to <a
-href="Service.html#method-c-component_interfaces">::component_interfaces</a>
-and returns its result.</p>
+            <p>Instance method which calls through to <a href="Service.html#method-c-component_interfaces"><code>::component_interfaces</code></a> and returns its result.</p>
         </div>
 
 

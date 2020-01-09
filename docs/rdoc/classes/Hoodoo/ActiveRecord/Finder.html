@@ -38,33 +38,23 @@
         <div id="content">
     <div class="description">
         
-<p>Mixin for models subclassed from <a href="Base.html">ActiveRecord::Base</a>
-providing support methods to handle common <code>show</code> and
-<code>list</code> filtering actions based on inbound data and create
-instances in a request context aware fashion.</p>
+<p>Mixin for models subclassed from <a href="Base.html"><code>ActiveRecord::Base</code></a> providing support methods to handle common <code>show</code> and <code>list</code> filtering actions based on inbound data and create instances in a request context aware fashion.</p>
 
 <p>It is <em>STRONGLY</em> <em>RECOMMENDED</em> that you use the likes of:</p>
 <ul><li>
-<p><a
-href="Finder/ClassMethods.html#method-i-acquire_in">Hoodoo::ActiveRecord::Finder::ClassMethods#acquire_in</a></p>
+<p><a href="Finder/ClassMethods.html#method-i-acquire_in"><code>Hoodoo::ActiveRecord::Finder::ClassMethods#acquire_in</code></a></p>
 </li><li>
-<p><a
-href="Finder/ClassMethods.html#method-i-list_in">Hoodoo::ActiveRecord::Finder::ClassMethods#list_in</a></p>
+<p><a href="Finder/ClassMethods.html#method-i-list_in"><code>Hoodoo::ActiveRecord::Finder::ClassMethods#list_in</code></a></p>
 </li></ul>
 
-<p>…to retrieve model data related to resource instances and participate “for
-free” in whatever plug-in <a href="../ActiveRecord.html">ActiveRecord</a>
-modules are mixed into the model classes, such as <a
-href="Secure.html">Hoodoo::ActiveRecord::Secure</a>.</p>
+<p>…to retrieve model data related to resource instances and participate “for free” in whatever plug-in <a href="../ActiveRecord.html"><code>ActiveRecord</code></a> modules are mixed into the model classes, such as <a href="Secure.html"><code>Hoodoo::ActiveRecord::Secure</code></a>.</p>
 
 <p>See also:</p>
 <ul><li>
-<p><a
-href="http://guides.rubyonrails.org/active_record_basics.html">guides.rubyonrails.org/active_record_basics.html</a></p>
+<p><a href="http://guides.rubyonrails.org/active_record_basics.html">guides.rubyonrails.org/active_record_basics.html</a></p>
 </li></ul>
 
-<p>Dependency <a href="Secure.html">Hoodoo::ActiveRecord::Secure</a> is
-included automatically.</p>
+<p>Dependency <a href="Secure.html"><code>Hoodoo::ActiveRecord::Secure</code></a> is included automatically.</p>
 
     </div>
 
@@ -126,12 +116,10 @@ included automatically.</p>
 end
 </code></pre>
 
-<p>Depends upon and auto-includes <a
-href="Secure.html">Hoodoo::ActiveRecord::Secure</a>.</p>
+<p>Depends upon and auto-includes <a href="Secure.html"><code>Hoodoo::ActiveRecord::Secure</code></a>.</p>
 <dl class="rdoc-list note-list"><dt><code>model</code>
 <dd>
-<p>The <a href="Base.html">ActiveRecord::Base</a> descendant that is including
-this module.</p>
+<p>The <a href="Base.html"><code>ActiveRecord::Base</code></a> descendant that is including this module.</p>
 </dd></dl>
         </div>
 
@@ -175,18 +163,12 @@ this module.</p>
         </div>
 
         <div class="description">
-            <p>When instantiated in an <a href="Base.html">ActiveRecord::Base</a>
-subclass, all of the <a
-href="Finder/ClassMethods.html">Hoodoo::ActiveRecord::Finder::ClassMethods</a>
-methods are defined as class methods on the including class.</p>
+            <p>When instantiated in an <a href="Base.html"><code>ActiveRecord::Base</code></a> subclass, all of the <a href="Finder/ClassMethods.html"><code>Hoodoo::ActiveRecord::Finder::ClassMethods</code></a> methods are defined as class methods on the including class.</p>
 
-<p>This module depends upon <a
-href="Secure.html">Hoodoo::ActiveRecord::Secure</a>, so that will be
-auto-included first if it isn&#39;t already.</p>
+<p>This module depends upon <a href="Secure.html"><code>Hoodoo::ActiveRecord::Secure</code></a>, so that will be auto-included first if it isn&#39;t already.</p>
 <dl class="rdoc-list note-list"><dt><code>model</code>
 <dd>
-<p>The <a href="Base.html">ActiveRecord::Base</a> descendant that is including
-this module.</p>
+<p>The <a href="Base.html"><code>ActiveRecord::Base</code></a> descendant that is including this module.</p>
 </dd></dl>
         </div>
 

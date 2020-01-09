@@ -36,8 +36,7 @@
         <div id="content">
     <div class="description">
         
-<p>Instance methods to patch over <a
-href="../../../Services/Middleware.html">Hoodoo::Services::Middleware</a>.</p>
+<p>Instance methods to patch over <a href="../../../Services/Middleware.html"><code>Hoodoo::Services::Middleware</code></a>.</p>
 
     </div>
 
@@ -72,18 +71,10 @@ href="../../../Services/Middleware.html">Hoodoo::Services::Middleware</a>.</p>
         </div>
 
         <div class="description">
-            <p>Add custom attributes to the NewRelic transaction. The original
-implementation is called via <code>super</code>.</p>
+            <p>Add custom attributes to the NewRelic transaction. The original implementation is called via <code>super</code>.</p>
 <dl class="rdoc-list note-list"><dt><code>interaction</code>
 <dd>
-<p><a
-href="../../../Services/Middleware/Interaction.html">Hoodoo::Services::Middleware::Interaction</a>
-instance describing the inbound request. The <code>interaction_id</code>,
-<code>rack_request</code> and <code>session</code> data is used (the latter
-being optional). If <code>target_interface</code> and
-<code>requested_action</code> are available, body data <em>might</em> be
-logged according to secure log settings in the interface; if these values
-are unset, body data is <em>not</em> logged.</p>
+<p><a href="../../../Services/Middleware/Interaction.html"><code>Hoodoo::Services::Middleware::Interaction</code></a> instance describing the inbound request. The <code>interaction_id</code>, <code>rack_request</code> and <code>session</code> data is used (the latter being optional). If <code>target_interface</code> and <code>requested_action</code> are available, body data <em>might</em> be logged according to secure log settings in the interface; if these values are unset, body data is <em>not</em> logged.</p>
 </dd></dl>
         </div>
 

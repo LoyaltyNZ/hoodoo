@@ -15,8 +15,8 @@
 
     <meta property="og:title" value="Hoodoo::ActiveRecord::ManuallyDated::ClassMethods">
 
-    <meta name="description" content="Collection of class methods that get defined on an including class via Hoodoo::ActiveRecord::ManuallyDated.included.">
-    <meta property="og:description" content="Collection of class methods that get defined on an including class via Hoodoo::ActiveRecord::ManuallyDated.included.">
+    <meta name="description" content="Collection of class methods that get defined on an including class via Hoodoo::ActiveRecord::ManuallyDated::included.">
+    <meta property="og:description" content="Collection of class methods that get defined on an including class via Hoodoo::ActiveRecord::ManuallyDated::included.">
 
     <meta name="keywords" content="Hoodoo::ActiveRecord::ManuallyDated::ClassMethods class">
     <meta name="keywords" content="manual_dating_enabled, manual_dating_enabled?, manually_dated, manually_dated_at, manually_dated_historic, manually_dated_contemporary, manually_dated_update_in, manually_dated_destruction_in">
@@ -36,8 +36,7 @@
         <div id="content">
     <div class="description">
         
-<p>Collection of class methods that get defined on an including class via <a
-href="../ManuallyDated.html#method-c-included">Hoodoo::ActiveRecord::ManuallyDated.included</a>.</p>
+<p>Collection of class methods that get defined on an including class via <a href="../ManuallyDated.html#method-c-included"><code>Hoodoo::ActiveRecord::ManuallyDated::included</code></a>.</p>
 
     </div>
 
@@ -95,21 +94,9 @@ href="../ManuallyDated.html#method-c-included">Hoodoo::ActiveRecord::ManuallyDat
         <div class="description">
             <p>Activate manually-driven historic dating for this model.</p>
 
-<p>See the module documentation for <a
-href="../ManuallyDated.html">Hoodoo::ActiveRecord::ManuallyDated</a> for
-full information on dating, column/attribute requirements and so forth.</p>
+<p>See the module documentation for <a href="../ManuallyDated.html"><code>Hoodoo::ActiveRecord::ManuallyDated</code></a> for full information on dating, column/attribute requirements and so forth.</p>
 
-<p>When dating is enabled, a <code>before_save</code> filter will ensure that
-the record&#39;s <code>created_at</code> and <code>updated_at</code> fields
-are manually set to the current time (“now”), if not already set by the
-time the filter is run. The record&#39;s <code>effective_start</code> time
-is set to match <code>created_at</code> if not already set and
-<code>effective_end</code> is set to
-Hoodoo::ActiveRecord::ManuallyDated::DATE_MAXIMUM <em>if</em> not already
-set. The record&#39;s <code>uuid</code> resource <a
-href="../UUID.html">UUID</a> is set to the value of the <code>id</code>
-column if not already set, which is useful for new records but should never
-happen for history-savvy updates performed by this mixin&#39;s code.</p>
+<p>When dating is enabled, a <code>before_save</code> filter will ensure that the record&#39;s <code>created_at</code> and <code>updated_at</code> fields are manually set to the current time (“now”), if not already set by the time the filter is run. The record&#39;s <code>effective_start</code> time is set to match <code>created_at</code> if not already set and <code>effective_end</code> is set to Hoodoo::ActiveRecord::ManuallyDated::DATE_MAXIMUM <em>if</em> not already set. The record&#39;s <code>uuid</code> resource <a href="../UUID.html"><code>UUID</code></a> is set to the value of the <code>id</code> column if not already set, which is useful for new records but should never happen for history-savvy updates performed by this mixin&#39;s code.</p>
         </div>
 
 
@@ -203,9 +190,7 @@ happen for history-savvy updates performed by this mixin&#39;s code.</p>
         </div>
 
         <div class="description">
-            <p>If a prior call has been made to <a
-href="ClassMethods.html#method-i-manual_dating_enabled">manual_dating_enabled</a>
-then this method returns <code>true</code>, else <code>false</code>.</p>
+            <p>If a prior call has been made to <a href="ClassMethods.html#method-i-manual_dating_enabled"><code>manual_dating_enabled</code></a> then this method returns <code>true</code>, else <code>false</code>.</p>
         </div>
 
 
@@ -231,21 +216,12 @@ then this method returns <code>true</code>, else <code>false</code>.</p>
         </div>
 
         <div class="description">
-            <p>Return an ActiveRecord::Relation instance which only matches records that
-are relevant/effective at the date/time in the value of
-<code>context.request.dated_at</code> within the given
-<code>context</code>. If this value is <code>nil</code> then the current
-time in UTC is used.</p>
+            <p>Return an ActiveRecord::Relation instance which only matches records that are relevant/effective at the date/time in the value of <code>context.request.dated_at</code> within the given <code>context</code>. If this value is <code>nil</code> then the current time in UTC is used.</p>
 
-<p>Manual historic dating must have been previously activated through a call
-to dating_enabled, else results will be undefined.</p>
+<p>Manual historic dating must have been previously activated through a call to dating_enabled, else results will be undefined.</p>
 <dl class="rdoc-list note-list"><dt><code>context</code>
 <dd>
-<p><a href="../../Services/Context.html">Hoodoo::Services::Context</a>
-instance describing a call context. This is typically a value passed to one
-of the <a
-href="../../Services/Implementation.html">Hoodoo::Services::Implementation</a>
-instance methods that a resource subclass implements.</p>
+<p><a href="../../Services/Context.html"><code>Hoodoo::Services::Context</code></a> instance describing a call context. This is typically a value passed to one of the <a href="../../Services/Implementation.html"><code>Hoodoo::Services::Implementation</code></a> instance methods that a resource subclass implements.</p>
 </dd></dl>
         </div>
 
@@ -273,17 +249,12 @@ instance methods that a resource subclass implements.</p>
         </div>
 
         <div class="description">
-            <p>Return an ActiveRecord::Relation instance which only matches records that
-are relevant/effective at the given date/time. If this value is
-<code>nil</code> then the current time in UTC is used.</p>
+            <p>Return an ActiveRecord::Relation instance which only matches records that are relevant/effective at the given date/time. If this value is <code>nil</code> then the current time in UTC is used.</p>
 
-<p>Manual historic dating must have been previously activated through a call
-to dating_enabled, else results will be undefined.</p>
+<p>Manual historic dating must have been previously activated through a call to dating_enabled, else results will be undefined.</p>
 <dl class="rdoc-list note-list"><dt><code>date_time</code>
 <dd>
-<p>(Optional) A Time or DateTime instance, or a String that can be converted
-to a DateTime instance, for which the “effective dated” scope is to be
-constructed.</p>
+<p>(Optional) A Time or DateTime instance, or a String that can be converted to a DateTime instance, for which the “effective dated” scope is to be constructed.</p>
 </dd></dl>
         </div>
 
@@ -321,12 +292,9 @@ constructed.</p>
         </div>
 
         <div class="description">
-            <p>Return an ActiveRecord::Relation instance which only matches records that
-are &#39;current&#39;. The historic/past records for any given <a
-href="../UUID.html">UUID</a> will never be included in the scope.</p>
+            <p>Return an ActiveRecord::Relation instance which only matches records that are &#39;current&#39;. The historic/past records for any given <a href="../UUID.html"><code>UUID</code></a> will never be included in the scope.</p>
 
-<p>Manual historic dating must have been previously activated through a call
-to dating_enabled, else results will be undefined.</p>
+<p>Manual historic dating must have been previously activated through a call to dating_enabled, else results will be undefined.</p>
         </div>
 
 
@@ -352,50 +320,25 @@ to dating_enabled, else results will be undefined.</p>
         </div>
 
         <div class="description">
-            <p>Analogous to <a
-href="ClassMethods.html#method-i-manually_dated_update_in">manually_dated_update_in</a>
-and with the same return value and exception generation semantics, so see
-that method for those details.</p>
+            <p>Analogous to <a href="ClassMethods.html#method-i-manually_dated_update_in"><code>manually_dated_update_in</code></a> and with the same return value and exception generation semantics, so see that method for those details.</p>
 
-<p>This particular method soft-deletes a record. It moves the
-&#39;current&#39; entry to being an &#39;historic&#39; entry as in <a
-href="ClassMethods.html#method-i-manually_dated_update_in">manually_dated_update_in</a>,
-but does not then generate any new &#39;current&#39; record. Returns
-<code>nil</code> if the record couldn&#39;t be found to start with, else
-returns the found and soft-deleted / now-historic model instance.</p>
+<p>This particular method soft-deletes a record. It moves the &#39;current&#39; entry to being an &#39;historic&#39; entry as in <a href="ClassMethods.html#method-i-manually_dated_update_in"><code>manually_dated_update_in</code></a>, but does not then generate any new &#39;current&#39; record. Returns <code>nil</code> if the record couldn&#39;t be found to start with, else returns the found and soft-deleted / now-historic model instance.</p>
 
-<p>Since no actual “hard” record deletion takes place, traditional <a
-href="../../ActiveRecord.html">ActiveRecord</a> concerns of
-<code>delete</code> versus <code>destroy</code> or of dependency chain
-destruction do not apply. No callbacks or validations are run when the
-record is updated (via ActiveRecord&#39;s update_column). A failure to
-update the record will result in an unhandled exception. No change is made
-to the <code>updated_at</code> column value.</p>
+<p>Since no actual “hard” record deletion takes place, traditional <a href="../../ActiveRecord.html"><code>ActiveRecord</code></a> concerns of <code>delete</code> versus <code>destroy</code> or of dependency chain destruction do not apply. No callbacks or validations are run when the record is updated (via ActiveRecord&#39;s update_column). A failure to update the record will result in an unhandled exception. No change is made to the <code>updated_at</code> column value.</p>
 
 <p><em>Unnamed</em> parameters are:</p>
 <dl class="rdoc-list note-list"><dt><code>context</code>
 <dd>
-<p><a href="../../Services/Context.html">Hoodoo::Services::Context</a>
-instance describing a call context. This is typically a value passed to one
-of the <a
-href="../../Services/Implementation.html">Hoodoo::Services::Implementation</a>
-instance methods that a resource subclass implements. This is used to
-obtain the record&#39;s <a href="../UUID.html">UUID</a> unless overridden
-(see named parameter list).</p>
+<p><a href="../../Services/Context.html"><code>Hoodoo::Services::Context</code></a> instance describing a call context. This is typically a value passed to one of the <a href="../../Services/Implementation.html"><code>Hoodoo::Services::Implementation</code></a> instance methods that a resource subclass implements. This is used to obtain the record&#39;s <a href="../UUID.html"><code>UUID</code></a> unless overridden (see named parameter list).</p>
 </dd></dl>
 
 <p>Additional <em>named</em> parameters are:</p>
 <dl class="rdoc-list note-list"><dt><code>ident</code>
 <dd>
-<p><a href="../UUID.html">UUID</a> (32-digit <code>id</code> column value) of
-the record to be updated. If present, the <code>context</code> parameter
-may be <code>nil</code>. If omitted, <code>context.request.ident</code> is
-used.</p>
+<p><a href="../UUID.html"><code>UUID</code></a> (32-digit <code>id</code> column value) of the record to be updated. If present, the <code>context</code> parameter may be <code>nil</code>. If omitted, <code>context.request.ident</code> is used.</p>
 </dd><dt><code>scope</code>
 <dd>
-<p>ActiveRecord::Relation instance providing the scope to use for database
-locks and acquiring the record to update. Defaults to acquisition_scope for
-the prevailing <code>ident</code> value.</p>
+<p>ActiveRecord::Relation instance providing the scope to use for database locks and acquiring the record to update. Defaults to acquisition_scope for the prevailing <code>ident</code> value.</p>
 </dd></dl>
         </div>
 
@@ -433,12 +376,9 @@ the prevailing <code>ident</code> value.</p>
         </div>
 
         <div class="description">
-            <p>Return an ActiveRecord::Relation instance which only matches records that
-are from the past. The &#39;current&#39; record for any given <a
-href="../UUID.html">UUID</a> will never be included by the scope.</p>
+            <p>Return an ActiveRecord::Relation instance which only matches records that are from the past. The &#39;current&#39; record for any given <a href="../UUID.html"><code>UUID</code></a> will never be included by the scope.</p>
 
-<p>Manual historic dating must have been previously activated through a call
-to dating_enabled, else results will be undefined.</p>
+<p>Manual historic dating must have been previously activated through a call to dating_enabled, else results will be undefined.</p>
         </div>
 
 
@@ -464,69 +404,36 @@ to dating_enabled, else results will be undefined.</p>
         </div>
 
         <div class="description">
-            <p>Update a record with manual historic dating. This means that the
-&#39;current&#39; / most recent record is turned into a historic entry via
-setting its <code>effective_end</code> date, a duplicate is made and any
-new attribute values are set in this duplicate. This new record is then
-saved as the &#39;current&#39; version. A transaction containing a database
-lock over all history rows for the record via its <a
-href="../UUID.html">UUID</a> (<code>id</code> column) is used to provide
-concurrent access safety.</p>
+            <p>Update a record with manual historic dating. This means that the &#39;current&#39; / most recent record is turned into a historic entry via setting its <code>effective_end</code> date, a duplicate is made and any new attribute values are set in this duplicate. This new record is then saved as the &#39;current&#39; version. A transaction containing a database lock over all history rows for the record via its <a href="../UUID.html"><code>UUID</code></a> (<code>id</code> column) is used to provide concurrent access safety.</p>
 
 <p>The return value is complex:</p>
 <ul><li>
 <p>If <code>nil</code>, the record that was to be updated could not be found.</p>
 </li><li>
-<p>If not <code>nil</code>, an <a
-href="../../ActiveRecord.html">ActiveRecord</a> model instance is returned.
-This is the new &#39;current&#39; record, but it might not be saved;
-validation errors may have happened. You need to check for this before
-proceeding. This will <em>not</em> be the same model instance found for the
-original, most recent / current record.</p>
+<p>If not <code>nil</code>, an <a href="../../ActiveRecord.html"><code>ActiveRecord</code></a> model instance is returned. This is the new &#39;current&#39; record, but it might not be saved; validation errors may have happened. You need to check for this before proceeding. This will <em>not</em> be the same model instance found for the original, most recent / current record.</p>
 </li></ul>
 
-<p>If attempts to update the previous, now-historic record&#39;s effective end
-date fail, an exception may be thrown as the failure condition is
-unexpected (it will almost certainly be because of a database connection
-failure). You <em>might</em> need to call this method from a block with a
-<code>rescue</code> clause if you wish to handle those elegantly, but it is
-probably a serious failure and the generally recommended behaviour is to
-just let Hoodoo&#39;s default exception handler catch the exception and
-return an HTTP 500 response to the API caller.</p>
+<p>If attempts to update the previous, now-historic record&#39;s effective end date fail, an exception may be thrown as the failure condition is unexpected (it will almost certainly be because of a database connection failure). You <em>might</em> need to call this method from a block with a <code>rescue</code> clause if you wish to handle those elegantly, but it is probably a serious failure and the generally recommended behaviour is to just let Hoodoo&#39;s default exception handler catch the exception and return an HTTP 500 response to the API caller.</p>
 
 <p><em>Unnamed</em> parameters are:</p>
 <dl class="rdoc-list note-list"><dt><code>context</code>
 <dd>
-<p><a href="../../Services/Context.html">Hoodoo::Services::Context</a>
-instance describing a call context. This is typically a value passed to one
-of the <a
-href="../../Services/Implementation.html">Hoodoo::Services::Implementation</a>
-instance methods that a resource subclass implements. This is used to find
-the record&#39;s <a href="../UUID.html">UUID</a> and new attribute
-information unless overridden (see named parameter list).</p>
+<p><a href="../../Services/Context.html"><code>Hoodoo::Services::Context</code></a> instance describing a call context. This is typically a value passed to one of the <a href="../../Services/Implementation.html"><code>Hoodoo::Services::Implementation</code></a> instance methods that a resource subclass implements. This is used to find the record&#39;s <a href="../UUID.html"><code>UUID</code></a> and new attribute information unless overridden (see named parameter list).</p>
 </dd></dl>
 
 <p>Additional <em>named</em> parameters are:</p>
 <dl class="rdoc-list note-list"><dt><code>ident</code>
 <dd>
-<p><a href="../UUID.html">UUID</a> (32-digit <code>id</code> column value) of
-the record to be updated. If omitted, <code>context.request.ident</code> is
-used.</p>
+<p><a href="../UUID.html"><code>UUID</code></a> (32-digit <code>id</code> column value) of the record to be updated. If omitted, <code>context.request.ident</code> is used.</p>
 </dd><dt><code>attributes</code>
 <dd>
-<p>Hash of attributes to write (via ActiveRecord&#39;s
-<code>assign_attributes</code> method) in order to perform the update. If
-omitted, <code>context.request.body</code> is used.</p>
+<p>Hash of attributes to write (via ActiveRecord&#39;s <code>assign_attributes</code> method) in order to perform the update. If omitted, <code>context.request.body</code> is used.</p>
 </dd></dl>
 
-<p>If both <code>ident</code> <em>and</em> <code>attributes</code> are
-supplied then the first parameter providing <code>context</code> may be
-<code>nil</code>.</p>
+<p>If both <code>ident</code> <em>and</em> <code>attributes</code> are supplied then the first parameter providing <code>context</code> may be <code>nil</code>.</p>
 <dl class="rdoc-list note-list"><dt><code>scope</code>
 <dd>
-<p>ActiveRecord::Relation instance providing the scope to use for database
-locks and acquiring the record to update. Defaults to acquisition_scope for
-the prevailing <code>ident</code> value.</p>
+<p>ActiveRecord::Relation instance providing the scope to use for database locks and acquiring the record to update. Defaults to acquisition_scope for the prevailing <code>ident</code> value.</p>
 </dd></dl>
         </div>
 

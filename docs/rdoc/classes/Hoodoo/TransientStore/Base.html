@@ -39,11 +39,7 @@
         <div id="content">
     <div class="description">
         
-<p><a href="Base.html">Base</a> class for <a
-href="../TransientStore.html">Hoodoo::TransientStore</a> plugins. This is
-in effect just a template / abstract class, providing a source-level
-guideline for plug-in authors. See also out-of-the-box existing plug-ins as
-worked examples.</p>
+<p><a href="Base.html"><code>Base</code></a> class for <a href="../TransientStore.html"><code>Hoodoo::TransientStore</code></a> plugins. This is in effect just a template / abstract class, providing a source-level guideline for plug-in authors. See also out-of-the-box existing plug-ins as worked examples.</p>
 
     </div>
 
@@ -110,19 +106,13 @@ worked examples.</p>
         </div>
 
         <div class="description">
-            <p><a href="Base.html">Base</a> class template for a constructor. Subclasses
-should try to establish a connection with their storage engine(s) here and
-raise exceptions if things go wrong.</p>
+            <p><a href="Base.html"><code>Base</code></a> class template for a constructor. Subclasses should try to establish a connection with their storage engine(s) here and raise exceptions if things go wrong.</p>
 <dl class="rdoc-list note-list"><dt><code>storage_host_uri</code>
 <dd>
-<p>The engine-dependent connection URI. See <a
-href="../TransientStore.html#method-c-new">Hoodoo::TransientStore.new</a>
-for details.</p>
+<p>The engine-dependent connection URI. See <a href="../TransientStore.html#method-c-new"><code>Hoodoo::TransientStore::new</code></a> for details.</p>
 </dd><dt><code>namespace</code>
 <dd>
-<p>The storage key namespace to use, as a String. See <a
-href="../TransientStore.html#method-c-new">Hoodoo::TransientStore.new</a>
-for details.</p>
+<p>The storage key namespace to use, as a String. See <a href="../TransientStore.html#method-c-new"><code>Hoodoo::TransientStore::new</code></a> for details.</p>
 </dd></dl>
         </div>
 
@@ -152,13 +142,9 @@ for details.</p>
         </div>
 
         <div class="description">
-            <p><a href="Base.html">Base</a> class template for the plug-in&#39;s back-end
-implementation of <a
-href="../TransientStore.html#method-i-close">Hoodoo::TransientStore#close</a>
-- see that for details.</p>
+            <p><a href="Base.html"><code>Base</code></a> class template for the plug-in&#39;s back-end implementation of <a href="../TransientStore.html#method-i-close"><code>Hoodoo::TransientStore#close</code></a> - see that for details.</p>
 
-<p>Any exception raised will be ignored by <a
-href="../TransientStore.html#method-i-close">Hoodoo::TransientStore#close</a>.</p>
+<p>Any exception raised will be ignored by <a href="../TransientStore.html#method-i-close"><code>Hoodoo::TransientStore#close</code></a>.</p>
         </div>
 
 
@@ -184,16 +170,9 @@ href="../TransientStore.html#method-i-close">Hoodoo::TransientStore#close</a>.</
         </div>
 
         <div class="description">
-            <p><a href="Base.html">Base</a> class template for the plug-in&#39;s back-end
-implementation of <a
-href="../TransientStore.html#method-i-delete">Hoodoo::TransientStore#delete</a>
-- see that for details.</p>
+            <p><a href="Base.html"><code>Base</code></a> class template for the plug-in&#39;s back-end implementation of <a href="../TransientStore.html#method-i-delete"><code>Hoodoo::TransientStore#delete</code></a> - see that for details.</p>
 
-<p>The implementation is free to raise an exception if an error is encountered
-while trying to get the data - this will be caught and ignored by <a
-href="../TransientStore.html#method-i-delete">Hoodoo::TransientStore#delete</a>.
-Otherwise return <code>true</code> on success or <code>false</code> for
-failures of unknown origin.</p>
+<p>The implementation is free to raise an exception if an error is encountered while trying to get the data - this will be caught and ignored by <a href="../TransientStore.html#method-i-delete"><code>Hoodoo::TransientStore#delete</code></a>. Otherwise return <code>true</code> on success or <code>false</code> for failures of unknown origin.</p>
         </div>
 
 
@@ -219,16 +198,9 @@ failures of unknown origin.</p>
         </div>
 
         <div class="description">
-            <p><a href="Base.html">Base</a> class template for the plug-in&#39;s back-end
-implementation of <a
-href="../TransientStore.html#method-i-get">Hoodoo::TransientStore#get</a> -
-see that for details. Returns <code>nil</code> if no data is found for the
-given key, or if data is explicitly <code>nil</code>.</p>
+            <p><a href="Base.html"><code>Base</code></a> class template for the plug-in&#39;s back-end implementation of <a href="../TransientStore.html#method-i-get"><code>Hoodoo::TransientStore#get</code></a> - see that for details. Returns <code>nil</code> if no data is found for the given key, or if data is explicitly <code>nil</code>.</p>
 
-<p>The implementation is free to raise an exception if an error is encountered
-while trying to get the data - this will be caught and <code>nil</code>
-returned by <a
-href="../TransientStore.html#method-i-get">Hoodoo::TransientStore#get</a>.</p>
+<p>The implementation is free to raise an exception if an error is encountered while trying to get the data - this will be caught and <code>nil</code> returned by <a href="../TransientStore.html#method-i-get"><code>Hoodoo::TransientStore#get</code></a>.</p>
         </div>
 
 
@@ -254,16 +226,9 @@ href="../TransientStore.html#method-i-get">Hoodoo::TransientStore#get</a>.</p>
         </div>
 
         <div class="description">
-            <p><a href="Base.html">Base</a> class template for the plug-in&#39;s back-end
-implementation of <a
-href="../TransientStore.html#method-i-set">Hoodoo::TransientStore#set</a> -
-see that for details.</p>
+            <p><a href="Base.html"><code>Base</code></a> class template for the plug-in&#39;s back-end implementation of <a href="../TransientStore.html#method-i-set"><code>Hoodoo::TransientStore#set</code></a> - see that for details.</p>
 
-<p>The implementation is free to raise an exception if an error is encountered
-while trying to set the data - this will be caught and returned by <a
-href="../TransientStore.html#method-i-set">Hoodoo::TransientStore#set</a>.
-Otherwise return <code>true</code> on success or <code>false</code> for
-failures of unknown origin.</p>
+<p>The implementation is free to raise an exception if an error is encountered while trying to set the data - this will be caught and returned by <a href="../TransientStore.html#method-i-set"><code>Hoodoo::TransientStore#set</code></a>. Otherwise return <code>true</code> on success or <code>false</code> for failures of unknown origin.</p>
         </div>
 
 

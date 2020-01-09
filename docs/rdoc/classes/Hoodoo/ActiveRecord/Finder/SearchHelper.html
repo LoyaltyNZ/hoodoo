@@ -39,15 +39,9 @@
         <div id="content">
     <div class="description">
         
-<p>Help build up Hash maps to pass into <a
-href="../Finder.html">Hoodoo::ActiveRecord::Finder</a> methods <a
-href="ClassMethods.html#method-i-search_with">Hoodoo::ActiveRecord::Finder::ClassMethods#search_with</a>
-and <a
-href="ClassMethods.html#method-i-filter_with">Hoodoo::ActiveRecord::Finder::ClassMethods#filter_with</a>.
-Used also by the default framework search scopes.</p>
+<p>Help build up Hash maps to pass into <a href="../Finder.html"><code>Hoodoo::ActiveRecord::Finder</code></a> methods <a href="ClassMethods.html#method-i-search_with"><code>Hoodoo::ActiveRecord::Finder::ClassMethods#search_with</code></a> and <a href="ClassMethods.html#method-i-filter_with"><code>Hoodoo::ActiveRecord::Finder::ClassMethods#filter_with</code></a>. Used also by the default framework search scopes.</p>
 
-<p>The usage pattern is as follows, using “sh” as a local variable just for
-brevity - it isn&#39;t required:</p>
+<p>The usage pattern is as follows, using “sh” as a local variable just for brevity - it isn&#39;t required:</p>
 
 <pre><code>sh = Hoodoo::ActiveRecord::Finder::SearchHelper
 
@@ -60,18 +54,9 @@ class SomeModel &lt; ActiveRecord::Base
 end
 </code></pre>
 
-<p>The helper methods just provide values to pass into the Hash used with the
-search/filter <a href="../Finder.html">Hoodoo::ActiveRecord::Finder</a>
-methods, so they&#39;re optional and compatible with calls that write it
-out “by hand”.</p>
+<p>The helper methods just provide values to pass into the Hash used with the search/filter <a href="../Finder.html"><code>Hoodoo::ActiveRecord::Finder</code></a> methods, so they&#39;re optional and compatible with calls that write it out “by hand”.</p>
 
-<p>In all cases, in normal use the generated SQL _will not_ match
-<code>null</code> values; if negated for a filter
-(“<code>where.not</code>”), the generated SQL <em>will</em> match
-<code>null</code> values. As a result, passing in explicit searches for
-<code>nil</code> won&#39;t work - but that&#39;s never expected as a use
-case here since search values are coming in via e.g. query string
-information from a URI.</p>
+<p>In all cases, in normal use the generated SQL _will not_ match <code>null</code> values; if negated for a filter (“<code>where.not</code>”), the generated SQL <em>will</em> match <code>null</code> values. As a result, passing in explicit searches for <code>nil</code> won&#39;t work - but that&#39;s never expected as a use case here since search values are coming in via e.g. query string information from a URI.</p>
 
     </div>
 
@@ -139,26 +124,15 @@ information from a URI.</p>
         </div>
 
         <div class="description">
-            <p>Case-insensitive match which should be fairly database independent but will
-run relatively slowly as a result. If you are using PostgreSQL, consider
-using the faster <a
-href="SearchHelper.html#method-c-ci_match_postgres">::ci_match_postgres</a>
-method instead.</p>
+            <p>Case-insensitive match which should be fairly database independent but will run relatively slowly as a result. If you are using PostgreSQL, consider using the faster <a href="SearchHelper.html#method-c-ci_match_postgres"><code>Hoodoo::ActiveRecord::Finder::SearchHelper::ci_match_postgres</code></a> method instead.</p>
 
-<p>Results in a <code>lower(foo) = bar AND foo IS NOT NULL</code> query with
-<code>bar</code> coerced to a String and converted to lower case by Ruby
-first.</p>
+<p>Results in a <code>lower(foo) = bar AND foo IS NOT NULL</code> query with <code>bar</code> coerced to a String and converted to lower case by Ruby first.</p>
 <dl class="rdoc-list note-list"><dt><code>model_field_name</code>
 <dd>
-<p>If the model attribute name differs from the search key you want to use in
-the URI, give the model attribute name here, else omit.</p>
+<p>If the model attribute name differs from the search key you want to use in the URI, give the model attribute name here, else omit.</p>
 </dd></dl>
 
-<p>Returns a value that can be asssigned to a URI query string key in the Hash
-given to <a
-href="ClassMethods.html#method-i-search_with">Hoodoo::ActiveRecord::Finder::ClassMethods#search_with</a>
-or <a
-href="ClassMethods.html#method-i-filter_with">Hoodoo::ActiveRecord::Finder::ClassMethods#filter_with</a>.</p>
+<p>Returns a value that can be asssigned to a URI query string key in the Hash given to <a href="ClassMethods.html#method-i-search_with"><code>Hoodoo::ActiveRecord::Finder::ClassMethods#search_with</code></a> or <a href="ClassMethods.html#method-i-filter_with"><code>Hoodoo::ActiveRecord::Finder::ClassMethods#filter_with</code></a>.</p>
         </div>
 
 
@@ -189,23 +163,15 @@ href="ClassMethods.html#method-i-filter_with">Hoodoo::ActiveRecord::Finder::Clas
         </div>
 
         <div class="description">
-            <p>Case-insensitive match which requires PostgreSQL but should run quickly. If
-you need a database agnostic solution, consider using the slower <a
-href="SearchHelper.html#method-c-ci_match_generic">::ci_match_generic</a>
-method instead.</p>
+            <p>Case-insensitive match which requires PostgreSQL but should run quickly. If you need a database agnostic solution, consider using the slower <a href="SearchHelper.html#method-c-ci_match_generic"><code>Hoodoo::ActiveRecord::Finder::SearchHelper::ci_match_generic</code></a> method instead.</p>
 
 <p>Results in a <code>foo ILIKE bar AND foo IS NOT NULL</code> query.</p>
 <dl class="rdoc-list note-list"><dt><code>model_field_name</code>
 <dd>
-<p>If the model attribute name differs from the search key you want to use in
-the URI, give the model attribute name here, else omit.</p>
+<p>If the model attribute name differs from the search key you want to use in the URI, give the model attribute name here, else omit.</p>
 </dd></dl>
 
-<p>Returns a value that can be asssigned to a URI query string key in the Hash
-given to <a
-href="ClassMethods.html#method-i-search_with">Hoodoo::ActiveRecord::Finder::ClassMethods#search_with</a>
-or <a
-href="ClassMethods.html#method-i-filter_with">Hoodoo::ActiveRecord::Finder::ClassMethods#filter_with</a>.</p>
+<p>Returns a value that can be asssigned to a URI query string key in the Hash given to <a href="ClassMethods.html#method-i-search_with"><code>Hoodoo::ActiveRecord::Finder::ClassMethods#search_with</code></a> or <a href="ClassMethods.html#method-i-filter_with"><code>Hoodoo::ActiveRecord::Finder::ClassMethods#filter_with</code></a>.</p>
         </div>
 
 
@@ -235,10 +201,7 @@ href="ClassMethods.html#method-i-filter_with">Hoodoo::ActiveRecord::Finder::Clas
         </div>
 
         <div class="description">
-            <p>As <a
-href="SearchHelper.html#method-c-ci_match_generic">::ci_match_generic</a>,
-but adds wildcards at the front and end of the string for a
-case-insensitive-all-wildcard match.</p>
+            <p>As <a href="SearchHelper.html#method-c-ci_match_generic"><code>Hoodoo::ActiveRecord::Finder::SearchHelper::ci_match_generic</code></a>, but adds wildcards at the front and end of the string for a case-insensitive-all-wildcard match.</p>
 
 <p>Results in a <code>foo LIKE %bar% AND foo IS NOT NULL</code> query.</p>
         </div>
@@ -271,10 +234,7 @@ case-insensitive-all-wildcard match.</p>
         </div>
 
         <div class="description">
-            <p>As <a
-href="SearchHelper.html#method-c-ci_match_postgres">::ci_match_postgres</a>,
-but adds wildcards at the front and end of the string for a
-case-insensitive-all-wildcard match.</p>
+            <p>As <a href="SearchHelper.html#method-c-ci_match_postgres"><code>Hoodoo::ActiveRecord::Finder::SearchHelper::ci_match_postgres</code></a>, but adds wildcards at the front and end of the string for a case-insensitive-all-wildcard match.</p>
 
 <p>Results in a <code>foo ILIKE %bar% AND foo IS NOT NULL</code> query.</p>
         </div>
@@ -306,8 +266,7 @@ case-insensitive-all-wildcard match.</p>
         </div>
 
         <div class="description">
-            <p>As <a href="SearchHelper.html#method-c-cs_lt">::cs_lt</a>, but compares
-with greater-than.</p>
+            <p>As <a href="SearchHelper.html#method-c-cs_lt"><code>Hoodoo::ActiveRecord::Finder::SearchHelper::cs_lt</code></a>, but compares with greater-than.</p>
 
 <p>Results in a <code>foo &gt; bar AND foo IS NOT NULL</code> query.</p>
         </div>
@@ -339,8 +298,7 @@ with greater-than.</p>
         </div>
 
         <div class="description">
-            <p>As <a href="SearchHelper.html#method-c-cs_lt">::cs_lt</a>, but compares
-with greater-than-or-equal-to.</p>
+            <p>As <a href="SearchHelper.html#method-c-cs_lt"><code>Hoodoo::ActiveRecord::Finder::SearchHelper::cs_lt</code></a>, but compares with greater-than-or-equal-to.</p>
 
 <p>Results in a <code>foo &gt;= bar AND foo IS NOT NULL</code> query.</p>
         </div>
@@ -372,27 +330,17 @@ with greater-than-or-equal-to.</p>
         </div>
 
         <div class="description">
-            <p>Case-sensitive less-than (default-style comparison).
-<strong>WARNING:</strong> This will be case sensitive only if your database
-is configured for case sensitive matching by default.</p>
+            <p>Case-sensitive less-than (default-style comparison). <strong>WARNING:</strong> This will be case sensitive only if your database is configured for case sensitive matching by default.</p>
 
-<p>If comparing non-string column types be sure to pass in a value of an
-appropriate matching type (e.g. compare dates with DateTimes), else
-returned results will be incorrect but errors may not arise depending on
-database engine in use.</p>
+<p>If comparing non-string column types be sure to pass in a value of an appropriate matching type (e.g. compare dates with DateTimes), else returned results will be incorrect but errors may not arise depending on database engine in use.</p>
 
 <p>Results in a <code>foo &lt; bar AND foo IS NOT NULL</code> query.</p>
 <dl class="rdoc-list note-list"><dt><code>model_field_name</code>
 <dd>
-<p>If the model attribute name differs from the search key you want to use in
-the URI, give the model attribute name here, else omit.</p>
+<p>If the model attribute name differs from the search key you want to use in the URI, give the model attribute name here, else omit.</p>
 </dd></dl>
 
-<p>Returns a value that can be asssigned to a URI query string key in the Hash
-given to <a
-href="ClassMethods.html#method-i-search_with">Hoodoo::ActiveRecord::Finder::ClassMethods#search_with</a>
-or <a
-href="ClassMethods.html#method-i-filter_with">Hoodoo::ActiveRecord::Finder::ClassMethods#filter_with</a>.</p>
+<p>Returns a value that can be asssigned to a URI query string key in the Hash given to <a href="ClassMethods.html#method-i-search_with"><code>Hoodoo::ActiveRecord::Finder::ClassMethods#search_with</code></a> or <a href="ClassMethods.html#method-i-filter_with"><code>Hoodoo::ActiveRecord::Finder::ClassMethods#filter_with</code></a>.</p>
         </div>
 
 
@@ -422,8 +370,7 @@ href="ClassMethods.html#method-i-filter_with">Hoodoo::ActiveRecord::Finder::Clas
         </div>
 
         <div class="description">
-            <p>As <a href="SearchHelper.html#method-c-cs_lt">::cs_lt</a>, but compares
-with less-than-or-equal-to.</p>
+            <p>As <a href="SearchHelper.html#method-c-cs_lt"><code>Hoodoo::ActiveRecord::Finder::SearchHelper::cs_lt</code></a>, but compares with less-than-or-equal-to.</p>
 
 <p>Results in a <code>foo &lt;= bar AND foo IS NOT NULL</code> query.</p>
         </div>
@@ -455,22 +402,15 @@ with less-than-or-equal-to.</p>
         </div>
 
         <div class="description">
-            <p>Case-sensitive match (default-style matching). <strong>WARNING:</strong>
-This will be case sensitive only if your database is configured for case
-sensitive matching by default.</p>
+            <p>Case-sensitive match (default-style matching). <strong>WARNING:</strong> This will be case sensitive only if your database is configured for case sensitive matching by default.</p>
 
 <p>Results in a <code>foo = bar AND foo IS NOT NULL</code> query.</p>
 <dl class="rdoc-list note-list"><dt><code>model_field_name</code>
 <dd>
-<p>If the model attribute name differs from the search key you want to use in
-the URI, give the model attribute name here, else omit.</p>
+<p>If the model attribute name differs from the search key you want to use in the URI, give the model attribute name here, else omit.</p>
 </dd></dl>
 
-<p>Returns a value that can be asssigned to a URI query string key in the Hash
-given to <a
-href="ClassMethods.html#method-i-search_with">Hoodoo::ActiveRecord::Finder::ClassMethods#search_with</a>
-or <a
-href="ClassMethods.html#method-i-filter_with">Hoodoo::ActiveRecord::Finder::ClassMethods#filter_with</a>.</p>
+<p>Returns a value that can be asssigned to a URI query string key in the Hash given to <a href="ClassMethods.html#method-i-search_with"><code>Hoodoo::ActiveRecord::Finder::ClassMethods#search_with</code></a> or <a href="ClassMethods.html#method-i-filter_with"><code>Hoodoo::ActiveRecord::Finder::ClassMethods#filter_with</code></a>.</p>
         </div>
 
 
@@ -500,24 +440,15 @@ href="ClassMethods.html#method-i-filter_with">Hoodoo::ActiveRecord::Finder::Clas
         </div>
 
         <div class="description">
-            <p>Case-sensitive match of a series of values given as an Array. Normally,
-query string information comes in as a String so the use cases for this are
-quite unusual; you probably want to use <a
-href="SearchHelper.html#method-c-cs_match_csv">::cs_match_csv</a> most of
-the time.</p>
+            <p>Case-sensitive match of a series of values given as an Array. Normally, query string information comes in as a String so the use cases for this are quite unusual; you probably want to use <a href="SearchHelper.html#method-c-cs_match_csv"><code>Hoodoo::ActiveRecord::Finder::SearchHelper::cs_match_csv</code></a> most of the time.</p>
 
 <p>Results in a <code>foo IN (bar,baz,boo) AND foo IS NOT NULL</code> query.</p>
 <dl class="rdoc-list note-list"><dt><code>model_field_name</code>
 <dd>
-<p>If the model attribute name differs from the search key you want to use in
-the URI, give the model attribute name here, else omit.</p>
+<p>If the model attribute name differs from the search key you want to use in the URI, give the model attribute name here, else omit.</p>
 </dd></dl>
 
-<p>Returns a value that can be asssigned to a URI query string key in the Hash
-given to <a
-href="ClassMethods.html#method-i-search_with">Hoodoo::ActiveRecord::Finder::ClassMethods#search_with</a>
-or <a
-href="ClassMethods.html#method-i-filter_with">Hoodoo::ActiveRecord::Finder::ClassMethods#filter_with</a>.</p>
+<p>Returns a value that can be asssigned to a URI query string key in the Hash given to <a href="ClassMethods.html#method-i-search_with"><code>Hoodoo::ActiveRecord::Finder::ClassMethods#search_with</code></a> or <a href="ClassMethods.html#method-i-filter_with"><code>Hoodoo::ActiveRecord::Finder::ClassMethods#filter_with</code></a>.</p>
         </div>
 
 
@@ -548,21 +479,15 @@ href="ClassMethods.html#method-i-filter_with">Hoodoo::ActiveRecord::Finder::Clas
         </div>
 
         <div class="description">
-            <p>Case-sensitive match of a series of values separated by commas, which are
-split into an array then processed by AREL back to something SQL-safe.</p>
+            <p>Case-sensitive match of a series of values separated by commas, which are split into an array then processed by AREL back to something SQL-safe.</p>
 
 <p>Results in a <code>foo IN (bar,baz,boo) AND foo IS NOT NULL</code> query.</p>
 <dl class="rdoc-list note-list"><dt><code>model_field_name</code>
 <dd>
-<p>If the model attribute name differs from the search key you want to use in
-the URI, give the model attribute name here, else omit.</p>
+<p>If the model attribute name differs from the search key you want to use in the URI, give the model attribute name here, else omit.</p>
 </dd></dl>
 
-<p>Returns a value that can be asssigned to a URI query string key in the Hash
-given to <a
-href="ClassMethods.html#method-i-search_with">Hoodoo::ActiveRecord::Finder::ClassMethods#search_with</a>
-or <a
-href="ClassMethods.html#method-i-filter_with">Hoodoo::ActiveRecord::Finder::ClassMethods#filter_with</a>.</p>
+<p>Returns a value that can be asssigned to a URI query string key in the Hash given to <a href="ClassMethods.html#method-i-search_with"><code>Hoodoo::ActiveRecord::Finder::ClassMethods#search_with</code></a> or <a href="ClassMethods.html#method-i-filter_with"><code>Hoodoo::ActiveRecord::Finder::ClassMethods#filter_with</code></a>.</p>
         </div>
 
 
@@ -593,9 +518,7 @@ href="ClassMethods.html#method-i-filter_with">Hoodoo::ActiveRecord::Finder::Clas
         </div>
 
         <div class="description">
-            <p>As <a href="SearchHelper.html#method-c-cs_match">::cs_match</a>, but adds
-wildcards at the front and end of the string for a
-case-sensitive-all-wildcard match.</p>
+            <p>As <a href="SearchHelper.html#method-c-cs_match"><code>Hoodoo::ActiveRecord::Finder::SearchHelper::cs_match</code></a>, but adds wildcards at the front and end of the string for a case-sensitive-all-wildcard match.</p>
 
 <p>Results in a <code>foo LIKE bar AND foo IS NOT NULL</code> query.</p>
         </div>

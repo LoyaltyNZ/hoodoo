@@ -39,13 +39,7 @@
         <div id="content">
     <div class="description">
         
-<p>A collection of error descriptions. API service implementations create one
-of these, which self-declares platform and generic error domain codes. A
-simple DSL is available to declare service-specific errors. Since the
-middleware is responsible for instantiating an error collection inside a
-response object which service implementations use to signal error
-conditions, the service&#39;s <em>interface</em> class uses the interface
-description DSL to call through to here behind the scenes; for example:</p>
+<p>A collection of error descriptions. API service implementations create one of these, which self-declares platform and generic error domain codes. A simple DSL is available to declare service-specific errors. Since the middleware is responsible for instantiating an error collection inside a response object which service implementations use to signal error conditions, the service&#39;s <em>interface</em> class uses the interface description DSL to call through to here behind the scenes; for example:</p>
 
 <pre><code>class TransactionImplementation &lt; Hoodoo::Services::Implementation
   # ...
@@ -61,30 +55,11 @@ class TransactionInterface &lt; Hoodoo::Services::Interface
 end
 </code></pre>
 
-<p>The <a href="ErrorDescriptions.html#method-i-errors_for">errors_for</a>
-method takes the domain of the error as a string - the part that comes
-before the “<code>.</code>” in error codes. Then a series of
-<code>error</code> calls describe the individual error codes. See <a
-href="ErrorDescriptions/DomainDescriptions.html#method-i-error">Hoodoo::ErrorDescriptions::DomainDescriptions#error</a>
-for details.</p>
+<p>The <a href="ErrorDescriptions.html#method-i-errors_for"><code>errors_for</code></a> method takes the domain of the error as a string - the part that comes before the “<code>.</code>” in error codes. Then a series of <code>error</code> calls describe the individual error codes. See <a href="ErrorDescriptions/DomainDescriptions.html#method-i-error"><code>Hoodoo::ErrorDescriptions::DomainDescriptions#error</code></a> for details.</p>
 
-<p>An instance of the <a
-href="ErrorDescriptions.html">Hoodoo::ErrorDescriptions</a> class gets
-built behind the scenes as part of the service interface description. This
-is found by the middleware and passed to a <a
-href="Errors.html">Hoodoo::Errors</a> constructor. The result is stored in
-a <a href="Services/Response.html">Hoodoo::Services::Response</a> instance
-and passed to handler methods in the service&#39;s <a
-href="Services/Implementation.html">Hoodoo::Services::Implementation</a>
-subclass for each request. Service implementations access the errors
-collection through <a
-href="Services/Response.html#attribute-i-errors">Hoodoo::Services::Response#errors</a>
-and can then add errors using the generic or platform domains, or whatever
-additional custom domain(s) they defined in the service interface subclass.</p>
+<p>An instance of the <a href="ErrorDescriptions.html"><code>Hoodoo::ErrorDescriptions</code></a> class gets built behind the scenes as part of the service interface description. This is found by the middleware and passed to a <a href="Errors.html"><code>Hoodoo::Errors</code></a> constructor. The result is stored in a <a href="Services/Response.html"><code>Hoodoo::Services::Response</code></a> instance and passed to handler methods in the service&#39;s <a href="Services/Implementation.html"><code>Hoodoo::Services::Implementation</code></a> subclass for each request. Service implementations access the errors collection through <a href="Services/Response.html#attribute-i-errors"><code>Hoodoo::Services::Response#errors</code></a> and can then add errors using the generic or platform domains, or whatever additional custom domain(s) they defined in the service interface subclass.</p>
 
-<p>For direct callers (e.g. the middleware), there is a shorthand form to
-invoke the DSL where the constructor is used in the same way as <a
-href="ErrorDescriptions.html#method-i-errors_for">errors_for</a>:</p>
+<p>For direct callers (e.g. the middleware), there is a shorthand form to invoke the DSL where the constructor is used in the same way as <a href="ErrorDescriptions.html#method-i-errors_for"><code>errors_for</code></a>:</p>
 
 <pre><code>ERROR_DESCRIPTIONS = Hoodoo::ErrorDescriptions.new( &#39;transaction&#39; ) do
   error &#39;duplicate_transaction&#39;, status: 409, message: &#39;Duplicate transaction&#39;, :required =&gt; [ :client_uid ]
@@ -93,11 +68,7 @@ end
 
 <p>Either way,</p>
 
-<p>As per the example above, services can share an instance across requests
-(and threads) via a class&#39;s variable if the descriptions don&#39;t
-change. You would use the descriptions to inform a <a
-href="Errors.html">Hoodoo::Errors</a> instance of the available codes and
-their requirements:</p>
+<p>As per the example above, services can share an instance across requests (and threads) via a class&#39;s variable if the descriptions don&#39;t change. You would use the descriptions to inform a <a href="Errors.html"><code>Hoodoo::Errors</code></a> instance of the available codes and their requirements:</p>
 
 <pre><code>@errors = Hoodoo::Errors.new( ERROR_DESCRIPTIONS )
 </code></pre>
@@ -168,20 +139,13 @@ their requirements:</p>
         </div>
 
         <div class="description">
-            <p>Create an instance, self-declaring <code>platform</code> and
-<code>generic</code> domain errors. You can optionally call the constructor
-with an error domain and code block, to declare errors all in one go rather
-than making a separate call to <a
-href="ErrorDescriptions.html#method-i-errors_for">errors_for</a> (but both
-approaches are valid).</p>
+            <p>Create an instance, self-declaring <code>platform</code> and <code>generic</code> domain errors. You can optionally call the constructor with an error domain and code block, to declare errors all in one go rather than making a separate call to <a href="ErrorDescriptions.html#method-i-errors_for"><code>errors_for</code></a> (but both approaches are valid).</p>
 <dl class="rdoc-list note-list"><dt><code>domain</code>
 <dd>
-<p>Optional domain, just as used in <a
-href="ErrorDescriptions.html#method-i-errors_for">errors_for</a></p>
+<p>Optional domain, just as used in <a href="ErrorDescriptions.html#method-i-errors_for"><code>errors_for</code></a></p>
 </dd><dt>&amp;block
 <dd>
-<p>Optional block, just as used in <a
-href="ErrorDescriptions.html#method-i-errors_for">errors_for</a></p>
+<p>Optional block, just as used in <a href="ErrorDescriptions.html#method-i-errors_for"><code>errors_for</code></a></p>
 </dd></dl>
         </div>
 
@@ -255,10 +219,7 @@ href="ErrorDescriptions.html#method-i-errors_for">errors_for</a></p>
         </div>
 
         <div class="description">
-            <p>Return the options description hash, as passed to <code>error</code> calls
-in the block given to <a
-href="ErrorDescriptions.html#method-i-errors_for">errors_for</a>, for the
-given code.</p>
+            <p>Return the options description hash, as passed to <code>error</code> calls in the block given to <a href="ErrorDescriptions.html#method-i-errors_for"><code>errors_for</code></a>, for the given code.</p>
 <dl class="rdoc-list note-list"><dt><code>code</code>
 <dd>
 <p>Error code in full, e.g. +generic.invalid_state&#39;.</p>
@@ -288,14 +249,7 @@ given code.</p>
         </div>
 
         <div class="description">
-            <p>Implement the collection&#39;s part of the small DSL used for error
-declaration. Call here, passing the error domain (usually the singular
-service name or resource name, e.g. “<code>transaction</code>” and defined
-by the part of the platform API the service is implementing) and a block.
-The block makes one or more “<code>error</code>” calls, which actually end
-up calling <a
-href="ErrorDescriptions/DomainDescriptions.html#method-i-error">Hoodoo::ErrorDescriptions::DomainDescriptions#error</a>
-behind the scenes.</p>
+            <p>Implement the collection&#39;s part of the small DSL used for error declaration. Call here, passing the error domain (usually the singular service name or resource name, e.g. “<code>transaction</code>” and defined by the part of the platform API the service is implementing) and a block. The block makes one or more “<code>error</code>” calls, which actually end up calling <a href="ErrorDescriptions/DomainDescriptions.html#method-i-error"><code>Hoodoo::ErrorDescriptions::DomainDescriptions#error</code></a> behind the scenes.</p>
 
 <p>See the implementation of initialize for a worked example.</p>
 <dl class="rdoc-list note-list"><dt><code>domain</code>
@@ -333,8 +287,7 @@ behind the scenes.</p>
         </div>
 
         <div class="description">
-            <p>Is the given error code recognised? Returns <code>true</code> if so, else
-<code>false</code>.</p>
+            <p>Is the given error code recognised? Returns <code>true</code> if so, else <code>false</code>.</p>
 <dl class="rdoc-list note-list"><dt><code>code</code>
 <dd>
 <p>Error code in full, e.g. +generic.invalid_state&#39;.</p>

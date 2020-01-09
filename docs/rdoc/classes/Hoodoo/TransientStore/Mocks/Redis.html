@@ -39,9 +39,7 @@
         <div id="content">
     <div class="description">
         
-<p>Mock known uses of <a href="Redis.html">Redis</a> with test
-implementations. Use explicitly, or as an RSpec implicit mock via something
-like this:</p>
+<p>Mock known uses of <a href="Redis.html"><code>Redis</code></a> with test implementations. Use explicitly, or as an RSpec implicit mock via something like this:</p>
 
 <pre><code>allow( Redis ).to(
   receive( :new ).
@@ -49,25 +47,16 @@ like this:</p>
 )
 </code></pre>
 
-<p>…whenever you need to stub out real <a href="Redis.html">Redis</a>. You
-will# probably want to add:</p>
+<p>…whenever you need to stub out real <a href="Redis.html"><code>Redis</code></a>. You will# probably want to add:</p>
 
 <pre><code>before :all do # (or &quot;:each&quot;)
   Hoodoo::TransientStore::Mocks::Redis.reset()
 end
 </code></pre>
 
-<p>…to “clean out Redis” before or between tests. You can check the contents
-of mock <a href="Redis.html">Redis</a> by examining <a
-href="Redis.html#method-c-store">::store</a>&#39;s hash of data.</p>
+<p>…to “clean out Redis” before or between tests. You can check the contents of mock <a href="Redis.html"><code>Redis</code></a> by examining <a href="Redis.html#method-c-store"><code>::store</code></a>&#39;s hash of data.</p>
 
-<p>The test coverage for <a
-href="../../TransientStore.html">Hoodoo::TransientStore</a> selects this
-backend in passing. Generally speaking you should favour <a
-href="../../TransientStore.html">Hoodoo::TransientStore</a> over
-hard-coding to a storage engine available by the <a
-href="../../../Hoodoo.html">Hoodoo</a> abstraction and, as a result, may
-never need this mock class at all.</p>
+<p>The test coverage for <a href="../../TransientStore.html"><code>Hoodoo::TransientStore</code></a> selects this backend in passing. Generally speaking you should favour <a href="../../TransientStore.html"><code>Hoodoo::TransientStore</code></a> over hard-coding to a storage engine available by the <a href="../../../Hoodoo.html"><code>Hoodoo</code></a> abstraction and, as a result, may never need this mock class at all.</p>
 
     </div>
 
@@ -192,9 +181,7 @@ never need this mock class at all.</p>
         <div class="description">
             <p>For test analysis, return the hash of &#39;Redis&#39; mock data.</p>
 
-<p>Entries are referenced by the key you used to originally store them; values
-are hashes with “:expires_at” giving an expiry time or “nil” and “:value”
-giving your stored value.</p>
+<p>Entries are referenced by the key you used to originally store them; values are hashes with “:expires_at” giving an expiry time or “nil” and “:value” giving your stored value.</p>
         </div>
 
 
@@ -222,7 +209,7 @@ giving your stored value.</p>
         </div>
 
         <div class="description">
-            <p>Alias for <a href="Redis.html#method-i-get">get</a>.</p>
+            <p>Alias for <a href="Redis.html#method-i-get"><code>get</code></a>.</p>
         </div>
 
 
@@ -248,7 +235,7 @@ giving your stored value.</p>
         </div>
 
         <div class="description">
-            <p>Alias for <a href="Redis.html#method-i-set">set</a>.</p>
+            <p>Alias for <a href="Redis.html#method-i-set"><code>set</code></a>.</p>
         </div>
 
 
@@ -308,8 +295,7 @@ giving your stored value.</p>
             <p>Set expiry time for a given key, which must exist.</p>
 <dl class="rdoc-list note-list"><dt><code>ttl</code>
 <dd>
-<p>time-to-live (&#39;live&#39; as in living, not as in &#39;live TV&#39;). A
-value in seconds, after which the data is considered expired.</p>
+<p>time-to-live (&#39;live&#39; as in living, not as in &#39;live TV&#39;). A value in seconds, after which the data is considered expired.</p>
 </dd></dl>
         </div>
 
@@ -341,11 +327,10 @@ value in seconds, after which the data is considered expired.</p>
         </div>
 
         <div class="description">
-            <p>Get the data stored under the given key. Returns <code>nil</code> if not
-found / expired.</p>
+            <p>Get the data stored under the given key. Returns <code>nil</code> if not found / expired.</p>
 <dl class="rdoc-list note-list"><dt><code>key</code>
 <dd>
-<p>Key to look up (see <a href="Redis.html#method-i-set">set</a>).</p>
+<p>Key to look up (see <a href="Redis.html#method-i-set"><code>set</code></a>).</p>
 </dd></dl>
         </div>
 
@@ -434,12 +419,10 @@ found / expired.</p>
 <p>Key under which to store data.</p>
 </dd><dt><code>value</code>
 <dd>
-<p><a href="../../Data.html">Data</a> to store.</p>
+<p><a href="../../Data.html"><code>Data</code></a> to store.</p>
 </dd><dt><code>ttl</code>
 <dd>
-<p>(Optional) time-to-live (&#39;live&#39; as in living, not as in &#39;live
-TV&#39;) - a value in seconds, after which the data is considered expired.
-If omitted, the data does not expire.</p>
+<p>(Optional) time-to-live (&#39;live&#39; as in living, not as in &#39;live TV&#39;) - a value in seconds, after which the data is considered expired. If omitted, the data does not expire.</p>
 </dd></dl>
         </div>
 

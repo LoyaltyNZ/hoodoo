@@ -45,14 +45,7 @@
         <div id="content">
     <div class="description">
         
-<p>A simple abstraction over transient storage engines such as <a
-href="https://memcached.org">Memcached</a> or <a
-href="https://redis.io">Redis</a>, making it it easier for client code to
-switch engines with very few changes. If the storage engine chosen when
-creating instances of this object is defined in application-wide
-configuration data, all you would need to do is change the configuration
-for all new <a href="TransientStore.html">TransientStore</a> instances to
-use the new engine.</p>
+<p>A simple abstraction over transient storage engines such as <a href="https://memcached.org">Memcached</a> or <a href="https://redis.io">Redis</a>, making it it easier for client code to switch engines with very few changes. If the storage engine chosen when creating instances of this object is defined in application-wide configuration data, all you would need to do is change the configuration for all new <a href="TransientStore.html"><code>TransientStore</code></a> instances to use the new engine.</p>
 
     </div>
 
@@ -159,37 +152,28 @@ use the new engine.</p>
                 [R]
             </td>
             <td class='attr-name'>default_maximum_lifespan</td>
-            <td class='attr-desc'><p>Read this instance&#39;s default item maximum lifespan, in seconds. See
-also <a href="TransientStore.html#method-c-new">::new</a>.</p></td>
+            <td class='attr-desc'><p>Read this instance&#39;s default item maximum lifespan, in seconds. See also <a href="TransientStore.html#method-c-new"><code>::new</code></a>.</p></td>
         </tr>
         <tr valign='top' id='attribute-i-default_namespace'>
             <td class='attr-rw'>
                 [R]
             </td>
             <td class='attr-name'>default_namespace</td>
-            <td class='attr-desc'><p>Read this instance&#39;s default storage namespace, as a String. See also
-<a href="TransientStore.html#method-c-new">::new</a>.</p></td>
+            <td class='attr-desc'><p>Read this instance&#39;s default storage namespace, as a String. See also <a href="TransientStore.html#method-c-new"><code>::new</code></a>.</p></td>
         </tr>
         <tr valign='top' id='attribute-i-storage_engine'>
             <td class='attr-rw'>
                 [R]
             </td>
             <td class='attr-name'>storage_engine</td>
-            <td class='attr-desc'><p>Read this instance&#39;s storage engine; see <a
-href="TransientStore.html#method-c-supported_storage_engines">::supported_storage_engines</a>
-and <a href="TransientStore.html#method-c-new">::new</a>.</p></td>
+            <td class='attr-desc'><p>Read this instance&#39;s storage engine; see <a href="TransientStore.html#method-c-supported_storage_engines"><code>::supported_storage_engines</code></a> and <a href="TransientStore.html#method-c-new"><code>::new</code></a>.</p></td>
         </tr>
         <tr valign='top' id='attribute-i-storage_engine_instance'>
             <td class='attr-rw'>
                 [R]
             </td>
             <td class='attr-name'>storage_engine_instance</td>
-            <td class='attr-desc'><p>Read the storage engine instance for the <a
-href="TransientStore.html#attribute-i-storage_engine">storage_engine</a> -
-this allows engine-specific configuration to be set where available, though
-this is strongly discouraged as it couples client code to the engine in
-use, defeating the main rationale behind the <a
-href="TransientStore.html">TransientStore</a> abstraction.</p></td>
+            <td class='attr-desc'><p>Read the storage engine instance for the <a href="TransientStore.html#attribute-i-storage_engine"><code>storage_engine</code></a> - this allows engine-specific configuration to be set where available, though this is strongly discouraged as it couples client code to the engine in use, defeating the main rationale behind the <a href="TransientStore.html"><code>TransientStore</code></a> abstraction.</p></td>
         </tr>
     </table>
 
@@ -203,10 +187,7 @@ href="TransientStore.html">TransientStore</a> abstraction.</p></td>
         </div>
 
         <div class="description">
-            <p>Remove a storage engine plugin class from the supported collection. Any
-existing <a href="TransientStore.html">Hoodoo::TransientStore</a> instances
-using the removed class will not be affected, but new instances cannot be
-made.</p>
+            <p>Remove a storage engine plugin class from the supported collection. Any existing <a href="TransientStore.html"><code>Hoodoo::TransientStore</code></a> instances using the removed class will not be affected, but new instances cannot be made.</p>
 
 <p><em>Named</em> parameters are:</p>
 <dl class="rdoc-list note-list"><dt><code>as</code>
@@ -238,44 +219,25 @@ made.</p>
         </div>
 
         <div class="description">
-            <p>Instantiate a new Transient storage object through which temporary data can
-be stored or retrieved.</p>
+            <p>Instantiate a new Transient storage object through which temporary data can be stored or retrieved.</p>
 
-<p>The <a href="TransientStore.html">TransientStore</a> abstraction is a high
-level and simple abstraction over heterogenous data storage engines. It
-does not expose the many subtle configuration settings usually available in
-such. If you need to take advantage of those at an item storage level,
-you&#39;ll need to use a lower level interface and thus lock your code to
-the engine of choice.</p>
+<p>The <a href="TransientStore.html"><code>TransientStore</code></a> abstraction is a high level and simple abstraction over heterogenous data storage engines. It does not expose the many subtle configuration settings usually available in such. If you need to take advantage of those at an item storage level, you&#39;ll need to use a lower level interface and thus lock your code to the engine of choice.</p>
 
-<p>Engine plug-ins are recommended to attempt to gain and test a connection to
-the storage engine when this object is constructed, so if building a <a
-href="TransientStore.html">TransientStore</a> instance, ensure your chosen
-storage engine is running first. Exceptions may be raised by storage
-engines, so you will probably want to catch those with more civilised error
-handling code.</p>
+<p>Engine plug-ins are recommended to attempt to gain and test a connection to the storage engine when this object is constructed, so if building a <a href="TransientStore.html"><code>TransientStore</code></a> instance, ensure your chosen storage engine is running first. Exceptions may be raised by storage engines, so you will probably want to catch those with more civilised error handling code.</p>
 
 <p><em>Named</em> parameters are:</p>
 <dl class="rdoc-list note-list"><dt><code>storage_engine</code>
 <dd>
-<p>An entry from <a
-href="TransientStore.html#method-c-supported_storage_engines">::supported_storage_engines</a>.</p>
+<p>An entry from <a href="TransientStore.html#method-c-supported_storage_engines"><code>::supported_storage_engines</code></a>.</p>
 </dd><dt><code>storage_host_uri</code>
 <dd>
-<p>The engine-dependent connection URI. Consult documentation for your chosen
-engine to find out its connection URI requirements, along with the
-documentation for the constructor method of the plug-in in use, since in
-some cases requirements may be unusual (e.g. in <a
-href="TransientStore/MemcachedRedisMirror.html">Hoodoo::TransientStore::MemcachedRedisMirror</a>).</p>
+<p>The engine-dependent connection URI. Consult documentation for your chosen engine to find out its connection URI requirements, along with the documentation for the constructor method of the plug-in in use, since in some cases requirements may be unusual (e.g. in <a href="TransientStore/MemcachedRedisMirror.html"><code>Hoodoo::TransientStore::MemcachedRedisMirror</code></a>).</p>
 </dd><dt><code>default_maximum_lifespan</code>
 <dd>
-<p>The default time-to-live for data items, in, seconds; can be overridden per
-item; default is 604800 seconds or 7 days.</p>
+<p>The default time-to-live for data items, in, seconds; can be overridden per item; default is 604800 seconds or 7 days.</p>
 </dd><dt><code>default_namespace</code>
 <dd>
-<p>Storage engine keys are namespaced with
-<code>nz_co_loyalty_hoodoo_transient_store_</code> by default, though this
-can be overridden here. Pass a String or Symbol.</p>
+<p>Storage engine keys are namespaced with <code>nz_co_loyalty_hoodoo_transient_store_</code> by default, though this can be overridden here. Pass a String or Symbol.</p>
 </dd></dl>
         </div>
 
@@ -326,21 +288,15 @@ can be overridden here. Pass a String or Symbol.</p>
         </div>
 
         <div class="description">
-            <p>Register a new storage engine plugin class. It <em>MUST</em> inherit from
-and thus follow the template laid out in <a
-href="TransientStore/Base.html">Hoodoo::TransientStore::Base</a>.</p>
+            <p>Register a new storage engine plugin class. It <em>MUST</em> inherit from and thus follow the template laid out in <a href="TransientStore/Base.html"><code>Hoodoo::TransientStore::Base</code></a>.</p>
 
 <p><em>Named</em> parameters are:</p>
 <dl class="rdoc-list note-list"><dt><code>as</code>
 <dd>
-<p>The name, as a Symbol, for the <a
-href="TransientStore.html#method-c-new">::new</a>
-<code>storage_engine</code> input parameter, to select this plugin.</p>
+<p>The name, as a Symbol, for the <a href="TransientStore.html#method-c-new"><code>::new</code></a> <code>storage_engine</code> input parameter, to select this plugin.</p>
 </dd><dt><code>using</code>
 <dd>
-<p>The class reference of the <a
-href="TransientStore/Base.html">Hoodoo::TransientStore::Base</a> subclass
-to be associated with the name given in <code>as</code>.</p>
+<p>The class reference of the <a href="TransientStore/Base.html"><code>Hoodoo::TransientStore::Base</code></a> subclass to be associated with the name given in <code>as</code>.</p>
 </dd></dl>
 
 <p>Example:</p>
@@ -387,11 +343,7 @@ to be associated with the name given in <code>as</code>.</p>
         </div>
 
         <div class="description">
-            <p>Return an array of the names of all supported storage engine names known to
-the <a href="TransientStore.html">Hoodoo::TransientStore</a> class. Any one
-of those names can be used with the <a
-href="TransientStore.html#method-c-new">::new</a>
-<code>storage_engine</code> parameter.</p>
+            <p>Return an array of the names of all supported storage engine names known to the <a href="TransientStore.html"><code>Hoodoo::TransientStore</code></a> class. Any one of those names can be used with the <a href="TransientStore.html#method-c-new"><code>::new</code></a> <code>storage_engine</code> parameter.</p>
         </div>
 
 
@@ -419,8 +371,7 @@ href="TransientStore.html#method-c-new">::new</a>
         </div>
 
         <div class="description">
-            <p>If you aren&#39;t going to use this instance again, it is good manners to
-immediately close its connection(s) to any storage engines by calling here.</p>
+            <p>If you aren&#39;t going to use this instance again, it is good manners to immediately close its connection(s) to any storage engines by calling here.</p>
 
 <p>No useful return value is generated and exceptions are ignored.</p>
         </div>
@@ -448,29 +399,24 @@ immediately close its connection(s) to any storage engines by calling here.</p>
         </div>
 
         <div class="description">
-            <p>Delete data previously stored with <a
-href="TransientStore.html#method-i-set">set</a>.</p>
+            <p>Delete data previously stored with <a href="TransientStore.html#method-i-set"><code>set</code></a>.</p>
 
 <p><em>Named</em> parameters are:</p>
 <dl class="rdoc-list note-list"><dt><code>key</code>
 <dd>
-<p>Key previously given to <a href="TransientStore.html#method-i-set">set</a>.</p>
+<p>Key previously given to <a href="TransientStore.html#method-i-set"><code>set</code></a>.</p>
 </dd></dl>
 
 <p>Returns:</p>
 <ul><li>
-<p><code>true</code> if deletion was successful, if the item has already
-expired or if the key is simply not recognised so there is no more work to
-do.</p>
+<p><code>true</code> if deletion was successful, if the item has already expired or if the key is simply not recognised so there is no more work to do.</p>
 </li><li>
 <p><code>false</code> if deletion failed but the reason is unknown.</p>
 </li><li>
-<p>An <code>Exception</code> instance if deletion failed and the storage
-engine raised an exception describing the problem.</p>
+<p>An <code>Exception</code> instance if deletion failed and the storage engine raised an exception describing the problem.</p>
 </li></ul>
 
-<p>Only non-empty String or Symbol keys are permitted, else an exception will
-be raised.</p>
+<p>Only non-empty String or Symbol keys are permitted, else an exception will be raised.</p>
         </div>
 
 
@@ -510,26 +456,20 @@ be raised.</p>
         </div>
 
         <div class="description">
-            <p>Retrieve data previously stored with <a
-href="TransientStore.html#method-i-set">set</a>.</p>
+            <p>Retrieve data previously stored with <a href="TransientStore.html#method-i-set"><code>set</code></a>.</p>
 
 <p><em>Named</em> parameters are:</p>
 <dl class="rdoc-list note-list"><dt><code>key</code>
 <dd>
-<p>Key previously given to <a href="TransientStore.html#method-i-set">set</a>.</p>
+<p>Key previously given to <a href="TransientStore.html#method-i-set"><code>set</code></a>.</p>
 </dd><dt><code>allow_throw</code>
 <dd>
-<p>If <code>true</code>, exceptions raised by the underlying storage engine
-are thrown, else ignored and <code>nil</code> is returned. Optional;
-default is <code>false</code>.</p>
+<p>If <code>true</code>, exceptions raised by the underlying storage engine are thrown, else ignored and <code>nil</code> is returned. Optional; default is <code>false</code>.</p>
 </dd></dl>
 
-<p>Returns <code>nil</code> if the item is not found - either the key is
-wrong, the stored data has expired or the stored data has been evicted
-early from the storage engine&#39;s pool.</p>
+<p>Returns <code>nil</code> if the item is not found - either the key is wrong, the stored data has expired or the stored data has been evicted early from the storage engine&#39;s pool.</p>
 
-<p>Only non-empty String or Symbol keys are permitted, else an exception will
-be raised.</p>
+<p>Only non-empty String or Symbol keys are permitted, else an exception will be raised.</p>
         </div>
 
 
@@ -561,32 +501,20 @@ be raised.</p>
         </div>
 
         <div class="description">
-            <p>Set (write) a given payload into the storage engine with the given payload
-and maximum lifespan.</p>
+            <p>Set (write) a given payload into the storage engine with the given payload and maximum lifespan.</p>
 
-<p>Payloads must only contain simple types such as Hash, Array, String and
-Integer. Complex types like Symbol, Date, Float, BigDecimal or custom
-objects are unlikely to serialise properly but since this depends upon the
-storage engine in use, errors may or may not be raised for misuse.</p>
+<p>Payloads must only contain simple types such as Hash, Array, String and Integer. Complex types like Symbol, Date, Float, BigDecimal or custom objects are unlikely to serialise properly but since this depends upon the storage engine in use, errors may or may not be raised for misuse.</p>
 
-<p>Storage engines usually have a maximum payload size limit; consult your
-engine administrator for information. For example, the default - but
-reconfigurable - maximum payload size for <a
-href="TransientStore/Memcached.html">Memcached</a> is 1MB.</p>
+<p>Storage engines usually have a maximum payload size limit; consult your engine administrator for information. For example, the default - but reconfigurable - maximum payload size for <a href="TransientStore/Memcached.html"><code>Memcached</code></a> is 1MB.</p>
 
 <p>For maximum possible compatibility:</p>
 <ul><li>
-<p>Use only Hash payloads with String key/value paids and no nesting. You may
-choose to marshal the data into a String manually for unusual data
-requirements, manually converting back when reading stored data.</p>
+<p>Use only Hash payloads with String key/value paids and no nesting. You may choose to marshal the data into a String manually for unusual data requirements, manually converting back when reading stored data.</p>
 </li><li>
-<p>Keep the payload size as small as possible - large objects belong in bulk
-storage engines such as Amazon S3.</p>
+<p>Keep the payload size as small as possible - large objects belong in bulk storage engines such as Amazon S3.</p>
 </li></ul>
 
-<p>These are only guidelines though - heterogenous storage engine support and
-the ability of system administrators to arbitrarily configure those storage
-engines makes it impossible to be more precise.</p>
+<p>These are only guidelines though - heterogenous storage engine support and the ability of system administrators to arbitrarily configure those storage engines makes it impossible to be more precise.</p>
 
 <p>Returns:</p>
 <ul><li>
@@ -594,34 +522,19 @@ engines makes it impossible to be more precise.</p>
 </li><li>
 <p><code>false</code> if storage failed but the reason is unknown</p>
 </li><li>
-<p>An <code>Exception</code> instance if storage failed and the storage engine
-raised an exception describing the problem.</p>
+<p>An <code>Exception</code> instance if storage failed and the storage engine raised an exception describing the problem.</p>
 </li></ul>
 
 <p><em>Named</em> parameters are:</p>
 <dl class="rdoc-list note-list"><dt><code>key</code>
 <dd>
-<p>Storage key to use in the engine, which is then used in subsequent calls to
-<a href="TransientStore.html#method-i-get">get</a> and possibly eventually
-to <a href="TransientStore.html#method-i-delete">delete</a>. Only non-empty
-Strings or Symbols are permitted, else an exception will be raised.</p>
+<p>Storage key to use in the engine, which is then used in subsequent calls to <a href="TransientStore.html#method-i-get"><code>get</code></a> and possibly eventually to <a href="TransientStore.html#method-i-delete"><code>delete</code></a>. Only non-empty Strings or Symbols are permitted, else an exception will be raised.</p>
 </dd><dt><code>payload</code>
 <dd>
-<p>Payload data to store under the given <code>key</code>. A flat Hash is
-recommended rather than simple types such as String (unless marshalling a
-complex type into such) in order to make potential additions to stored data
-easier to implement. Note that <code>nil</code> is prohibited.</p>
+<p>Payload data to store under the given <code>key</code>. A flat Hash is recommended rather than simple types such as String (unless marshalling a complex type into such) in order to make potential additions to stored data easier to implement. Note that <code>nil</code> is prohibited.</p>
 </dd><dt><code>maximum_lifespan</code>
 <dd>
-<p>Optional maximum lifespan, seconds. Storage engines may chooset to evict
-payloads sooner than this; it is a maximum time, not a guarantee. Omit to
-use this <a href="TransientStore.html">TransientStore</a> instance&#39;s
-default value - see <a href="TransientStore.html#method-c-new">::new</a>.
-If you know you no longer need a piece of data at a particular point in the
-execution flow of your code, explicitly delete it via <a
-href="TransientStore.html#method-i-delete">delete</a> rather than leaving
-it to expire. This maximises the storage engine&#39;s pool free space and
-so minimises the chance of early item eviction.</p>
+<p>Optional maximum lifespan, seconds. Storage engines may chooset to evict payloads sooner than this; it is a maximum time, not a guarantee. Omit to use this <a href="TransientStore.html"><code>TransientStore</code></a> instance&#39;s default value - see <a href="TransientStore.html#method-c-new"><code>::new</code></a>. If you know you no longer need a piece of data at a particular point in the execution flow of your code, explicitly delete it via <a href="TransientStore.html#method-i-delete"><code>delete</code></a> rather than leaving it to expire. This maximises the storage engine&#39;s pool free space and so minimises the chance of early item eviction.</p>
 </dd></dl>
         </div>
 

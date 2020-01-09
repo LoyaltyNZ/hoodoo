@@ -39,17 +39,9 @@
         <div id="content">
     <div class="description">
         
-<p>Instantiate this class and add one, or an <a href="../Array.html">Array</a>
-of fully rendered resource objects to it via the API described in the base
-class, <a
-href="Embeddable.html">Hoodoo::Presenters::Embedding::Embeddable</a>. You
-can then pass it to the likes of <a
-href="../Base.html#method-c-render_in">Hoodoo::Presenters::Base.render_in</a>
-via the <code>options</code> parameter to have the embed data included in
-the fully rendered end result.</p>
+<p>Instantiate this class and add one, or an <a href="../Array.html"><code>Array</code></a> of fully rendered resource objects to it via the API described in the base class, <a href="Embeddable.html"><code>Hoodoo::Presenters::Embedding::Embeddable</code></a>. You can then pass it to the likes of <a href="../Base.html#method-c-render_in"><code>Hoodoo::Presenters::Base.render_in</code></a> via the <code>options</code> parameter to have the embed data included in the fully rendered end result.</p>
 
-<p>When a request arrives to embed data for a particular resource or list of
-resources (in which case, do the following for each item in that list):</p>
+<p>When a request arrives to embed data for a particular resource or list of resources (in which case, do the following for each item in that list):</p>
 <ul><li>
 <p>Render the embedded resource(s)</p>
 </li><li>
@@ -57,10 +49,7 @@ resources (in which case, do the following for each item in that list):</p>
 </li><li>
 <p>Add the rendered resource representations using this class&#39;s API</p>
 </li><li>
-<p>Use <a
-href="../Base.html#method-c-render_in">Hoodoo::Presenters::Base.render_in</a>
-to render the final, target resource, passing in the embed collection via
-the <code>options</code> <a href="../Hash.html">Hash</a>.</p>
+<p>Use <a href="../Base.html#method-c-render_in"><code>Hoodoo::Presenters::Base.render_in</code></a> to render the final, target resource, passing in the embed collection via the <code>options</code> <a href="../Hash.html"><code>Hash</code></a>.</p>
 </li></ul>
 
 <p>Simple example:</p>
@@ -114,9 +103,7 @@ embeds.add_many( &#39;vouchers&#39;, rendered_voucher_array )
         </div>
 
         <div class="description">
-            <p>Returns the top-level resource key used for reference data, as per the API
-documentation - which is the <a href="../String.html">String</a>
-<code>_embed</code>.</p>
+            <p>Returns the top-level resource key used for reference data, as per the API documentation - which is the <a href="../String.html"><code>String</code></a> <code>_embed</code>.</p>
         </div>
 
 
@@ -144,14 +131,10 @@ documentation - which is the <a href="../String.html">String</a>
         </div>
 
         <div class="description">
-            <p>Called from <a href="Embeddable.html#method-i-add_many">add_many</a> in the
-base class to make sure the right data is being supplied. Raises an
-exception if it gets worried.</p>
+            <p>Called from <a href="Embeddable.html#method-i-add_many"><code>add_many</code></a> in the base class to make sure the right data is being supplied. Raises an exception if it gets worried.</p>
 <dl class="rdoc-list note-list"><dt><code>thing</code>
 <dd>
-<p>The value that&#39;ll be stored; should be an <a
-href="../Array.html">Array</a> of Hashes but only the first array entry is
-checked, for speed.</p>
+<p>The value that&#39;ll be stored; should be an <a href="../Array.html"><code>Array</code></a> of Hashes but only the first array entry is checked, for speed.</p>
 </dd></dl>
         </div>
 
@@ -184,13 +167,10 @@ checked, for speed.</p>
         </div>
 
         <div class="description">
-            <p>Called from <a href="Embeddable.html#method-i-add_one">add_one</a> in the
-base class to make sure the right data is being supplied. Raises an
-exception if it gets worried.</p>
+            <p>Called from <a href="Embeddable.html#method-i-add_one"><code>add_one</code></a> in the base class to make sure the right data is being supplied. Raises an exception if it gets worried.</p>
 <dl class="rdoc-list note-list"><dt><code>thing</code>
 <dd>
-<p>The value that&#39;ll be stored; should be a <a
-href="../Hash.html">Hash</a>.</p>
+<p>The value that&#39;ll be stored; should be a <a href="../Hash.html"><code>Hash</code></a>.</p>
 </dd></dl>
         </div>
 

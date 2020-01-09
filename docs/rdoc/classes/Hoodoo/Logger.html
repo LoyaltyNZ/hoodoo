@@ -47,53 +47,22 @@
         <div id="content">
     <div class="description">
         
-<p>Multiple output logging via local code or external services. Instantiate a
-new <a href="Logger.html">Logger</a>, then use <a
-href="Logger.html#method-i-add">add</a> to add <em>instances</em> of writer
-classes to the collection of log writers. When <a
-href="Logger.html#method-i-report">report</a>, <a
-href="Logger.html#method-i-debug">debug</a>, <a
-href="Logger.html#method-i-info">info</a>, <a
-href="Logger.html#method-i-warn">warn</a> or <a
-href="Logger.html#method-i-error">error</a> are called, a corresponding log
-message is sent once to each of the writers, provided that the configured
-logging level (#level, <a href="Logger.html#attribute-i-level">level=</a>)
-allows it.</p>
+<p>Multiple output logging via local code or external services. Instantiate a new <a href="Logger.html"><code>Logger</code></a>, then use <a href="Logger.html#method-i-add"><code>add</code></a> to add <em>instances</em> of writer classes to the collection of log writers. When <a href="Logger.html#method-i-report"><code>report</code></a>, <a href="Logger.html#method-i-debug"><code>debug</code></a>, <a href="Logger.html#method-i-info"><code>info</code></a>, <a href="Logger.html#method-i-warn"><code>warn</code></a> or <a href="Logger.html#method-i-error"><code>error</code></a> are called, a corresponding log message is sent once to each of the writers, provided that the configured logging level (<a href="Logger.html#attribute-i-level"><code>level</code></a>, <a href="Logger.html#attribute-i-level"><code>level=</code></a>) allows it.</p>
 
-<p>By default, a new logger instance has no configured writers so logged
-messages will not go anywhere. You must use <a
-href="Logger.html#method-i-add">add</a> to add at least one writer for the
-instance to be useful.</p>
+<p>By default, a new logger instance has no configured writers so logged messages will not go anywhere. You must use <a href="Logger.html#method-i-add"><code>add</code></a> to add at least one writer for the instance to be useful.</p>
 
-<p>Some writer classes are provided by <a href="../Hoodoo.html">Hoodoo</a>,
-including:</p>
+<p>Some writer classes are provided by <a href="../Hoodoo.html"><code>Hoodoo</code></a>, including:</p>
 <ul><li>
-<p><a href="Logger/StreamWriter.html">Hoodoo::Logger::StreamWriter</a> - write
-to output streams, typically expected to be fast, e.g. unredirected $stdout
-or $stderr.</p>
+<p><a href="Logger/StreamWriter.html"><code>Hoodoo::Logger::StreamWriter</code></a> - write to output streams, typically expected to be fast, e.g. unredirected $stdout or $stderr.</p>
 </li><li>
-<p><a href="Logger/FileWriter.html">Hoodoo::Logger::FileWriter</a> - write to
-files, typically expected to be relatively slow.</p>
+<p><a href="Logger/FileWriter.html"><code>Hoodoo::Logger::FileWriter</code></a> - write to files, typically expected to be relatively slow.</p>
 </li></ul>
 
-<p>Some loggers can preserve structural logged data (see <a
-href="Logger.html#method-i-report">report</a>) while others flatten all log
-messages. For example, <a
-href="Logger/StreamWriter.html">Hoodoo::Logger::StreamWriter</a> must
-flatten messages but a custom writer that, say, persisted messages in a
-database should be able to preserve structure.</p>
+<p>Some loggers can preserve structural logged data (see <a href="Logger.html#method-i-report"><code>report</code></a>) while others flatten all log messages. For example, <a href="Logger/StreamWriter.html"><code>Hoodoo::Logger::StreamWriter</code></a> must flatten messages but a custom writer that, say, persisted messages in a database should be able to preserve structure.</p>
 
-<p>Writers are either considered fast or slow. Fast writers are called inline
-as soon as a message gets logged. Slow writers are called asynchronously
-via a Thread. A Queue is used to buffer messages for slow writers; if this
-gets too large, messages may be dropped. Once the slow writer catches up, a
-<code>warn</code> level log message is automatically logged to report the
-number of dropped messages in the interim.</p>
+<p>Writers are either considered fast or slow. Fast writers are called inline as soon as a message gets logged. Slow writers are called asynchronously via a Thread. A Queue is used to buffer messages for slow writers; if this gets too large, messages may be dropped. Once the slow writer catches up, a <code>warn</code> level log message is automatically logged to report the number of dropped messages in the interim.</p>
 
-<p>To create a new custom writer class of any name/namespace, just subclass <a
-href="Logger/FastWriter.html">Hoodoo::Logger::FastWriter</a> or <a
-href="Logger/SlowWriter.html">Hoodoo::Logger::SlowWriter</a> - see those
-classes for details.</p>
+<p>To create a new custom writer class of any name/namespace, just subclass <a href="Logger/FastWriter.html"><code>Hoodoo::Logger::FastWriter</code></a> or <a href="Logger/SlowWriter.html"><code>Hoodoo::Logger::SlowWriter</code></a> - see those classes for details.</p>
 
     </div>
 
@@ -259,8 +228,7 @@ classes for details.</p>
                 [RW]
             </td>
             <td class='attr-name'>level</td>
-            <td class='attr-desc'><p>Return or set the current log level. This is <code>:debug</code> by
-default.</p></td>
+            <td class='attr-desc'><p>Return or set the current log level. This is <code>:debug</code> by default.</p></td>
         </tr>
     </table>
 
@@ -274,19 +242,10 @@ default.</p></td>
         </div>
 
         <div class="description">
-            <p>Create a new logger instance. Once created, use <a
-href="Logger.html#method-i-add">add</a> to add writers.</p>
+            <p>Create a new logger instance. Once created, use <a href="Logger.html#method-i-add"><code>add</code></a> to add writers.</p>
 <dl class="rdoc-list note-list"><dt><code>component</code>
 <dd>
-<p>Flat logging methods (see <a href="Logger.html#method-i-debug">debug</a>,
-<a href="Logger.html#method-i-info">info</a>, <a
-href="Logger.html#method-i-warn">warn</a> and <a
-href="Logger.html#method-i-error">error</a>) are internally logged through
-the structured logger (see <a
-href="Logger.html#method-i-report">report</a>) using the
-<code>component</code> (again, see <a
-href="Logger.html#method-i-report">report</a>) optionally passed here as a
-Symbol or String. Default is <code>:Middleware</code>.</p>
+<p>Flat logging methods (see <a href="Logger.html#method-i-debug"><code>debug</code></a>, <a href="Logger.html#method-i-info"><code>info</code></a>, <a href="Logger.html#method-i-warn"><code>warn</code></a> and <a href="Logger.html#method-i-error"><code>error</code></a>) are internally logged through the structured logger (see <a href="Logger.html#method-i-report"><code>report</code></a>) using the <code>component</code> (again, see <a href="Logger.html#method-i-report"><code>report</code></a>) optionally passed here as a Symbol or String. Default is <code>:Middleware</code>.</p>
 </dd></dl>
         </div>
 
@@ -334,10 +293,7 @@ logger.report( ... ) # -&gt; Sends to &quot;output.log&quot; and $stdout
 </code></pre>
 <dl class="rdoc-list note-list"><dt><code>writer_instances</code>
 <dd>
-<p>One or more <em>instances</em> of a subclass of <a
-href="Logger/FastWriter.html">Hoodoo::Logger::FastWriter</a> or <a
-href="Logger/SlowWriter.html">Hoodoo::Logger::SlowWriter</a>, passed as one
-or more comma-separated parameters.</p>
+<p>One or more <em>instances</em> of a subclass of <a href="Logger/FastWriter.html"><code>Hoodoo::Logger::FastWriter</code></a> or <a href="Logger/SlowWriter.html"><code>Hoodoo::Logger::SlowWriter</code></a>, passed as one or more comma-separated parameters.</p>
 </dd></dl>
         </div>
 
@@ -375,20 +331,14 @@ or more comma-separated parameters.</p>
         </div>
 
         <div class="description">
-            <p>Write a <code>debug</code> log message, provided the log level is
-<code>:debug</code>.</p>
+            <p>Write a <code>debug</code> log message, provided the log level is <code>:debug</code>.</p>
 
-<p>The logging data is unstructured, but gets passed to <a
-href="Logger.html#method-i-report">report</a> for structured logging under
-the component specified in the constructor and code &#39;log&#39;.</p>
+<p>The logging data is unstructured, but gets passed to <a href="Logger.html#method-i-report"><code>report</code></a> for structured logging under the component specified in the constructor and code &#39;log&#39;.</p>
 
-<p>Calling <a href="Logger.html#method-i-report">report</a> is recommended
-over unstructured direct logging.</p>
+<p>Calling <a href="Logger.html#method-i-report"><code>report</code></a> is recommended over unstructured direct logging.</p>
 <dl class="rdoc-list note-list"><dt>*args
 <dd>
-<p>One or more arguments that will be treated as strings and written in the
-presented order to the log, each on its own line of output (“\n”
-terminated).</p>
+<p>One or more arguments that will be treated as strings and written in the presented order to the log, each on its own line of output (“\n” terminated).</p>
 </dd></dl>
         </div>
 
@@ -417,17 +367,12 @@ terminated).</p>
         <div class="description">
             <p>Write an <code>error</code> log message, regardless of logging level.</p>
 
-<p>The logging data is unstructured, but gets passed to <a
-href="Logger.html#method-i-report">report</a> for structured logging under
-the component specified in the constructor and code &#39;log&#39;.</p>
+<p>The logging data is unstructured, but gets passed to <a href="Logger.html#method-i-report"><code>report</code></a> for structured logging under the component specified in the constructor and code &#39;log&#39;.</p>
 
-<p>Calling <a href="Logger.html#method-i-report">report</a> is recommended
-over unstructured direct logging.</p>
+<p>Calling <a href="Logger.html#method-i-report"><code>report</code></a> is recommended over unstructured direct logging.</p>
 <dl class="rdoc-list note-list"><dt>*args
 <dd>
-<p>One or more arguments that will be treated as strings and written in the
-presented order to the log, each on its own line of output (“\n”
-terminated).</p>
+<p>One or more arguments that will be treated as strings and written in the presented order to the log, each on its own line of output (“\n” terminated).</p>
 </dd></dl>
         </div>
 
@@ -454,13 +399,10 @@ terminated).</p>
         </div>
 
         <div class="description">
-            <p>Does this log instance&#39;s collection of writers include the given writer
-instance? Returns <code>true</code> if so, else <code>false</code>.</p>
+            <p>Does this log instance&#39;s collection of writers include the given writer instance? Returns <code>true</code> if so, else <code>false</code>.</p>
 <dl class="rdoc-list note-list"><dt><code>writer_instance</code>
 <dd>
-<p>An <em>instance</em> of a subclass of <a
-href="Logger/FastWriter.html">Hoodoo::Logger::FastWriter</a> or <a
-href="Logger/SlowWriter.html">Hoodoo::Logger::SlowWriter</a>.</p>
+<p>An <em>instance</em> of a subclass of <a href="Logger/FastWriter.html"><code>Hoodoo::Logger::FastWriter</code></a> or <a href="Logger/SlowWriter.html"><code>Hoodoo::Logger::SlowWriter</code></a>.</p>
 </dd></dl>
         </div>
 
@@ -491,18 +433,12 @@ href="Logger/SlowWriter.html">Hoodoo::Logger::SlowWriter</a>.</p>
         </div>
 
         <div class="description">
-            <p>Does this log instance&#39;s collection of writers include any writer
-instances which are of the given writer <em>class</em>? Returns
-<code>true</code> if so, else <code>false</code>.</p>
+            <p>Does this log instance&#39;s collection of writers include any writer instances which are of the given writer <em>class</em>? Returns <code>true</code> if so, else <code>false</code>.</p>
 
-<p>This is slower than <a href="Logger.html#method-i-include-3F">include?</a>
-so try to work with writer instance queries rather than writer class
-queries if you can.</p>
+<p>This is slower than <a href="Logger.html#method-i-include-3F"><code>include?</code></a> so try to work with writer instance queries rather than writer class queries if you can.</p>
 <dl class="rdoc-list note-list"><dt><code>writer_class</code>
 <dd>
-<p>A <em>subclass</em> (class reference, not instance) of <a
-href="Logger/FastWriter.html">Hoodoo::Logger::FastWriter</a> or <a
-href="Logger/SlowWriter.html">Hoodoo::Logger::SlowWriter</a>.</p>
+<p>A <em>subclass</em> (class reference, not instance) of <a href="Logger/FastWriter.html"><code>Hoodoo::Logger::FastWriter</code></a> or <a href="Logger/SlowWriter.html"><code>Hoodoo::Logger::SlowWriter</code></a>.</p>
 </dd></dl>
         </div>
 
@@ -569,20 +505,14 @@ href="Logger/SlowWriter.html">Hoodoo::Logger::SlowWriter</a>.</p>
         </div>
 
         <div class="description">
-            <p>Write an <code>info</code> log message, provided the log level is
-<code>:debug</code> or <code>:info</code>.</p>
+            <p>Write an <code>info</code> log message, provided the log level is <code>:debug</code> or <code>:info</code>.</p>
 
-<p>The logging data is unstructured, but gets passed to <a
-href="Logger.html#method-i-report">report</a> for structured logging under
-the component specified in the constructor and code &#39;log&#39;.</p>
+<p>The logging data is unstructured, but gets passed to <a href="Logger.html#method-i-report"><code>report</code></a> for structured logging under the component specified in the constructor and code &#39;log&#39;.</p>
 
-<p>Calling <a href="Logger.html#method-i-report">report</a> is recommended
-over unstructured direct logging.</p>
+<p>Calling <a href="Logger.html#method-i-report"><code>report</code></a> is recommended over unstructured direct logging.</p>
 <dl class="rdoc-list note-list"><dt>*args
 <dd>
-<p>One or more arguments that will be treated as strings and written in the
-presented order to the log, each on its own line of output (“\n”
-terminated).</p>
+<p>One or more arguments that will be treated as strings and written in the presented order to the log, each on its own line of output (“\n” terminated).</p>
 </dd></dl>
         </div>
 
@@ -609,8 +539,7 @@ terminated).</p>
         </div>
 
         <div class="description">
-            <p>Returns an array of all log writer instances currently in use, in order of
-addition. See <a href="Logger.html#method-i-add">add</a>.</p>
+            <p>Returns an array of all log writer instances currently in use, in order of addition. See <a href="Logger.html#method-i-add"><code>add</code></a>.</p>
         </div>
 
 
@@ -641,19 +570,12 @@ addition. See <a href="Logger.html#method-i-add">add</a>.</p>
         </div>
 
         <div class="description">
-            <p>Remove a writer instance from this logger. If the instance has not been
-previously added, no error is raised.</p>
+            <p>Remove a writer instance from this logger. If the instance has not been previously added, no error is raised.</p>
 
-<p>Slow writers may take a while to finish processing and shut down in the
-background. As a result, this method might take a while to return. Internal
-default timeouts may even mean that the writer is still running (possibly
-entirely hung).</p>
+<p>Slow writers may take a while to finish processing and shut down in the background. As a result, this method might take a while to return. Internal default timeouts may even mean that the writer is still running (possibly entirely hung).</p>
 <dl class="rdoc-list note-list"><dt><code>writer_instances</code>
 <dd>
-<p>One or more <em>instances</em> of a subclass of <a
-href="Logger/FastWriter.html">Hoodoo::Logger::FastWriter</a> or <a
-href="Logger/SlowWriter.html">Hoodoo::Logger::SlowWriter</a>, passed as one
-or more comma-separated parameters.</p>
+<p>One or more <em>instances</em> of a subclass of <a href="Logger/FastWriter.html"><code>Hoodoo::Logger::FastWriter</code></a> or <a href="Logger/SlowWriter.html"><code>Hoodoo::Logger::SlowWriter</code></a>, passed as one or more comma-separated parameters.</p>
 </dd></dl>
         </div>
 
@@ -686,10 +608,7 @@ or more comma-separated parameters.</p>
         <div class="description">
             <p>Remove all writer instances from this logger.</p>
 
-<p>Slow writers may take a while to finish processing and shut down in the
-background. As a result, this method might take a while to return. Internal
-default timeouts may even mean that one or more slow writers are still
-running (possibly entirely hung).</p>
+<p>Slow writers may take a while to finish processing and shut down in the background. As a result, this method might take a while to return. Internal default timeouts may even mean that one or more slow writers are still running (possibly entirely hung).</p>
         </div>
 
 
@@ -716,42 +635,21 @@ running (possibly entirely hung).</p>
         </div>
 
         <div class="description">
-            <p>Logs a message using the structured logger. Whether or not log data is
-written in a stuctured manner depends upon the writer(s) in use (see <a
-href="Logger.html#method-i-add">add</a>). Structured writers preserve data
-structures like hashes or arrays rather than (say) dumping things out as
-strings into flat output streams.</p>
+            <p>Logs a message using the structured logger. Whether or not log data is written in a stuctured manner depends upon the writer(s) in use (see <a href="Logger.html#method-i-add"><code>add</code></a>). Structured writers preserve data structures like hashes or arrays rather than (say) dumping things out as strings into flat output streams.</p>
 
-<p>As with flat logging methods <a
-href="Logger.html#method-i-debug">debug</a>, <a
-href="Logger.html#method-i-info">info</a>, <a
-href="Logger.html#method-i-warn">warn</a> and <a
-href="Logger.html#method-i-error">error</a>, a message is only logged if
-the logging threshold level (see <a
-href="Logger.html#attribute-i-level">level=</a>) is set to an equal or
-lower level.</p>
+<p>As with flat logging methods <a href="Logger.html#method-i-debug"><code>debug</code></a>, <a href="Logger.html#method-i-info"><code>info</code></a>, <a href="Logger.html#method-i-warn"><code>warn</code></a> and <a href="Logger.html#method-i-error"><code>error</code></a>, a message is only logged if the logging threshold level (see <a href="Logger.html#attribute-i-level"><code>level=</code></a>) is set to an equal or lower level.</p>
 <dl class="rdoc-list note-list"><dt><code>log_level</code>
 <dd>
-<p>Log level as a symbol - one of, from most trivial to most severe,
-<code>:debug</code>, <code>:info</code>, <code>:warn</code> or
-<code>:error</code>.</p>
+<p>Log level as a symbol - one of, from most trivial to most severe, <code>:debug</code>, <code>:info</code>, <code>:warn</code> or <code>:error</code>.</p>
 </dd><dt><code>component</code>
 <dd>
-<p>Component; for example, the resource name for a specific resource endpoint
-implementation, &#39;Middleware&#39; for <a
-href="../Hoodoo.html">Hoodoo</a> middleware itself, or some other name you
-think is useful. String or Symbol.</p>
+<p>Component; for example, the resource name for a specific resource endpoint implementation, &#39;Middleware&#39; for <a href="../Hoodoo.html"><code>Hoodoo</code></a> middleware itself, or some other name you think is useful. String or Symbol.</p>
 </dd><dt><code>code</code>
 <dd>
-<p>Component-defined code. Think of this in a manner similar to platform error
-codes, appearing after the “.”; messages related to the same thing should
-share the same code. The intent is to produce log data that someone can
-filter on code to get useful information about that specific aspect of a
-service implementation&#39;s behaviour.</p>
+<p>Component-defined code. Think of this in a manner similar to platform error codes, appearing after the “.”; messages related to the same thing should share the same code. The intent is to produce log data that someone can filter on code to get useful information about that specific aspect of a service implementation&#39;s behaviour.</p>
 </dd><dt><code>data</code>
 <dd>
-<p>A Hash containing the level-, component- and code-dependent payload data to
-be logged.</p>
+<p>A Hash containing the level-, component- and code-dependent payload data to be logged.</p>
 </dd></dl>
         </div>
 
@@ -787,18 +685,12 @@ be logged.</p>
         </div>
 
         <div class="description">
-            <p>Given the log level configuration of this instance - see <a
-href="Logger.html#attribute-i-level">level=</a> and <a
-href="Logger.html#attribute-i-level">level</a> - should a message of the
-given log level be reported? Returns <code>true</code> if so else
-<code>false</code>.</p>
+            <p>Given the log level configuration of this instance - see <a href="Logger.html#attribute-i-level"><code>level=</code></a> and <a href="Logger.html#attribute-i-level"><code>level</code></a> - should a message of the given log level be reported? Returns <code>true</code> if so else <code>false</code>.</p>
 
-<p>This is mostly for internal use but external callers might find it useful
-from time to time, especially in tests.</p>
+<p>This is mostly for internal use but external callers might find it useful from time to time, especially in tests.</p>
 <dl class="rdoc-list note-list"><dt><code>log_level</code>
 <dd>
-<p>Log level of interest as a Symbol - <code>debug</code>, <code>info</code>,
-<code>warn</code> or <code>error</code>.</p>
+<p>Log level of interest as a Symbol - <code>debug</code>, <code>info</code>, <code>warn</code> or <code>error</code>.</p>
 </dd></dl>
         </div>
 
@@ -828,11 +720,7 @@ from time to time, especially in tests.</p>
         </div>
 
         <div class="description">
-            <p>Wait for all writers to finish writing all log messages sent up to the
-point of calling. Internal default timeouts for slow writers mean that hung
-or extremely slow/backlogged writers may not have finished by the time the
-call returns, but it&#39;s necessary to enforce a timeout else this call
-may never return at all.</p>
+            <p>Wait for all writers to finish writing all log messages sent up to the point of calling. Internal default timeouts for slow writers mean that hung or extremely slow/backlogged writers may not have finished by the time the call returns, but it&#39;s necessary to enforce a timeout else this call may never return at all.</p>
         </div>
 
 
@@ -858,20 +746,14 @@ may never return at all.</p>
         </div>
 
         <div class="description">
-            <p>Write a <code>warn</code> log message, provided the log level is
-<code>:debug</code>, <code>:info</code> or <code>:warn</code>.</p>
+            <p>Write a <code>warn</code> log message, provided the log level is <code>:debug</code>, <code>:info</code> or <code>:warn</code>.</p>
 
-<p>The logging data is unstructured, but gets passed to <a
-href="Logger.html#method-i-report">report</a> for structured logging under
-the component specified in the constructor and code &#39;log&#39;.</p>
+<p>The logging data is unstructured, but gets passed to <a href="Logger.html#method-i-report"><code>report</code></a> for structured logging under the component specified in the constructor and code &#39;log&#39;.</p>
 
-<p>Calling <a href="Logger.html#method-i-report">report</a> is recommended
-over unstructured direct logging.</p>
+<p>Calling <a href="Logger.html#method-i-report"><code>report</code></a> is recommended over unstructured direct logging.</p>
 <dl class="rdoc-list note-list"><dt>*args
 <dd>
-<p>One or more arguments that will be treated as strings and written in the
-presented order to the log, each on its own line of output (“\n”
-terminated).</p>
+<p>One or more arguments that will be treated as strings and written in the presented order to the log, each on its own line of output (“\n” terminated).</p>
 </dd></dl>
         </div>
 

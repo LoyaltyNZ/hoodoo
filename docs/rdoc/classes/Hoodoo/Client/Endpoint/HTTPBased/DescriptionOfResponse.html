@@ -38,9 +38,7 @@
         <div id="content">
     <div class="description">
         
-<p>Description of data describing an <a href="../HTTP.html">HTTP</a> response.
-Used by get_data_for_response to generate a response array or hash (see
-response_class_for).</p>
+<p>Description of data describing an <a href="../HTTP.html"><code>HTTP</code></a> response. Used by get_data_for_response to generate a response array or hash (see response_class_for).</p>
 
     </div>
 
@@ -60,17 +58,14 @@ response_class_for).</p>
                 [RW]
             </td>
             <td class='attr-name'>action</td>
-            <td class='attr-desc'><p>The action that was performed - a Symbol from
-Hoodoo::Services::Middleware::ALLOWED_ACTIONS.</p></td>
+            <td class='attr-desc'><p>The action that was performed - a Symbol from Hoodoo::Services::Middleware::ALLOWED_ACTIONS.</p></td>
         </tr>
         <tr valign='top' id='attribute-i-http_headers'>
             <td class='attr-rw'>
                 [RW]
             </td>
             <td class='attr-name'>http_headers</td>
-            <td class='attr-desc'><p>An object that will allow Hash-like lookup and iteration of key/value pairs
-via <code>each</code>. A raw Net::HTTPOK (sic.) instance from a successful
-response is an example of such an object.</p>
+            <td class='attr-desc'><p>An object that will allow Hash-like lookup and iteration of key/value pairs via <code>each</code>. A raw Net::HTTPOK (sic.) instance from a successful response is an example of such an object.</p>
 
 <p>May be unset (<code>nil</code>) or empty, especially for error cases.</p></td>
         </tr>
@@ -79,7 +74,7 @@ response is an example of such an object.</p>
                 [RW]
             </td>
             <td class='attr-name'>http_status_code</td>
-            <td class='attr-desc'><p>The <a href="../HTTP.html">HTTP</a> status code _as an Integer_.</p></td>
+            <td class='attr-desc'><p>The <a href="../HTTP.html"><code>HTTP</code></a> status code _as an Integer_.</p></td>
         </tr>
         <tr valign='top' id='attribute-i-raw_body_data'>
             <td class='attr-rw'>

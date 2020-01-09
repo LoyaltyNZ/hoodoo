@@ -39,20 +39,9 @@
         <div id="content">
     <div class="description">
         
-<p><a href="Service.html">Service</a> authors subclass this to produce the
-body of their service interface implementation. It defines a series of
-methods that must be implemented in order to service requests.</p>
+<p><a href="Service.html"><code>Service</code></a> authors subclass this to produce the body of their service interface implementation. It defines a series of methods that must be implemented in order to service requests.</p>
 
-<p>A <a href="Implementation.html">Hoodoo::Services::Implementation</a>
-subclass is selected by the platform middleware because a <a
-href="Interface.html">Hoodoo::Services::Interface</a> subclass tells it
-about the implementation class through the <a
-href="Interface.html#method-c-interface">Hoodoo::Services::Interface.interface</a>
-DSL; the interface class is referenced from an <a
-href="Service.html">Hoodoo::Services::Service</a> subclass through the <a
-href="Service.html#method-c-comprised_of">Hoodoo::Services::Service.comprised_of</a>
-DSL; and the application class is run by <a href="../../Rack.html">Rack</a>
-by being passed to a call to <code>run</code> in <code>config.ru</code>.</p>
+<p>A <a href="Implementation.html"><code>Hoodoo::Services::Implementation</code></a> subclass is selected by the platform middleware because a <a href="Interface.html"><code>Hoodoo::Services::Interface</code></a> subclass tells it about the implementation class through the <a href="Interface.html#method-c-interface"><code>Hoodoo::Services::Interface::interface</code></a> DSL; the interface class is referenced from an <a href="Service.html"><code>Hoodoo::Services::Service</code></a> subclass through the <a href="Service.html#method-c-comprised_of"><code>Hoodoo::Services::Service::comprised_of</code></a> DSL; and the application class is run by <a href="../../Rack.html"><code>Rack</code></a> by being passed to a call to <code>run</code> in <code>config.ru</code>.</p>
 
     </div>
 
@@ -130,10 +119,7 @@ by being passed to a call to <code>run</code> in <code>config.ru</code>.</p>
             <p>Implement a “create” action (store one new resource instance).</p>
 <dl class="rdoc-list note-list"><dt><code>context</code>
 <dd>
-<p><a href="Context.html">Hoodoo::Services::Context</a> instance describing
-authorised session information, inbound request information and holding the
-response object that the service updates with the results of its processing
-of this action.</p>
+<p><a href="Context.html"><code>Hoodoo::Services::Context</code></a> instance describing authorised session information, inbound request information and holding the response object that the service updates with the results of its processing of this action.</p>
 </dd></dl>
         </div>
 
@@ -163,10 +149,7 @@ of this action.</p>
             <p>Implement a “delete” action (delete one existing resource instance).</p>
 <dl class="rdoc-list note-list"><dt><code>context</code>
 <dd>
-<p><a href="Context.html">Hoodoo::Services::Context</a> instance describing
-authorised session information, inbound request information and holding the
-response object that the service updates with the results of its processing
-of this action.</p>
+<p><a href="Context.html"><code>Hoodoo::Services::Context</code></a> instance describing authorised session information, inbound request information and holding the response object that the service updates with the results of its processing of this action.</p>
 </dd></dl>
         </div>
 
@@ -196,10 +179,7 @@ of this action.</p>
             <p>Implement a “list” action (paginated, sorted list of resources).</p>
 <dl class="rdoc-list note-list"><dt><code>context</code>
 <dd>
-<p><a href="Context.html">Hoodoo::Services::Context</a> instance describing
-authorised session information, inbound request information and holding the
-response object that the service updates with the results of its processing
-of this action.</p>
+<p><a href="Context.html"><code>Hoodoo::Services::Context</code></a> instance describing authorised session information, inbound request information and holding the response object that the service updates with the results of its processing of this action.</p>
 </dd></dl>
         </div>
 
@@ -229,10 +209,7 @@ of this action.</p>
             <p>Implement a “show” action (represent one existing resource instance).</p>
 <dl class="rdoc-list note-list"><dt><code>context</code>
 <dd>
-<p><a href="Context.html">Hoodoo::Services::Context</a> instance describing
-authorised session information, inbound request information and holding the
-response object that the service updates with the results of its processing
-of this action.</p>
+<p><a href="Context.html"><code>Hoodoo::Services::Context</code></a> instance describing authorised session information, inbound request information and holding the response object that the service updates with the results of its processing of this action.</p>
 </dd></dl>
         </div>
 
@@ -262,10 +239,7 @@ of this action.</p>
             <p>Implement a “update” action (modify one existing resource instance).</p>
 <dl class="rdoc-list note-list"><dt><code>context</code>
 <dd>
-<p><a href="Context.html">Hoodoo::Services::Context</a> instance describing
-authorised session information, inbound request information and holding the
-response object that the service updates with the results of its processing
-of this action.</p>
+<p><a href="Context.html"><code>Hoodoo::Services::Context</code></a> instance describing authorised session information, inbound request information and holding the response object that the service updates with the results of its processing of this action.</p>
 </dd></dl>
         </div>
 
@@ -292,47 +266,25 @@ of this action.</p>
         </div>
 
         <div class="description">
-            <p>Optional verification to allow or deny authorisation for a particular
-action on a call-by-call basis.</p>
+            <p>Optional verification to allow or deny authorisation for a particular action on a call-by-call basis.</p>
 
-<p>The middleware calls this method if a session (Hoodoo::Services::Session)
-has associated permissions (Hoodoo::Services::Permissions) which say that
-the resource&#39;s implementation should be asked via constant
-(Hoodoo::Services::Permissions::ASK).</p>
+<p>The middleware calls this method if a session (<a href="Session.html"><code>Hoodoo::Services::Session</code></a>) has associated permissions (<a href="Permissions.html"><code>Hoodoo::Services::Permissions</code></a>) which say that the resource&#39;s implementation should be asked via constant (Hoodoo::Services::Permissions::ASK).</p>
 <dl class="rdoc-list note-list"><dt><code>context</code>
 <dd>
-<p><a href="Context.html">Hoodoo::Services::Context</a> instance as for action
-methods such as <a href="Implementation.html#method-i-show">show</a>, <a
-href="Implementation.html#method-i-list">list</a> and so forth.</p>
+<p><a href="Context.html"><code>Hoodoo::Services::Context</code></a> instance as for action methods such as <a href="Implementation.html#method-i-show"><code>show</code></a>, <a href="Implementation.html#method-i-list"><code>list</code></a> and so forth.</p>
 </dd><dt><code>action</code>
 <dd>
-<p>The action that the caller is trying to perform, as a Symbol from the list
-in Hoodoo::Services::Middleware::ALLOWED_ACTIONS.</p>
+<p>The action that the caller is trying to perform, as a Symbol from the list in Hoodoo::Services::Middleware::ALLOWED_ACTIONS.</p>
 </dd></dl>
 
-<p>Your implementation <strong>MUST</strong> return either
-Hoodoo::Services::Permissions::ALLOW, to allow the action, or
-Hoodoo::Services::Permissions::DENY, to block the action.</p>
+<p>Your implementation <strong>MUST</strong> return either Hoodoo::Services::Permissions::ALLOW, to allow the action, or Hoodoo::Services::Permissions::DENY, to block the action.</p>
 <ul><li>
-<p>If a session&#39;s permissions indicate that a resource endpoint should be
-asked, but that interface does not define its own <a
-href="Implementation.html#method-i-verify">verify</a> method, then the
-default implementation herein will <em>deny</em> the request.</p>
+<p>If a session&#39;s permissions indicate that a resource endpoint should be asked, but that interface does not define its own <a href="Implementation.html#method-i-verify"><code>verify</code></a> method, then the default implementation herein will <em>deny</em> the request.</p>
 </li><li>
-<p>If a buggy verification method returns an unexpected value, the middleware
-will ignore it and again <em>deny</em> the request.</p>
+<p>If a buggy verification method returns an unexpected value, the middleware will ignore it and again <em>deny</em> the request.</p>
 </li></ul>
 
-<p>Whether or not any of your implementations ever need to write a custom
-verification method will depend entirely upon your API, whether or not it
-has a meaningful definition of per-request assessment to allow or deny
-access and whether or not any sessions can exist with an &#39;ask&#39;
-permission inside in the first place. If using the <a
-href="../../Hoodoo.html">Hoodoo</a> authorisation and authentication
-mechanism, this would come down to whether or not any <a
-href="../Data/Resources/Caller.html">Hoodoo::Data::Resources::Caller</a>
-instances existed with the relevant permission value defined somewhere
-inside.</p>
+<p>Whether or not any of your implementations ever need to write a custom verification method will depend entirely upon your API, whether or not it has a meaningful definition of per-request assessment to allow or deny access and whether or not any sessions can exist with an &#39;ask&#39; permission inside in the first place. If using the <a href="../../Hoodoo.html"><code>Hoodoo</code></a> authorisation and authentication mechanism, this would come down to whether or not any <a href="../Data/Resources/Caller.html"><code>Hoodoo::Data::Resources::Caller</code></a> instances existed with the relevant permission value defined somewhere inside.</p>
         </div>
 
 

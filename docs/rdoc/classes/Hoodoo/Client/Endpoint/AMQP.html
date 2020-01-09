@@ -39,19 +39,11 @@
         <div id="content">
     <div class="description">
         
-<p>Talk to a resource that is contacted over <a href="AMQP.html">AMQP</a>
-using <a href="HTTP.html">HTTP</a> emulation via the Alchemy and AMQ <a
-href="../Endpoint.html">Endpoint</a> gems.</p>
+<p>Talk to a resource that is contacted over <a href="AMQP.html"><code>AMQP</code></a> using <a href="HTTP.html"><code>HTTP</code></a> emulation via the Alchemy and AMQ <a href="../Endpoint.html"><code>Endpoint</code></a> gems.</p>
 
-<p>Calls cannot be made until <a
-href="AMQP.html#attribute-i-alchemy">alchemy=</a> has been called to set an
-Alchemy caller instance. The Alchemy <code>http_request</code> method is
-called on this instance to perform the over-queue <a
-href="HTTP.html">HTTP</a> simulation.</p>
+<p>Calls cannot be made until <a href="AMQP.html#attribute-i-alchemy"><code>alchemy=</code></a> has been called to set an Alchemy caller instance. The Alchemy <code>http_request</code> method is called on this instance to perform the over-queue <a href="HTTP.html"><code>HTTP</code></a> simulation.</p>
 
-<p>Configured with a <a
-href="../../Services/Discovery/ForAMQP.html">Hoodoo::Services::Discovery::ForAMQP</a>
-discovery result instance.</p>
+<p>Configured with a <a href="../../Services/Discovery/ForAMQP.html"><code>Hoodoo::Services::Discovery::ForAMQP</code></a> discovery result instance.</p>
 
     </div>
 
@@ -126,19 +118,9 @@ discovery result instance.</p>
                 [RW]
             </td>
             <td class='attr-name'>alchemy</td>
-            <td class='attr-desc'><p>Set/get the Alchemy caller instance. Its <code>http_request</code> method
-is called to perform the over-queue <a href="HTTP.html">HTTP</a>
-simulation.</p>
+            <td class='attr-desc'><p>Set/get the Alchemy caller instance. Its <code>http_request</code> method is called to perform the over-queue <a href="HTTP.html"><code>HTTP</code></a> simulation.</p>
 
-<p>Instances of the <a href="AMQP.html">AMQP</a> endpoint can be created, but
-cannot be used for resource calls - <a
-href="AMQP.html#method-i-list">list</a>, <a
-href="AMQP.html#method-i-show">show</a>, <a
-href="AMQP.html#method-i-create">create</a>, <a
-href="AMQP.html#method-i-update">update</a> and <a
-href="AMQP.html#method-i-delete">delete</a> <em>cannot</em> be called -
-until an Alchemy instance has been specified. An exception will be raised
-if you try.</p></td>
+<p>Instances of the <a href="AMQP.html"><code>AMQP</code></a> endpoint can be created, but cannot be used for resource calls - <a href="AMQP.html#method-i-list"><code>list</code></a>, <a href="AMQP.html#method-i-show"><code>show</code></a>, <a href="AMQP.html#method-i-create"><code>create</code></a>, <a href="AMQP.html#method-i-update"><code>update</code></a> and <a href="AMQP.html#method-i-delete"><code>delete</code></a> <em>cannot</em> be called - until an Alchemy instance has been specified. An exception will be raised if you try.</p></td>
         </tr>
     </table>
 
@@ -152,8 +134,7 @@ if you try.</p></td>
         </div>
 
         <div class="description">
-            <p>See <a
-href="../Endpoint.html#method-i-create">Hoodoo::Client::Endpoint#create</a>.</p>
+            <p>See <a href="../Endpoint.html#method-i-create"><code>Hoodoo::Client::Endpoint#create</code></a>.</p>
         </div>
 
 
@@ -184,8 +165,7 @@ href="../Endpoint.html#method-i-create">Hoodoo::Client::Endpoint#create</a>.</p>
         </div>
 
         <div class="description">
-            <p>See <a
-href="../Endpoint.html#method-i-delete">Hoodoo::Client::Endpoint#delete</a>.</p>
+            <p>See <a href="../Endpoint.html#method-i-delete"><code>Hoodoo::Client::Endpoint#delete</code></a>.</p>
         </div>
 
 
@@ -216,8 +196,7 @@ href="../Endpoint.html#method-i-delete">Hoodoo::Client::Endpoint#delete</a>.</p>
         </div>
 
         <div class="description">
-            <p>See <a
-href="../Endpoint.html#method-i-list">Hoodoo::Client::Endpoint#list</a>.</p>
+            <p>See <a href="../Endpoint.html#method-i-list"><code>Hoodoo::Client::Endpoint#list</code></a>.</p>
         </div>
 
 
@@ -247,30 +226,22 @@ href="../Endpoint.html#method-i-list">Hoodoo::Client::Endpoint#list</a>.</p>
         </div>
 
         <div class="description">
-            <p>Ask Alchemy Flux to send a given <a href="HTTP.html">HTTP</a> message to a
-resource.</p>
+            <p>Ask Alchemy Flux to send a given <a href="HTTP.html"><code>HTTP</code></a> message to a resource.</p>
 
-<p>This method is available for <a href="../../../Hoodoo.html">Hoodoo</a>
-monkey patching but must not be called by third party code; it&#39;s a
-private method exposed in the public <code>monkey_</code> namespace for
-patching only. For more, see:</p>
+<p>This method is available for <a href="../../../Hoodoo.html"><code>Hoodoo</code></a> monkey patching but must not be called by third party code; it&#39;s a private method exposed in the public <code>monkey_</code> namespace for patching only. For more, see:</p>
 <ul><li>
-<p><a href="../../Monkey.html">Hoodoo::Monkey</a></p>
+<p><a href="../../Monkey.html"><code>Hoodoo::Monkey</code></a></p>
 </li><li>
-<p><a
-href="../../Monkey/Patch/NewRelicTracedAMQP.html">Hoodoo::Monkey::Patch::NewRelicTracedAMQP</a></p>
+<p><a href="../../Monkey/Patch/NewRelicTracedAMQP.html"><code>Hoodoo::Monkey::Patch::NewRelicTracedAMQP</code></a></p>
 </li><li>
-<p><a
-href="../../Monkey/Patch/DatadogTracedAMQP.html">Hoodoo::Monkey::Patch::DatadogTracedAMQP</a></p>
+<p><a href="../../Monkey/Patch/DatadogTracedAMQP.html"><code>Hoodoo::Monkey::Patch::DatadogTracedAMQP</code></a></p>
 </li></ul>
 <dl class="rdoc-list note-list"><dt><code>http_message</code>
 <dd>
 <p>Hash describing the message to send.</p>
 </dd><dt><code>full_uri</code>
 <dd>
-<p>Equivalent full URI of the request (information only; the
-<code>http_message</code> tells Alchemy Flux how to route the message; it
-does not consult this parameter).</p>
+<p>Equivalent full URI of the request (information only; the <code>http_message</code> tells Alchemy Flux how to route the message; it does not consult this parameter).</p>
 </dd></dl>
 
 <p>The return value is an Alchemy Flux response object.</p>
@@ -299,8 +270,7 @@ does not consult this parameter).</p>
         </div>
 
         <div class="description">
-            <p>See <a
-href="../Endpoint.html#method-i-show">Hoodoo::Client::Endpoint#show</a>.</p>
+            <p>See <a href="../Endpoint.html#method-i-show"><code>Hoodoo::Client::Endpoint#show</code></a>.</p>
         </div>
 
 
@@ -331,8 +301,7 @@ href="../Endpoint.html#method-i-show">Hoodoo::Client::Endpoint#show</a>.</p>
         </div>
 
         <div class="description">
-            <p>See <a
-href="../Endpoint.html#method-i-update">Hoodoo::Client::Endpoint#update</a>.</p>
+            <p>See <a href="../Endpoint.html#method-i-update"><code>Hoodoo::Client::Endpoint#update</code></a>.</p>
         </div>
 
 
@@ -366,13 +335,9 @@ href="../Endpoint.html#method-i-update">Hoodoo::Client::Endpoint#update</a>.</p>
         </div>
 
         <div class="description">
-            <p>See <a
-href="../Endpoint.html#method-i-configure_with">Hoodoo::Client::Endpoint#configure_with</a>.</p>
+            <p>See <a href="../Endpoint.html#method-i-configure_with"><code>Hoodoo::Client::Endpoint#configure_with</code></a>.</p>
 
-<p>Requires a <a
-href="../../Services/Discovery/ForAMQP.html">Hoodoo::Services::Discovery::ForAMQP</a>
-instance in the <code>discovery_result</code> field of the
-<code>options</code> Hash.</p>
+<p>Requires a <a href="../../Services/Discovery/ForAMQP.html"><code>Hoodoo::Services::Discovery::ForAMQP</code></a> instance in the <code>discovery_result</code> field of the <code>options</code> Hash.</p>
         </div>
 
 

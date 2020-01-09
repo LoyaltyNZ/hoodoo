@@ -41,8 +41,7 @@
         <div id="content">
     <div class="description">
         
-<p>Discover resource endpoint locations via a DRb registry. For HTTP-based
-endpoints.</p>
+<p>Discover resource endpoint locations via a DRb registry. For HTTP-based endpoints.</p>
 
     </div>
 
@@ -165,21 +164,17 @@ allow 127.0.0.1
         </div>
 
         <div class="description">
-            <p>Announce the location of an instance through the DRb service (which may be
-started up if necessary).</p>
+            <p>Announce the location of an instance through the DRb service (which may be started up if necessary).</p>
 
-<p>Returns a <a href="ForHTTP.html">Hoodoo::Services::Discovery::ForHTTP</a>
-instance.</p>
+<p>Returns a <a href="ForHTTP.html"><code>Hoodoo::Services::Discovery::ForHTTP</code></a> instance.</p>
 
 <p>Call via Hoodoo::Services::Discovery::Base#announce.</p>
 <dl class="rdoc-list note-list"><dt><code>resource</code>
 <dd>
-<p>Passed to <a
-href="ByDRb.html#method-i-discover_remote">discover_remote</a>.</p>
+<p>Passed to <a href="ByDRb.html#method-i-discover_remote"><code>discover_remote</code></a>.</p>
 </dd><dt><code>version</code>
 <dd>
-<p>Passed to <a
-href="ByDRb.html#method-i-discover_remote">discover_remote</a>.</p>
+<p>Passed to <a href="ByDRb.html#method-i-discover_remote"><code>discover_remote</code></a>.</p>
 </dd><dt><code>options</code>
 <dd>
 <p>Options hash as described below.</p>
@@ -188,8 +183,7 @@ href="ByDRb.html#method-i-discover_remote">discover_remote</a>.</p>
 <p>Options keys are:</p>
 <dl class="rdoc-list note-list"><dt><code>host</code>
 <dd>
-<p>Host name as a string for location of service endpoint, over HTTP (usually,
-local development is assumed).</p>
+<p>Host name as a string for location of service endpoint, over HTTP (usually, local development is assumed).</p>
 </dd><dt><code>port</code>
 <dd>
 <p>Port number of service endpoint.</p>
@@ -198,8 +192,7 @@ local development is assumed).</p>
 <p>Path on the above host and port of service endpoint.</p>
 </dd></dl>
 
-<p>If any are missing or <code>nil</code>, remote announcement is aborted and
-the return value is correspondingly <code>nil</code>.</p>
+<p>If any are missing or <code>nil</code>, remote announcement is aborted and the return value is correspondingly <code>nil</code>.</p>
         </div>
 
 
@@ -243,8 +236,7 @@ the return value is correspondingly <code>nil</code>.</p>
         </div>
 
         <div class="description">
-            <p>Configure an instance. Call via Hoodoo::Services::Discovery::Base#new.
-Parameters:</p>
+            <p>Configure an instance. Call via Hoodoo::Services::Discovery::Base#new. Parameters:</p>
 <dl class="rdoc-list note-list"><dt><code>options</code>
 <dd>
 <p>Options hash as described below.</p>
@@ -253,14 +245,10 @@ Parameters:</p>
 <p>Options are:</p>
 <dl class="rdoc-list note-list"><dt><code>drb_port</code>
 <dd>
-<p>Optional port on which to launch the DRb service. If omitted, environment
-variable <code>HOODOO_DISCOVERY_BY_DRB_PORT_OVERRIDE</code> will be
-consulted. If unset, port 8787 is used.</p>
+<p>Optional port on which to launch the DRb service. If omitted, environment variable <code>HOODOO_DISCOVERY_BY_DRB_PORT_OVERRIDE</code> will be consulted. If unset, port 8787 is used.</p>
 </dd><dt><code>drb_uri</code>
 <dd>
-<p>Optional URI String at which to find an existing DRB service. It must
-alreayd be running. If omitted, the <code>drb_port</code> option&#39;s
-behaviour applies. If present, the <code>drb_port</code> option is ignored.</p>
+<p>Optional URI String at which to find an existing DRB service. It must alreayd be running. If omitted, the <code>drb_port</code> option&#39;s behaviour applies. If present, the <code>drb_port</code> option is ignored.</p>
 </dd></dl>
         </div>
 
@@ -288,11 +276,9 @@ behaviour applies. If present, the <code>drb_port</code> option is ignored.</p>
         </div>
 
         <div class="description">
-            <p>Discover an endpoint someone previously registered via <a
-href="ByDRb.html#method-i-announce_remote">announce_remote</a>.</p>
+            <p>Discover an endpoint someone previously registered via <a href="ByDRb.html#method-i-announce_remote"><code>announce_remote</code></a>.</p>
 
-<p>Returns a <a href="ForHTTP.html">Hoodoo::Services::Discovery::ForHTTP</a>
-instance if the endpoint is found, else <code>nil</code>.</p>
+<p>Returns a <a href="ForHTTP.html"><code>Hoodoo::Services::Discovery::ForHTTP</code></a> instance if the endpoint is found, else <code>nil</code>.</p>
 <dl class="rdoc-list note-list"><dt><code>resource</code>
 <dd>
 <p>Resource name as a String.</p>

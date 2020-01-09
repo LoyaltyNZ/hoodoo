@@ -39,14 +39,9 @@
         <div id="content">
     <div class="description">
         
-<p>Maintains a pool of object instances which are expected to be communicating
-with “the outside world” in some way. A message sent to the pool is
-replicated to all the communicators in that pool. Some communicators are
-fast, which means they are called synchronously and expected to return very
-quickly. Some communicators are slow, which means they are called
-asynchronously through a work queue.</p>
+<p>Maintains a pool of object instances which are expected to be communicating with “the outside world” in some way. A message sent to the pool is replicated to all the communicators in that pool. Some communicators are fast, which means they are called synchronously and expected to return very quickly. Some communicators are slow, which means they are called asynchronously through a work queue.</p>
 
-<p>See <a href="Pool.html#method-i-add">add</a> for more information.</p>
+<p>See <a href="Pool.html#method-i-add"><code>add</code></a> for more information.</p>
 
     </div>
 
@@ -133,12 +128,7 @@ asynchronously through a work queue.</p>
         </tr>
         <tr valign='top'>
             <td>&nbsp;</td>
-            <td colspan="2" class="attr-desc"><p><a href="Slow.html">Hoodoo::Communicators::Slow</a> subclass communicators
-are called in their own Threads via a processing Queue. There is the
-potential for a flood of communications to cause the queue to back up
-considerably, so a maximum number of messages is defined. If the queue size
-is _equal to or greater_ than this amount when a message arrives, it will
-be dropped and a &#39;dropped message&#39; count incremented.</p></td>
+            <td colspan="2" class="attr-desc"><p><a href="Slow.html"><code>Hoodoo::Communicators::Slow</code></a> subclass communicators are called in their own Threads via a processing Queue. There is the potential for a flood of communications to cause the queue to back up considerably, so a maximum number of messages is defined. If the queue size is _equal to or greater_ than this amount when a message arrives, it will be dropped and a &#39;dropped message&#39; count incremented.</p></td>
         </tr>
         <tr valign='top' id='THREAD_EXIT_TIMEOUT'>
             <td class="attr-name">THREAD_EXIT_TIMEOUT</td>
@@ -147,9 +137,7 @@ be dropped and a &#39;dropped message&#39; count incremented.</p></td>
         </tr>
         <tr valign='top'>
             <td>&nbsp;</td>
-            <td colspan="2" class="attr-desc"><p>When asking slow communicator threads to exit, a timeout must be used in
-case the thread doesn&#39;t seem to be responsive. This is the timeout
-value in seconds - it can take a floating point or integer value.</p></td>
+            <td colspan="2" class="attr-desc"><p>When asking slow communicator threads to exit, a timeout must be used in case the thread doesn&#39;t seem to be responsive. This is the timeout value in seconds - it can take a floating point or integer value.</p></td>
         </tr>
         <tr valign='top' id='THREAD_WAIT_TIMEOUT'>
             <td class="attr-name">THREAD_WAIT_TIMEOUT</td>
@@ -158,10 +146,7 @@ value in seconds - it can take a floating point or integer value.</p></td>
         </tr>
         <tr valign='top'>
             <td>&nbsp;</td>
-            <td colspan="2" class="attr-desc"><p>Analogous to <a
-href="Pool.html#THREAD_WAIT_TIMEOUT">THREAD_WAIT_TIMEOUT</a> but used when
-waiting for a processing Thread to drain its Queue, without asking it to
-exit.</p></td>
+            <td colspan="2" class="attr-desc"><p>Analogous to <a href="Pool.html#THREAD_WAIT_TIMEOUT"><code>THREAD_WAIT_TIMEOUT</code></a> but used when waiting for a processing Thread to drain its Queue, without asking it to exit.</p></td>
         </tr>
     </table>
 
@@ -173,9 +158,7 @@ exit.</p></td>
                 [RW]
             </td>
             <td class='attr-name'>group</td>
-            <td class='attr-desc'><p>Retrieve the ThreadGroup instance managing the collection of slow
-communicator threads. This is mostly used for testing purposes and has
-little general purpose utility.</p></td>
+            <td class='attr-desc'><p>Retrieve the ThreadGroup instance managing the collection of slow communicator threads. This is mostly used for testing purposes and has little general purpose utility.</p></td>
         </tr>
     </table>
 
@@ -189,11 +172,7 @@ little general purpose utility.</p></td>
         </div>
 
         <div class="description">
-            <p>Create a new pool of communicators - instances of subclasses of <a
-href="Fast.html">Hoodoo::Communicators::Fast</a> or <a
-href="Slow.html">Hoodoo::Communicators::Slow</a>, are added with <a
-href="Pool.html#method-i-add">add</a> and called with <a
-href="Pool.html#method-i-communicate">communicate</a>.</p>
+            <p>Create a new pool of communicators - instances of subclasses of <a href="Fast.html"><code>Hoodoo::Communicators::Fast</code></a> or <a href="Slow.html"><code>Hoodoo::Communicators::Slow</code></a>, are added with <a href="Pool.html#method-i-add"><code>add</code></a> and called with <a href="Pool.html#method-i-communicate"><code>communicate</code></a>.</p>
         </div>
 
 
@@ -222,36 +201,18 @@ href="Pool.html#method-i-communicate">communicate</a>.</p>
         </div>
 
         <div class="description">
-            <p>Add a communicator instance to the pool. Future calls to <a
-href="Pool.html#method-i-communicate">communicate</a> will call the
-same-named method in that instance.</p>
+            <p>Add a communicator instance to the pool. Future calls to <a href="Pool.html#method-i-communicate"><code>communicate</code></a> will call the same-named method in that instance.</p>
 
-<p>Subclasses of <a href="Slow.html">Hoodoo::Communicators::Slow</a> are
-called within a processing Thread. Subclasses of <a
-href="Fast.html">Hoodoo::Communicators::Fast</a> are called inline. The
-instances are called in the order of addition, but since each slow
-communicator runs in its own Thread, the execution order is indeterminate
-for such instances.</p>
+<p>Subclasses of <a href="Slow.html"><code>Hoodoo::Communicators::Slow</code></a> are called within a processing Thread. Subclasses of <a href="Fast.html"><code>Hoodoo::Communicators::Fast</code></a> are called inline. The instances are called in the order of addition, but since each slow communicator runs in its own Thread, the execution order is indeterminate for such instances.</p>
 
-<p>If a slow communicator&#39;s inbound message queue length matches or
-exceeds <a href="Pool.html#MAX_SLOW_QUEUE_SIZE">MAX_SLOW_QUEUE_SIZE</a>,
-messages for that specific communicator will start being dropped until the
-communicator clears the backlog and at last one space opens on the queue.
-<a href="Slow.html">Slow</a> communicators can detect when this has
-happened by implementing <a
-href="Slow.html#method-i-dropped">Hoodoo::Communicators::Slow#dropped</a>
-in the subclass.</p>
+<p>If a slow communicator&#39;s inbound message queue length matches or exceeds <a href="Pool.html#MAX_SLOW_QUEUE_SIZE"><code>MAX_SLOW_QUEUE_SIZE</code></a>, messages for that specific communicator will start being dropped until the communicator clears the backlog and at last one space opens on the queue. <a href="Slow.html"><code>Slow</code></a> communicators can detect when this has happened by implementing <a href="Slow.html#method-i-dropped"><code>Hoodoo::Communicators::Slow#dropped</code></a> in the subclass.</p>
 
-<p>If you pass the same instance more than once, the subsequent calls are
-ignored. You can add many instances of the same class if that&#39;s useful
-for any reason.</p>
+<p>If you pass the same instance more than once, the subsequent calls are ignored. You can add many instances of the same class if that&#39;s useful for any reason.</p>
 
 <p>Returns the passed-in communicator instance parameter, for convenience.</p>
 <dl class="rdoc-list note-list"><dt><code>communicator</code>
 <dd>
-<p>Instance is to be added to the pool. Must be either a <a
-href="Fast.html">Hoodoo::Communicators::Fast</a> or <a
-href="Slow.html">Hoodoo::Communicators::Slow</a> subclass instance.</p>
+<p>Instance is to be added to the pool. Must be either a <a href="Fast.html"><code>Hoodoo::Communicators::Fast</code></a> or <a href="Slow.html"><code>Hoodoo::Communicators::Slow</code></a> subclass instance.</p>
 </dd></dl>
         </div>
 
@@ -291,17 +252,10 @@ href="Slow.html">Hoodoo::Communicators::Slow</a> subclass instance.</p>
         </div>
 
         <div class="description">
-            <p>Call the <a href="Pool.html#method-i-communicate">communicate</a> method on
-each communicator instance added via <a
-href="Pool.html#method-i-add">add</a>. Each instance is called in the same
-order as corresponding calls are made to the pool. <em>Across</em>
-instances, fast communicators are called in the order they were added to
-the pool, but since each slow communicator runs in its own Thread,
-execution order is indeterminate.</p>
+            <p>Call the <a href="Pool.html#method-i-communicate"><code>communicate</code></a> method on each communicator instance added via <a href="Pool.html#method-i-add"><code>add</code></a>. Each instance is called in the same order as corresponding calls are made to the pool. <em>Across</em> instances, fast communicators are called in the order they were added to the pool, but since each slow communicator runs in its own Thread, execution order is indeterminate.</p>
 <dl class="rdoc-list note-list"><dt><code>object</code>
 <dd>
-<p>Parameter passed to the communicator subclass instance <a
-href="Pool.html#method-i-communicate">communicate</a> methods.</p>
+<p>Parameter passed to the communicator subclass instance <a href="Pool.html#method-i-communicate"><code>communicate</code></a> methods.</p>
 </dd></dl>
         </div>
 
@@ -371,24 +325,16 @@ href="Pool.html#method-i-communicate">communicate</a> methods.</p>
         </div>
 
         <div class="description">
-            <p>Remove a communicator previously added by <a
-href="Pool.html#method-i-add">add</a>. See that for details.</p>
+            <p>Remove a communicator previously added by <a href="Pool.html#method-i-add"><code>add</code></a>. See that for details.</p>
 
-<p>It is harmless to try and remove communicator instances more than once or
-to try to remove something that was never added in the first place; the
-call simply has no side effects.</p>
+<p>It is harmless to try and remove communicator instances more than once or to try to remove something that was never added in the first place; the call simply has no side effects.</p>
 
-<p>If removing a slow communicator, its thread will be terminated with default
-timeout value of <a
-href="Pool.html#THREAD_EXIT_TIMEOUT">THREAD_EXIT_TIMEOUT</a> seconds. For
-this reason, removing a slow communicator may take a long time.</p>
+<p>If removing a slow communicator, its thread will be terminated with default timeout value of <a href="Pool.html#THREAD_EXIT_TIMEOUT"><code>THREAD_EXIT_TIMEOUT</code></a> seconds. For this reason, removing a slow communicator may take a long time.</p>
 
 <p>Returns the passed-in communicator instance parameter, for convenience.</p>
 <dl class="rdoc-list note-list"><dt><code>communicator</code>
 <dd>
-<p>Instance is to be removed from the pool. Must be either a <a
-href="Fast.html">Hoodoo::Communicators::Fast</a> or <a
-href="Slow.html">Hoodoo::Communicators::Slow</a> subclass instance.</p>
+<p>Instance is to be removed from the pool. Must be either a <a href="Fast.html"><code>Hoodoo::Communicators::Fast</code></a> or <a href="Slow.html"><code>Hoodoo::Communicators::Slow</code></a> subclass instance.</p>
 </dd></dl>
         </div>
 
@@ -428,34 +374,18 @@ href="Slow.html">Hoodoo::Communicators::Slow</a> subclass instance.</p>
         </div>
 
         <div class="description">
-            <p>The communication pool is “emptied” by this call, going back to a clean
-state as if just initialised. New workers can be added via <a
-href="Pool.html#method-i-add">add</a> and then called via <a
-href="Pool.html#method-i-communicate">communicate</a> if you so wish.</p>
+            <p>The communication pool is “emptied” by this call, going back to a clean state as if just initialised. New workers can be added via <a href="Pool.html#method-i-add"><code>add</code></a> and then called via <a href="Pool.html#method-i-communicate"><code>communicate</code></a> if you so wish.</p>
 
-<p>Hoodoo::Communciators::Fast subclass instances are removed immediately
-without complications.</p>
+<p>Hoodoo::Communciators::Fast subclass instances are removed immediately without complications.</p>
 
-<p><a href="Slow.html">Hoodoo::Communicators::Slow</a> subclass instances in
-the communication pool are called via a worker Thread; this method shuts
-down all such worker Threads, clearing their work queues and asking each
-one to exit (politely). There is no mechanism (other than overall Ruby
-process exit) available to shut down the Threads by force, so some Threads
-may not respond and time out.</p>
+<p><a href="Slow.html"><code>Hoodoo::Communicators::Slow</code></a> subclass instances in the communication pool are called via a worker Thread; this method shuts down all such worker Threads, clearing their work queues and asking each one to exit (politely). There is no mechanism (other than overall Ruby process exit) available to shut down the Threads by force, so some Threads may not respond and time out.</p>
 
-<p>When this method exits, all workers will have either exited or timed out
-and possibly still be running, but are considered too slow or dead. No
-further communications are made to them.</p>
+<p>When this method exits, all workers will have either exited or timed out and possibly still be running, but are considered too slow or dead. No further communications are made to them.</p>
 
 <p>The following <strong>named</strong> parameters are supported:</p>
 <dl class="rdoc-list note-list"><dt><code>per_instance_timeout</code>
 <dd>
-<p>Timeout for <em>each</em> slow communicator Thread in seconds. Optional.
-Default is the value in <a
-href="Pool.html#THREAD_EXIT_TIMEOUT">THREAD_EXIT_TIMEOUT</a>. For example,
-with three slow communicators in the pool and all three reached a 5 second
-timeout, the termination method would not return for 15 seconds (3 * 5
-seconds full timeout).</p>
+<p>Timeout for <em>each</em> slow communicator Thread in seconds. Optional. Default is the value in <a href="Pool.html#THREAD_EXIT_TIMEOUT"><code>THREAD_EXIT_TIMEOUT</code></a>. For example, with three slow communicators in the pool and all three reached a 5 second timeout, the termination method would not return for 15 seconds (3 * 5 seconds full timeout).</p>
 </dd></dl>
         </div>
 
@@ -494,28 +424,17 @@ seconds full timeout).</p>
         </div>
 
         <div class="description">
-            <p>This method is only useful if there are any <a
-href="Slow.html">Hoodoo::Communicators::Slow</a> subclass instances in the
-communication pool. Each instance is called via a worker Thread; this
-method waits for each communicator to drain its queue before returning.
-This is useful if you have a requirement to wait for all communications to
-finish on all threads, presumably for wider synchronisation reasons.</p>
+            <p>This method is only useful if there are any <a href="Slow.html"><code>Hoodoo::Communicators::Slow</code></a> subclass instances in the communication pool. Each instance is called via a worker Thread; this method waits for each communicator to drain its queue before returning. This is useful if you have a requirement to wait for all communications to finish on all threads, presumably for wider synchronisation reasons.</p>
 
-<p>Since fast communicators are called synchronously there is never any need
-to wait for them, so this call ignores such pool entries.</p>
+<p>Since fast communicators are called synchronously there is never any need to wait for them, so this call ignores such pool entries.</p>
 
 <p>The following <strong>named</strong> parameters are supported:</p>
 <dl class="rdoc-list note-list"><dt><code>per_instance_timeout</code>
 <dd>
-<p>Timeout for <em>each</em> slow communicator Thread in seconds. Optional.
-Default is the value in <a
-href="Pool.html#THREAD_WAIT_TIMEOUT">THREAD_WAIT_TIMEOUT</a>.</p>
+<p>Timeout for <em>each</em> slow communicator Thread in seconds. Optional. Default is the value in <a href="Pool.html#THREAD_WAIT_TIMEOUT"><code>THREAD_WAIT_TIMEOUT</code></a>.</p>
 </dd><dt><code>communicator</code>
 <dd>
-<p>If you want to wait for specific instance only (see <a
-href="Pool.html#method-i-add">add</a>), pass it here. If the instance is a
-fast communicator, or any object not added to the pool, then there is no
-error raised. The method simply returns immediately.</p>
+<p>If you want to wait for specific instance only (see <a href="Pool.html#method-i-add"><code>add</code></a>), pass it here. If the instance is a fast communicator, or any object not added to the pool, then there is no error raised. The method simply returns immediately.</p>
 </dd></dl>
         </div>
 

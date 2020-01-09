@@ -36,26 +36,18 @@
         <div id="content">
     <div class="description">
         
-<p><a href="Support.html">Support</a> mixin for models subclassed from <a
-href="Base.html">ActiveRecord::Base</a> providing context-aware model
-instance creation, allowing service authors to auto-inherit related
-features from <a href="../../Hoodoo.html">Hoodoo</a> without changing their
-code.</p>
+<p><a href="Support.html"><code>Support</code></a> mixin for models subclassed from <a href="Base.html"><code>ActiveRecord::Base</code></a> providing context-aware model instance creation, allowing service authors to auto-inherit related features from <a href="../../Hoodoo.html"><code>Hoodoo</code></a> without changing their code.</p>
 
 <p>It is <em>STRONGLY</em> <em>RECOMMENDED</em> that you use the likes of:</p>
 <ul><li>
 <p>Hoodoo::ActiveRecord::Creator::ClassMethods::new_in</p>
 </li></ul>
 
-<p>…to create model instances and participate “for free” in whatever plug-in
-<a href="../ActiveRecord.html">ActiveRecord</a> modules are mixed into the
-model classes, such as <a href="Dated.html">Hoodoo::ActiveRecord::Dated</a>
-and <a href="ManuallyDated.html">Hoodoo::ActiveRecord::ManuallyDated</a>.</p>
+<p>…to create model instances and participate “for free” in whatever plug-in <a href="../ActiveRecord.html"><code>ActiveRecord</code></a> modules are mixed into the model classes, such as <a href="Dated.html"><code>Hoodoo::ActiveRecord::Dated</code></a> and <a href="ManuallyDated.html"><code>Hoodoo::ActiveRecord::ManuallyDated</code></a>.</p>
 
 <p>See also:</p>
 <ul><li>
-<p><a
-href="http://guides.rubyonrails.org/active_record_basics.html">guides.rubyonrails.org/active_record_basics.html</a></p>
+<p><a href="http://guides.rubyonrails.org/active_record_basics.html">guides.rubyonrails.org/active_record_basics.html</a></p>
 </li></ul>
 
     </div>
@@ -114,8 +106,7 @@ end
 </code></pre>
 <dl class="rdoc-list note-list"><dt><code>model</code>
 <dd>
-<p>The <a href="Base.html">ActiveRecord::Base</a> descendant that is including
-this module.</p>
+<p>The <a href="Base.html"><code>ActiveRecord::Base</code></a> descendant that is including this module.</p>
 </dd></dl>
         </div>
 
@@ -143,14 +134,10 @@ this module.</p>
         </div>
 
         <div class="description">
-            <p>When instantiated in an <a href="Base.html">ActiveRecord::Base</a>
-subclass, all of the <a
-href="Dated/ClassMethods.html">Hoodoo::ActiveRecord::Dated::ClassMethods</a>
-methods are defined as class methods on the including class.</p>
+            <p>When instantiated in an <a href="Base.html"><code>ActiveRecord::Base</code></a> subclass, all of the <a href="Dated/ClassMethods.html"><code>Hoodoo::ActiveRecord::Dated::ClassMethods</code></a> methods are defined as class methods on the including class.</p>
 <dl class="rdoc-list note-list"><dt><code>model</code>
 <dd>
-<p>The <a href="Base.html">ActiveRecord::Base</a> descendant that is including
-this module.</p>
+<p>The <a href="Base.html"><code>ActiveRecord::Base</code></a> descendant that is including this module.</p>
 </dd></dl>
         </div>
 

@@ -35,19 +35,9 @@
 <p>Loyalty New Zealand 2014</p>
 </dd><dt>Purpose
 <dd>
-<p>Define a class that service authors subclass and use to declare the
-component interfaces within the service via a very small DSL.</p>
+<p>Define a class that service authors subclass and use to declare the component interfaces within the service via a very small DSL.</p>
 
-<p>This class is passed to <a href="../../../../../classes/Rack.html">Rack</a>
-and treated like an endpoint <a
-href="../../../../../classes/Rack.html">Rack</a> application, though the
-service middleware in practice does not pass on calls using the <a
-href="../../../../../classes/Rack.html">Rack</a> interface; it uses the
-custom calls exposed by <a
-href="../../../../../classes/Hoodoo/Services/Implementation.html">Hoodoo::Services::Implementation</a>.
-Rack&#39;s involvement between the two is really limited to just passing an
-instance of the service application subclass to the middleware so it knows
-who to “talk to”.</p>
+<p>This class is passed to <a href="../../../../../classes/Rack.html"><code>Rack</code></a> and treated like an endpoint <a href="../../../../../classes/Rack.html"><code>Rack</code></a> application, though the service middleware in practice does not pass on calls using the <a href="../../../../../classes/Rack.html"><code>Rack</code></a> interface; it uses the custom calls exposed by <a href="../../../../../classes/Hoodoo/Services/Implementation.html"><code>Hoodoo::Services::Implementation</code></a>. Rack&#39;s involvement between the two is really limited to just passing an instance of the service application subclass to the middleware so it knows who to “talk to”.</p>
 </dd></dl>
 <hr>
 

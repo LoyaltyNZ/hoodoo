@@ -39,36 +39,30 @@
         <div id="content">
     <div class="description">
         
-<p>While individual <a href="../ActiveRecord.html">ActiveRecord</a> mixins can
-be included as and when needed, if you want the set of mixins, just define
-a model which subclasses from this <a
-href="Base.html">Hoodoo::ActiveRecord::Base</a> class instead of <a
-href="Base.html">ActiveRecord::Base</a>.</p>
+<p>While individual <a href="../ActiveRecord.html"><code>ActiveRecord</code></a> mixins can be included as and when needed, if you want the set of mixins, just define a model which subclasses from this <a href="Base.html"><code>Hoodoo::ActiveRecord::Base</code></a> class instead of <a href="Base.html"><code>ActiveRecord::Base</code></a>.</p>
 
 <p>This will include:</p>
 <ul><li>
-<p><a href="Secure.html">Hoodoo::ActiveRecord::Secure</a></p>
+<p><a href="Secure.html"><code>Hoodoo::ActiveRecord::Secure</code></a></p>
 </li><li>
-<p><a href="Dated.html">Hoodoo::ActiveRecord::Dated</a></p>
+<p><a href="Dated.html"><code>Hoodoo::ActiveRecord::Dated</code></a></p>
 </li><li>
-<p><a href="ManuallyDated.html">Hoodoo::ActiveRecord::ManuallyDated</a></p>
+<p><a href="ManuallyDated.html"><code>Hoodoo::ActiveRecord::ManuallyDated</code></a></p>
 </li><li>
-<p><a href="Translated.html">Hoodoo::ActiveRecord::Translated</a></p>
+<p><a href="Translated.html"><code>Hoodoo::ActiveRecord::Translated</code></a></p>
 </li><li>
-<p><a href="Finder.html">Hoodoo::ActiveRecord::Finder</a></p>
+<p><a href="Finder.html"><code>Hoodoo::ActiveRecord::Finder</code></a></p>
 </li><li>
-<p><a href="UUID.html">Hoodoo::ActiveRecord::UUID</a></p>
+<p><a href="UUID.html"><code>Hoodoo::ActiveRecord::UUID</code></a></p>
 </li><li>
-<p><a href="Creator.html">Hoodoo::ActiveRecord::Creator</a></p>
+<p><a href="Creator.html"><code>Hoodoo::ActiveRecord::Creator</code></a></p>
 </li><li>
-<p><a href="Writer.html">Hoodoo::ActiveRecord::Writer</a></p>
+<p><a href="Writer.html"><code>Hoodoo::ActiveRecord::Writer</code></a></p>
 </li><li>
-<p><a href="ErrorMapping.html">Hoodoo::ActiveRecord::ErrorMapping</a></p>
+<p><a href="ErrorMapping.html"><code>Hoodoo::ActiveRecord::ErrorMapping</code></a></p>
 </li></ul>
 
-<p>…but not necessarily <em>activate</em> those modules. For example, the <a
-href="Dated.html">Hoodoo::ActiveRecord::Dated</a> module must be activated
-by a call to Hoodoo::ActiveRecord::Dated.dating_enabled.</p>
+<p>…but not necessarily <em>activate</em> those modules. For example, the <a href="Dated.html"><code>Hoodoo::ActiveRecord::Dated</code></a> module must be activated by a call to Hoodoo::ActiveRecord::Dated.dating_enabled.</p>
 
     </div>
 
@@ -152,12 +146,10 @@ by a call to Hoodoo::ActiveRecord::Dated.dating_enabled.</p>
         </div>
 
         <div class="description">
-            <p>Instantiates all the <a href="../ActiveRecord.html">ActiveRecord</a> mixins
-when this class is inherited.</p>
+            <p>Instantiates all the <a href="../ActiveRecord.html"><code>ActiveRecord</code></a> mixins when this class is inherited.</p>
 <dl class="rdoc-list note-list"><dt><code>model</code>
 <dd>
-<p>The <a href="Base.html">ActiveRecord::Base</a> descendant that is including
-this module.</p>
+<p>The <a href="Base.html"><code>ActiveRecord::Base</code></a> descendant that is including this module.</p>
 </dd></dl>
         </div>
 

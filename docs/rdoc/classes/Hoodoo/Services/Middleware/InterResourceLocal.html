@@ -39,10 +39,7 @@
         <div id="content">
     <div class="description">
         
-<p>This is an endpoint which the middleware uses for inter-resource calls back
-calling back to that same middleware instance, for resources which exist
-within the same service application. The middleware manages all the
-inter-resource preparation and post processing.</p>
+<p>This is an endpoint which the middleware uses for inter-resource calls back calling back to that same middleware instance, for resources which exist within the same service application. The middleware manages all the inter-resource preparation and post processing.</p>
 
     </div>
 
@@ -112,8 +109,7 @@ inter-resource preparation and post processing.</p>
         </div>
 
         <div class="description">
-            <p>See <a
-href="../../Client/Endpoint.html#method-i-create">Hoodoo::Client::Endpoint#create</a>.</p>
+            <p>See <a href="../../Client/Endpoint.html#method-i-create"><code>Hoodoo::Client::Endpoint#create</code></a>.</p>
         </div>
 
 
@@ -148,8 +144,7 @@ href="../../Client/Endpoint.html#method-i-create">Hoodoo::Client::Endpoint#creat
         </div>
 
         <div class="description">
-            <p>See <a
-href="../../Client/Endpoint.html#method-i-delete">Hoodoo::Client::Endpoint#delete</a>.</p>
+            <p>See <a href="../../Client/Endpoint.html#method-i-delete"><code>Hoodoo::Client::Endpoint#delete</code></a>.</p>
         </div>
 
 
@@ -184,8 +179,7 @@ href="../../Client/Endpoint.html#method-i-delete">Hoodoo::Client::Endpoint#delet
         </div>
 
         <div class="description">
-            <p>See <a
-href="../../Client/Endpoint.html#method-i-list">Hoodoo::Client::Endpoint#list</a>.</p>
+            <p>See <a href="../../Client/Endpoint.html#method-i-list"><code>Hoodoo::Client::Endpoint#list</code></a>.</p>
         </div>
 
 
@@ -220,8 +214,7 @@ href="../../Client/Endpoint.html#method-i-list">Hoodoo::Client::Endpoint#list</a
         </div>
 
         <div class="description">
-            <p>See <a
-href="../../Client/Endpoint.html#method-i-show">Hoodoo::Client::Endpoint#show</a>.</p>
+            <p>See <a href="../../Client/Endpoint.html#method-i-show"><code>Hoodoo::Client::Endpoint#show</code></a>.</p>
         </div>
 
 
@@ -256,8 +249,7 @@ href="../../Client/Endpoint.html#method-i-show">Hoodoo::Client::Endpoint#show</a
         </div>
 
         <div class="description">
-            <p>See <a
-href="../../Client/Endpoint.html#method-i-update">Hoodoo::Client::Endpoint#update</a>.</p>
+            <p>See <a href="../../Client/Endpoint.html#method-i-update"><code>Hoodoo::Client::Endpoint#update</code></a>.</p>
         </div>
 
 
@@ -295,27 +287,17 @@ href="../../Client/Endpoint.html#method-i-update">Hoodoo::Client::Endpoint#updat
         </div>
 
         <div class="description">
-            <p>See <a
-href="../../Client/Endpoint.html#method-i-configure_with">Hoodoo::Client::Endpoint#configure_with</a>.</p>
+            <p>See <a href="../../Client/Endpoint.html#method-i-configure_with"><code>Hoodoo::Client::Endpoint#configure_with</code></a>.</p>
 
-<p>It isn&#39;t expected that anyone will ever need to use this class beyond
-<a href="../Middleware.html">Hoodoo::Services::Middleware</a>, but you
-never know…</p>
+<p>It isn&#39;t expected that anyone will ever need to use this class beyond <a href="../Middleware.html"><code>Hoodoo::Services::Middleware</code></a>, but you never know…</p>
 
 <p>Configuration option keys which <em>must</em> be supplied are:</p>
 <dl class="rdoc-list note-list"><dt><code>interaction</code>
 <dd>
-<p>A <a href="Interaction.html">Hoodoo::Services::Middleware::Interaction</a>
-instance which describes the <strong>source</strong> interaction at hand.
-This is a middleware concept; the middleware is handling some API call
-which the source interaction data describes, but the resource which is
-handling the call needs to make a local inter-resource call, which is why
-this Endpoint subclass instance is needed.</p>
+<p>A <a href="Interaction.html"><code>Hoodoo::Services::Middleware::Interaction</code></a> instance which describes the <strong>source</strong> interaction at hand. This is a middleware concept; the middleware is handling some API call which the source interaction data describes, but the resource which is handling the call needs to make a local inter-resource call, which is why this Endpoint subclass instance is needed.</p>
 </dd><dt><code>discovery_result</code>
 <dd>
-<p>A <a
-href="../Discovery/ForLocal.html">Hoodoo::Services::Discovery::ForLocal</a>
-instance describing the locally available resource endpoint.</p>
+<p>A <a href="../Discovery/ForLocal.html"><code>Hoodoo::Services::Discovery::ForLocal</code></a> instance describing the locally available resource endpoint.</p>
 </dd></dl>
         </div>
 

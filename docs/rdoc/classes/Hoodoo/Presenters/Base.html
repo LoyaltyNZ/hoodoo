@@ -39,11 +39,7 @@
         <div id="content">
     <div class="description">
         
-<p><a href="Base.html">Base</a> functionality for JSON validation and
-presenter (rendering) layers. Subclass this to define a schema against
-which validation of inbound data or rendering of outbound data can be
-performed. Call schema in the subclass to declare, via the DSL, the shape
-of the schema.</p>
+<p><a href="Base.html"><code>Base</code></a> functionality for JSON validation and presenter (rendering) layers. Subclass this to define a schema against which validation of inbound data or rendering of outbound data can be performed. Call schema in the subclass to declare, via the DSL, the shape of the schema.</p>
 
     </div>
 
@@ -176,8 +172,7 @@ of the schema.</p>
         </div>
 
         <div class="description">
-            <p>Does this presenter use internationalisation? Returns <code>true</code> if
-so, else <code>false</code>.</p>
+            <p>Does this presenter use internationalisation? Returns <code>true</code> if so, else <code>false</code>.</p>
         </div>
 
 
@@ -203,18 +198,9 @@ so, else <code>false</code>.</p>
         </div>
 
         <div class="description">
-            <p>Given some data that should conform to the subclass presenter&#39;s schema,
-render it to go from the input Ruby <a href="Hash.html">Hash</a>, to an
-output Ruby <a href="Hash.html">Hash</a> which will include default values
-- if any - present in the schema and will drop input fields not present in
-that schema. In essence, this takes data which may have been
-programatically generated and sanitises it to produce valid, with-defaults
-guaranteed valid output.</p>
+            <p>Given some data that should conform to the subclass presenter&#39;s schema, render it to go from the input Ruby <a href="Hash.html"><code>Hash</code></a>, to an output Ruby <a href="Hash.html"><code>Hash</code></a> which will include default values - if any - present in the schema and will drop input fields not present in that schema. In essence, this takes data which may have been programatically generated and sanitises it to produce valid, with-defaults guaranteed valid output.</p>
 
-<p><a href="Field.html">Field</a> <code>kind</code> is taken from the class
-name. If concerned about clashes between resource names and <a
-href="../ActiveRecord.html">ActiveRecord</a> model names, put your resource
-classes inside a module for namespacing - for example:</p>
+<p><a href="Field.html"><code>Field</code></a> <code>kind</code> is taken from the class name. If concerned about clashes between resource names and <a href="../ActiveRecord.html"><code>ActiveRecord</code></a> model names, put your resource classes inside a module for namespacing - for example:</p>
 
 <pre><code>module Resources
   class Product &lt; Hoodoo::Presenters::Base
@@ -225,60 +211,33 @@ classes inside a module for namespacing - for example:</p>
 end
 </code></pre>
 
-<p>Only the class “leaf” name is used to infer the resource kind - in the
-above case, that&#39;s <code>Product</code>.</p>
+<p>Only the class “leaf” name is used to infer the resource kind - in the above case, that&#39;s <code>Product</code>.</p>
 
-<p>Any field with a schema giving a default value will only appear should a
-value for that field be <em>omitted</em> in the input data. If the data
-provides, for example, an explicit <code>nil</code> value then a
-corresponding explicit <code>nil</code> will be rendered, regardless of
-defaults.</p>
+<p>Any field with a schema giving a default value will only appear should a value for that field be <em>omitted</em> in the input data. If the data provides, for example, an explicit <code>nil</code> value then a corresponding explicit <code>nil</code> will be rendered, regardless of defaults.</p>
 
-<p>For belt-and-braces, unless subsequent profiling shows performance issues,
-callers should call validate first to self-check their internal data
-against the schema prior to rendering. That way, coding errors will be
-discovered immediately, rather than hidden / obscured by the rendered
-sanitisation.</p>
+<p>For belt-and-braces, unless subsequent profiling shows performance issues, callers should call validate first to self-check their internal data against the schema prior to rendering. That way, coding errors will be discovered immediately, rather than hidden / obscured by the rendered sanitisation.</p>
 
-<p>Since rendering top-level <code>nil</code> is not valid JSON, should
-<code>nil</code> be provided as input, it&#39;ll be treated as an empty
-hash (“{}”) instead.</p>
+<p>Since rendering top-level <code>nil</code> is not valid JSON, should <code>nil</code> be provided as input, it&#39;ll be treated as an empty hash (“{}”) instead.</p>
 
-<p>This is quite a low-level call. For a higher level renderer which <a
-href="../../Hoodoo.html">Hoodoo</a> service resource implementations will
-probably want to use for returning resource representations in responses,
-see <a href="Base.html#method-c-render_in">::render_in</a>.</p>
+<p>This is quite a low-level call. For a higher level renderer which <a href="../../Hoodoo.html"><code>Hoodoo</code></a> service resource implementations will probably want to use for returning resource representations in responses, see <a href="Base.html#method-c-render_in"><code>::render_in</code></a>.</p>
 <dl class="rdoc-list note-list"><dt><code>data</code>
 <dd>
-<p><a href="Hash.html">Hash</a> to be represented. <a
-href="../Data.html">Data</a> within this is compared against the schema
-being called to ensure that correct information is returned and unknown
-data is ignored.</p>
+<p><a href="Hash.html"><code>Hash</code></a> to be represented. <a href="../Data.html"><code>Data</code></a> within this is compared against the schema being called to ensure that correct information is returned and unknown data is ignored.</p>
 </dd><dt><code>uuid</code>
 <dd>
-<p>Unique ID of the resource instance that is to be represented. If nil /
-omitted, this is assumed to be a rendering of a type or other non-resource
-like item. Otherwise the field is mandatory.</p>
+<p>Unique ID of the resource instance that is to be represented. If nil / omitted, this is assumed to be a rendering of a type or other non-resource like item. Otherwise the field is mandatory.</p>
 </dd><dt><code>created_at</code>
 <dd>
-<p>Date/Time of instance creation. Only required if <a
-href="UUID.html">UUID</a> has been provided. This is a Ruby <a
-href="DateTime.html">DateTime</a> instance or similar, <em>NOT</em> a
-string!</p>
+<p>Date/Time of instance creation. Only required if <a href="UUID.html"><code>UUID</code></a> has been provided. This is a Ruby <a href="DateTime.html"><code>DateTime</code></a> instance or similar, <em>NOT</em> a string!</p>
 </dd><dt><code>language</code>
 <dd>
-<p>Optional language. If the type/resource being rendered is internationalised
-but this is omitted, then a value of “en-nz” is used as a default.</p>
+<p>Optional language. If the type/resource being rendered is internationalised but this is omitted, then a value of “en-nz” is used as a default.</p>
 </dd><dt><code>created_by</code>
 <dd>
-<p>Optional fingerprint of the Caller whose credentials were used to create
-the Session under which the resource instance was created. Absent if
-omitted.</p>
+<p>Optional fingerprint of the Caller whose credentials were used to create the Session under which the resource instance was created. Absent if omitted.</p>
 </dd><dt><code>updated_at</code>
 <dd>
-<p>Optional Date/Time of instance update. This is a Ruby <a
-href="DateTime.html">DateTime</a> instance or similar, <em>NOT</em> a
-string!</p>
+<p>Optional Date/Time of instance update. This is a Ruby <a href="DateTime.html"><code>DateTime</code></a> instance or similar, <em>NOT</em> a string!</p>
 </dd></dl>
         </div>
 
@@ -347,36 +306,17 @@ string!</p>
         </div>
 
         <div class="description">
-            <p>A higher level version of <a href="Base.html#method-c-render">::render</a>,
-typically called from <a href="../../Hoodoo.html">Hoodoo</a> services in
-their resource implementation code.</p>
+            <p>A higher level version of <a href="Base.html#method-c-render"><code>::render</code></a>, typically called from <a href="../../Hoodoo.html"><code>Hoodoo</code></a> services in their resource implementation code.</p>
 
-<p>As with <a href="Base.html#method-c-render">::render</a>, data is rendered
-according to the schema of the object the <a
-href="Base.html#method-c-render_in">::render_in</a> message is sent to.
-Options specify things like <a href="UUID.html">UUID</a> and created-at
-date. Language information for internationalised fields can be given, but
-if omitted comes from the given request context data.</p>
+<p>As with <a href="Base.html#method-c-render"><code>::render</code></a>, data is rendered according to the schema of the object the <a href="Base.html#method-c-render_in"><code>::render_in</code></a> message is sent to. Options specify things like <a href="UUID.html"><code>UUID</code></a> and created-at date. Language information for internationalised fields can be given, but if omitted comes from the given request context data.</p>
 
-<p>Additional facilites exist over and above <a
-href="Base.html#method-c-render">::render</a> - security scoping
-information in the resource via its <code>secured_with</code> field is made
-available through options (see below), along with support for embedded or
-referenced resource information.</p>
+<p>Additional facilites exist over and above <a href="Base.html#method-c-render"><code>::render</code></a> - security scoping information in the resource via its <code>secured_with</code> field is made available through options (see below), along with support for embedded or referenced resource information.</p>
 <dl class="rdoc-list note-list"><dt><code>context</code>
 <dd>
-<p>A <a href="../Services/Context.html">Hoodoo::Services::Context</a>
-instance, which is usually the value passed to a service implementation in
-calls like <a
-href="../Services/Implementation.html#method-i-list">Hoodoo::Services::Implementation#list</a>
-or <a
-href="../Services/Implementation.html#method-i-show">Hoodoo::Services::Implementation#show</a>.</p>
+<p>A <a href="../Services/Context.html"><code>Hoodoo::Services::Context</code></a> instance, which is usually the value passed to a service implementation in calls like <a href="../Services/Implementation.html#method-i-list"><code>Hoodoo::Services::Implementation#list</code></a> or <a href="../Services/Implementation.html#method-i-show"><code>Hoodoo::Services::Implementation#show</code></a>.</p>
 </dd><dt><code>data</code>
 <dd>
-<p><a href="Hash.html">Hash</a> to be represented. <a
-href="../Data.html">Data</a> within this is compared against the schema
-being called to ensure that correct information is returned and unknown
-data is ignored.</p>
+<p><a href="Hash.html"><code>Hash</code></a> to be represented. <a href="../Data.html"><code>Data</code></a> within this is compared against the schema being called to ensure that correct information is returned and unknown data is ignored.</p>
 </dd><dt><code>options</code>
 <dd>
 <p>Options hash, see below.</p>
@@ -385,44 +325,28 @@ data is ignored.</p>
 <p>The options keys are Symbols, used as follows:</p>
 <dl class="rdoc-list note-list"><dt><code>uuid</code>
 <dd>
-<p>Same as the <code>uuid</code> parameter to <a
-href="Base.html#method-c-render">::render</a>, except mandatory.</p>
+<p>Same as the <code>uuid</code> parameter to <a href="Base.html#method-c-render"><code>::render</code></a>, except mandatory.</p>
 </dd><dt><code>created_at</code>
 <dd>
-<p>Same as the <code>created_at</code> parameter to <a
-href="Base.html#method-c-render">::render</a>, except mandatory.</p>
+<p>Same as the <code>created_at</code> parameter to <a href="Base.html#method-c-render"><code>::render</code></a>, except mandatory.</p>
 </dd><dt><code>updated_at</code>
 <dd>
 <p>Optional value expressing the time the resource was last updated.</p>
 </dd><dt><code>created_by</code>
 <dd>
-<p>Optional fingerprint of the Caller whose credentials were used to create
-the Session under which the resource instance was created.</p>
+<p>Optional fingerprint of the Caller whose credentials were used to create the Session under which the resource instance was created.</p>
 </dd><dt><code>language</code>
 <dd>
-<p>Optional value for resource&#39;s <code>language</code> field; taken from
-the <code>context</code> parameter if omitted.</p>
+<p>Optional value for resource&#39;s <code>language</code> field; taken from the <code>context</code> parameter if omitted.</p>
 </dd><dt><code>embeds</code>
 <dd>
-<p>A <a href="Embedding/Embeds.html">Hoodoo::Presenters::Embedding::Embeds</a>
-instance that contains (fully rendered) resources which are to be embedded
-in this rendered representation. Optional.</p>
+<p>A <a href="Embedding/Embeds.html"><code>Hoodoo::Presenters::Embedding::Embeds</code></a> instance that contains (fully rendered) resources which are to be embedded in this rendered representation. Optional.</p>
 </dd><dt><code>references</code>
 <dd>
-<p>A <a
-href="Embedding/References.html">Hoodoo::Presenters::Embedding::References</a>
-instance that contains UUIDs which are to be embedded in this rendered
-representation as references. Optional.</p>
+<p>A <a href="Embedding/References.html"><code>Hoodoo::Presenters::Embedding::References</code></a> instance that contains UUIDs which are to be embedded in this rendered representation as references. Optional.</p>
 </dd><dt><code>secured_with</code>
 <dd>
-<p>An <a href="../ActiveRecord/Base.html">ActiveRecord::Base</a> subclass
-instance where the model class includes a <code>secure_with</code>
-declaration. As per documentation for <a
-href="../ActiveRecord/Secure/ClassMethods.html#method-i-secure">Hoodoo::ActiveRecord::Secure::ClassMethods#secure</a>
-and <a
-href="../ActiveRecord/Secure/ClassMethods.html#method-i-secure_with">Hoodoo::ActiveRecord::Secure::ClassMethods#secure_with</a>,
-this leads (potentially) to the generation of the <code>secured_with</code>
-field and object value in the rendered resource data.</p>
+<p>An <a href="../ActiveRecord/Base.html"><code>ActiveRecord::Base</code></a> subclass instance where the model class includes a <code>secure_with</code> declaration. As per documentation for <a href="../ActiveRecord/Secure/ClassMethods.html#method-i-secure"><code>Hoodoo::ActiveRecord::Secure::ClassMethods#secure</code></a> and <a href="../ActiveRecord/Secure/ClassMethods.html#method-i-secure_with"><code>Hoodoo::ActiveRecord::Secure::ClassMethods#secure_with</code></a>, this leads (potentially) to the generation of the <code>secured_with</code> field and object value in the rendered resource data.</p>
 </dd></dl>
         </div>
 
@@ -484,9 +408,7 @@ field and object value in the rendered resource data.</p>
             <p>Define the JSON schema for validation.</p>
 <dl class="rdoc-list note-list"><dt>&amp;block
 <dd>
-<p>Block that makes calls to the DSL defined in <a
-href="BaseDSL.html">Hoodoo::Presenters::BaseDSL</a> in order to define the
-schema.</p>
+<p>Block that makes calls to the DSL defined in <a href="BaseDSL.html"><code>Hoodoo::Presenters::BaseDSL</code></a> in order to define the schema.</p>
 </dd></dl>
         </div>
 
@@ -515,18 +437,13 @@ schema.</p>
         </div>
 
         <div class="description">
-            <p>Is the given rendering of a resource valid? Returns an array of Error
-Primitive types (as hashes); this will be empty if the data given is valid.</p>
+            <p>Is the given rendering of a resource valid? Returns an array of Error Primitive types (as hashes); this will be empty if the data given is valid.</p>
 <dl class="rdoc-list note-list"><dt><code>data</code>
 <dd>
-<p>Ruby <a href="Hash.html">Hash</a> representation of JSON data that is to be
-validated against &#39;this&#39; schema. Keys must be Strings, not Symbols.</p>
+<p>Ruby <a href="Hash.html"><code>Hash</code></a> representation of JSON data that is to be validated against &#39;this&#39; schema. Keys must be Strings, not Symbols.</p>
 </dd><dt><code>as_resource</code>
 <dd>
-<p>Check Resource common fields - <code>id</code>, <code>kind</code>,
-<code>created_at</code> and (for an internationalised resource)
-<code>language</code>. Otherwise, only basic data schema is examined.
-Optional; default is <code>false</code>.</p>
+<p>Check Resource common fields - <code>id</code>, <code>kind</code>, <code>created_at</code> and (for an internationalised resource) <code>language</code>. Otherwise, only basic data schema is examined. Optional; default is <code>false</code>.</p>
 </dd></dl>
         </div>
 
@@ -578,12 +495,9 @@ Optional; default is <code>false</code>.</p>
         </div>
 
         <div class="description">
-            <p>Walk the schema graph and invoke the given block on each field within it,
-passing the field instances to the block for each call.</p>
+            <p>Walk the schema graph and invoke the given block on each field within it, passing the field instances to the block for each call.</p>
 
-<p>All fields including the top-level “root” property (which has an empty
-string for a name) will be passed to the block in order of definition,
-recursing into nested objects, arrays and so-on as each is encountered.</p>
+<p>All fields including the top-level “root” property (which has an empty string for a name) will be passed to the block in order of definition, recursing into nested objects, arrays and so-on as each is encountered.</p>
         </div>
 
 

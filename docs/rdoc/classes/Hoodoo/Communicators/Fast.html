@@ -39,22 +39,13 @@
         <div id="content">
     <div class="description">
         
-<p>See <a href="Pool.html">Hoodoo::Communicators::Pool</a> for details.</p>
+<p>See <a href="Pool.html"><code>Hoodoo::Communicators::Pool</code></a> for details.</p>
 
-<p>A “fast communicator”. Subclass this to create a class where instances are
-invoked via <a href="Fast.html#method-i-communicate">#communicate</a> with
-some parameter and, in response, they talk to some other piece of software
-to communicate information related to that parameter. The communication is
-expected to be fast and will be called from Ruby&#39;s main execution
-thread.</p>
+<p>A “fast communicator”. Subclass this to create a class where instances are invoked via <a href="Fast.html#method-i-communicate"><code>Hoodoo::Communicators::Fast#communicate</code></a> with some parameter and, in response, they talk to some other piece of software to communicate information related to that parameter. The communication is expected to be fast and will be called from Ruby&#39;s main execution thread.</p>
 
-<p>If the communicator takes a long time to complete its operation, other
-processing will be delayed. If you expect this to happen, subclass <a
-href="Slow.html">Hoodoo::Communicators::Slow</a> instead.</p>
+<p>If the communicator takes a long time to complete its operation, other processing will be delayed. If you expect this to happen, subclass <a href="Slow.html"><code>Hoodoo::Communicators::Slow</code></a> instead.</p>
 
-<p>Example: A communicator might be part of a logging scheme which writes to
-<code>STDOUT</code>. The parameter it expects would be a log message
-string.</p>
+<p>Example: A communicator might be part of a logging scheme which writes to <code>STDOUT</code>. The parameter it expects would be a log message string.</p>
 
     </div>
 
@@ -89,14 +80,10 @@ string.</p>
         </div>
 
         <div class="description">
-            <p>Communicate quickly with the piece of external software for which your
-subclass is designed. Subclasses <em>must</em> implement this method. There
-is no need to call <code>super</code> in your implementation.</p>
+            <p>Communicate quickly with the piece of external software for which your subclass is designed. Subclasses <em>must</em> implement this method. There is no need to call <code>super</code> in your implementation.</p>
 <dl class="rdoc-list note-list"><dt><code>object</code>
 <dd>
-<p>Parameter sent by the communication pool, in response to someone calling <a
-href="Pool.html#method-i-communicate">Hoodoo::Communicators::Pool#communicate</a>
-with that value.</p>
+<p>Parameter sent by the communication pool, in response to someone calling <a href="Pool.html#method-i-communicate"><code>Hoodoo::Communicators::Pool#communicate</code></a> with that value.</p>
 </dd></dl>
         </div>
 

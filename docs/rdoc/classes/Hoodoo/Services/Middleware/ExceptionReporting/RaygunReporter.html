@@ -39,21 +39,11 @@
         <div id="content">
     <div class="description">
         
-<p><a
-href="BaseReporter.html">Hoodoo::Services::Middleware::ExceptionReporting::BaseReporter</a>
-subclass giving <a
-href="../ExceptionReporting.html">Hoodoo::Services::Middleware::ExceptionReporting</a>
-access to Raygun for error reporting. See <a
-href="https://raygun.io">raygun.io</a>.</p>
+<p><a href="BaseReporter.html"><code>Hoodoo::Services::Middleware::ExceptionReporting::BaseReporter</code></a> subclass giving <a href="../ExceptionReporting.html"><code>Hoodoo::Services::Middleware::ExceptionReporting</code></a> access to Raygun for error reporting. See <a href="https://raygun.io">raygun.io</a>.</p>
 
-<p>Your application must include the Raygun gem &#39;raygun4ruby&#39; via
-Gemfile (+gem &#39;raygun4ruby&#39;+ / +bundle install) or direct
-installation (+gem install raygun4ruby+).</p>
+<p>Your application must include the Raygun gem &#39;raygun4ruby&#39; via Gemfile (+gem &#39;raygun4ruby&#39;+ / +bundle install) or direct installation (+gem install raygun4ruby+).</p>
 
-<p>The API key must be set during your application initialization and the
-class must be added to <a href="../../../../Hoodoo.html">Hoodoo</a> for use
-as an error reporter, e.g. through a &#39;config/initializers&#39; folder,
-as follows:</p>
+<p>The API key must be set during your application initialization and the class must be added to <a href="../../../../Hoodoo.html"><code>Hoodoo</code></a> for use as an error reporter, e.g. through a &#39;config/initializers&#39; folder, as follows:</p>
 
 <pre><code>require &#39;raygun4ruby&#39;
 
@@ -66,12 +56,7 @@ Hoodoo::Services::Middleware::ExceptionReporting.add(
 ) unless Service.config.env.test? || Service.config.env.development?
 </code></pre>
 
-<p><a href="../../../Services.html">Services</a> and the <a
-href="../../../../Hoodoo.html">Hoodoo</a> middleware do not pass Rails-like
-params around in forms or query strings, but do beware of search or filter
-query data containing sensitive material or POST bodies in e.g. JSON
-encoding containing sensitive data. This comes down to the filtering
-ability of the Raygun gem:</p>
+<p><a href="../../../Services.html"><code>Services</code></a> and the <a href="../../../../Hoodoo.html"><code>Hoodoo</code></a> middleware do not pass Rails-like params around in forms or query strings, but do beware of search or filter query data containing sensitive material or POST bodies in e.g. JSON encoding containing sensitive data. This comes down to the filtering ability of the Raygun gem:</p>
 
 <pre><code>https://github.com/MindscapeHQ/raygun4ruby
 </code></pre>
@@ -117,17 +102,13 @@ ability of the Raygun gem:</p>
         </div>
 
         <div class="description">
-            <p>Report an exception for errors that occur within a fully handled <a
-href="../../../../Rack.html">Rack</a> request context, with a high level
-processed <a href="../../../../Hoodoo.html">Hoodoo</a> representation
-available.</p>
+            <p>Report an exception for errors that occur within a fully handled <a href="../../../../Rack.html"><code>Rack</code></a> request context, with a high level processed <a href="../../../../Hoodoo.html"><code>Hoodoo</code></a> representation available.</p>
 <dl class="rdoc-list note-list"><dt><code>e</code>
 <dd>
 <p>Exception (or subclass) instance to be reported.</p>
 </dd><dt><code>context</code>
 <dd>
-<p><a href="../../Context.html">Hoodoo::Services::Context</a> instance
-describing an in-flight request/response cycle.</p>
+<p><a href="../../Context.html"><code>Hoodoo::Services::Context</code></a> instance describing an in-flight request/response cycle.</p>
 </dd></dl>
         </div>
 
@@ -163,9 +144,7 @@ describing an in-flight request/response cycle.</p>
 <p>Exception (or subclass) instance to be reported.</p>
 </dd><dt><code>env</code>
 <dd>
-<p>Optional <a href="../../../../Rack.html">Rack</a> environment hash for the
-inbound request, for exception reports made in the context of <a
-href="../../../../Rack.html">Rack</a> request handling.</p>
+<p>Optional <a href="../../../../Rack.html"><code>Rack</code></a> environment hash for the inbound request, for exception reports made in the context of <a href="../../../../Rack.html"><code>Rack</code></a> request handling.</p>
 </dd></dl>
         </div>
 

@@ -39,11 +39,7 @@
         <div id="content">
     <div class="description">
         
-<p>Contain a description of errors for a particular domain, where the domain
-is a grouping string such as “platform”, “generic”, or a short service
-name. Usually driven via <a
-href="../ErrorDescriptions.html">Hoodoo::ErrorDescriptions</a>, not
-directly.</p>
+<p>Contain a description of errors for a particular domain, where the domain is a grouping string such as “platform”, “generic”, or a short service name. Usually driven via <a href="../ErrorDescriptions.html"><code>Hoodoo::ErrorDescriptions</code></a>, not directly.</p>
 
     </div>
 
@@ -83,9 +79,7 @@ directly.</p>
                 [R]
             </td>
             <td class='attr-name'>descriptions</td>
-            <td class='attr-desc'><p>Hash of all descriptions, keyed by full error code, with options hash data
-as values (see <a href="DomainDescriptions.html#method-i-error">error</a>
-for details).</p></td>
+            <td class='attr-desc'><p>Hash of all descriptions, keyed by full error code, with options hash data as values (see <a href="DomainDescriptions.html#method-i-error"><code>error</code></a> for details).</p></td>
         </tr>
         <tr valign='top' id='attribute-i-domain'>
             <td class='attr-rw'>
@@ -109,8 +103,7 @@ for details).</p></td>
             <p>Initialize a new instance for the given domain.</p>
 <dl class="rdoc-list note-list"><dt><code>domain</code>
 <dd>
-<p>The domain string - for most service-based callers, usually a short service
-name like <code>members</code> or <code>transactions</code>.</p>
+<p>The domain string - for most service-based callers, usually a short service name like <code>members</code> or <code>transactions</code>.</p>
 </dd></dl>
         </div>
 
@@ -143,29 +136,22 @@ name like <code>members</code> or <code>transactions</code>.</p>
             <p>Describe an error.</p>
 <dl class="rdoc-list note-list"><dt><code>name</code>
 <dd>
-<p>The error name - the bit after the “<code>.</code>” in the code, e.g.
-<code>invalid_parameters</code>.</p>
+<p>The error name - the bit after the “<code>.</code>” in the code, e.g. <code>invalid_parameters</code>.</p>
 </dd><dt><code>options</code>
 <dd>
 <p>Options hash. See below.</p>
 </dd></dl>
 
-<p>The options hash contains symbol keys named as follows, with values as
-described:</p>
+<p>The options hash contains symbol keys named as follows, with values as described:</p>
 <dl class="rdoc-list note-list"><dt><code>:status</code>
 <dd>
 <p>The integer or string HTTP status code to be associated with this error</p>
 </dd><dt><code>message</code>
 <dd>
-<p>The <code>en-nz</code> language human-readable error message used for
-developers.</p>
+<p>The <code>en-nz</code> language human-readable error message used for developers.</p>
 </dd><dt><code>reference</code>
 <dd>
-<p>Optional array of required named references. When errors are added (via <a
-href="../Errors.html#method-i-add_error">Hoodoo::Errors#add_error</a>) to a
-collection, required reference(s) from this array must be provided by the
-error-adding caller else an exception will be raised. This ensures correct,
-fully qualified error data is logged and sent to clients.</p>
+<p>Optional array of required named references. When errors are added (via <a href="../Errors.html#method-i-add_error"><code>Hoodoo::Errors#add_error</code></a>) to a collection, required reference(s) from this array must be provided by the error-adding caller else an exception will be raised. This ensures correct, fully qualified error data is logged and sent to clients.</p>
 </dd></dl>
         </div>
 

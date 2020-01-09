@@ -15,8 +15,8 @@
 
     <meta property="og:title" value="Hoodoo::ActiveRecord::Creator::ClassMethods">
 
-    <meta name="description" content="Collection of class methods that get defined on an including class via Hoodoo::ActiveRecord::Creator.included.">
-    <meta property="og:description" content="Collection of class methods that get defined on an including class via Hoodoo::ActiveRecord::Creator.included.">
+    <meta name="description" content="Collection of class methods that get defined on an including class via Hoodoo::ActiveRecord::Creator::included.">
+    <meta property="og:description" content="Collection of class methods that get defined on an including class via Hoodoo::ActiveRecord::Creator::included.">
 
     <meta name="keywords" content="Hoodoo::ActiveRecord::Creator::ClassMethods class">
     <meta name="keywords" content="new_in">
@@ -36,8 +36,7 @@
         <div id="content">
     <div class="description">
         
-<p>Collection of class methods that get defined on an including class via <a
-href="../Creator.html#method-c-included">Hoodoo::ActiveRecord::Creator.included</a>.</p>
+<p>Collection of class methods that get defined on an including class via <a href="../Creator.html#method-c-included"><code>Hoodoo::ActiveRecord::Creator::included</code></a>.</p>
 
     </div>
 
@@ -72,15 +71,9 @@ href="../Creator.html#method-c-included">Hoodoo::ActiveRecord::Creator.included<
         </div>
 
         <div class="description">
-            <p>Create an instance of this model with knowledge of the wider request
-context. This may lead to important things like support of inbound
-“dated_from” values, depending upon the <a
-href="../../../Hoodoo.html">Hoodoo</a> mixins included (or not) by this
-class - see <a href="../Dated.html">Hoodoo::ActiveRecord::Dated</a>.</p>
+            <p>Create an instance of this model with knowledge of the wider request context. This may lead to important things like support of inbound “dated_from” values, depending upon the <a href="../../../Hoodoo.html"><code>Hoodoo</code></a> mixins included (or not) by this class - see <a href="../Dated.html"><code>Hoodoo::ActiveRecord::Dated</code></a>.</p>
 
-<p>You use this exactly as you would for ActiveRecord::Core#new, but an
-additional, mandatory first parameter providing the request context must be
-supplied. For example, instead of this:</p>
+<p>You use this exactly as you would for ActiveRecord::Core#new, but an additional, mandatory first parameter providing the request context must be supplied. For example, instead of this:</p>
 
 <pre><code>instance = SomeActiveRecordSubclass.new( attrs )
 </code></pre>
@@ -92,34 +85,24 @@ supplied. For example, instead of this:</p>
 
 <p>See also:</p>
 <ul><li>
-<p><a
-href="http://api.rubyonrails.org/classes/ActiveRecord/Base.html">api.rubyonrails.org/classes/ActiveRecord/Base.html</a></p>
+<p><a href="http://api.rubyonrails.org/classes/ActiveRecord/Base.html">api.rubyonrails.org/classes/ActiveRecord/Base.html</a></p>
 </li></ul>
 
 <p>Parameters:</p>
 <dl class="rdoc-list note-list"><dt><code>context</code>
 <dd>
-<p><a href="../../Services/Context.html">Hoodoo::Services::Context</a>
-instance describing a call context. This is typically a value passed to one
-of the <a
-href="../../Services/Implementation.html">Hoodoo::Services::Implementation</a>
-instance methods that a resource subclass implements.</p>
+<p><a href="../../Services/Context.html"><code>Hoodoo::Services::Context</code></a> instance describing a call context. This is typically a value passed to one of the <a href="../../Services/Implementation.html"><code>Hoodoo::Services::Implementation</code></a> instance methods that a resource subclass implements.</p>
 </dd><dt><code>attributes</code>
 <dd>
 <p>Optional model attributes Hash, passed through to ActiveRecord::Core#new.</p>
 </dd><dt>&amp;block
 <dd>
-<p>Optional block for initialisation, passed through to
-ActiveRecord::Core#new.</p>
+<p>Optional block for initialisation, passed through to ActiveRecord::Core#new.</p>
 </dd></dl>
 
-<p>Returns a new model instance which may have context-derived values set for
-some attributes, in addition to anything set through the
-<code>attributes</code> or <code>&amp;block</code> parameters, if present.</p>
+<p>Returns a new model instance which may have context-derived values set for some attributes, in addition to anything set through the <code>attributes</code> or <code>&amp;block</code> parameters, if present.</p>
 
-<p>Note that context-dependent data is set <em>AFTER</em> attribute or block
-based values, so takes precedence over anything you might set up using
-those parameters.</p>
+<p>Note that context-dependent data is set <em>AFTER</em> attribute or block based values, so takes precedence over anything you might set up using those parameters.</p>
         </div>
 
 

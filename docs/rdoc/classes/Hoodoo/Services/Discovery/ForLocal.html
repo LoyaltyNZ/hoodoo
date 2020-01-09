@@ -39,20 +39,11 @@
         <div id="content">
     <div class="description">
         
-<p>Describe a resource endpoint location in a way that allows it to be
-method-called from the service middleware directly.</p>
+<p>Describe a resource endpoint location in a way that allows it to be method-called from the service middleware directly.</p>
 
-<p>This is a very special case class used for the inter-resource local call
-code in <a href="../Middleware.html">Hoodoo::Services::Middleware</a>. It
-really exists only for semantic purposes; the middleware calls via <a
-href="../../Client/Endpoint.html">Hoodoo::Client::Endpoint</a> subclass
-Hoodoo::Sevices::Middleware::InterResourceLocal; and the Endpoint subclass
-family are supposed to use result classes from the <a
-href="../Discovery.html">Hoodoo::Services::Discovery</a> engine when they
-configure instances.</p>
+<p>This is a very special case class used for the inter-resource local call code in <a href="../Middleware.html"><code>Hoodoo::Services::Middleware</code></a>. It really exists only for semantic purposes; the middleware calls via <a href="../../Client/Endpoint.html"><code>Hoodoo::Client::Endpoint</code></a> subclass Hoodoo::Sevices::Middleware::InterResourceLocal; and the Endpoint subclass family are supposed to use result classes from the <a href="../Discovery.html"><code>Hoodoo::Services::Discovery</code></a> engine when they configure instances.</p>
 
-<p>This isn&#39;t actually enforced anywhere, but conceptually it&#39;s
-cleanest to follow the same pattern.</p>
+<p>This isn&#39;t actually enforced anywhere, but conceptually it&#39;s cleanest to follow the same pattern.</p>
 
     </div>
 
@@ -84,45 +75,35 @@ cleanest to follow the same pattern.</p>
                 [RW]
             </td>
             <td class='attr-name'>base_path</td>
-            <td class='attr-desc'><p>The base path of this resource and version - for example, “/v1/products” or
-“/v2/members”. String.</p></td>
+            <td class='attr-desc'><p>The base path of this resource and version - for example, “/v1/products” or “/v2/members”. String.</p></td>
         </tr>
         <tr valign='top' id='attribute-i-de_facto_base_path'>
             <td class='attr-rw'>
                 [RW]
             </td>
             <td class='attr-name'>de_facto_base_path</td>
-            <td class='attr-desc'><p>The de facto routing equivalent of <a
-href="ForLocal.html#attribute-i-base_path">base_path</a>. This is not a
-custom path based on the interface&#39;s declared endpoint; it is derived
-directlyf rom resource or version - for example, “/1/Product” or
-“/2/Member”. String.</p></td>
+            <td class='attr-desc'><p>The de facto routing equivalent of <a href="ForLocal.html#attribute-i-base_path"><code>base_path</code></a>. This is not a custom path based on the interface&#39;s declared endpoint; it is derived directlyf rom resource or version - for example, “/1/Product” or “/2/Member”. String.</p></td>
         </tr>
         <tr valign='top' id='attribute-i-de_facto_routing_regexp'>
             <td class='attr-rw'>
                 [RW]
             </td>
             <td class='attr-name'>de_facto_routing_regexp</td>
-            <td class='attr-desc'><p>As <a href="ForLocal.html#attribute-i-routing_regexp">routing_regexp</a>,
-but matches <a
-href="ForLocal.html#attribute-i-de_facto_base_path">de_facto_base_path</a>.</p></td>
+            <td class='attr-desc'><p>As <a href="ForLocal.html#attribute-i-routing_regexp"><code>routing_regexp</code></a>, but matches <a href="ForLocal.html#attribute-i-de_facto_base_path"><code>de_facto_base_path</code></a>.</p></td>
         </tr>
         <tr valign='top' id='attribute-i-implementation_instance'>
             <td class='attr-rw'>
                 [RW]
             </td>
             <td class='attr-name'>implementation_instance</td>
-            <td class='attr-desc'><p>The <a href="../Implementation.html">Hoodoo::Services::Implementation</a>
-subclass <em>instance</em> which implements the interface described by <a
-href="ForLocal.html#attribute-i-interface_class">interface_class</a>.</p></td>
+            <td class='attr-desc'><p>The <a href="../Implementation.html"><code>Hoodoo::Services::Implementation</code></a> subclass <em>instance</em> which implements the interface described by <a href="ForLocal.html#attribute-i-interface_class"><code>interface_class</code></a>.</p></td>
         </tr>
         <tr valign='top' id='attribute-i-interface_class'>
             <td class='attr-rw'>
                 [RW]
             </td>
             <td class='attr-name'>interface_class</td>
-            <td class='attr-desc'><p>The <a href="../Interface.html">Hoodoo::Services::Interface</a> subclass
-<em>class</em> describing the resource interface.</p></td>
+            <td class='attr-desc'><p>The <a href="../Interface.html"><code>Hoodoo::Services::Interface</code></a> subclass <em>class</em> describing the resource interface.</p></td>
         </tr>
         <tr valign='top' id='attribute-i-resource'>
             <td class='attr-rw'>
@@ -136,10 +117,7 @@ href="ForLocal.html#attribute-i-interface_class">interface_class</a>.</p></td>
                 [RW]
             </td>
             <td class='attr-name'>routing_regexp</td>
-            <td class='attr-desc'><p>A regular expression which matches the <a
-href="ForLocal.html#attribute-i-base_path">base_path</a> and any identifier
-data, allowing inbound URI-based requests to be routed to this endpoint.
-Regexp instance.</p></td>
+            <td class='attr-desc'><p>A regular expression which matches the <a href="ForLocal.html#attribute-i-base_path"><code>base_path</code></a> and any identifier data, allowing inbound URI-based requests to be routed to this endpoint. Regexp instance.</p></td>
         </tr>
         <tr valign='top' id='attribute-i-version'>
             <td class='attr-rw'>
@@ -163,32 +141,28 @@ Regexp instance.</p></td>
             <p>Create an instance with named parameters as follows:</p>
 <dl class="rdoc-list note-list"><dt><code>resource</code>
 <dd>
-<p>See <a href="ForLocal.html#attribute-i-resource">resource</a>.</p>
+<p>See <a href="ForLocal.html#attribute-i-resource"><code>resource</code></a>.</p>
 </dd><dt><code>version</code>
 <dd>
-<p>See <a href="ForLocal.html#attribute-i-version">version</a>.</p>
+<p>See <a href="ForLocal.html#attribute-i-version"><code>version</code></a>.</p>
 </dd><dt><code>base_path</code>
 <dd>
-<p>See <a href="ForLocal.html#attribute-i-base_path">base_path</a>.</p>
+<p>See <a href="ForLocal.html#attribute-i-base_path"><code>base_path</code></a>.</p>
 </dd><dt><code>routing_regexp</code>
 <dd>
-<p>See <a href="ForLocal.html#attribute-i-routing_regexp">routing_regexp</a>.</p>
+<p>See <a href="ForLocal.html#attribute-i-routing_regexp"><code>routing_regexp</code></a>.</p>
 </dd><dt><code>de_facto_base_path</code>
 <dd>
-<p>See <a
-href="ForLocal.html#attribute-i-de_facto_base_path">de_facto_base_path</a>.</p>
+<p>See <a href="ForLocal.html#attribute-i-de_facto_base_path"><code>de_facto_base_path</code></a>.</p>
 </dd><dt><code>de_facto_routing_regexp</code>
 <dd>
-<p>See <a
-href="ForLocal.html#attribute-i-de_facto_routing_regexp">de_facto_routing_regexp</a>.</p>
+<p>See <a href="ForLocal.html#attribute-i-de_facto_routing_regexp"><code>de_facto_routing_regexp</code></a>.</p>
 </dd><dt><code>interface_class</code>
 <dd>
-<p>See <a
-href="ForLocal.html#attribute-i-interface_class">interface_class</a>.</p>
+<p>See <a href="ForLocal.html#attribute-i-interface_class"><code>interface_class</code></a>.</p>
 </dd><dt><code>implementation_instance</code>
 <dd>
-<p>See <a
-href="ForLocal.html#attribute-i-implementation_instance">implementation_instance</a>.</p>
+<p>See <a href="ForLocal.html#attribute-i-implementation_instance"><code>implementation_instance</code></a>.</p>
 </dd></dl>
         </div>
 

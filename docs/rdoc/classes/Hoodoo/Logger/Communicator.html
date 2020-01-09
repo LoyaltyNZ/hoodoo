@@ -36,10 +36,7 @@
         <div id="content">
     <div class="description">
         
-<p>Mixin used internally for the <a
-href="FastCommunicator.html">FastCommunicator</a> and <a
-href="SlowCommunicator.html">SlowCommunicator</a> wrappers that hide
-implementation complexity from log writer subclasses.</p>
+<p>Mixin used internally for the <a href="FastCommunicator.html"><code>FastCommunicator</code></a> and <a href="SlowCommunicator.html"><code>SlowCommunicator</code></a> wrappers that hide implementation complexity from log writer subclasses.</p>
 
     </div>
 
@@ -90,18 +87,13 @@ implementation complexity from log writer subclasses.</p>
         </div>
 
         <div class="description">
-            <p>Create an instance of a logging communicator, based on the given log writer
-and owning logger instance.</p>
+            <p>Create an instance of a logging communicator, based on the given log writer and owning logger instance.</p>
 <dl class="rdoc-list note-list"><dt><code>writer_instance</code>
 <dd>
-<p><a href="FastWriter.html">Hoodoo::Logger::FastWriter</a> or <a
-href="SlowWriter.html">Hoodoo::Logger::SlowWriter</a> subclass instance
-that will log things when this <a href="Communicator.html">Communicator</a>
-asks it to do so.</p>
+<p><a href="FastWriter.html"><code>Hoodoo::Logger::FastWriter</code></a> or <a href="SlowWriter.html"><code>Hoodoo::Logger::SlowWriter</code></a> subclass instance that will log things when this <a href="Communicator.html"><code>Communicator</code></a> asks it to do so.</p>
 </dd><dt><code>owning_logger</code>
 <dd>
-<p><a href="../Logger.html">Hoodoo::Logger</a> instance that will be using
-this communicator instance.</p>
+<p><a href="../Logger.html"><code>Hoodoo::Logger</code></a> instance that will be using this communicator instance.</p>
 </dd></dl>
         </div>
 
@@ -131,13 +123,7 @@ this communicator instance.</p>
         </div>
 
         <div class="description">
-            <p>Implement Hoodoo::Communicators::Base#communicate for both slow and fast
-writers. Assumes it will be passed a <a
-href="Payload.html">Hoodoo::Logger::Payload</a> class instance which
-describes the structured log data to report; also assumes it is only called
-when the calling logger&#39;s configured log level threshold should allow
-through the level of the log message in question. Calls through to the
-report implementation.</p>
+            <p>Implement Hoodoo::Communicators::Base#communicate for both slow and fast writers. Assumes it will be passed a <a href="Payload.html"><code>Hoodoo::Logger::Payload</code></a> class instance which describes the structured log data to report; also assumes it is only called when the calling logger&#39;s configured log level threshold should allow through the level of the log message in question. Calls through to the report implementation.</p>
         </div>
 
 
@@ -168,15 +154,7 @@ report implementation.</p>
         </div>
 
         <div class="description">
-            <p>Implement optional method <a
-href="../Communicators/Slow.html#method-i-dropped">Hoodoo::Communicators::Slow#dropped</a>
-on behalf of subclasses. The method turns the &#39;messages dropped&#39;
-notification into a log message of <code>:warn</code> level and which it
-reports internally immediately for the Writer instance only (since
-different writers have different queues and thus different dropped message
-warnings), provided that the owning <a
-href="../Logger.html">Hoodoo::Logger</a> instance log level lets warnings
-through.</p>
+            <p>Implement optional method <a href="../Communicators/Slow.html#method-i-dropped"><code>Hoodoo::Communicators::Slow#dropped</code></a> on behalf of subclasses. The method turns the &#39;messages dropped&#39; notification into a log message of <code>:warn</code> level and which it reports internally immediately for the Writer instance only (since different writers have different queues and thus different dropped message warnings), provided that the owning <a href="../Logger.html"><code>Hoodoo::Logger</code></a> instance log level lets warnings through.</p>
         </div>
 
 

@@ -39,30 +39,15 @@
         <div id="content">
     <div class="description">
         
-<p><a href="../TransientStore.html">Hoodoo::TransientStore</a> plugin
-supporting storage into both <a href="https://memcached.org">Memcached</a>
-and <a href="https://redis.io">Redis</a> simultaneously.</p>
+<p><a href="../TransientStore.html"><code>Hoodoo::TransientStore</code></a> plugin supporting storage into both <a href="https://memcached.org">Memcached</a> and <a href="https://redis.io">Redis</a> simultaneously.</p>
 
-<p>The implementation uses <a
-href="Memcached.html">Hoodoo::TransientStore::Memcached</a> and <a
-href="Redis.html">Hoodoo::TransientStore::Redis</a> to talk to the two
-storage engines.</p>
+<p>The implementation uses <a href="Memcached.html"><code>Hoodoo::TransientStore::Memcached</code></a> and <a href="Redis.html"><code>Hoodoo::TransientStore::Redis</code></a> to talk to the two storage engines.</p>
 
-<p>When looking up data with <a
-href="MemcachedRedisMirror.html#method-i-get">get</a>, the requested item
-must be found in both storage engines. If it is found in only one, the
-other one is deleted to keep maximum pool space available in both and
-<code>nil</code> will be returned for the lookup.</p>
+<p>When looking up data with <a href="MemcachedRedisMirror.html#method-i-get"><code>get</code></a>, the requested item must be found in both storage engines. If it is found in only one, the other one is deleted to keep maximum pool space available in both and <code>nil</code> will be returned for the lookup.</p>
 
-<p>Note unusual requirements for the connection URI data provided to the
-initialize call.</p>
+<p>Note unusual requirements for the connection URI data provided to the initialize call.</p>
 
-<p>The mirroring storage engine plug-in is useful if migrating from one of
-these engines to another without invalidating data present in the one from
-which you are migrating away. Change to using the mirrored storage engine
-for as long as the maximum item expiry period in the old engine, then once
-you know all old engine items must have been expired, cut over to just the
-new engine.</p>
+<p>The mirroring storage engine plug-in is useful if migrating from one of these engines to another without invalidating data present in the one from which you are migrating away. Change to using the mirrored storage engine for as long as the maximum item expiry period in the old engine, then once you know all old engine items must have been expired, cut over to just the new engine.</p>
 
     </div>
 
@@ -126,29 +111,21 @@ new engine.</p>
                 [RW]
             </td>
             <td class='attr-name'>get_keys_from</td>
-            <td class='attr-desc'><p>Command an instance to allow <a
-href="MemcachedRedisMirror.html#method-i-get">get</a> to return values
-which are only found in one or the other storage engine, or in both.</p>
+            <td class='attr-desc'><p>Command an instance to allow <a href="MemcachedRedisMirror.html#method-i-get"><code>get</code></a> to return values which are only found in one or the other storage engine, or in both.</p>
 
 <p>Permitted values are:</p>
 <dl class="rdoc-list note-list"><dt><code>:memcached</code>
 <dd>
-<p>Only <a href="Memcached.html">Memcached</a> needs to have a value for a key</p>
+<p>Only <a href="Memcached.html"><code>Memcached</code></a> needs to have a value for a key</p>
 </dd><dt><code>:redis</code>
 <dd>
-<p>Only <a href="Redis.html">Redis</a> needs to have a value for a key</p>
+<p>Only <a href="Redis.html"><code>Redis</code></a> needs to have a value for a key</p>
 </dd><dt><code>both</code>
 <dd>
 <p>Both engines must have the key</p>
 </dd></dl>
 
-<p>This is useful in migration scenarios where moving from <a
-href="Memcached.html">Memcached</a> to <a href="Redis.html">Redis</a> or
-vice versa. If wishing to be able to still read old data only in <a
-href="Memcached.html">Memcached</a>, set <code>:memcached</code>; else
-<code>:redis</code>. That way, data only in the old engine but not yet in
-the new is still considered valid and read back. For true mirroring which
-requires both stores to have the value, use <code>:both</code>.</p>
+<p>This is useful in migration scenarios where moving from <a href="Memcached.html"><code>Memcached</code></a> to <a href="Redis.html"><code>Redis</code></a> or vice versa. If wishing to be able to still read old data only in <a href="Memcached.html"><code>Memcached</code></a>, set <code>:memcached</code>; else <code>:redis</code>. That way, data only in the old engine but not yet in the new is still considered valid and read back. For true mirroring which requires both stores to have the value, use <code>:both</code>.</p>
 
 <p>The default is <code>:both</code>.</p></td>
         </tr>
@@ -164,19 +141,11 @@ requires both stores to have the value, use <code>:both</code>.</p>
         </div>
 
         <div class="description">
-            <p>See <a href="Base.html#method-c-new">Hoodoo::TransientStore::Base.new</a>
-for details.</p>
+            <p>See <a href="Base.html#method-c-new"><code>Hoodoo::TransientStore::Base::new</code></a> for details.</p>
 
-<p>Do not instantiate this class directly. Use <a
-href="../TransientStore.html#method-c-new">Hoodoo::TransientStore.new</a>.</p>
+<p>Do not instantiate this class directly. Use <a href="../TransientStore.html#method-c-new"><code>Hoodoo::TransientStore::new</code></a>.</p>
 
-<p>The <code>storage_host_uri</code> parameter is necessarily unusual here. It
-must be either _a Hash_ with Symbol keys <code>:memcached</code> and
-<code>:redis</code>, or a serialised JSON string representing the same
-information. These values define the actual storage engine host URI for the
-respective engines. For example, to connect to locally running engines
-configured on their default ports, pass this Hash in
-<code>storage_host_uri</code>:</p>
+<p>The <code>storage_host_uri</code> parameter is necessarily unusual here. It must be either _a Hash_ with Symbol keys <code>:memcached</code> and <code>:redis</code>, or a serialised JSON string representing the same information. These values define the actual storage engine host URI for the respective engines. For example, to connect to locally running engines configured on their default ports, pass this Hash in <code>storage_host_uri</code>:</p>
 
 <pre><code>{
   :memcached =&gt; &#39;localhost:11211&#39;,
@@ -192,13 +161,9 @@ configured on their default ports, pass this Hash in
 }&quot;
 </code></pre>
 
-<p>See <a
-href="Memcached.html#method-c-new">Hoodoo::TransientStore::Memcached.new</a>
-and <a href="Redis.html#method-c-new">Hoodoo::TransientStore::Redis.new</a>
-for details of connection URI requirements for those engines.</p>
+<p>See <a href="Memcached.html#method-c-new"><code>Hoodoo::TransientStore::Memcached::new</code></a> and <a href="Redis.html#method-c-new"><code>Hoodoo::TransientStore::Redis::new</code></a> for details of connection URI requirements for those engines.</p>
 
-<p>The value of the <code>namespace</code> parameter applies equally to both
-engines.</p>
+<p>The value of the <code>namespace</code> parameter applies equally to both engines.</p>
         </div>
 
 
@@ -238,9 +203,7 @@ engines.</p>
         </div>
 
         <div class="description">
-            <p>See <a
-href="Base.html#method-i-close">Hoodoo::TransientStore::Base#close</a> for
-details.</p>
+            <p>See <a href="Base.html#method-i-close"><code>Hoodoo::TransientStore::Base#close</code></a> for details.</p>
         </div>
 
 
@@ -267,9 +230,7 @@ details.</p>
         </div>
 
         <div class="description">
-            <p>See <a
-href="Base.html#method-i-delete">Hoodoo::TransientStore::Base#delete</a>
-for details.</p>
+            <p>See <a href="Base.html#method-i-delete"><code>Hoodoo::TransientStore::Base#delete</code></a> for details.</p>
         </div>
 
 
@@ -315,21 +276,11 @@ for details.</p>
         </div>
 
         <div class="description">
-            <p>See <a href="Base.html#method-i-get">Hoodoo::TransientStore::Base#get</a>
-for details.</p>
+            <p>See <a href="Base.html#method-i-get"><code>Hoodoo::TransientStore::Base#get</code></a> for details.</p>
 
-<p>The requested item must be found in both <a
-href="Memcached.html">Memcached</a> and <a href="Redis.html">Redis</a>. If
-it is found in only one, the other one is deleted to keep maximum pool
-space available in and <code>nil</code> will be returned.</p>
+<p>The requested item must be found in both <a href="Memcached.html"><code>Memcached</code></a> and <a href="Redis.html"><code>Redis</code></a>. If it is found in only one, the other one is deleted to keep maximum pool space available in and <code>nil</code> will be returned.</p>
 
-<p>If <a
-href="MemcachedRedisMirror.html#attribute-i-get_keys_from">get_keys_from</a>
-is configured for <code>:both</code> and the data for some reason has ended
-up differing in the two stores - most likely because something modified
-just one of them (perhaps there is outdated code kicking around which is
-writing to just one) - then the <a href="Memcached.html">Memcached</a> copy
-will “win” and the <a href="Redis.html">Redis</a> value will be ignored.</p>
+<p>If <a href="MemcachedRedisMirror.html#attribute-i-get_keys_from"><code>get_keys_from</code></a> is configured for <code>:both</code> and the data for some reason has ended up differing in the two stores - most likely because something modified just one of them (perhaps there is outdated code kicking around which is writing to just one) - then the <a href="Memcached.html"><code>Memcached</code></a> copy will “win” and the <a href="Redis.html"><code>Redis</code></a> value will be ignored.</p>
         </div>
 
 
@@ -376,8 +327,7 @@ will “win” and the <a href="Redis.html">Redis</a> value will be ignored.</p>
         </div>
 
         <div class="description">
-            <p>See <a href="Base.html#method-i-set">Hoodoo::TransientStore::Base#set</a>
-for details.</p>
+            <p>See <a href="Base.html#method-i-set"><code>Hoodoo::TransientStore::Base#set</code></a> for details.</p>
         </div>
 
 

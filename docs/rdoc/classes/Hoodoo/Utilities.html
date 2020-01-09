@@ -178,9 +178,7 @@
         </div>
 
         <div class="description">
-            <p>This method is intended really just for testing purposes; it clears the
-internal cache of clock drift tolerance read from environment variable
-<code>HOODOO_CLOCK_DRIFT_TOLERANCE</code>.</p>
+            <p>This method is intended really just for testing purposes; it clears the internal cache of clock drift tolerance read from environment variable <code>HOODOO_CLOCK_DRIFT_TOLERANCE</code>.</p>
         </div>
 
 
@@ -206,8 +204,7 @@ internal cache of clock drift tolerance read from environment variable
         </div>
 
         <div class="description">
-            <p>A very single-purpose method which converts an Array of specifc form into a
-Hash.</p>
+            <p>A very single-purpose method which converts an Array of specifc form into a Hash.</p>
 
 <p>The Hash class can already build itself from an Array of tuples, thus:</p>
 
@@ -223,10 +220,7 @@ hash  = Hash[ array ]
 # =&gt; { :one =&gt; 42, :two =&gt; 2 }
 </code></pre>
 
-<p>The later duplicates simply override any former entries. This Array
-collation method is designed to instead take the tuples and set up a Hash
-where each key leads to an Array of unique values found in the original,
-thus:</p>
+<p>The later duplicates simply override any former entries. This Array collation method is designed to instead take the tuples and set up a Hash where each key leads to an Array of unique values found in the original, thus:</p>
 
 <pre><code>array = [ [ :one, 1 ], [ :two, 2 ], [ :one, 42 ] ]
 Hoodoo::Utilities.collated_hash_from( array )
@@ -241,14 +235,10 @@ Hoodoo::Utilities.collated_hash_from( array )
 </li></ul>
 <dl class="rdoc-list note-list"><dt><code>array</code>
 <dd>
-<p>Array of two-element Arrays. The first element becomes a key in the
-returned Hash. The last element is added to an Array of (unique) values
-associated with that key. An empty Array results in an empty Hash;
-<code>nil</code> is not allowed.</p>
+<p>Array of two-element Arrays. The first element becomes a key in the returned Hash. The last element is added to an Array of (unique) values associated with that key. An empty Array results in an empty Hash; <code>nil</code> is not allowed.</p>
 </dd><dt><code>dupes</code>
 <dd>
-<p>Optional. If omitted, duplicates are removed as described; if present and
-<code>true</code>, duplicates are allowed.</p>
+<p>Optional. If omitted, duplicates are removed as described; if present and <code>true</code>, duplicates are allowed.</p>
 </dd></dl>
 
 <p>Returns a new Hash as described. The input Array is not modified.</p>
@@ -285,16 +275,13 @@ associated with that key. An empty Array results in an empty Hash;
         </div>
 
         <div class="description">
-            <p>Thorough but slow deep duplication of any object (if it isn&#39;t
-duplicable, e.g. FixNum, you just get the same thing back). Usually used
-with Hashes or Arrays.</p>
+            <p>Thorough but slow deep duplication of any object (if it isn&#39;t duplicable, e.g. FixNum, you just get the same thing back). Usually used with Hashes or Arrays.</p>
 <dl class="rdoc-list note-list"><dt><code>obj</code>
 <dd>
 <p>Object to duplicate.</p>
 </dd></dl>
 
-<p>Returns the duplicated object if duplicable, else returns the input
-parameter.</p>
+<p>Returns the duplicated object if duplicable, else returns the input parameter.</p>
         </div>
 
 
@@ -332,8 +319,7 @@ parameter.</p>
         <div class="description">
             <p>Deep merge two hashes.</p>
 
-<p>Hash#merge/merge! only do a shallow merge. For example, without a block,
-when starting with this hash:</p>
+<p>Hash#merge/merge! only do a shallow merge. For example, without a block, when starting with this hash:</p>
 
 <pre><code>{ :one =&gt; { :two =&gt; { :three =&gt; 3 } } }
 </code></pre>
@@ -348,12 +334,9 @@ when starting with this hash:</p>
 <pre><code>{ :one =&gt; { :two =&gt; { :and_four =&gt; 4 } } }
 </code></pre>
 
-<p>Because the value for key “:one” in the original hash is simply overwritten
-with the value from the merged-in hash.</p>
+<p>Because the value for key “:one” in the original hash is simply overwritten with the value from the merged-in hash.</p>
 
-<p>Deep merging takes a target hash, into which an “inbound” source hash is
-merged and returns a new hash that is the deep merged result. Taking the
-above example:</p>
+<p>Deep merging takes a target hash, into which an “inbound” source hash is merged and returns a new hash that is the deep merged result. Taking the above example:</p>
 
 <pre><code>target_hash  = { :one =&gt; { :two =&gt; { :three =&gt; 3 } } }
 inbound_hash = { :one =&gt; { :two =&gt; { :and_four =&gt; 4 } } }
@@ -365,8 +348,7 @@ Hoodoo::Utilities.deep_merge_into( target_hash, inbound_hash )
 <pre><code>{ :one =&gt; { :two =&gt; { :three =&gt; 3, :and_four =&gt; 4 } } }
 </code></pre>
 
-<p>For any same-named key with a non-hash value, the value in the inbound hash
-will overwrite the value in the target hash.</p>
+<p>For any same-named key with a non-hash value, the value in the inbound hash will overwrite the value in the target hash.</p>
 
 <p>Parameters:</p>
 <dl class="rdoc-list note-list"><dt><code>target_hash</code>
@@ -419,12 +401,7 @@ will overwrite the value in the target hash.</p>
 <p>“Right hand” hash for comparison.</p>
 </dd></dl>
 
-<p>The returned result is a Hash itself, potentially nested, with any present
-key paths leading to an array describing the difference found at that key
-path. If the two input hashes had values at the path, the differing values
-are placed in the array (“left hand” value at index 0, “right hand” at
-index 1). If one input hash has a key leading to a value which the other
-omits, the array contains <code>nil</code> for the omitted entry.</p>
+<p>The returned result is a Hash itself, potentially nested, with any present key paths leading to an array describing the difference found at that key path. If the two input hashes had values at the path, the differing values are placed in the array (“left hand” value at index 0, “right hand” at index 1). If one input hash has a key leading to a value which the other omits, the array contains <code>nil</code> for the omitted entry.</p>
 
 <p>Example:</p>
 
@@ -438,17 +415,13 @@ Hoodoo::Utilities.hash_diff( hash2, hash1 )
 # =&gt; { :foo =&gt; { :bar =&gt; [ 3, 2 ] }, :baz =&gt; [ nil, true ] }
 </code></pre>
 
-<p>Bear in mind that the difference array contains values of everything
-different from the first part of the key path where things diverge. So in
-this case:</p>
+<p>Bear in mind that the difference array contains values of everything different from the first part of the key path where things diverge. So in this case:</p>
 
 <pre><code>hash1 = { :foo =&gt; { :bar =&gt; { :baz =&gt; [ 1, 2, 3 ] } } }
 hash2 = {}
 </code></pre>
 
-<p>…the difference starts all the way up at “:foo”. The result is thus
-<strong>not</strong> a Hash where just the “:baz” array is picked out as a
-difference; the entire Hash sub-tree is picked out:</p>
+<p>…the difference starts all the way up at “:foo”. The result is thus <strong>not</strong> a Hash where just the “:baz” array is picked out as a difference; the entire Hash sub-tree is picked out:</p>
 
 <pre><code>diff = Hoodoo::Utilities.hash_diff( hash1, hash2 )
 # =&gt; { :foo =&gt; [ { :bar =&gt; { :baz =&gt; [ 1, 2, 3 ] } }, nil ] }
@@ -491,8 +464,7 @@ difference; the entire Hash sub-tree is picked out:</p>
         </div>
 
         <div class="description">
-            <p>Convert a (potentially nested) Hash into an array of entries which
-represent its keys, with the notation “foo.bar.baz” for nested hashes.</p>
+            <p>Convert a (potentially nested) Hash into an array of entries which represent its keys, with the notation “foo.bar.baz” for nested hashes.</p>
 <dl class="rdoc-list note-list"><dt><code>hash</code>
 <dd>
 <p>Input Hash.</p>
@@ -538,32 +510,21 @@ Hoodoo::Utilities.hash_key_paths( hash )
         </div>
 
         <div class="description">
-            <p>Is the given Time, DateTime or String instance specifying a date-time that
-is in the future relevant to this executing environment&#39;s concept of
-“now”, allowing for <code>CLOCK_DRIFT_TOLERANCE</code>? Returns
-<code>true</code> if so, else <code>false</code>.</p>
+            <p>Is the given Time, DateTime or String instance specifying a date-time that is in the future relevant to this executing environment&#39;s concept of “now”, allowing for <code>CLOCK_DRIFT_TOLERANCE</code>? Returns <code>true</code> if so, else <code>false</code>.</p>
 
-<p>Future date (clock drift) tolerance is specified in seconds using the
-<code>HOODOO_CLOCK_DRIFT_TOLERANCE</code> environment variable. The default
-is 30 seconds, as described in the relevant <a
-href="../Hoodoo.html">Hoodoo</a> Guide:</p>
+<p>Future date (clock drift) tolerance is specified in seconds using the <code>HOODOO_CLOCK_DRIFT_TOLERANCE</code> environment variable. The default is 30 seconds, as described in the relevant <a href="../Hoodoo.html"><code>Hoodoo</code></a> Guide:</p>
 
 <pre><code>http://loyaltynz.github.io/hoodoo/guides_1000_env_vars.html#hoodoo_clock_drift_tolerance
 </code></pre>
 <dl class="rdoc-list note-list"><dt><code>input</code>
 <dd>
-<p>A value that&#39;s passed to <a
-href="Utilities.html#method-c-rationalise_datetime">::rationalise_datetime</a>
-with the result checked against `now` allowing for clock drift.</p>
+<p>A value that&#39;s passed to <a href="Utilities.html#method-c-rationalise_datetime"><code>::rationalise_datetime</code></a> with the result checked against `now` allowing for clock drift.</p>
 </dd><dt><code>backdated_to</code>
 <dd>
-<p>Optional. The “now” of the context, defaulting to
-<code>DateTime.now</code>.</p>
+<p>Optional. The “now” of the context, defaulting to <code>DateTime.now</code>.</p>
 </dd></dl>
 
-<p>If the given input or `backdated_to` is not parseable as a date-time like
-object, then the method it will throw a RuntimeError exception via <a
-href="Utilities.html#method-c-rationalise_datetime">::rationalise_datetime</a>.</p>
+<p>If the given input or `backdated_to` is not parseable as a date-time like object, then the method it will throw a RuntimeError exception via <a href="Utilities.html#method-c-rationalise_datetime"><code>::rationalise_datetime</code></a>.</p>
         </div>
 
 
@@ -606,16 +567,10 @@ href="Utilities.html#method-c-rationalise_datetime">::rationalise_datetime</a>.<
         </div>
 
         <div class="description">
-            <p>Returns an ISO 8601 String equivalent of the given Time or DateTime
-instance, with nanosecond precision (subject to Ruby port / OS support).
-This is nothing more than a standardised central interface on calling
-Ruby&#39;s <code>Time/DateTime#iso8601( 9 )</code>, to avoid the risk of
-lots of variable length precision times floating around by authors picking
-their own arbitrary precision parameters.</p>
+            <p>Returns an ISO 8601 String equivalent of the given Time or DateTime instance, with nanosecond precision (subject to Ruby port / OS support). This is nothing more than a standardised central interface on calling Ruby&#39;s <code>Time/DateTime#iso8601( 9 )</code>, to avoid the risk of lots of variable length precision times floating around by authors picking their own arbitrary precision parameters.</p>
 <dl class="rdoc-list note-list"><dt><code>date_time</code>
 <dd>
-<p>Ruby Time or DateTime instance to convert to an ISO 8601 String with
-nanosecond precision.</p>
+<p>Ruby Time or DateTime instance to convert to an ISO 8601 String with nanosecond precision.</p>
 </dd></dl>
         </div>
 
@@ -642,16 +597,10 @@ nanosecond precision.</p>
         </div>
 
         <div class="description">
-            <p>Turn a given value of various types into a DateTime instance or
-<code>nil</code>. If the input value is not <code>nil</code>, a DateTime
-instance, a Time instance, a Date instance or something else that
-<code>DateTime.parse</code> can handle, the method will throw a
-RuntimeError exception.</p>
+            <p>Turn a given value of various types into a DateTime instance or <code>nil</code>. If the input value is not <code>nil</code>, a DateTime instance, a Time instance, a Date instance or something else that <code>DateTime.parse</code> can handle, the method will throw a RuntimeError exception.</p>
 <dl class="rdoc-list note-list"><dt><code>input</code>
 <dd>
-<p>A Time, Date or DateTime instance, or a String that can be converted to a
-DateTime instance; in these cases, an equivalent DateTime is returned. If
-<code>nil</code>, returns <code>nil</code>.</p>
+<p>A Time, Date or DateTime instance, or a String that can be converted to a DateTime instance; in these cases, an equivalent DateTime is returned. If <code>nil</code>, returns <code>nil</code>.</p>
 </dd></dl>
         </div>
 
@@ -690,12 +639,7 @@ DateTime instance; in these cases, an equivalent DateTime is returned. If
         </div>
 
         <div class="description">
-            <p>Return a spare TCP port on localhost. This is free at the instant of
-calling, though of course if you have anything in other local machine
-processes/threads running which might start using ports at any moment,
-there&#39;s a chance of the free port getting claimed in between you asking
-for it and it being returned. This utility method is usually therefore used
-for test environments only.</p>
+            <p>Return a spare TCP port on localhost. This is free at the instant of calling, though of course if you have anything in other local machine processes/threads running which might start using ports at any moment, there&#39;s a chance of the free port getting claimed in between you asking for it and it being returned. This utility method is usually therefore used for test environments only.</p>
         </div>
 
 
@@ -729,10 +673,7 @@ for test environments only.</p>
         </div>
 
         <div class="description">
-            <p>Returns an ISO 8601 String equivalent of the given Time, Date or DateTime
-instance as a full date-time with UTC timezone, with “standard high
-precision” (for rendeirng consistency), subject to Ruby port / OS support
-abilities. At the time of writing, 6 decimal places are included.</p>
+            <p>Returns an ISO 8601 String equivalent of the given Time, Date or DateTime instance as a full date-time with UTC timezone, with “standard high precision” (for rendeirng consistency), subject to Ruby port / OS support abilities. At the time of writing, 6 decimal places are included.</p>
         </div>
 
 
@@ -758,14 +699,10 @@ abilities. At the time of writing, 6 decimal places are included.</p>
         </div>
 
         <div class="description">
-            <p>The keys-to-strings equivalent of <a
-href="Utilities.html#method-c-symbolize">::symbolize</a>.</p>
+            <p>The keys-to-strings equivalent of <a href="Utilities.html#method-c-symbolize"><code>::symbolize</code></a>.</p>
 <dl class="rdoc-list note-list"><dt><code>obj</code>
 <dd>
-<p>Hash or Array of Hashes. Will recursively convert keys in Hashes to
-strings. Hashes with values that are Arrays of Hashes will be dealt with
-properly. Does not modify other types (e.g. an Array of Symbols would stay
-an Array of Symbols).</p>
+<p>Hash or Array of Hashes. Will recursively convert keys in Hashes to strings. Hashes with values that are Arrays of Hashes will be dealt with properly. Does not modify other types (e.g. an Array of Symbols would stay an Array of Symbols).</p>
 </dd></dl>
 
 <p>Returns a copy of your input object with keys converted to strings.</p>
@@ -796,14 +733,10 @@ an Array of Symbols).</p>
         </div>
 
         <div class="description">
-            <p>Given a hash, returns the same hash with keys converted to symbols. Works
-with nested hashes.</p>
+            <p>Given a hash, returns the same hash with keys converted to symbols. Works with nested hashes.</p>
 <dl class="rdoc-list note-list"><dt><code>obj</code>
 <dd>
-<p>Hash or Array of Hashes. Will recursively convert keys in Hashes to
-symbols. Hashes with values that are Arrays of Hashes will be dealt with
-properly. Does not modify other types (e.g. an Array of Strings would stay
-an Array of Strings).</p>
+<p>Hash or Array of Hashes. Will recursively convert keys in Hashes to symbols. Hashes with values that are Arrays of Hashes will be dealt with properly. Does not modify other types (e.g. an Array of Strings would stay an Array of Strings).</p>
 </dd></dl>
 
 <p>Returns a copy of your input object with keys converted to symbols.</p>
@@ -837,12 +770,10 @@ an Array of Strings).</p>
         </div>
 
         <div class="description">
-            <p>Is a parameter convertable to an integer cleanly? Returns the integer value
-if so, else <code>nil</code>.</p>
+            <p>Is a parameter convertable to an integer cleanly? Returns the integer value if so, else <code>nil</code>.</p>
 <dl class="rdoc-list note-list"><dt><code>value</code>
 <dd>
-<p>Value to check, e.g. 2, “44”, :&#39;55&#39; (yields 2, 44, 55) or “hello”,
-Time.now (yields nil, nil).</p>
+<p>Value to check, e.g. 2, “44”, :&#39;55&#39; (yields 2, 44, 55) or “hello”, Time.now (yields nil, nil).</p>
 </dd></dl>
         </div>
 
@@ -870,15 +801,13 @@ Time.now (yields nil, nil).</p>
         </div>
 
         <div class="description">
-            <p>Is the given String a valid ISO 8601 subset date (no time) as accepted by
-(for example) <a href="../Hoodoo.html">Hoodoo</a> API calls?</p>
+            <p>Is the given String a valid ISO 8601 subset date (no time) as accepted by (for example) <a href="../Hoodoo.html"><code>Hoodoo</code></a> API calls?</p>
 <dl class="rdoc-list note-list"><dt><code>str</code>
 <dd>
 <p>Value to check</p>
 </dd></dl>
 
-<p>Returns a Date instance holding the parsed result if a valid ISO 8601
-subset date, else <code>false</code>.</p>
+<p>Returns a Date instance holding the parsed result if a valid ISO 8601 subset date, else <code>false</code>.</p>
         </div>
 
 
@@ -916,15 +845,13 @@ subset date, else <code>false</code>.</p>
         </div>
 
         <div class="description">
-            <p>Is the given String a valid ISO 8601 subset date and time as accepted by
-(for example) <a href="../Hoodoo.html">Hoodoo</a> API calls?</p>
+            <p>Is the given String a valid ISO 8601 subset date and time as accepted by (for example) <a href="../Hoodoo.html"><code>Hoodoo</code></a> API calls?</p>
 <dl class="rdoc-list note-list"><dt><code>str</code>
 <dd>
 <p>Value to check</p>
 </dd></dl>
 
-<p>Returns a DateTime instance holding the parsed result if a valid ISO 8601
-subset date and time, else <code>false</code>.</p>
+<p>Returns a DateTime instance holding the parsed result if a valid ISO 8601 subset date and time, else <code>false</code>.</p>
         </div>
 
 

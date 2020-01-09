@@ -41,13 +41,7 @@
         <div id="content">
     <div class="description">
         
-<p><a href="../Client.html">Hoodoo::Client</a> and related software such as <a
-href="../Services/Middleware.html">Hoodoo::Services::Middleware</a> need
-common access to information about special processing headers defined by <a
-href="../../Hoodoo.html">Hoodoo</a> and the <a
-href="../../Hoodoo.html">Hoodoo</a> API. This class is just a container -
-pretty much a namespaced library - holding that kind of information and
-support methods.</p>
+<p><a href="../Client.html"><code>Hoodoo::Client</code></a> and related software such as <a href="../Services/Middleware.html"><code>Hoodoo::Services::Middleware</code></a> need common access to information about special processing headers defined by <a href="../../Hoodoo.html"><code>Hoodoo</code></a> and the <a href="../../Hoodoo.html"><code>Hoodoo</code></a> API. This class is just a container - pretty much a namespaced library - holding that kind of information and support methods.</p>
 
     </div>
 
@@ -91,11 +85,7 @@ value || nil # =&gt; &#39;value&#39; if &#39;value&#39; is truthy, &#39;nil&#39;
         </tr>
         <tr valign='top'>
             <td>&nbsp;</td>
-            <td colspan="2" class="attr-desc"><p>Used by <a href="Headers.html#HEADER_TO_PROPERTY">HEADER_TO_PROPERTY</a>;
-this Proc when called with some non-nil value from an HTTP header
-representing a <a href="../UUID.html">UUID</a>, evaluates to either the <a
-href="../UUID.html">UUID</a> as a String or <code>nil</code> if the value
-appeared to not be a <a href="../UUID.html">UUID</a>.</p></td>
+            <td colspan="2" class="attr-desc"><p>Used by <a href="Headers.html#HEADER_TO_PROPERTY"><code>HEADER_TO_PROPERTY</code></a>; this Proc when called with some non-nil value from an HTTP header representing a <a href="../UUID.html"><code>UUID</code></a>, evaluates to either the <a href="../UUID.html"><code>UUID</code></a> as a String or <code>nil</code> if the value appeared to not be a <a href="../UUID.html"><code>UUID</code></a>.</p></td>
         </tr>
         <tr valign='top' id='UUID_HEADER_PROC'>
             <td class="attr-name">UUID_HEADER_PROC</td>
@@ -104,9 +94,7 @@ appeared to not be a <a href="../UUID.html">UUID</a>.</p></td>
         </tr>
         <tr valign='top'>
             <td>&nbsp;</td>
-            <td colspan="2" class="attr-desc"><p>Used by <a href="Headers.html#HEADER_TO_PROPERTY">HEADER_TO_PROPERTY</a>;
-this Proc when called with some <a href="../UUID.html">UUID</a> evaluates
-to the input value coerced to a String and no other changes.</p></td>
+            <td colspan="2" class="attr-desc"><p>Used by <a href="Headers.html#HEADER_TO_PROPERTY"><code>HEADER_TO_PROPERTY</code></a>; this Proc when called with some <a href="../UUID.html"><code>UUID</code></a> evaluates to the input value coerced to a String and no other changes.</p></td>
         </tr>
         <tr valign='top' id='KVP_PROPERTY_PROC'>
             <td class="attr-name">KVP_PROPERTY_PROC</td>
@@ -117,16 +105,11 @@ Hash[ URI.decode_www_form( value ) ]
         </tr>
         <tr valign='top'>
             <td>&nbsp;</td>
-            <td colspan="2" class="attr-desc"><p>Used by <a href="Headers.html#HEADER_TO_PROPERTY">HEADER_TO_PROPERTY</a>;
-this Proc when called with some non-nil value from an HTTP header
-containing URL-encoded simple key/value pair data returns a decoded Hash of
-key/value pairs. Use URL encoding in the HTTP header value as per:</p>
+            <td colspan="2" class="attr-desc"><p>Used by <a href="Headers.html#HEADER_TO_PROPERTY"><code>HEADER_TO_PROPERTY</code></a>; this Proc when called with some non-nil value from an HTTP header containing URL-encoded simple key/value pair data returns a decoded Hash of key/value pairs. Use URL encoding in the HTTP header value as per:</p>
 
-<p><a
-href="http://www.w3.org/TR/html5/forms.html#url-encoded-form-data">www.w3.org/TR/html5/forms.html#url-encoded-form-data</a></p>
+<p><a href="http://www.w3.org/TR/html5/forms.html#url-encoded-form-data">www.w3.org/TR/html5/forms.html#url-encoded-form-data</a></p>
 
-<p>Invalid input will produce unusual results, e.g. an empty Hash or a Hash
-where certain keys may have empty string values.</p></td>
+<p>Invalid input will produce unusual results, e.g. an empty Hash or a Hash where certain keys may have empty string values.</p></td>
         </tr>
         <tr valign='top' id='KVP_HEADER_PROC'>
             <td class="attr-name">KVP_HEADER_PROC</td>
@@ -137,12 +120,9 @@ URI.encode_www_form( value )
         </tr>
         <tr valign='top'>
             <td>&nbsp;</td>
-            <td colspan="2" class="attr-desc"><p>Used by <a href="Headers.html#HEADER_TO_PROPERTY">HEADER_TO_PROPERTY</a>;
-this Proc when called with some non-nested Hash evaluates to a URL-encoded
-form data String as per:</p>
+            <td colspan="2" class="attr-desc"><p>Used by <a href="Headers.html#HEADER_TO_PROPERTY"><code>HEADER_TO_PROPERTY</code></a>; this Proc when called with some non-nested Hash evaluates to a URL-encoded form data String as per:</p>
 
-<p><a
-href="http://www.w3.org/TR/html5/forms.html#url-encoded-form-data">www.w3.org/TR/html5/forms.html#url-encoded-form-data</a></p></td>
+<p><a href="http://www.w3.org/TR/html5/forms.html#url-encoded-form-data">www.w3.org/TR/html5/forms.html#url-encoded-form-data</a></p></td>
         </tr>
         <tr valign='top' id='DATETIME_IN_PAST_ONLY_PROPERTY_PROC'>
             <td class="attr-name">DATETIME_IN_PAST_ONLY_PROPERTY_PROC</td>
@@ -155,11 +135,7 @@ value || nil # =&gt; &#39;value&#39; if &#39;value&#39; is truthy, &#39;nil&#39;
         </tr>
         <tr valign='top'>
             <td>&nbsp;</td>
-            <td colspan="2" class="attr-desc"><p>Used by <a href="Headers.html#HEADER_TO_PROPERTY">HEADER_TO_PROPERTY</a>;
-this Proc when called with some non-nil value from an HTTP header
-representing a Date/Time in a supported format, evaluates to either a
-parsed DateTime instance or <code>nil</code> if the value appeared to not
-be in a supported format.</p></td>
+            <td colspan="2" class="attr-desc"><p>Used by <a href="Headers.html#HEADER_TO_PROPERTY"><code>HEADER_TO_PROPERTY</code></a>; this Proc when called with some non-nil value from an HTTP header representing a Date/Time in a supported format, evaluates to either a parsed DateTime instance or <code>nil</code> if the value appeared to not be in a supported format.</p></td>
         </tr>
         <tr valign='top' id='DATETIME_WRITER_PROC'>
             <td class="attr-name">DATETIME_WRITER_PROC</td>
@@ -168,11 +144,7 @@ be in a supported format.</p></td>
         </tr>
         <tr valign='top'>
             <td>&nbsp;</td>
-            <td colspan="2" class="attr-desc"><p>Used by <a href="Headers.html#HEADER_TO_PROPERTY">HEADER_TO_PROPERTY</a>;
-this Proc is called with a Time, Date, DateTime or DateTime-parseable
-String and returns a DateTime. It is used for a custom write accessor for
-the property associated with a header entry and works independently of the
-validation mechanism for inbound String-only from-header data.</p></td>
+            <td colspan="2" class="attr-desc"><p>Used by <a href="Headers.html#HEADER_TO_PROPERTY"><code>HEADER_TO_PROPERTY</code></a>; this Proc is called with a Time, Date, DateTime or DateTime-parseable String and returns a DateTime. It is used for a custom write accessor for the property associated with a header entry and works independently of the validation mechanism for inbound String-only from-header data.</p></td>
         </tr>
         <tr valign='top' id='DATETIME_HEADER_PROC'>
             <td class="attr-name">DATETIME_HEADER_PROC</td>
@@ -181,10 +153,7 @@ validation mechanism for inbound String-only from-header data.</p></td>
         </tr>
         <tr valign='top'>
             <td>&nbsp;</td>
-            <td colspan="2" class="attr-desc"><p>Used by <a href="Headers.html#HEADER_TO_PROPERTY">HEADER_TO_PROPERTY</a>;
-this Proc when called with a DateTime instance evaluates to a String
-representing the DateTime as an ISO 8601 subset value given to nanosecond
-precision.</p></td>
+            <td colspan="2" class="attr-desc"><p>Used by <a href="Headers.html#HEADER_TO_PROPERTY"><code>HEADER_TO_PROPERTY</code></a>; this Proc when called with a DateTime instance evaluates to a String representing the DateTime as an ISO 8601 subset value given to nanosecond precision.</p></td>
         </tr>
         <tr valign='top' id='BOOLEAN_PROPERTY_PROC'>
             <td class="attr-name">BOOLEAN_PROPERTY_PROC</td>
@@ -195,11 +164,7 @@ value.to_s.downcase == &#39;yes&#39; || value == true ? true : false
         </tr>
         <tr valign='top'>
             <td>&nbsp;</td>
-            <td colspan="2" class="attr-desc"><p>Used by <a href="Headers.html#HEADER_TO_PROPERTY">HEADER_TO_PROPERTY</a>;
-this Proc when called with some non-nil value from an HTTP header
-representing a Boolean as “yes” or “no”, evaluates to either
-<code>true</code> for “yes” or <code>false</code> for any other value. Case
-insensitive.</p></td>
+            <td colspan="2" class="attr-desc"><p>Used by <a href="Headers.html#HEADER_TO_PROPERTY"><code>HEADER_TO_PROPERTY</code></a>; this Proc when called with some non-nil value from an HTTP header representing a Boolean as “yes” or “no”, evaluates to either <code>true</code> for “yes” or <code>false</code> for any other value. Case insensitive.</p></td>
         </tr>
         <tr valign='top' id='BOOLEAN_HEADER_PROC'>
             <td class="attr-name">BOOLEAN_HEADER_PROC</td>
@@ -208,10 +173,7 @@ insensitive.</p></td>
         </tr>
         <tr valign='top'>
             <td>&nbsp;</td>
-            <td colspan="2" class="attr-desc"><p>Used by <a href="Headers.html#HEADER_TO_PROPERTY">HEADER_TO_PROPERTY</a>;
-this Proc when called with <code>true</code> or <code>false</code>
-evaluates to String “yes” for <code>true</code> or “no” for any other
-value.</p></td>
+            <td colspan="2" class="attr-desc"><p>Used by <a href="Headers.html#HEADER_TO_PROPERTY"><code>HEADER_TO_PROPERTY</code></a>; this Proc when called with <code>true</code> or <code>false</code> evaluates to String “yes” for <code>true</code> or “no” for any other value.</p></td>
         </tr>
         <tr valign='top' id='HEADER_TO_PROPERTY'>
             <td class="attr-name">HEADER_TO_PROPERTY</td>
@@ -271,66 +233,33 @@ value.</p></td>
         </tr>
         <tr valign='top'>
             <td>&nbsp;</td>
-            <td colspan="2" class="attr-desc"><p>Various “X-Foo”-style HTTP headers specified in the <a
-href="../../Hoodoo.html">Hoodoo</a> API Specification have special meanings
-and values for those need to be set up in request data and <a
-href="../Client.html">Hoodoo::Client</a> endpoints. Processing around these
-is data driven by this mapping Hash.</p>
+            <td colspan="2" class="attr-desc"><p>Various “X-Foo”-style HTTP headers specified in the <a href="../../Hoodoo.html"><code>Hoodoo</code></a> API Specification have special meanings and values for those need to be set up in request data and <a href="../Client.html"><code>Hoodoo::Client</code></a> endpoints. Processing around these is data driven by this mapping Hash.</p>
 
-<p>Keys are the HTTP header names in <a href="../../Rack.html">Rack</a> (upper
-case, “HTTP_”-prefix) format. Values are options bundles as follows:</p>
+<p>Keys are the HTTP header names in <a href="../../Rack.html"><code>Rack</code></a> (upper case, “HTTP_”-prefix) format. Values are options bundles as follows:</p>
 <dl class="rdoc-list note-list"><dt><code>property</code>
 <dd>
 <p>The property name to be associated with the header, as a Symbol.</p>
 </dd><dt><code>property_proc</code>
 <dd>
-<p>A Proc that&#39;s called to both validate and clean up the raw value from
-the HTTP header. It evaluates to <code>nil</code> if the value is invalid,
-or non-<code>nil</code> for any other case. Note that there is no way for
-an HTTP header to explicitly convey a corresponding value internally of
-<code>nil</code> as a result, by design; instead the relevant header would
-simply be omitted by the caller (and/or change your header design!).</p>
+<p>A Proc that&#39;s called to both validate and clean up the raw value from the HTTP header. It evaluates to <code>nil</code> if the value is invalid, or non-<code>nil</code> for any other case. Note that there is no way for an HTTP header to explicitly convey a corresponding value internally of <code>nil</code> as a result, by design; instead the relevant header would simply be omitted by the caller (and/or change your header design!).</p>
 </dd><dt><code>writer_proc</code>
 <dd>
-<p>If a property has a possible amigbuity of input data types when set
-externally, independently of any validation etc. from the
-<code>property_proc</code> option, then this optional entry contains a Proc
-that is used for a custom write accessor and canonicalises assumed-valid
-but possibly not canonical input for writing. An example would be the
-conversion of String or Time instances to a DateTime so that a property
-always reads back with a DateTime instance.</p>
+<p>If a property has a possible amigbuity of input data types when set externally, independently of any validation etc. from the <code>property_proc</code> option, then this optional entry contains a Proc that is used for a custom write accessor and canonicalises assumed-valid but possibly not canonical input for writing. An example would be the conversion of String or Time instances to a DateTime so that a property always reads back with a DateTime instance.</p>
 </dd><dt><code>header</code>
 <dd>
-<p>For speed in lookups where it&#39;s needed, this is the “real” (not <a
-href="../../Rack.html">Rack</a> format) HTTP header name.</p>
+<p>For speed in lookups where it&#39;s needed, this is the “real” (not <a href="../../Rack.html"><code>Rack</code></a> format) HTTP header name.</p>
 </dd><dt><code>header_proc</code>
 <dd>
-<p>A Proc that&#39;s called to convert a cleaned-up value set in the
-<code>property</code> by its <code>property_proc</code>. It is called with
-this value and returns an equivalent appropriate value for use with the
-HTTP header given in <code>header</code>. This <em>MUST</em> always be a
-String.</p>
+<p>A Proc that&#39;s called to convert a cleaned-up value set in the <code>property</code> by its <code>property_proc</code>. It is called with this value and returns an equivalent appropriate value for use with the HTTP header given in <code>header</code>. This <em>MUST</em> always be a String.</p>
 </dd><dt><code>secured</code>
 <dd>
-<p>Optional, default <code>nil</code>. If <code>true</code>, marks that this
-header and its associated value can only be processed if there is a Session
-with a Caller that has an <code>authorised_http_headers</code> entry for
-this header.</p>
+<p>Optional, default <code>nil</code>. If <code>true</code>, marks that this header and its associated value can only be processed if there is a Session with a Caller that has an <code>authorised_http_headers</code> entry for this header.</p>
 </dd><dt><code>auto_transfer</code>
 <dd>
-<p>Optional, default <code>nil</code>. Only relevant to inter-resource call
-scenarios. If <code>true</code>, when one resource calls another, the value
-of this property is automatically transferred to the downstream resource.
-Otherwise, it is not, and the downstream resource will operate under
-whatever defaults are present. An inter-resource call endpoint which
-inherits an auto-transfer property can always have this property explicitly
-overwritten before any calls are made through it.</p>
+<p>Optional, default <code>nil</code>. Only relevant to inter-resource call scenarios. If <code>true</code>, when one resource calls another, the value of this property is automatically transferred to the downstream resource. Otherwise, it is not, and the downstream resource will operate under whatever defaults are present. An inter-resource call endpoint which inherits an auto-transfer property can always have this property explicitly overwritten before any calls are made through it.</p>
 </dd></dl>
 
-<p>An additional key of <code>:property_writer</code> will be set up
-automatically which contains the value of the <code>:property</code> key
-with an “=” sign added, resulting in the name of a write accessor method
-for that property.</p></td>
+<p>An additional key of <code>:property_writer</code> will be set up automatically which contains the value of the <code>:property</code> key with an “=” sign added, resulting in the name of a write accessor method for that property.</p></td>
         </tr>
     </table>
 
@@ -345,14 +274,7 @@ for that property.</p></td>
         </div>
 
         <div class="description">
-            <p>Define a series of read and custom write accessors according to the
-HTTP_HEADER_OPTIONS_MAP. For example, a property of “dated_at” results in a
-<code>dated_at</code> reader, a <code>dated_at=</code> writer which calls
-<a
-href="../Utilities.html#method-c-rationalise_datetime">Hoodoo::Utilities.rationalise_datetime</a>
-to clean up the input value and sets the result into the
-<code>@dated_at</code> instance variable which the read accessor will be
-expecting to use.</p>
+            <p>Define a series of read and custom write accessors according to the HTTP_HEADER_OPTIONS_MAP. For example, a property of “dated_at” results in a <code>dated_at</code> reader, a <code>dated_at=</code> writer which calls <a href="../Utilities.html#method-c-rationalise_datetime"><code>Hoodoo::Utilities.rationalise_datetime</code></a> to clean up the input value and sets the result into the <code>@dated_at</code> instance variable which the read accessor will be expecting to use.</p>
 <dl class="rdoc-list note-list"><dt><code>klass</code>
 <dd>
 <p>The Class to which the instance methods will be added.</p>
@@ -400,30 +322,15 @@ expecting to use.</p>
         </div>
 
         <div class="description">
-            <p>From a Hash-like source where keys are HTTP header names and values are the
-corresponding HTTP header values, extract interesting values and return a
-Hash of options as described below.</p>
+            <p>From a Hash-like source where keys are HTTP header names and values are the corresponding HTTP header values, extract interesting values and return a Hash of options as described below.</p>
 
-<p>Any <code>X-Foo</code> header is extracted, including core <a
-href="../../Hoodoo.html">Hoodoo</a> extension headers such as
-<code>X-Interaction-ID</code>, which is present in any response. The “X-”
-is stripped, the rest converted to lower case and hyphens converted to
-underscores. The interaction ID, therefore, would be set as an
-<code>interaction_id</code> option. <code>X-Foo</code> would be set as a
-<code>foo</code> option - and so-on.</p>
+<p>Any <code>X-Foo</code> header is extracted, including core <a href="../../Hoodoo.html"><code>Hoodoo</code></a> extension headers such as <code>X-Interaction-ID</code>, which is present in any response. The “X-” is stripped, the rest converted to lower case and hyphens converted to underscores. The interaction ID, therefore, would be set as an <code>interaction_id</code> option. <code>X-Foo</code> would be set as a <code>foo</code> option - and so-on.</p>
 
-<p>The header matcher accepts headers from the Hash-like source in upper or
-lower case with hyphens or underscores inside; extracted headers can
-therefore start with any of <code>X_</code>, <code>x_</code>,
-<code>X-</code> or <code>x-</code>. The Hash-like source must support the
-<code>each</code> operator yielding a key and value to the block on each
-iteration.</p>
+<p>The header matcher accepts headers from the Hash-like source in upper or lower case with hyphens or underscores inside; extracted headers can therefore start with any of <code>X_</code>, <code>x_</code>, <code>X-</code> or <code>x-</code>. The Hash-like source must support the <code>each</code> operator yielding a key and value to the block on each iteration.</p>
 
-<p>Header values are not translated at all, so (unless something very unsual
-is going on) the option values will be Strings.</p>
+<p>Header values are not translated at all, so (unless something very unsual is going on) the option values will be Strings.</p>
 
-<p>If the same header is encountered more than once, only the first one
-encountered (in enumeration order, whatever that might be) is stored.</p>
+<p>If the same header is encountered more than once, only the first one encountered (in enumeration order, whatever that might be) is stored.</p>
 
 <p>Parameters:</p>
 <dl class="rdoc-list note-list"><dt><code>hashlike_source</code>

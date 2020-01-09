@@ -39,8 +39,7 @@
         <div id="content">
     <div class="description">
         
-<p>Encapsulate all data related to an interaction (API call) within one
-object.</p>
+<p>Encapsulate all data related to an interaction (API call) within one object.</p>
 
     </div>
 
@@ -83,43 +82,35 @@ object.</p>
                 [RW]
             </td>
             <td class='attr-name'>context</td>
-            <td class='attr-desc'><p>A <a href="../Context.html">Hoodoo::Services::Context</a> instance
-representing this API call. May be updated/replaced during processing.</p></td>
+            <td class='attr-desc'><p>A <a href="../Context.html"><code>Hoodoo::Services::Context</code></a> instance representing this API call. May be updated/replaced during processing.</p></td>
         </tr>
         <tr valign='top' id='attribute-i-interaction_id'>
             <td class='attr-rw'>
                 [R]
             </td>
             <td class='attr-name'>interaction_id</td>
-            <td class='attr-desc'><p>Every interaction has a <a href="../../UUID.html">UUID</a> passed back in
-API responses via the X-Interaction-ID HTTP header. This is that <a
-href="../../UUID.html">UUID</a>.</p></td>
+            <td class='attr-desc'><p>Every interaction has a <a href="../../UUID.html"><code>UUID</code></a> passed back in API responses via the X-Interaction-ID HTTP header. This is that <a href="../../UUID.html"><code>UUID</code></a>.</p></td>
         </tr>
         <tr valign='top' id='attribute-i-owning_middleware_instance'>
             <td class='attr-rw'>
                 [R]
             </td>
             <td class='attr-name'>owning_middleware_instance</td>
-            <td class='attr-desc'><p>API calls are handled by the middleware, so Interactions are created by <a
-href="../Middleware.html">Hoodoo::Services::Middleware</a> instances. This
-is that creating instance, or the instance that should be treated as if it
-were the creator.</p></td>
+            <td class='attr-desc'><p>API calls are handled by the middleware, so Interactions are created by <a href="../Middleware.html"><code>Hoodoo::Services::Middleware</code></a> instances. This is that creating instance, or the instance that should be treated as if it were the creator.</p></td>
         </tr>
         <tr valign='top' id='attribute-i-rack_request'>
             <td class='attr-rw'>
                 [R]
             </td>
             <td class='attr-name'>rack_request</td>
-            <td class='attr-desc'><p>The inbound <a href="../../../Rack.html">Rack</a> request; a
-<code>Rack::Request</code> instance.</p></td>
+            <td class='attr-desc'><p>The inbound <a href="../../../Rack.html"><code>Rack</code></a> request; a <code>Rack::Request</code> instance.</p></td>
         </tr>
         <tr valign='top' id='attribute-i-requested_action'>
             <td class='attr-rw'>
                 [RW]
             </td>
             <td class='attr-name'>requested_action</td>
-            <td class='attr-desc'><p>The requested action, as a symbol; see
-Hoodoo::Services::Middleware::ALLOWED_ACTIONS.</p></td>
+            <td class='attr-desc'><p>The requested action, as a symbol; see Hoodoo::Services::Middleware::ALLOWED_ACTIONS.</p></td>
         </tr>
         <tr valign='top' id='attribute-i-requested_content_encoding'>
             <td class='attr-rw'>
@@ -140,18 +131,14 @@ Hoodoo::Services::Middleware::ALLOWED_ACTIONS.</p></td>
                 [RW]
             </td>
             <td class='attr-name'>target_implementation</td>
-            <td class='attr-desc'><p>The target <a
-href="../Implementation.html">Hoodoo::Services::Implementation</a> instance
-for the API call. See <a
-href="Interaction.html#attribute-i-target_interface">target_interface</a>.</p></td>
+            <td class='attr-desc'><p>The target <a href="../Implementation.html"><code>Hoodoo::Services::Implementation</code></a> instance for the API call. See <a href="Interaction.html#attribute-i-target_interface"><code>target_interface</code></a>.</p></td>
         </tr>
         <tr valign='top' id='attribute-i-target_interface'>
             <td class='attr-rw'>
                 [RW]
             </td>
             <td class='attr-name'>target_interface</td>
-            <td class='attr-desc'><p>The <a href="../Interface.html">Hoodoo::Services::Interface</a> subclass
-describing the resource interface that is the target of the API call.</p></td>
+            <td class='attr-desc'><p>The <a href="../Interface.html"><code>Hoodoo::Services::Interface</code></a> subclass describing the resource interface that is the target of the API call.</p></td>
         </tr>
     </table>
 
@@ -165,32 +152,18 @@ describing the resource interface that is the target of the API call.</p></td>
         </div>
 
         <div class="description">
-            <p>Create a new <a href="Interaction.html">Interaction</a> instance, acquiring
-a new interaction ID automatically or picking up one from an
-X-Interaction-ID header if available.</p>
+            <p>Create a new <a href="Interaction.html"><code>Interaction</code></a> instance, acquiring a new interaction ID automatically or picking up one from an X-Interaction-ID header if available.</p>
 
-<p>A new context instance (see <a
-href="Interaction.html#attribute-i-context">context</a>) is generated with
-a new empty request and response object attached, along with
-<code>nil</code> session data or the given session information in the input
-parameters:</p>
+<p>A new context instance (see <a href="Interaction.html#attribute-i-context"><code>context</code></a>) is generated with a new empty request and response object attached, along with <code>nil</code> session data or the given session information in the input parameters:</p>
 <dl class="rdoc-list note-list"><dt><code>env</code>
 <dd>
-<p>The raw <a href="../../../Rack.html">Rack</a> request Hash. May be “{}” in
-some test scenarios. Converted to a Rack::Request instance. If this
-describes an X-Interaction-ID header then this <a
-href="Interaction.html">Interaction</a> will use - without validation -
-whatever value the header holds, else a new <a
-href="../../UUID.html">UUID</a> is generated.</p>
+<p>The raw <a href="../../../Rack.html"><code>Rack</code></a> request Hash. May be “{}” in some test scenarios. Converted to a Rack::Request instance. If this describes an X-Interaction-ID header then this <a href="Interaction.html"><code>Interaction</code></a> will use - without validation - whatever value the header holds, else a new <a href="../../UUID.html"><code>UUID</code></a> is generated.</p>
 </dd><dt><code>owning_middleware_instance</code>
 <dd>
-<p>See <a
-href="Interaction.html#attribute-i-owning_middleware_instance">owning_middleware_instance</a>.</p>
+<p>See <a href="Interaction.html#attribute-i-owning_middleware_instance"><code>owning_middleware_instance</code></a>.</p>
 </dd><dt><code>session</code>
 <dd>
-<p>The session data attached to the <a
-href="Interaction.html#attribute-i-context">context</a> value; optional; if
-omitted, <code>nil</code> is used.</p>
+<p>The session data attached to the <a href="Interaction.html#attribute-i-context"><code>context</code></a> value; optional; if omitted, <code>nil</code> is used.</p>
 </dd></dl>
         </div>
 
@@ -231,11 +204,7 @@ omitted, <code>nil</code> is used.</p>
         </div>
 
         <div class="description">
-            <p><a href="../../../Hoodoo.html">Hoodoo</a> middleware calls here to say
-“I&#39;m using the test session” (or not), so that this can be enquired
-about via <a
-href="Interaction.html#method-i-using_test_session-3F">using_test_session?</a>
-if need be.</p>
+            <p><a href="../../../Hoodoo.html"><code>Hoodoo</code></a> middleware calls here to say “I&#39;m using the test session” (or not), so that this can be enquired about via <a href="Interaction.html#method-i-using_test_session-3F"><code>using_test_session?</code></a> if need be.</p>
         </div>
 
 
@@ -261,9 +230,7 @@ if need be.</p>
         </div>
 
         <div class="description">
-            <p>Returns <code>true</code> if <a href="../../../Hoodoo.html">Hoodoo</a> has
-previously called <a
-href="Interaction.html#method-i-using_test_session">using_test_session</a>.</p>
+            <p>Returns <code>true</code> if <a href="../../../Hoodoo.html"><code>Hoodoo</code></a> has previously called <a href="Interaction.html#method-i-using_test_session"><code>using_test_session</code></a>.</p>
         </div>
 
 

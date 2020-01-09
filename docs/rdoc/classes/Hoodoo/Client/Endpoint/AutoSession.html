@@ -39,26 +39,18 @@
         <div id="content">
     <div class="description">
         
-<p>This endpoint wraps something which does <em>actual</em> communication but
-requires a session; it maintains a valid session for that wrapped endpoint
-automatically. It implements the following model:</p>
+<p>This endpoint wraps something which does <em>actual</em> communication but requires a session; it maintains a valid session for that wrapped endpoint automatically. It implements the following model:</p>
 <ul><li>
-<p>It requires a Caller ID and Caller Authentication Secret to be instantiated
-(via the <code>options</code> parameter).</p>
+<p>It requires a Caller ID and Caller Authentication Secret to be instantiated (via the <code>options</code> parameter).</p>
 </li><li>
-<p>If there is no session ID available, it creates one using the above
-details. Otherwise, it tries to use the given session.</p>
+<p>If there is no session ID available, it creates one using the above details. Otherwise, it tries to use the given session.</p>
 </li><li>
-<p>If a particular request leads to an &#39;invalid session&#39; response, the
-request is marked for retry. A new session is obtained first, the retry
-happens and if it fails this time, the failure is returned to the caller.</p>
+<p>If a particular request leads to an &#39;invalid session&#39; response, the request is marked for retry. A new session is obtained first, the retry happens and if it fails this time, the failure is returned to the caller.</p>
 </li></ul>
 
-<p>Since it wraps another endpoint and requires Caller information to be able
-to build sessions, instantiation requirements are rather unusual</p>
+<p>Since it wraps another endpoint and requires Caller information to be able to build sessions, instantiation requirements are rather unusual</p>
 <ul><li>
-<p>see <a href="AutoSession.html#method-i-configure_with">configure_with</a>
-for details.</p>
+<p>see <a href="AutoSession.html#method-i-configure_with"><code>configure_with</code></a> for details.</p>
 </li></ul>
 
     </div>
@@ -129,8 +121,7 @@ for details.</p>
         </div>
 
         <div class="description">
-            <p>See <a
-href="../Endpoint.html#method-i-create">Hoodoo::Client::Endpoint#create</a>.</p>
+            <p>See <a href="../Endpoint.html#method-i-create"><code>Hoodoo::Client::Endpoint#create</code></a>.</p>
         </div>
 
 
@@ -156,8 +147,7 @@ href="../Endpoint.html#method-i-create">Hoodoo::Client::Endpoint#create</a>.</p>
         </div>
 
         <div class="description">
-            <p>See <a
-href="../Endpoint.html#method-i-delete">Hoodoo::Client::Endpoint#delete</a>.</p>
+            <p>See <a href="../Endpoint.html#method-i-delete"><code>Hoodoo::Client::Endpoint#delete</code></a>.</p>
         </div>
 
 
@@ -183,8 +173,7 @@ href="../Endpoint.html#method-i-delete">Hoodoo::Client::Endpoint#delete</a>.</p>
         </div>
 
         <div class="description">
-            <p>See <a
-href="../Endpoint.html#method-i-list">Hoodoo::Client::Endpoint#list</a>.</p>
+            <p>See <a href="../Endpoint.html#method-i-list"><code>Hoodoo::Client::Endpoint#list</code></a>.</p>
         </div>
 
 
@@ -210,8 +199,7 @@ href="../Endpoint.html#method-i-list">Hoodoo::Client::Endpoint#list</a>.</p>
         </div>
 
         <div class="description">
-            <p>See <a
-href="../Endpoint.html#method-i-show">Hoodoo::Client::Endpoint#show</a>.</p>
+            <p>See <a href="../Endpoint.html#method-i-show"><code>Hoodoo::Client::Endpoint#show</code></a>.</p>
         </div>
 
 
@@ -237,8 +225,7 @@ href="../Endpoint.html#method-i-show">Hoodoo::Client::Endpoint#show</a>.</p>
         </div>
 
         <div class="description">
-            <p>See <a
-href="../Endpoint.html#method-i-update">Hoodoo::Client::Endpoint#update</a>.</p>
+            <p>See <a href="../Endpoint.html#method-i-update"><code>Hoodoo::Client::Endpoint#update</code></a>.</p>
         </div>
 
 
@@ -266,48 +253,34 @@ href="../Endpoint.html#method-i-update">Hoodoo::Client::Endpoint#update</a>.</p>
         </div>
 
         <div class="description">
-            <p>See <a
-href="../Endpoint.html#method-i-configure_with">Hoodoo::Client::Endpoint#configure_with</a>.</p>
+            <p>See <a href="../Endpoint.html#method-i-configure_with"><code>Hoodoo::Client::Endpoint#configure_with</code></a>.</p>
 
 <p>Configuration option keys which <em>must</em> be supplied are:</p>
 <dl class="rdoc-list note-list"><dt><code>caller_id</code>
 <dd>
-<p>The <a href="../../UUID.html">UUID</a> of the Caller instance to be used
-for session creation.</p>
+<p>The <a href="../../UUID.html"><code>UUID</code></a> of the Caller instance to be used for session creation.</p>
 </dd><dt><code>caller_secret</code>
 <dd>
-<p>The authentication secret of the Caller instance to be used for session
-creation.</p>
+<p>The authentication secret of the Caller instance to be used for session creation.</p>
 </dd><dt>+session_endpoint
 <dd>
-<p>A Hooodo::Client::Endpoint subclass which can be used for talking to the
-Session endpoint (for obvious reasons!).</p>
+<p>A Hooodo::Client::Endpoint subclass which can be used for talking to the Session endpoint (for obvious reasons!).</p>
 </dd><dt><code>discovery_result</code>
 <dd>
-<p>A <a
-href="../../Services/Discovery/ForRemote.html">Hoodoo::Services::Discovery::ForRemote</a>
-instance describing the required, remotely available resource endpoint.</p>
+<p>A <a href="../../Services/Discovery/ForRemote.html"><code>Hoodoo::Services::Discovery::ForRemote</code></a> instance describing the required, remotely available resource endpoint.</p>
 </dd></dl>
 
 <p>The pattern for creating and using this instance is:</p>
 <ul><li>
 <p>Discover the location of the remote resource.</p>
 </li><li>
-<p>Use the discovery result to build an appropriate <a
-href="../Endpoint.html">Endpoint</a> subclass instance, e.g. <a
-href="HTTP.html">Hoodoo::Client::Endpoint::HTTP</a>.</p>
+<p>Use the discovery result to build an appropriate <a href="../Endpoint.html"><code>Endpoint</code></a> subclass instance, e.g. <a href="HTTP.html"><code>Hoodoo::Client::Endpoint::HTTP</code></a>.</p>
 </li><li>
-<p>Create a <a
-href="../../Services/Discovery/ForRemote.html">Hoodoo::Services::Discovery::ForRemote</a>
-instance which describes the above endpoint via the
-<code>wrapped_endpoint</code> option.</p>
+<p>Create a <a href="../../Services/Discovery/ForRemote.html"><code>Hoodoo::Services::Discovery::ForRemote</code></a> instance which describes the above endpoint via the <code>wrapped_endpoint</code> option.</p>
 </li><li>
-<p>Build an instance of this auto-session <a
-href="../Endpoint.html">Endpoint</a> subclass, giving it the above object
-as the <code>discovery_result</code>.</p>
+<p>Build an instance of this auto-session <a href="../Endpoint.html"><code>Endpoint</code></a> subclass, giving it the above object as the <code>discovery_result</code>.</p>
 </li><li>
-<p>Use this endpoint in the normal fashion. All the special mechanics of
-session management are handled here.</p>
+<p>Use this endpoint in the normal fashion. All the special mechanics of session management are handled here.</p>
 </li></ul>
         </div>
 

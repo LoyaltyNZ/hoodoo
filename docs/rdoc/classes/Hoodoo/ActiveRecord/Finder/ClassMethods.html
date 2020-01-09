@@ -15,8 +15,8 @@
 
     <meta property="og:title" value="Hoodoo::ActiveRecord::Finder::ClassMethods">
 
-    <meta name="description" content="Collection of class methods that get defined on an including class via Hoodoo::ActiveRecord::Finder.included.">
-    <meta property="og:description" content="Collection of class methods that get defined on an including class via Hoodoo::ActiveRecord::Finder.included.">
+    <meta name="description" content="Collection of class methods that get defined on an including class via Hoodoo::ActiveRecord::Finder::included.">
+    <meta property="og:description" content="Collection of class methods that get defined on an including class via Hoodoo::ActiveRecord::Finder::included.">
 
     <meta name="keywords" content="Hoodoo::ActiveRecord::Finder::ClassMethods class">
     <meta name="keywords" content="scoped_in, scoped_undated_in, acquire, acquire_in, acquire_in!, acquire_with, acquired_with, acquire_with_id_substitute, acquisition_scope, list, list_in, dataset_size, estimated_dataset_size, estimated_count, estimate_counts_with, search_with, filter_with, polymorphic_find, polymorphic_id_fields, list_finder, list_search_map, list_filter_map">
@@ -36,8 +36,7 @@
         <div id="content">
     <div class="description">
         
-<p>Collection of class methods that get defined on an including class via <a
-href="../Finder.html#method-c-included">Hoodoo::ActiveRecord::Finder.included</a>.</p>
+<p>Collection of class methods that get defined on an including class via <a href="../Finder.html#method-c-included"><code>Hoodoo::ActiveRecord::Finder::included</code></a>.</p>
 
     </div>
 
@@ -165,16 +164,9 @@ href="../Finder.html#method-c-included">Hoodoo::ActiveRecord::Finder.included</a
         </div>
 
         <div class="description">
-            <p>“Polymorphic” find - support for finding a model by fields other than just
-<code>:id</code>, based on a single unique identifier. Use <a
-href="ClassMethods.html#method-i-acquire">acquire</a> just like you&#39;d
-use <code>find_by_id</code> and only bother with it if you support finding
-a resource instance by <code>id</code> <em>and</em> one or more other model
-fields. Otherwise, just use <code>find_by_id</code>.</p>
+            <p>“Polymorphic” find - support for finding a model by fields other than just <code>:id</code>, based on a single unique identifier. Use <a href="ClassMethods.html#method-i-acquire"><code>acquire</code></a> just like you&#39;d use <code>find_by_id</code> and only bother with it if you support finding a resource instance by <code>id</code> <em>and</em> one or more other model fields. Otherwise, just use <code>find_by_id</code>.</p>
 
-<p>In the model, you declare the list of fields <em>in</em> <em>addition</em>
-<em>to</em> <code>id</code> by calling <a
-href="ClassMethods.html#method-i-acquire_with">acquire_with</a> thus:</p>
+<p>In the model, you declare the list of fields <em>in</em> <em>addition</em> <em>to</em> <code>id</code> by calling <a href="ClassMethods.html#method-i-acquire_with"><code>acquire_with</code></a> thus:</p>
 
 <pre><code>class SomeModel &lt; ActiveRecord::Base
   include Hoodoo::ActiveRecord::Finder
@@ -182,10 +174,7 @@ href="ClassMethods.html#method-i-acquire_with">acquire_with</a> thus:</p>
 end
 </code></pre>
 
-<p>For example, maybe you allow some resource to be looked up by fields
-<code>id</code> or <code>code</code>, both of which are independently
-unique sets. Since <code>id</code> is always automatically included, you
-only need to do this:</p>
+<p>For example, maybe you allow some resource to be looked up by fields <code>id</code> or <code>code</code>, both of which are independently unique sets. Since <code>id</code> is always automatically included, you only need to do this:</p>
 
 <pre><code>class SomeModel &lt; ActiveRecord::Base
   include Hoodoo::ActiveRecord::Finder
@@ -208,42 +197,19 @@ end
 end
 </code></pre>
 
-<p>There is nothing magic “under the hood” - <a
-href="../../../Hoodoo.html">Hoodoo</a> just tries to find records with a
-value matching the incoming identifier for each of the fields in turn. It
-starts with <code>id</code> then runs through any other fields in the order
-given through <a
-href="ClassMethods.html#method-i-acquire_with">acquire_with</a>.</p>
+<p>There is nothing magic “under the hood” - <a href="../../../Hoodoo.html"><code>Hoodoo</code></a> just tries to find records with a value matching the incoming identifier for each of the fields in turn. It starts with <code>id</code> then runs through any other fields in the order given through <a href="ClassMethods.html#method-i-acquire_with"><code>acquire_with</code></a>.</p>
 
-<p>This can only be used <em>if your searched fields are strings</em> in the
-database. This includes, for example, the <code>id</code> column; <a
-href="../../../Hoodoo.html">Hoodoo</a> usually expects to be a string field
-holding a 32-character <a href="../UUID.html">UUID</a>. If any of the
-fields contain non-string types, attempts to use the <a
-href="ClassMethods.html#method-i-acquire">acquire</a> mechanism (or a
-related one) may result in database errors due to type mismatches,
-depending upon the database engine in use.</p>
+<p>This can only be used <em>if your searched fields are strings</em> in the database. This includes, for example, the <code>id</code> column; <a href="../../../Hoodoo.html"><code>Hoodoo</code></a> usually expects to be a string field holding a 32-character <a href="../UUID.html"><code>UUID</code></a>. If any of the fields contain non-string types, attempts to use the <a href="ClassMethods.html#method-i-acquire"><code>acquire</code></a> mechanism (or a related one) may result in database errors due to type mismatches, depending upon the database engine in use.</p>
 
-<p>In more complex scenarious, you can just call <a
-href="ClassMethods.html#method-i-acquire">acquire</a> at the end of any
-chain of AREL queries just as you would call ActiveRecord&#39;s own
-find_by_id method, e.g.:</p>
+<p>In more complex scenarious, you can just call <a href="ClassMethods.html#method-i-acquire"><code>acquire</code></a> at the end of any chain of AREL queries just as you would call ActiveRecord&#39;s own find_by_id method, e.g.:</p>
 
 <pre><code>SomeModel.where( :foo =&gt; :bar ).acquire( context.request.ident )
 </code></pre>
 
-<p>Usually for convenience you should use <a
-href="ClassMethods.html#method-i-acquire_in-21">acquire_in!</a> or <a
-href="ClassMethods.html#method-i-acquire_in">#acquire_in</a> instead, or
-only call <a href="ClassMethods.html#method-i-acquire">acquire</a> with
-(say) a secure scope via for example a call to <a
-href="../Secure/ClassMethods.html#method-i-secure">Hoodoo::ActiveRecord::Secure::ClassMethods#secure</a>.
-Other scopes may be needed depending on the mixins your model uses.</p>
+<p>Usually for convenience you should use <a href="ClassMethods.html#method-i-acquire_in-21"><code>acquire_in!</code></a> or <a href="ClassMethods.html#method-i-acquire_in"><code>acquire_in</code></a> instead, or only call <a href="ClassMethods.html#method-i-acquire"><code>acquire</code></a> with (say) a secure scope via for example a call to <a href="../Secure/ClassMethods.html#method-i-secure"><code>Hoodoo::ActiveRecord::Secure::ClassMethods#secure</code></a>. Other scopes may be needed depending on the mixins your model uses.</p>
 <dl class="rdoc-list note-list"><dt><code>ident</code>
 <dd>
-<p>The value to search for in the fields (attributes) specified via <a
-href="ClassMethods.html#method-i-acquire_with">acquire_with</a>, matched
-using calls to <code>where( attr =&gt; ident )</code>.</p>
+<p>The value to search for in the fields (attributes) specified via <a href="ClassMethods.html#method-i-acquire_with"><code>acquire_with</code></a>, matched using calls to <code>where( attr =&gt; ident )</code>.</p>
 </dd></dl>
 
 <p>Returns a found model instance or <code>nil</code> for no match.</p>
@@ -272,22 +238,9 @@ using calls to <code>where( attr =&gt; ident )</code>.</p>
         </div>
 
         <div class="description">
-            <p>Implicily secure, translated, dated etc. etc. version of <a
-href="ClassMethods.html#method-i-acquire">acquire</a>, according to which
-modules are mixed into your model class. Uses <a
-href="ClassMethods.html#method-i-scoped_in">scoped_in</a> to obtain a base
-scope in which to operate, so it is “mixin aware” and incorporates other <a
-href="../../../Hoodoo.html">Hoodoo</a> extensions within the wider scope
-chain. See that method&#39;s documentation for more information.</p>
+            <p>Implicily secure, translated, dated etc. etc. version of <a href="ClassMethods.html#method-i-acquire"><code>acquire</code></a>, according to which modules are mixed into your model class. Uses <a href="ClassMethods.html#method-i-scoped_in"><code>scoped_in</code></a> to obtain a base scope in which to operate, so it is “mixin aware” and incorporates other <a href="../../../Hoodoo.html"><code>Hoodoo</code></a> extensions within the wider scope chain. See that method&#39;s documentation for more information.</p>
 
-<p>For example, if you are using or at some point intend to mix in and use the
-mechanism described by the likes of <a
-href="../Secure/ClassMethods.html#method-i-secure">Hoodoo::ActiveRecord::Secure::ClassMethods#secure</a>,
-call here as a convenience to both obtain a secure context and find a
-record (with or without additional find-by fields other than
-<code>id</code>) in one go. Building on the example from <a
-href="../Secure/ClassMethods.html#method-i-secure">Hoodoo::ActiveRecord::Secure::ClassMethods#secure</a>,
-we might have an Audit model as follows:</p>
+<p>For example, if you are using or at some point intend to mix in and use the mechanism described by the likes of <a href="../Secure/ClassMethods.html#method-i-secure"><code>Hoodoo::ActiveRecord::Secure::ClassMethods#secure</code></a>, call here as a convenience to both obtain a secure context and find a record (with or without additional find-by fields other than <code>id</code>) in one go. Building on the example from <a href="../Secure/ClassMethods.html#method-i-secure"><code>Hoodoo::ActiveRecord::Secure::ClassMethods#secure</code></a>, we might have an Audit model as follows:</p>
 
 <pre><code>class Audit &lt; ActiveRecord::Base
   include Hoodoo::ActiveRecord::Secure
@@ -315,14 +268,9 @@ end
 end
 </code></pre>
 
-<p>The value of <code>found</code> will be acquired within the secure context
-determined by the prevailing call context (and its session), so the data it
-finds is inherently correctly scoped - provided your model&#39;s <a
-href="../Secure/ClassMethods.html#method-i-secure_with">Hoodoo::ActiveRecord::Secure::ClassMethods#secure_with</a>
-call describes things correctly.</p>
+<p>The value of <code>found</code> will be acquired within the secure context determined by the prevailing call context (and its session), so the data it finds is inherently correctly scoped - provided your model&#39;s <a href="../Secure/ClassMethods.html#method-i-secure_with"><code>Hoodoo::ActiveRecord::Secure::ClassMethods#secure_with</code></a> call describes things correctly.</p>
 
-<p>This method is for convenience and safety - you can&#39;t accidentally
-forget the secure scope:</p>
+<p>This method is for convenience and safety - you can&#39;t accidentally forget the secure scope:</p>
 
 <pre><code>SomeModel.secure( context ).acquire( context.request.ident )
 
@@ -331,34 +279,23 @@ forget the secure scope:</p>
 SomeModel.acquire_in( context )
 </code></pre>
 
-<p>The same applies to forgetting dated scopes, translated scopes, or anything
-else that <a href="ClassMethods.html#method-i-scoped_in">scoped_in</a>
-might include for you.</p>
+<p>The same applies to forgetting dated scopes, translated scopes, or anything else that <a href="ClassMethods.html#method-i-scoped_in"><code>scoped_in</code></a> might include for you.</p>
 
-<p>An even higher-level method, taking care of error handling as well, is <a
-href="ClassMethods.html#method-i-acquire_in-21">acquire_in!</a>. You may
-prefer to call this higher level interface if you don&#39;t object to the
-way it modifies <code>context</code>.</p>
+<p>An even higher-level method, taking care of error handling as well, is <a href="ClassMethods.html#method-i-acquire_in-21"><code>acquire_in!</code></a>. You may prefer to call this higher level interface if you don&#39;t object to the way it modifies <code>context</code>.</p>
 
 <p>Parameters:</p>
 <dl class="rdoc-list note-list"><dt><code>context</code>
 <dd>
-<p><a href="../../Services/Context.html">Hoodoo::Services::Context</a>
-instance describing a call context. This is typically a value passed to one
-of the <a
-href="../../Services/Implementation.html">Hoodoo::Services::Implementation</a>
-instance methods that a resource subclass implements.</p>
+<p><a href="../../Services/Context.html"><code>Hoodoo::Services::Context</code></a> instance describing a call context. This is typically a value passed to one of the <a href="../../Services/Implementation.html"><code>Hoodoo::Services::Implementation</code></a> instance methods that a resource subclass implements.</p>
 </dd></dl>
 
 <p>See also:</p>
 <ul><li>
-<p><a href="ClassMethods.html#method-i-acquire_in-21">#acquire_in!</a></p>
+<p><a href="ClassMethods.html#method-i-acquire_in-21"><code>Hoodoo::ActiveRecord::Finder::ClassMethods#acquire_in!</code></a></p>
 </li><li>
-<p><a
-href="../../Services/Response.html#method-i-not_found">Hoodoo::Services::Response#not_found</a></p>
+<p><a href="../../Services/Response.html#method-i-not_found"><code>Hoodoo::Services::Response#not_found</code></a></p>
 </li><li>
-<p><a
-href="../../Services/Response.html#method-i-contemporary_exists">Hoodoo::Services::Response#contemporary_exists</a></p>
+<p><a href="../../Services/Response.html#method-i-contemporary_exists"><code>Hoodoo::Services::Response#contemporary_exists</code></a></p>
 </li></ul>
 
 <p>Returns a found model instance or <code>nil</code> for no match / on error.</p>
@@ -387,55 +324,30 @@ href="../../Services/Response.html#method-i-contemporary_exists">Hoodoo::Service
         </div>
 
         <div class="description">
-            <p>A higher level equivalent of <a
-href="ClassMethods.html#method-i-acquire_in">acquire_in</a> in which the
-given context will be updated with error information if the requested item
-cannot be found. Although modifying the passed-in context may be considered
-an unclean pattern, it does allow extensions to that mechanism. For
-example, in the presence of the <a
-href="../Dated.html">Hoodoo::ActiveRecord::Dated</a> or <a
-href="../ManuallyDated.html">Hoodoo::ActiveRecord::ManuallyDated</a>
-modules, an additional error entry of
-<code>generic.contemporary_exists</code> will be added if conditions
-warrant it.</p>
+            <p>A higher level equivalent of <a href="ClassMethods.html#method-i-acquire_in"><code>acquire_in</code></a> in which the given context will be updated with error information if the requested item cannot be found. Although modifying the passed-in context may be considered an unclean pattern, it does allow extensions to that mechanism. For example, in the presence of the <a href="../Dated.html"><code>Hoodoo::ActiveRecord::Dated</code></a> or <a href="../ManuallyDated.html"><code>Hoodoo::ActiveRecord::ManuallyDated</code></a> modules, an additional error entry of <code>generic.contemporary_exists</code> will be added if conditions warrant it.</p>
 
-<p>At the time of writing only this and/or <code>generic.not_found</code> can
-be added, but in future other mixin modules may cause other additions,
-making preferential use of this method over <a
-href="ClassMethods.html#method-i-acquire_in">acquire_in</a> a good way to
-future-proof against such changes.</p>
+<p>At the time of writing only this and/or <code>generic.not_found</code> can be added, but in future other mixin modules may cause other additions, making preferential use of this method over <a href="ClassMethods.html#method-i-acquire_in"><code>acquire_in</code></a> a good way to future-proof against such changes.</p>
 
-<p>To be sure that these additions work, always include this module before any
-others (unless documentation indicates a differing inclusion order
-requirement), so that the dating module is able to detect the presence of
-this <a href="../Finder.html">Finder</a> module and enable the extensions.</p>
+<p>To be sure that these additions work, always include this module before any others (unless documentation indicates a differing inclusion order requirement), so that the dating module is able to detect the presence of this <a href="../Finder.html"><code>Finder</code></a> module and enable the extensions.</p>
 
 <p>Parameters:</p>
 <dl class="rdoc-list note-list"><dt><code>context</code>
 <dd>
-<p><a href="../../Services/Context.html">Hoodoo::Services::Context</a>
-instance describing a call context. This is typically a value passed to one
-of the <a
-href="../../Services/Implementation.html">Hoodoo::Services::Implementation</a>
-instance methods that a resource subclass implements.</p>
+<p><a href="../../Services/Context.html"><code>Hoodoo::Services::Context</code></a> instance describing a call context. This is typically a value passed to one of the <a href="../../Services/Implementation.html"><code>Hoodoo::Services::Implementation</code></a> instance methods that a resource subclass implements.</p>
 </dd></dl>
 
 <p>See also:</p>
 <ul><li>
-<p><a href="ClassMethods.html#method-i-acquire_in">#acquire_in</a></p>
+<p><a href="ClassMethods.html#method-i-acquire_in"><code>Hoodoo::ActiveRecord::Finder::ClassMethods#acquire_in</code></a></p>
 </li><li>
-<p><a
-href="../../Services/Response.html#method-i-not_found">Hoodoo::Services::Response#not_found</a></p>
+<p><a href="../../Services/Response.html#method-i-not_found"><code>Hoodoo::Services::Response#not_found</code></a></p>
 </li><li>
-<p><a
-href="../../Services/Response.html#method-i-contemporary_exists">Hoodoo::Services::Response#contemporary_exists</a></p>
+<p><a href="../../Services/Response.html#method-i-contemporary_exists"><code>Hoodoo::Services::Response#contemporary_exists</code></a></p>
 </li></ul>
 
-<p>Returns a found model instance or <code>nil</code> for no match / on error,
-wherein <code>context</code> will have been updated with error details.</p>
+<p>Returns a found model instance or <code>nil</code> for no match / on error, wherein <code>context</code> will have been updated with error details.</p>
 
-<p>Example, following on from those for <a
-href="ClassMethods.html#method-i-acquire_in">acquire_in</a>:</p>
+<p>Example, following on from those for <a href="ClassMethods.html#method-i-acquire_in"><code>acquire_in</code></a>:</p>
 
 <pre><code>def show( context )
   resource = SomeModel.acquire_in!( context )
@@ -483,15 +395,9 @@ end
         </div>
 
         <div class="description">
-            <p>Describe the list of model fields <em>in</em> <em>addition</em> <em>to</em>
-<code>id</code> which are to be used to “find-by-identifier” through calls
-<a href="ClassMethods.html#method-i-acquire">acquire</a>, <a
-href="ClassMethods.html#method-i-acquire_in">acquire_in</a> and <a
-href="ClassMethods.html#method-i-acquire_in-21">acquire_in!</a>. See those
-methods for more details.</p>
+            <p>Describe the list of model fields <em>in</em> <em>addition</em> <em>to</em> <code>id</code> which are to be used to “find-by-identifier” through calls <a href="ClassMethods.html#method-i-acquire"><code>acquire</code></a>, <a href="ClassMethods.html#method-i-acquire_in"><code>acquire_in</code></a> and <a href="ClassMethods.html#method-i-acquire_in-21"><code>acquire_in!</code></a>. See those methods for more details.</p>
 
-<p>Fields will be searched in the order listed. If duplicate items are
-present, the first occurrence is kept and the rest are removed.</p>
+<p>Fields will be searched in the order listed. If duplicate items are present, the first occurrence is kept and the rest are removed.</p>
 <dl class="rdoc-list note-list"><dt>*args
 <dd>
 <p>One or more field names as Strings or Symbols.</p>
@@ -499,10 +405,9 @@ present, the first occurrence is kept and the rest are removed.</p>
 
 <p>See also:</p>
 <ul><li>
-<p><a href="ClassMethods.html#method-i-acquired_with">acquired_with</a></p>
+<p><a href="ClassMethods.html#method-i-acquired_with"><code>acquired_with</code></a></p>
 </li><li>
-<p><a
-href="ClassMethods.html#method-i-acquire_with_id_substitute">acquire_with_id_substitute</a></p>
+<p><a href="ClassMethods.html#method-i-acquire_with_id_substitute"><code>acquire_with_id_substitute</code></a></p>
 </li></ul>
         </div>
 
@@ -530,33 +435,12 @@ href="ClassMethods.html#method-i-acquire_with_id_substitute">acquire_with_id_sub
         </div>
 
         <div class="description">
-            <p>The <a href="ClassMethods.html#method-i-acquire_with">acquire_with</a>
-method allows methods like <a
-href="ClassMethods.html#method-i-acquire">acquire</a>, <a
-href="ClassMethods.html#method-i-acquire_in">acquire_in</a> and <a
-href="ClassMethods.html#method-i-acquire_in-21">acquire_in!</a> to
-transparently find a record based on <em>one</em> <em>or</em> <em>more</em>
-columns in the database. The columns (and corresponding model attributes)
-specified through a call to <a
-href="ClassMethods.html#method-i-acquire_with">acquire_with</a> will
-normally be used <em>in</em> <em>addition</em> <em>to</em> a lookup on the
-<code>id</code> column, but in rare circumstances you might need to bypass
-that and use an entirely different field. This is distinct from the
-ActiveRecord-level concept of the model&#39;s primary key column.</p>
+            <p>The <a href="ClassMethods.html#method-i-acquire_with"><code>acquire_with</code></a> method allows methods like <a href="ClassMethods.html#method-i-acquire"><code>acquire</code></a>, <a href="ClassMethods.html#method-i-acquire_in"><code>acquire_in</code></a> and <a href="ClassMethods.html#method-i-acquire_in-21"><code>acquire_in!</code></a> to transparently find a record based on <em>one</em> <em>or</em> <em>more</em> columns in the database. The columns (and corresponding model attributes) specified through a call to <a href="ClassMethods.html#method-i-acquire_with"><code>acquire_with</code></a> will normally be used <em>in</em> <em>addition</em> <em>to</em> a lookup on the <code>id</code> column, but in rare circumstances you might need to bypass that and use an entirely different field. This is distinct from the ActiveRecord-level concept of the model&#39;s primary key column.</p>
 
-<p>To permanently change the use of the <code>id</code> attribute as the first
-search parameter in <a
-href="ClassMethods.html#method-i-acquire">acquire</a>, <a
-href="ClassMethods.html#method-i-acquire_in">acquire_in</a> and <a
-href="ClassMethods.html#method-i-acquire_in-21">acquire_in!</a> by
-modifying the behaviour of <a
-href="ClassMethods.html#method-i-acquisition_scope">acquisition_scope</a>,
-call here and pass in the new attribute name.</p>
+<p>To permanently change the use of the <code>id</code> attribute as the first search parameter in <a href="ClassMethods.html#method-i-acquire"><code>acquire</code></a>, <a href="ClassMethods.html#method-i-acquire_in"><code>acquire_in</code></a> and <a href="ClassMethods.html#method-i-acquire_in-21"><code>acquire_in!</code></a> by modifying the behaviour of <a href="ClassMethods.html#method-i-acquisition_scope"><code>acquisition_scope</code></a>, call here and pass in the new attribute name.</p>
 <dl class="rdoc-list note-list"><dt><code>attr</code>
 <dd>
-<p>Attribute name as a Symbol or String to use <em>instead</em> of
-<code>id</code>, as a default mandatory column in <a
-href="ClassMethods.html#method-i-acquisition_scope">acquisition_scope</a>.</p>
+<p>Attribute name as a Symbol or String to use <em>instead</em> of <code>id</code>, as a default mandatory column in <a href="ClassMethods.html#method-i-acquisition_scope"><code>acquisition_scope</code></a>.</p>
 </dd></dl>
         </div>
 
@@ -583,19 +467,13 @@ href="ClassMethods.html#method-i-acquisition_scope">acquisition_scope</a>.</p>
         </div>
 
         <div class="description">
-            <p>Return the list of model fields <em>in</em> <em>addition</em> <em>to</em>
-<code>id</code> which are being used to “find-by-identifier” through calls
-to <a href="ClassMethods.html#method-i-acquire">acquire</a>, <a
-href="ClassMethods.html#method-i-acquire_in">acquire_in</a> and <a
-href="ClassMethods.html#method-i-acquire_in-21">acquire_in!</a>. The
-returned Array contains de-duplicated String values only.</p>
+            <p>Return the list of model fields <em>in</em> <em>addition</em> <em>to</em> <code>id</code> which are being used to “find-by-identifier” through calls to <a href="ClassMethods.html#method-i-acquire"><code>acquire</code></a>, <a href="ClassMethods.html#method-i-acquire_in"><code>acquire_in</code></a> and <a href="ClassMethods.html#method-i-acquire_in-21"><code>acquire_in!</code></a>. The returned Array contains de-duplicated String values only.</p>
 
 <p>See also:</p>
 <ul><li>
-<p><a href="ClassMethods.html#method-i-acquire_with">acquire_with</a></p>
+<p><a href="ClassMethods.html#method-i-acquire_with"><code>acquire_with</code></a></p>
 </li><li>
-<p><a
-href="ClassMethods.html#method-i-acquire_with_id_substitute">acquire_with_id_substitute</a></p>
+<p><a href="ClassMethods.html#method-i-acquire_with_id_substitute"><code>acquire_with_id_substitute</code></a></p>
 </li></ul>
         </div>
 
@@ -622,33 +500,11 @@ href="ClassMethods.html#method-i-acquire_with_id_substitute">acquire_with_id_sub
         </div>
 
         <div class="description">
-            <p>Back-end to <a href="ClassMethods.html#method-i-acquire">acquire</a> and
-therefore, in turn, <a
-href="ClassMethods.html#method-i-acquire_in">acquire_in</a> and <a
-href="ClassMethods.html#method-i-acquire_in-21">acquire_in!</a>. Returns an
-ActiveRecord::Relation instance which scopes the search for a record by
-<code>id</code> and across any other columns specified by <a
-href="ClassMethods.html#method-i-acquire_with">acquire_with</a>, via SQL
-<code>OR</code>.</p>
+            <p>Back-end to <a href="ClassMethods.html#method-i-acquire"><code>acquire</code></a> and therefore, in turn, <a href="ClassMethods.html#method-i-acquire_in"><code>acquire_in</code></a> and <a href="ClassMethods.html#method-i-acquire_in-21"><code>acquire_in!</code></a>. Returns an ActiveRecord::Relation instance which scopes the search for a record by <code>id</code> and across any other columns specified by <a href="ClassMethods.html#method-i-acquire_with"><code>acquire_with</code></a>, via SQL <code>OR</code>.</p>
 
-<p>If you need to change the use of attribute <code>id</code>, specify a
-different attribute with <a
-href="ClassMethods.html#method-i-acquire_with_id_substitute">acquire_with_id_substitute</a>.
-In that case, the given attribute is searched for instead of
-<code>id</code>; either way, a default starting attribute <em>will</em> be
-used in scope in addition to any extra fields specified using <a
-href="ClassMethods.html#method-i-acquire_with">acquire_with</a>.</p>
+<p>If you need to change the use of attribute <code>id</code>, specify a different attribute with <a href="ClassMethods.html#method-i-acquire_with_id_substitute"><code>acquire_with_id_substitute</code></a>. In that case, the given attribute is searched for instead of <code>id</code>; either way, a default starting attribute <em>will</em> be used in scope in addition to any extra fields specified using <a href="ClassMethods.html#method-i-acquire_with"><code>acquire_with</code></a>.</p>
 
-<p>Normally such a scope could only ever return a single record based on an
-assuption of uniqueness constraints around columns which one might use in
-an equivalent of a <code>find</code> call. This scope is often chained on
-top of a wider listing scope provided by <a
-href="ClassMethods.html#method-i-scoped_in">scoped_in</a> to create a fully
-context-aware, secure, dated, translated etc. query. It is possible however
-that the chosen <code>ident</code> value might not resolve to a single
-unique record depending on how your data works and you may need to manually
-apply additional constraints to the returned ActiveRecord::Relation
-instance.</p>
+<p>Normally such a scope could only ever return a single record based on an assuption of uniqueness constraints around columns which one might use in an equivalent of a <code>find</code> call. This scope is often chained on top of a wider listing scope provided by <a href="ClassMethods.html#method-i-scoped_in"><code>scoped_in</code></a> to create a fully context-aware, secure, dated, translated etc. query. It is possible however that the chosen <code>ident</code> value might not resolve to a single unique record depending on how your data works and you may need to manually apply additional constraints to the returned ActiveRecord::Relation instance.</p>
         </div>
 
 
@@ -682,16 +538,9 @@ instance.</p>
         </div>
 
         <div class="description">
-            <p>Given some scope - typically that obtained from a prior call to <a
-href="ClassMethods.html#method-i-list">list</a> or <a
-href="ClassMethods.html#method-i-list_in">list_in</a>, with possibly other
-query modifiers too - return the total dataset size. This is basically a
-<code>COUNT</code> operation, but run without offset or limit
-considerations (ignoring pagination).</p>
+            <p>Given some scope - typically that obtained from a prior call to <a href="ClassMethods.html#method-i-list"><code>list</code></a> or <a href="ClassMethods.html#method-i-list_in"><code>list_in</code></a>, with possibly other query modifiers too - return the total dataset size. This is basically a <code>COUNT</code> operation, but run without offset or limit considerations (ignoring pagination).</p>
 
-<p>This is particularly useful if you are calling <a
-href="../../Services/Response.html#method-i-set_resources">Hoodoo::Services::Response#set_resources</a>
-and want to fill in its <code>dataset_size</code> parameter.</p>
+<p>This is particularly useful if you are calling <a href="../../Services/Response.html#method-i-set_resources"><code>Hoodoo::Services::Response#set_resources</code></a> and want to fill in its <code>dataset_size</code> parameter.</p>
         </div>
 
 
@@ -717,25 +566,16 @@ and want to fill in its <code>dataset_size</code> parameter.</p>
         </div>
 
         <div class="description">
-            <p>This method is related to <a
-href="ClassMethods.html#method-i-estimated_count">estimated_count</a>, so
-read the documentation for that as an introduction first.</p>
+            <p>This method is related to <a href="ClassMethods.html#method-i-estimated_count"><code>estimated_count</code></a>, so read the documentation for that as an introduction first.</p>
 
-<p>In <a
-href="ClassMethods.html#method-i-estimated_count">estimated_count</a>, a
-PostgreSQL example is given. Continuing with this, we could implement an
-estimation mechanism via Hoodoo&#39;s fast counter with something like the
-approach described here:</p>
+<p>In <a href="ClassMethods.html#method-i-estimated_count"><code>estimated_count</code></a>, a PostgreSQL example is given. Continuing with this, we could implement an estimation mechanism via Hoodoo&#39;s fast counter with something like the approach described here:</p>
 <ul><li>
-<p><a
-href="https://wiki.postgresql.org/wiki/Count_estimate">wiki.postgresql.org/wiki/Count_estimate</a></p>
+<p><a href="https://wiki.postgresql.org/wiki/Count_estimate">wiki.postgresql.org/wiki/Count_estimate</a></p>
 </li><li>
-<p><a
-href="http://www.verygoodindicators.com/blog/2015/04/07/faster-count-queries">www.verygoodindicators.com/blog/2015/04/07/faster-count-queries</a>/</p>
+<p><a href="http://www.verygoodindicators.com/blog/2015/04/07/faster-count-queries">www.verygoodindicators.com/blog/2015/04/07/faster-count-queries</a>/</p>
 </li></ul>
 
-<p>First, you would need a migration in your service to implement the
-estimation method as a PLPGSQL function:</p>
+<p>First, you would need a migration in your service to implement the estimation method as a PLPGSQL function:</p>
 
 <pre><code>class CreateFastCountFunction &lt; ActiveRecord::Migration
   def up
@@ -763,10 +603,7 @@ estimation method as a PLPGSQL function:</p>
 end
 </code></pre>
 
-<p>This takes arbitrary query text so should cope with pretty much any kind of
-<a href="../../ActiveRecord.html">ActiveRecord</a> query chain and
-resulting SQL. Run the database migration, then define a Proc which calls
-the new function:</p>
+<p>This takes arbitrary query text so should cope with pretty much any kind of <a href="../../ActiveRecord.html"><code>ActiveRecord</code></a> query chain and resulting SQL. Run the database migration, then define a Proc which calls the new function:</p>
 
 <pre><code>counter = Proc.new do | sql |
   begin
@@ -779,8 +616,7 @@ the new function:</p>
 end
 </code></pre>
 
-<p>Suppose we have a model called <code>Purchase</code>; next tell this model
-to use the above Proc for fast counting and use it:</p>
+<p>Suppose we have a model called <code>Purchase</code>; next tell this model to use the above Proc for fast counting and use it:</p>
 
 <pre><code>Purchase.estimate_counts_with( counter )
 
@@ -790,8 +626,7 @@ Purchase.where(...conditions...).estimated_count()
 # =&gt; An integer
 </code></pre>
 
-<p>A real-life example showing how running PostgreSQL&#39;s
-<code>ANALYZE</code> command can make a difference:</p>
+<p>A real-life example showing how running PostgreSQL&#39;s <code>ANALYZE</code> command can make a difference:</p>
 
 <pre><code>[1] pry(main)&gt; Purchase.estimated_count
 =&gt; 68
@@ -806,13 +641,9 @@ Purchase.where(...conditions...).estimated_count()
 <p>Parameters:</p>
 <dl class="rdoc-list note-list"><dt><code>proc</code>
 <dd>
-<p>The Proc to call. It must accept one parameter, which is the SQL query for
-which the count is to be run, as a String. It must evaluate to an Integer
-estimation, or <code>nil</code> if it is not able to provide any/useful
-estimations, in its opinion.</p>
+<p>The Proc to call. It must accept one parameter, which is the SQL query for which the count is to be run, as a String. It must evaluate to an Integer estimation, or <code>nil</code> if it is not able to provide any/useful estimations, in its opinion.</p>
 
-<p>Pass <code>nil</code> to remove the custom counter method and restore
-default behaviour.</p>
+<p>Pass <code>nil</code> to remove the custom counter method and restore default behaviour.</p>
 </dd></dl>
         </div>
 
@@ -839,30 +670,13 @@ default behaviour.</p>
         </div>
 
         <div class="description">
-            <p>In absence of other configuration, this method just calls through to Active
-Record&#39;s count, but you can override the counting mechanism with a Proc
-which gets called to do the counting instead.</p>
+            <p>In absence of other configuration, this method just calls through to Active Record&#39;s count, but you can override the counting mechanism with a Proc which gets called to do the counting instead.</p>
 
-<p>The use case is for databases where counting may be slow for some reason.
-For example, in PostgreSQL 9, the MVCC model means that big tables under
-heavy write load may take extremely long times to be counted as a full
-sequential row scan gets activated. In the case of PostgreSQL, there&#39;s
-an estimation available as an alternative; its accuracy depends on how
-often the <code>ANALYZE</code> command is run, but at least its execution
-speed is always very small.</p>
+<p>The use case is for databases where counting may be slow for some reason. For example, in PostgreSQL 9, the MVCC model means that big tables under heavy write load may take extremely long times to be counted as a full sequential row scan gets activated. In the case of PostgreSQL, there&#39;s an estimation available as an alternative; its accuracy depends on how often the <code>ANALYZE</code> command is run, but at least its execution speed is always very small.</p>
 
-<p>The <a
-href="ClassMethods.html#method-i-estimated_dataset_size">estimated_dataset_size</a>
-method runs through here for counting so you need to ensure that your count
-estimation method can cope with whatever queries that might arise from the
-scope chains involved in instances of the model at hand, within the service
-code that uses that model.</p>
+<p>The <a href="ClassMethods.html#method-i-estimated_dataset_size"><code>estimated_dataset_size</code></a> method runs through here for counting so you need to ensure that your count estimation method can cope with whatever queries that might arise from the scope chains involved in instances of the model at hand, within the service code that uses that model.</p>
 
-<p>Specify a count estimation Proc with <a
-href="ClassMethods.html#method-i-estimate_counts_with">estimate_counts_with</a>.
-Such blocks are permitted to return <code>nil</code> if the estimation is
-considered to be wildly wrong or unobtainable; in that case, the returned
-value for the estimated count will be <code>nil</code> too.</p>
+<p>Specify a count estimation Proc with <a href="ClassMethods.html#method-i-estimate_counts_with"><code>estimate_counts_with</code></a>. Such blocks are permitted to return <code>nil</code> if the estimation is considered to be wildly wrong or unobtainable; in that case, the returned value for the estimated count will be <code>nil</code> too.</p>
         </div>
 
 
@@ -894,15 +708,7 @@ value for the estimated count will be <code>nil</code> too.</p>
         </div>
 
         <div class="description">
-            <p>As <a href="ClassMethods.html#method-i-dataset_size">dataset_size</a>, but
-allows a configurable counting back-end via <a
-href="ClassMethods.html#method-i-estimated_count">estimated_count</a> and
-<a
-href="ClassMethods.html#method-i-estimate_counts_with">estimate_counts_with</a>.
-This method is intended to be used for fast count estimations, usually for
-performance reasons if an accurate <a
-href="ClassMethods.html#method-i-dataset_size">dataset_size</a> count is
-too slow to compute.</p>
+            <p>As <a href="ClassMethods.html#method-i-dataset_size"><code>dataset_size</code></a>, but allows a configurable counting back-end via <a href="ClassMethods.html#method-i-estimated_count"><code>estimated_count</code></a> and <a href="ClassMethods.html#method-i-estimate_counts_with"><code>estimate_counts_with</code></a>. This method is intended to be used for fast count estimations, usually for performance reasons if an accurate <a href="ClassMethods.html#method-i-dataset_size"><code>dataset_size</code></a> count is too slow to compute.</p>
         </div>
 
 
@@ -928,30 +734,17 @@ too slow to compute.</p>
         </div>
 
         <div class="description">
-            <p>As <a href="ClassMethods.html#method-i-search_with">search_with</a>, but
-used in <code>where.not</code> queries.</p>
+            <p>As <a href="ClassMethods.html#method-i-search_with"><code>search_with</code></a>, but used in <code>where.not</code> queries.</p>
 
-<p><strong><em>IMPORTANT:</em></strong> Beware <code>null</code> column values
-and filters given SQL&#39;s strange behaviour with such things. The search
-helpers in <a
-href="SearchHelper.html">Hoodoo::ActiveRecord::Finder::SearchHelper</a>
-class will work as logically expected (“field not &#39;foo&#39;” will find
-fields with a null value), though if you&#39;re expecting SQL-like
-behaviour it might come as a surprise! Using <code>...AND field IS NOT
-NULL</code> in queries for <code>filter_with</code> tends to work
-reasonably when the query is negated for filter use via
-<code>...NOT(...)...</code>. Examining the implementation of <a
-href="SearchHelper.html">Hoodoo::ActiveRecord::Finder::SearchHelper</a> may
-help if confused.</p>
+<p><strong><em>IMPORTANT:</em></strong> Beware <code>null</code> column values and filters given SQL&#39;s strange behaviour with such things. The search helpers in <a href="SearchHelper.html"><code>Hoodoo::ActiveRecord::Finder::SearchHelper</code></a> class will work as logically expected (“field not &#39;foo&#39;” will find fields with a null value), though if you&#39;re expecting SQL-like behaviour it might come as a surprise! Using <code>...AND field IS NOT NULL</code> in queries for <code>filter_with</code> tends to work reasonably when the query is negated for filter use via <code>...NOT(...)...</code>. Examining the implementation of <a href="SearchHelper.html"><code>Hoodoo::ActiveRecord::Finder::SearchHelper</code></a> may help if confused.</p>
 
 <p>See also:</p>
 <ul><li>
-<p><a
-href="https://en.wikipedia.org/wiki/Null_(SQL">en.wikipedia.org/wiki/Null_(SQL</a>)</p>
+<p><a href="https://en.wikipedia.org/wiki/Null_(SQL">en.wikipedia.org/wiki/Null_(SQL</a>)</p>
 </li></ul>
 <dl class="rdoc-list note-list"><dt><code>map</code>
 <dd>
-<p>As <a href="ClassMethods.html#method-i-search_with">search_with</a>.</p>
+<p>As <a href="ClassMethods.html#method-i-search_with"><code>search_with</code></a>.</p>
 </dd></dl>
         </div>
 
@@ -978,29 +771,13 @@ href="https://en.wikipedia.org/wiki/Null_(SQL">en.wikipedia.org/wiki/Null_(SQL</
         </div>
 
         <div class="description">
-            <p>Generate an ActiveRecord::Relation instance which can be used to count,
-retrieve or further refine a list of model instances from the database.</p>
+            <p>Generate an ActiveRecord::Relation instance which can be used to count, retrieve or further refine a list of model instances from the database.</p>
 
-<p>Usually for convenience you should use <a
-href="ClassMethods.html#method-i-list_in">list_in</a> instead, or only call
-<a href="ClassMethods.html#method-i-acquire">acquire</a> with (say) a
-secure scope via for example a call to <a
-href="../Secure/ClassMethods.html#method-i-secure">Hoodoo::ActiveRecord::Secure::ClassMethods#secure</a>.
-An example of this second option is shown below.</p>
+<p>Usually for convenience you should use <a href="ClassMethods.html#method-i-list_in"><code>list_in</code></a> instead, or only call <a href="ClassMethods.html#method-i-acquire"><code>acquire</code></a> with (say) a secure scope via for example a call to <a href="../Secure/ClassMethods.html#method-i-secure"><code>Hoodoo::ActiveRecord::Secure::ClassMethods#secure</code></a>. An example of this second option is shown below.</p>
 
-<p>Pass a <a
-href="../../Services/Request/ListParameters.html">Hoodoo::Services::Request::ListParameters</a>
-instance, e.g. via the <a
-href="../../Services/Context.html">Hoodoo::Services::Context</a> instance
-passed to resource endpoint implementations and accessor
-<code>context.request.list</code>. It takes into account the list offset,
-limit, sort key and sort direction automatically. In addition, it can do
-simple search and filter operations if search and filter mappings are set
-up via <a href="ClassMethods.html#method-i-search_with">search_with</a> and
-<a href="ClassMethods.html#method-i-filter_with">filter_with</a>.</p>
+<p>Pass a <a href="../../Services/Request/ListParameters.html"><code>Hoodoo::Services::Request::ListParameters</code></a> instance, e.g. via the <a href="../../Services/Context.html"><code>Hoodoo::Services::Context</code></a> instance passed to resource endpoint implementations and accessor <code>context.request.list</code>. It takes into account the list offset, limit, sort key and sort direction automatically. In addition, it can do simple search and filter operations if search and filter mappings are set up via <a href="ClassMethods.html#method-i-search_with"><code>search_with</code></a> and <a href="ClassMethods.html#method-i-filter_with"><code>filter_with</code></a>.</p>
 
-<p>For exampe, in a simple case where a model can be listed without any
-unusual constraints, we might do this:</p>
+<p>For exampe, in a simple case where a model can be listed without any unusual constraints, we might do this:</p>
 
 <pre><code>class SomeModel &lt; ActiveRecord::Base
   include Hoodoo::ActiveRecord::Finder
@@ -1021,13 +798,7 @@ def list( context )
 end
 </code></pre>
 
-<p>Note the use of helper method <a
-href="ClassMethods.html#method-i-dataset_size">dataset_size</a> to count
-the total amount of results in the dataset without pagination. A resource
-may alternatively choose to use <a
-href="ClassMethods.html#method-i-estimated_dataset_size">estimated_dataset_size</a>
-for a fast count estimation, or neither (though this is generally not
-recommended) or</p>
+<p>Note the use of helper method <a href="ClassMethods.html#method-i-dataset_size"><code>dataset_size</code></a> to count the total amount of results in the dataset without pagination. A resource may alternatively choose to use <a href="ClassMethods.html#method-i-estimated_dataset_size"><code>estimated_dataset_size</code></a> for a fast count estimation, or neither (though this is generally not recommended) or</p>
 <ul><li>
 <p>permissible but unusual - include both.</p>
 
@@ -1035,16 +806,9 @@ recommended) or</p>
 </code></pre>
 </li></ul>
 
-<p>The service middleware enforces sane values for things like list offsets,
-sort keys and so-on according to service interface definitions, so if using
-the middleware you don&#39;t need to do any extra checking yourself.</p>
+<p>The service middleware enforces sane values for things like list offsets, sort keys and so-on according to service interface definitions, so if using the middleware you don&#39;t need to do any extra checking yourself.</p>
 
-<p>Since the returned object is just a relation, adding further constraints is
-easy - call things like <code>where</code>, <code>group</code> and so-on as
-normal. You can also list in a secure context via the included <a
-href="../Secure/ClassMethods.html#method-i-secure">Hoodoo::ActiveRecord::Secure::ClassMethods#secure</a>,
-assuming appropriate data is set in the model via <a
-href="../Secure/ClassMethods.html#method-i-secure_with">Hoodoo::ActiveRecord::Secure::ClassMethods#secure_with</a>:</p>
+<p>Since the returned object is just a relation, adding further constraints is easy - call things like <code>where</code>, <code>group</code> and so-on as normal. You can also list in a secure context via the included <a href="../Secure/ClassMethods.html#method-i-secure"><code>Hoodoo::ActiveRecord::Secure::ClassMethods#secure</code></a>, assuming appropriate data is set in the model via <a href="../Secure/ClassMethods.html#method-i-secure_with"><code>Hoodoo::ActiveRecord::Secure::ClassMethods#secure_with</code></a>:</p>
 
 <pre><code>def list( context )
   finder = SomeModel.secure( context ).list( context.request.list )
@@ -1065,23 +829,12 @@ end
 SomeModel.list( context.request.list ).secure( context )
 </code></pre>
 
-<p>Any of the ActiveRecord::QueryMethods can be called on the returned value.
-See:</p>
+<p>Any of the ActiveRecord::QueryMethods can be called on the returned value. See:</p>
 
-<p><a
-href="http://api.rubyonrails.org/classes/ActiveRecord/QueryMethods.html">api.rubyonrails.org/classes/ActiveRecord/QueryMethods.html</a></p>
+<p><a href="http://api.rubyonrails.org/classes/ActiveRecord/QueryMethods.html">api.rubyonrails.org/classes/ActiveRecord/QueryMethods.html</a></p>
 <dl class="rdoc-list note-list"><dt><code>list_parameters</code>
 <dd>
-<p><a
-href="../../Services/Request/ListParameters.html">Hoodoo::Services::Request::ListParameters</a>
-instance, typically obtained from the <a
-href="../../Services/Context.html">Hoodoo::Services::Context</a> instance
-passed to a service implementation in <a
-href="../../Services/Implementation.html#method-i-list">Hoodoo::Services::Implementation#list</a>,
-via <code>context.request.list</code> (i.e. <a
-href="../../Services/Context.html#attribute-i-request">Hoodoo::Services::Context#request</a>
-/ <a
-href="../../Services/Request.html#attribute-i-list">Hoodoo::Services::Request#list</a>).</p>
+<p><a href="../../Services/Request/ListParameters.html"><code>Hoodoo::Services::Request::ListParameters</code></a> instance, typically obtained from the <a href="../../Services/Context.html"><code>Hoodoo::Services::Context</code></a> instance passed to a service implementation in <a href="../../Services/Implementation.html#method-i-list"><code>Hoodoo::Services::Implementation#list</code></a>, via <code>context.request.list</code> (i.e. <a href="../../Services/Context.html#attribute-i-request"><code>Hoodoo::Services::Context#request</code></a> / <a href="../../Services/Request.html#attribute-i-list"><code>Hoodoo::Services::Request#list</code></a>).</p>
 </dd></dl>
         </div>
 
@@ -1135,12 +888,10 @@ href="../../Services/Request.html#attribute-i-list">Hoodoo::Services::Request#li
         </div>
 
         <div class="description">
-            <p>Deprecated interface replaced by <a
-href="ClassMethods.html#method-i-filter_with">filter_with</a> (this is an
-alias).</p>
+            <p>Deprecated interface replaced by <a href="ClassMethods.html#method-i-filter_with"><code>filter_with</code></a> (this is an alias).</p>
 <dl class="rdoc-list note-list"><dt><code>map</code>
 <dd>
-<p>Passed to <a href="ClassMethods.html#method-i-filter_with">filter_with</a>.</p>
+<p>Passed to <a href="ClassMethods.html#method-i-filter_with"><code>filter_with</code></a>.</p>
 </dd></dl>
         </div>
 
@@ -1168,11 +919,10 @@ alias).</p>
         </div>
 
         <div class="description">
-            <p>Deprecated interface replaced by <a
-href="ClassMethods.html#method-i-list">list</a> (this is an alias).</p>
+            <p>Deprecated interface replaced by <a href="ClassMethods.html#method-i-list"><code>list</code></a> (this is an alias).</p>
 <dl class="rdoc-list note-list"><dt><code>list_parameters</code>
 <dd>
-<p>Passed to <a href="ClassMethods.html#method-i-list">list</a>.</p>
+<p>Passed to <a href="ClassMethods.html#method-i-list"><code>list</code></a>.</p>
 </dd></dl>
         </div>
 
@@ -1200,22 +950,9 @@ href="ClassMethods.html#method-i-list">list</a> (this is an alias).</p>
         </div>
 
         <div class="description">
-            <p>Implicily secure, translated, dated etc. etc. version of <a
-href="ClassMethods.html#method-i-list">list</a>, according to which modules
-are mixed into your model class. See <a
-href="ClassMethods.html#method-i-scoped_in">scoped_in</a> to see the list
-of things that get included in the scope according to the mixins that are
-in use.</p>
+            <p>Implicily secure, translated, dated etc. etc. version of <a href="ClassMethods.html#method-i-list"><code>list</code></a>, according to which modules are mixed into your model class. See <a href="ClassMethods.html#method-i-scoped_in"><code>scoped_in</code></a> to see the list of things that get included in the scope according to the mixins that are in use.</p>
 
-<p>For example, if you have included <a
-href="../Secure.html">Hoodoo::ActiveRecord::Secure</a>, this method
-provides you with an implicitly secure query. Read the documentation on <a
-href="ClassMethods.html#method-i-acquire_in">acquire_in</a> versus <a
-href="ClassMethods.html#method-i-acquire">acquire</a> for information on
-the use of secure scopes; as with <a
-href="ClassMethods.html#method-i-acquire_in">acquire_in</a> and the
-“Secure” mixin, this method becomes for convenience and safety - you
-can&#39;t accidentally forget the secure scope:</p>
+<p>For example, if you have included <a href="../Secure.html"><code>Hoodoo::ActiveRecord::Secure</code></a>, this method provides you with an implicitly secure query. Read the documentation on <a href="ClassMethods.html#method-i-acquire_in"><code>acquire_in</code></a> versus <a href="ClassMethods.html#method-i-acquire"><code>acquire</code></a> for information on the use of secure scopes; as with <a href="ClassMethods.html#method-i-acquire_in"><code>acquire_in</code></a> and the “Secure” mixin, this method becomes for convenience and safety - you can&#39;t accidentally forget the secure scope:</p>
 
 <pre><code>SomeModel.secure( context ).list( context.request.list )
 
@@ -1224,21 +961,13 @@ can&#39;t accidentally forget the secure scope:</p>
 SomeModel.list_in( context )
 </code></pre>
 
-<p>The same applies to forgetting dated scopes, translated scopes, or anything
-else that <a href="ClassMethods.html#method-i-scoped_in">scoped_in</a>
-might include for you.</p>
+<p>The same applies to forgetting dated scopes, translated scopes, or anything else that <a href="ClassMethods.html#method-i-scoped_in"><code>scoped_in</code></a> might include for you.</p>
 <dl class="rdoc-list note-list"><dt><code>context</code>
 <dd>
-<p><a href="../../Services/Context.html">Hoodoo::Services::Context</a>
-instance describing a call context. This is typically a value passed to one
-of the <a
-href="../../Services/Implementation.html">Hoodoo::Services::Implementation</a>
-instance methods that a resource subclass implements.</p>
+<p><a href="../../Services/Context.html"><code>Hoodoo::Services::Context</code></a> instance describing a call context. This is typically a value passed to one of the <a href="../../Services/Implementation.html"><code>Hoodoo::Services::Implementation</code></a> instance methods that a resource subclass implements.</p>
 </dd></dl>
 
-<p>Returns a secure list scope, for either further modification with query
-methods like <code>where</code> or fetching from the database with
-<code>all</code>.</p>
+<p>Returns a secure list scope, for either further modification with query methods like <code>where</code> or fetching from the database with <code>all</code>.</p>
         </div>
 
 
@@ -1264,12 +993,10 @@ methods like <code>where</code> or fetching from the database with
         </div>
 
         <div class="description">
-            <p>Deprecated interface replaced by <a
-href="ClassMethods.html#method-i-search_with">search_with</a> (this is an
-alias).</p>
+            <p>Deprecated interface replaced by <a href="ClassMethods.html#method-i-search_with"><code>search_with</code></a> (this is an alias).</p>
 <dl class="rdoc-list note-list"><dt><code>map</code>
 <dd>
-<p>Passed to <a href="ClassMethods.html#method-i-search_with">search_with</a>.</p>
+<p>Passed to <a href="ClassMethods.html#method-i-search_with"><code>search_with</code></a>.</p>
 </dd></dl>
         </div>
 
@@ -1297,8 +1024,7 @@ alias).</p>
         </div>
 
         <div class="description">
-            <p>Deprecated interface replaced by <a
-href="ClassMethods.html#method-i-acquire">acquire</a>. Instead of:</p>
+            <p>Deprecated interface replaced by <a href="ClassMethods.html#method-i-acquire"><code>acquire</code></a>. Instead of:</p>
 
 <pre><code>Model.polymorphic_find( foo, ident )
 </code></pre>
@@ -1308,14 +1034,13 @@ href="ClassMethods.html#method-i-acquire">acquire</a>. Instead of:</p>
 <pre><code>foo.acquire( ident )
 </code></pre>
 
-<p>This implementation is for legacy support and just calls through to <a
-href="ClassMethods.html#method-i-acquire">acquire</a>.</p>
+<p>This implementation is for legacy support and just calls through to <a href="ClassMethods.html#method-i-acquire"><code>acquire</code></a>.</p>
 <dl class="rdoc-list note-list"><dt><code>finder</code>
 <dd>
-<p><a href="ClassMethods.html#method-i-acquire">acquire</a> is called on this.</p>
+<p><a href="ClassMethods.html#method-i-acquire"><code>acquire</code></a> is called on this.</p>
 </dd><dt><code>ident</code>
 <dd>
-<p>Passed to <a href="ClassMethods.html#method-i-acquire">acquire</a>.</p>
+<p>Passed to <a href="ClassMethods.html#method-i-acquire"><code>acquire</code></a>.</p>
 </dd></dl>
 
 <p>Returns a found model instance or <code>nil</code> for no match.</p>
@@ -1345,13 +1070,10 @@ href="ClassMethods.html#method-i-acquire">acquire</a>.</p>
         </div>
 
         <div class="description">
-            <p>Deprecated interface replaced by <a
-href="ClassMethods.html#method-i-acquire_with">acquire_with</a> (this is an
-alias).</p>
+            <p>Deprecated interface replaced by <a href="ClassMethods.html#method-i-acquire_with"><code>acquire_with</code></a> (this is an alias).</p>
 <dl class="rdoc-list note-list"><dt>*args
 <dd>
-<p>Passed to <a
-href="ClassMethods.html#method-i-acquire_with">acquire_with</a>.</p>
+<p>Passed to <a href="ClassMethods.html#method-i-acquire_with"><code>acquire_with</code></a>.</p>
 </dd></dl>
         </div>
 
@@ -1379,25 +1101,12 @@ href="ClassMethods.html#method-i-acquire_with">acquire_with</a>.</p>
         </div>
 
         <div class="description">
-            <p>Returns an ActiveRecord::Relation instance representing a primitive base
-scope that includes various context-related aspects according to the
-prevailing mixins included by “this” class, if any - e.g. security, dating
-and/or translation.</p>
+            <p>Returns an ActiveRecord::Relation instance representing a primitive base scope that includes various context-related aspects according to the prevailing mixins included by “this” class, if any - e.g. security, dating and/or translation.</p>
 
-<p>See Hoodoo::ActiveRecord::Support#full_scope_for to see the list of things
-that get included. If there are no “interesting” mixins, the returned scope
-will just return the same thing that the <code>all</code> method in <a
-href="../../ActiveRecord.html">ActiveRecord</a> would have returned.
-Consequently, a default scope <em>will</em> be honoured if one has been
-declared, though default scopes are generally considered an anti-pattern to
-be avoided.</p>
+<p>See Hoodoo::ActiveRecord::Support#full_scope_for to see the list of things that get included. If there are no “interesting” mixins, the returned scope will just return the same thing that the <code>all</code> method in <a href="../../ActiveRecord.html"><code>ActiveRecord</code></a> would have returned. Consequently, a default scope <em>will</em> be honoured if one has been declared, though default scopes are generally considered an anti-pattern to be avoided.</p>
 <dl class="rdoc-list note-list"><dt><code>context</code>
 <dd>
-<p><a href="../../Services/Context.html">Hoodoo::Services::Context</a>
-instance describing a call context. This is typically a value passed to one
-of the <a
-href="../../Services/Implementation.html">Hoodoo::Services::Implementation</a>
-instance methods that a resource subclass implements.</p>
+<p><a href="../../Services/Context.html"><code>Hoodoo::Services::Context</code></a> instance describing a call context. This is typically a value passed to one of the <a href="../../Services/Implementation.html"><code>Hoodoo::Services::Implementation</code></a> instance methods that a resource subclass implements.</p>
 </dd></dl>
         </div>
 
@@ -1424,24 +1133,17 @@ instance methods that a resource subclass implements.</p>
         </div>
 
         <div class="description">
-            <p>As <a href="ClassMethods.html#method-i-scoped_in">scoped_in</a>, but
-intentionally omits any historical dating modules from the returned scope.
-The scope might then address both historic and contemporary records,
-depending on whether you are using manual or automatic dating.</p>
+            <p>As <a href="ClassMethods.html#method-i-scoped_in"><code>scoped_in</code></a>, but intentionally omits any historical dating modules from the returned scope. The scope might then address both historic and contemporary records, depending on whether you are using manual or automatic dating.</p>
 <dl class="rdoc-list note-list"><dt><code>context</code>
 <dd>
-<p><a href="../../Services/Context.html">Hoodoo::Services::Context</a>
-instance describing a call context. This is typically a value passed to one
-of the <a
-href="../../Services/Implementation.html">Hoodoo::Services::Implementation</a>
-instance methods that a resource subclass implements.</p>
+<p><a href="../../Services/Context.html"><code>Hoodoo::Services::Context</code></a> instance describing a call context. This is typically a value passed to one of the <a href="../../Services/Implementation.html"><code>Hoodoo::Services::Implementation</code></a> instance methods that a resource subclass implements.</p>
 </dd></dl>
 
 <p>See also:</p>
 <ul><li>
-<p><a href="../Dated.html">Hoodoo::ActiveRecord::Dated</a></p>
+<p><a href="../Dated.html"><code>Hoodoo::ActiveRecord::Dated</code></a></p>
 </li><li>
-<p><a href="../ManuallyDated.html">Hoodoo::ActiveRecord::ManuallyDated</a></p>
+<p><a href="../ManuallyDated.html"><code>Hoodoo::ActiveRecord::ManuallyDated</code></a></p>
 </li></ul>
         </div>
 
@@ -1472,15 +1174,9 @@ instance methods that a resource subclass implements.</p>
         </div>
 
         <div class="description">
-            <p>Specify a search mapping for use by <a
-href="ClassMethods.html#method-i-list">list</a> to automatically restrict
-list results.</p>
+            <p>Specify a search mapping for use by <a href="ClassMethods.html#method-i-list"><code>list</code></a> to automatically restrict list results.</p>
 
-<p>In the simplest case, search query string entries and model field
-(attribute) names are assumed to be the same; if you wanted to search for
-values of model attributes <code>name</code> and <code>colour</code> using
-query string entries of <code>name</code> and <code>colour</code> you would
-just do this:</p>
+<p>In the simplest case, search query string entries and model field (attribute) names are assumed to be the same; if you wanted to search for values of model attributes <code>name</code> and <code>colour</code> using query string entries of <code>name</code> and <code>colour</code> you would just do this:</p>
 
 <pre><code>class SomeModel &lt; ActiveRecord::Base
   search_with(
@@ -1490,13 +1186,9 @@ just do this:</p>
 end
 </code></pre>
 
-<p>The <code>nil</code> values mean a default, case sensitive match is
-performed with the query string keys and values mapping directly to model
-query attribute names and values.</p>
+<p>The <code>nil</code> values mean a default, case sensitive match is performed with the query string keys and values mapping directly to model query attribute names and values.</p>
 
-<p>More complex example where <code>colour</code> is matched verbatim, but
-<code>name</code> is matched case-insensitive, assuming PostgreSQL&#39;s
-ILIKE is there:</p>
+<p>More complex example where <code>colour</code> is matched verbatim, but <code>name</code> is matched case-insensitive, assuming PostgreSQL&#39;s ILIKE is there:</p>
 
 <pre><code>class SomeModel &lt; ActiveRecord::Base
   search_with(
@@ -1508,8 +1200,7 @@ ILIKE is there:</p>
 end
 </code></pre>
 
-<p>Extending the above to use a single Proc that handles case insensitive
-matches across all attributes:</p>
+<p>Extending the above to use a single Proc that handles case insensitive matches across all attributes:</p>
 
 <pre><code>class SomeModel &lt; ActiveRecord::Base
   CI_MATCH = Proc.new { | attr, value |
@@ -1523,45 +1214,25 @@ matches across all attributes:</p>
 end
 </code></pre>
 
-<p>If you wanted to match against an array of possible matches, something like
-this would work:</p>
+<p>If you wanted to match against an array of possible matches, something like this would work:</p>
 
 <pre><code>ARRAY_MATCH = Proc.new { | attr, value |
   [ { attr =&gt; [ value ].flatten } ]
 }
 </code></pre>
 
-<p>Note the returned <strong>array</strong> (see input parameter details)
-inside which the usual hash syntax for AREL <code>.where</code>-style
-queries is present.</p>
+<p>Note the returned <strong>array</strong> (see input parameter details) inside which the usual hash syntax for AREL <code>.where</code>-style queries is present.</p>
 
-<p>To help out with common cases other than just specifying <code>nil</code>,
-the <a
-href="SearchHelper.html">Hoodoo::ActiveRecord::Finder::SearchHelper</a>
-class provides a method chaining approach which builds up the Hash used by
-<a href="ClassMethods.html#method-i-search_with">search_with</a> and
-filter_with. See that class&#39;s API documentation for details.</p>
+<p>To help out with common cases other than just specifying <code>nil</code>, the <a href="SearchHelper.html"><code>Hoodoo::ActiveRecord::Finder::SearchHelper</code></a> class provides a method chaining approach which builds up the Hash used by <a href="ClassMethods.html#method-i-search_with"><code>search_with</code></a> and filter_with. See that class&#39;s API documentation for details.</p>
 <dl class="rdoc-list note-list"><dt>*args
 <dd>
-<p>A Hash. Keys are both search field names and model attribute names, unless
-overridden by values; values of <code>nil</code> are used for simple cases
-- “where( { attr_name =&gt; value } )” will be the resulting query
-modification. Alternatively, pass a callable Proc/Lambda. This is pased the
-attribute under consideration (and so you can ignore that and query against
-one or more different-named model attributes) and the
-context-caller-supplied value to search for. Return <strong>AN</strong>
-<strong>ARRAY</strong> of parameters to pass to <code>where</code>. For
-parameters to <code>where</code>, see:</p>
+<p>A Hash. Keys are both search field names and model attribute names, unless overridden by values; values of <code>nil</code> are used for simple cases - “where( { attr_name =&gt; value } )” will be the resulting query modification. Alternatively, pass a callable Proc/Lambda. This is pased the attribute under consideration (and so you can ignore that and query against one or more different-named model attributes) and the context-caller-supplied value to search for. Return <strong>AN</strong> <strong>ARRAY</strong> of parameters to pass to <code>where</code>. For parameters to <code>where</code>, see:</p>
 
-<p><a
-href="http://api.rubyonrails.org/classes/ActiveRecord/QueryMethods.html#method-i-where">api.rubyonrails.org/classes/ActiveRecord/QueryMethods.html#method-i-where</a></p>
+<p><a href="http://api.rubyonrails.org/classes/ActiveRecord/QueryMethods.html#method-i-where">api.rubyonrails.org/classes/ActiveRecord/QueryMethods.html#method-i-where</a></p>
 
-<p>The Hash keys giving the search attribute names can be specified as Strings
-or Symbols.</p>
+<p>The Hash keys giving the search attribute names can be specified as Strings or Symbols.</p>
 
-<p>See <a
-href="SearchHelper.html">Hoodoo::ActiveRecord::Finder::SearchHelper</a> for
-methods which assist with filling in non-nil values for this Hash.</p>
+<p>See <a href="SearchHelper.html"><code>Hoodoo::ActiveRecord::Finder::SearchHelper</code></a> for methods which assist with filling in non-nil values for this Hash.</p>
 </dd></dl>
         </div>
 

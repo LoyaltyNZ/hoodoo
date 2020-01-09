@@ -41,24 +41,9 @@
         
 <p>Discover resource endpoint locations via Alchemy Flux.</p>
 
-<p>For Flux, it&#39;s less about discovery as it is about convention and
-announcing. We have to set some system variables when the application
-starts up, <em>before</em> the <a href="../../../Rack.html">Rack</a> `run`
-call gets as far as the Alchemy Flux server&#39;s implementation - in
-practice this means announcement needs to happen from the <a
-href="../../../Hoodoo.html">Hoodoo</a> middleware&#39;s constructor,
-synchronously. The environment variables tell Flux about this local
-service&#39;s URI-located endpoints and derive a consistent, replicable
-&#39;service name&#39; from the resources which the service implements.</p>
+<p>For Flux, it&#39;s less about discovery as it is about convention and announcing. We have to set some system variables when the application starts up, <em>before</em> the <a href="../../../Rack.html"><code>Rack</code></a> `run` call gets as far as the Alchemy Flux server&#39;s implementation - in practice this means announcement needs to happen from the <a href="../../../Hoodoo.html"><code>Hoodoo</code></a> middleware&#39;s constructor, synchronously. The environment variables tell Flux about this local service&#39;s URI-located endpoints and derive a consistent, replicable &#39;service name&#39; from the resources which the service implements.</p>
 
-<p>Once all that is set up, the local Alchemy instance knows how to listen for
-relevant messages for &#39;this&#39; service on the queue and <a
-href="../../../Hoodoo.html">Hoodoo</a> in &#39;this&#39; service knowns
-which resources are local, or which are remote; and it knows that Flux is
-able in turn to use URI-based to-resource communications for inter-resource
-calls without any further explicit discovery within <a
-href="../../../Hoodoo.html">Hoodoo</a> beyond simply saying “here&#39;s the
-AMQP Flux endpoint class”.</p>
+<p>Once all that is set up, the local Alchemy instance knows how to listen for relevant messages for &#39;this&#39; service on the queue and <a href="../../../Hoodoo.html"><code>Hoodoo</code></a> in &#39;this&#39; service knowns which resources are local, or which are remote; and it knows that Flux is able in turn to use URI-based to-resource communications for inter-resource calls without any further explicit discovery within <a href="../../../Hoodoo.html"><code>Hoodoo</code></a> beyond simply saying “here&#39;s the AMQP Flux endpoint class”.</p>
 
     </div>
 
@@ -106,27 +91,19 @@ AMQP Flux endpoint class”.</p>
 <p>Call via Hoodoo::Services::Discovery::Base#announce.</p>
 <dl class="rdoc-list note-list"><dt><code>resource</code>
 <dd>
-<p>Passed to <a
-href="ByFlux.html#method-i-discover_remote">discover_remote</a>.</p>
+<p>Passed to <a href="ByFlux.html#method-i-discover_remote"><code>discover_remote</code></a>.</p>
 </dd><dt><code>version</code>
 <dd>
-<p>Passed to <a
-href="ByFlux.html#method-i-discover_remote">discover_remote</a>.</p>
+<p>Passed to <a href="ByFlux.html#method-i-discover_remote"><code>discover_remote</code></a>.</p>
 </dd><dt><code>options</code>
 <dd>
 <p>See below.</p>
 </dd></dl>
 
-<p>The Options hash informs the announcer of the intended endpoint base URI
-for the resource and also, where available, provides a head-up on the full
-range of resource <em>names</em> that will be present in this single
-service application (see <a
-href="../Service.html#method-c-comprised_of">Hoodoo::Services::Service.comprised_of</a>).
-Keys MUST be Symbols. Associated required values are:</p>
+<p>The Options hash informs the announcer of the intended endpoint base URI for the resource and also, where available, provides a head-up on the full range of resource <em>names</em> that will be present in this single service application (see <a href="../Service.html#method-c-comprised_of"><code>Hoodoo::Services::Service::comprised_of</code></a>). Keys MUST be Symbols. Associated required values are:</p>
 <dl class="rdoc-list note-list"><dt><code>services</code>
 <dd>
-<p>Array of <a href="ForLocal.html">Hoodoo::Services::Discovery::ForLocal</a>
-instances describing available resources in this local service.</p>
+<p>Array of <a href="ForLocal.html"><code>Hoodoo::Services::Discovery::ForLocal</code></a> instances describing available resources in this local service.</p>
 </dd></dl>
         </div>
 
@@ -198,18 +175,15 @@ instances describing available resources in this local service.</p>
         <div class="description">
             <p>Discover the location of an instance.</p>
 
-<p>Returns a <a href="ForAMQP.html">Hoodoo::Services::Discovery::ForAMQP</a>
-instance if the endpoint is found, else <code>nil</code>.</p>
+<p>Returns a <a href="ForAMQP.html"><code>Hoodoo::Services::Discovery::ForAMQP</code></a> instance if the endpoint is found, else <code>nil</code>.</p>
 
 <p>Call via Hoodoo::Services::Discovery::Base#announce.</p>
 <dl class="rdoc-list note-list"><dt><code>resource</code>
 <dd>
-<p>Passed to <a
-href="ByFlux.html#method-i-discover_remote">discover_remote</a>.</p>
+<p>Passed to <a href="ByFlux.html#method-i-discover_remote"><code>discover_remote</code></a>.</p>
 </dd><dt><code>version</code>
 <dd>
-<p>Passed to <a
-href="ByFlux.html#method-i-discover_remote">discover_remote</a>.</p>
+<p>Passed to <a href="ByFlux.html#method-i-discover_remote"><code>discover_remote</code></a>.</p>
 </dd></dl>
         </div>
 

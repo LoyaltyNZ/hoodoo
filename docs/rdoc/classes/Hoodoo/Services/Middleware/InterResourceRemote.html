@@ -39,16 +39,9 @@
         <div id="content">
     <div class="description">
         
-<p>This is an endpoint which the middleware uses for inter-resource calls over
-another &#39;wrapped&#39; endpoint. This endpoint manages all the
-inter-resource preparation and post processing, but calls in to another
-wrapped endpoint to actually talk to the resource for which the
-inter-resource call is being made.</p>
+<p>This is an endpoint which the middleware uses for inter-resource calls over another &#39;wrapped&#39; endpoint. This endpoint manages all the inter-resource preparation and post processing, but calls in to another wrapped endpoint to actually talk to the resource for which the inter-resource call is being made.</p>
 
-<p>Since it wraps another endpoint, instantiation requirements are rather
-unusual - see <a
-href="InterResourceRemote.html#method-i-configure_with">configure_with</a>
-for details.</p>
+<p>Since it wraps another endpoint, instantiation requirements are rather unusual - see <a href="InterResourceRemote.html#method-i-configure_with"><code>configure_with</code></a> for details.</p>
 
     </div>
 
@@ -118,8 +111,7 @@ for details.</p>
         </div>
 
         <div class="description">
-            <p>See <a
-href="../../Client/Endpoint.html#method-i-create">Hoodoo::Client::Endpoint#create</a>.</p>
+            <p>See <a href="../../Client/Endpoint.html#method-i-create"><code>Hoodoo::Client::Endpoint#create</code></a>.</p>
         </div>
 
 
@@ -147,8 +139,7 @@ href="../../Client/Endpoint.html#method-i-create">Hoodoo::Client::Endpoint#creat
         </div>
 
         <div class="description">
-            <p>See <a
-href="../../Client/Endpoint.html#method-i-delete">Hoodoo::Client::Endpoint#delete</a>.</p>
+            <p>See <a href="../../Client/Endpoint.html#method-i-delete"><code>Hoodoo::Client::Endpoint#delete</code></a>.</p>
         </div>
 
 
@@ -176,8 +167,7 @@ href="../../Client/Endpoint.html#method-i-delete">Hoodoo::Client::Endpoint#delet
         </div>
 
         <div class="description">
-            <p>See <a
-href="../../Client/Endpoint.html#method-i-list">Hoodoo::Client::Endpoint#list</a>.</p>
+            <p>See <a href="../../Client/Endpoint.html#method-i-list"><code>Hoodoo::Client::Endpoint#list</code></a>.</p>
         </div>
 
 
@@ -205,8 +195,7 @@ href="../../Client/Endpoint.html#method-i-list">Hoodoo::Client::Endpoint#list</a
         </div>
 
         <div class="description">
-            <p>See <a
-href="../../Client/Endpoint.html#method-i-show">Hoodoo::Client::Endpoint#show</a>.</p>
+            <p>See <a href="../../Client/Endpoint.html#method-i-show"><code>Hoodoo::Client::Endpoint#show</code></a>.</p>
         </div>
 
 
@@ -234,8 +223,7 @@ href="../../Client/Endpoint.html#method-i-show">Hoodoo::Client::Endpoint#show</a
         </div>
 
         <div class="description">
-            <p>See <a
-href="../../Client/Endpoint.html#method-i-update">Hoodoo::Client::Endpoint#update</a>.</p>
+            <p>See <a href="../../Client/Endpoint.html#method-i-update"><code>Hoodoo::Client::Endpoint#update</code></a>.</p>
         </div>
 
 
@@ -265,45 +253,28 @@ href="../../Client/Endpoint.html#method-i-update">Hoodoo::Client::Endpoint#updat
         </div>
 
         <div class="description">
-            <p>See <a
-href="../../Client/Endpoint.html#method-i-configure_with">Hoodoo::Client::Endpoint#configure_with</a>.</p>
+            <p>See <a href="../../Client/Endpoint.html#method-i-configure_with"><code>Hoodoo::Client::Endpoint#configure_with</code></a>.</p>
 
-<p>It isn&#39;t expected that anyone will ever need to use this class beyond
-<a href="../Middleware.html">Hoodoo::Services::Middleware</a>, but you
-never know…</p>
+<p>It isn&#39;t expected that anyone will ever need to use this class beyond <a href="../Middleware.html"><code>Hoodoo::Services::Middleware</code></a>, but you never know…</p>
 
 <p>Configuration option keys which <em>must</em> be supplied are:</p>
 <dl class="rdoc-list note-list"><dt><code>interaction</code>
 <dd>
-<p>A <a href="Interaction.html">Hoodoo::Services::Middleware::Interaction</a>
-instance which describes the <strong>source</strong> interaction at hand.
-This is a middleware concept; the middleware is handling some API call
-which the source interaction data describes, but the resource which is
-handling the call needs to make a remote inter-resource call, which is why
-this Endpoint subclass instance is needed.</p>
+<p>A <a href="Interaction.html"><code>Hoodoo::Services::Middleware::Interaction</code></a> instance which describes the <strong>source</strong> interaction at hand. This is a middleware concept; the middleware is handling some API call which the source interaction data describes, but the resource which is handling the call needs to make a remote inter-resource call, which is why this Endpoint subclass instance is needed.</p>
 </dd><dt><code>discovery_result</code>
 <dd>
-<p>A <a
-href="../Discovery/ForRemote.html">Hoodoo::Services::Discovery::ForRemote</a>
-instance describing the remotely available resource endpoint.</p>
+<p>A <a href="../Discovery/ForRemote.html"><code>Hoodoo::Services::Discovery::ForRemote</code></a> instance describing the remotely available resource endpoint.</p>
 </dd></dl>
 
 <p>The pattern for creating and using this instance is:</p>
 <ul><li>
-<p>Use the discovery result to build an appropriate Endpoint subclass
-instance, e.g. <a
-href="../../Client/Endpoint/HTTP.html">Hoodoo::Client::Endpoint::HTTP</a>.</p>
+<p>Use the discovery result to build an appropriate Endpoint subclass instance, e.g. <a href="../../Client/Endpoint/HTTP.html"><code>Hoodoo::Client::Endpoint::HTTP</code></a>.</p>
 </li><li>
-<p>Create a <a
-href="../Discovery/ForRemote.html">Hoodoo::Services::Discovery::ForRemote</a>
-instance which describes the above endpoint via the
-<code>wrapped_endpoint</code> option.</p>
+<p>Create a <a href="../Discovery/ForRemote.html"><code>Hoodoo::Services::Discovery::ForRemote</code></a> instance which describes the above endpoint via the <code>wrapped_endpoint</code> option.</p>
 </li><li>
-<p>Build an instance of this auto-session Endpoint subclass, giving it the
-above object as the <code>discovery_result</code>.</p>
+<p>Build an instance of this auto-session Endpoint subclass, giving it the above object as the <code>discovery_result</code>.</p>
 </li><li>
-<p>Use this endpoint in the normal fashion. All the special mechanics of
-remote inter-resource calling are handled here.</p>
+<p>Use this endpoint in the normal fashion. All the special mechanics of remote inter-resource calling are handled here.</p>
 </li></ul>
         </div>
 

@@ -148,8 +148,7 @@
         </div>
 
         <div class="description">
-            <p>Initialize a <a href="Field.html">Field</a> instance with the appropriate
-name and options.</p>
+            <p>Initialize a <a href="Field.html"><code>Field</code></a> instance with the appropriate name and options.</p>
 <dl class="rdoc-list note-list"><dt><code>name</code>
 <dd>
 <p>The JSON key.</p>
@@ -226,10 +225,7 @@ name and options.</p>
         </div>
 
         <div class="description">
-            <p>Does this property have a defined default (which may be defined as
-<code>nil</code>) rather than having no defined value (<code>nil</code> or
-otherwise)? Returns <code>true</code> if it has a default,
-<code>false</code> if it has no default.</p>
+            <p>Does this property have a defined default (which may be defined as <code>nil</code>) rather than having no defined value (<code>nil</code> or otherwise)? Returns <code>true</code> if it has a default, <code>false</code> if it has no default.</p>
         </div>
 
 
@@ -255,17 +251,13 @@ otherwise)? Returns <code>true</code> if it has a default,
         </div>
 
         <div class="description">
-            <p>Dive down into a given hash along path array +@path+, building new hash
-entries if necessary at each path level until the last one. At that last
-level, assign the given object.</p>
+            <p>Dive down into a given hash along path array +@path+, building new hash entries if necessary at each path level until the last one. At that last level, assign the given object.</p>
 <dl class="rdoc-list note-list"><dt><code>data</code>
 <dd>
-<p>The object to build at the final path entry - usually an empty <a
-href="Array.html">Array</a> or <a href="Hash.html">Hash</a>.</p>
+<p>The object to build at the final path entry - usually an empty <a href="Array.html"><code>Array</code></a> or <a href="Hash.html"><code>Hash</code></a>.</p>
 </dd><dt><code>target</code>
 <dd>
-<p>The <a href="Hash.html">Hash</a> (may be initially empty) in which to build
-the path of keys from internal data +@path+.</p>
+<p>The <a href="Hash.html"><code>Hash</code></a> (may be initially empty) in which to build the path of keys from internal data +@path+.</p>
 </dd></dl>
 
 <p>Returns the full path array that was used (a clone of +@path+).</p>
@@ -307,8 +299,7 @@ the path of keys from internal data +@path+.</p>
         </div>
 
         <div class="description">
-            <p>Check if data is required and return a <a
-href="../Errors.html">Hoodoo::Errors</a> instance.</p>
+            <p>Check if data is required and return a <a href="../Errors.html"><code>Hoodoo::Errors</code></a> instance.</p>
         </div>
 
 
@@ -344,8 +335,7 @@ href="../Errors.html">Hoodoo::Errors</a> instance.</p>
         </div>
 
         <div class="description">
-            <p>Invoke a given block, passing this item. See Hoodoo::Presenters::Base#walk
-for why.</p>
+            <p>Invoke a given block, passing this item. See Hoodoo::Presenters::Base#walk for why.</p>
 <dl class="rdoc-list note-list"><dt>&amp;block
 <dd>
 <p>Mandatory block, which is passed &#39;self&#39; when called.</p>
@@ -377,11 +367,7 @@ for why.</p>
         </div>
 
         <div class="description">
-            <p>Dive down into a given target data hash using the given array of path keys,
-returning the result at the final key in the path. E.g. if the <a
-href="Hash.html">Hash</a> is “{ :foo =&gt; { :bar =&gt; { :baz =&gt;
-”hello“ } } }” then a path of “[ :foo, :bar ]” would yield “{ :baz =&gt;
-”hello“ }”.</p>
+            <p>Dive down into a given target data hash using the given array of path keys, returning the result at the final key in the path. E.g. if the <a href="Hash.html"><code>Hash</code></a> is “{ :foo =&gt; { :bar =&gt; { :baz =&gt; ”hello“ } } }” then a path of “[ :foo, :bar ]” would yield “{ :baz =&gt; ”hello“ }”.</p>
         </div>
 
 
@@ -413,15 +399,12 @@ href="Hash.html">Hash</a> is “{ :foo =&gt; { :bar =&gt; { :baz =&gt;
         </div>
 
         <div class="description">
-            <p>Rename a property to the given name. The internal name is changed and the
-last path entry set to the same name (if a path is present). Paths of
-sub-properties (if any) are updated with the parent&#39;s new name.</p>
+            <p>Rename a property to the given name. The internal name is changed and the last path entry set to the same name (if a path is present). Paths of sub-properties (if any) are updated with the parent&#39;s new name.</p>
 
-<p>This is a specialist interface which is intended for internal use under
-unusual circumstances.</p>
+<p>This is a specialist interface which is intended for internal use under unusual circumstances.</p>
 <dl class="rdoc-list note-list"><dt><code>name</code>
 <dd>
-<p>New property name. Must be a <a href="String.html">String</a>.</p>
+<p>New property name. Must be a <a href="String.html"><code>String</code></a>.</p>
 </dd></dl>
         </div>
 
@@ -451,9 +434,7 @@ unusual circumstances.</p>
         </div>
 
         <div class="description">
-            <p>Change the +@path+ array by writing a given value in at a given index. If
-this property has any sub-properties, then those are recursively updated to
-change the same depth item to the new name in all of them.</p>
+            <p>Change the +@path+ array by writing a given value in at a given index. If this property has any sub-properties, then those are recursively updated to change the same depth item to the new name in all of them.</p>
 <dl class="rdoc-list note-list"><dt><code>depth</code>
 <dd>
 <p>Index into +@path+ to make modifications.</p>

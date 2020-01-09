@@ -39,45 +39,19 @@
         <div id="content">
     <div class="description">
         
-<p>The <a href="Permissions.html">Permissions</a> class provides a way to
-store and recall information on action behaviour for resources. It is just
-a way to store and query this information; actually enforcing the result is
-up to the caller.</p>
+<p>The <a href="Permissions.html"><code>Permissions</code></a> class provides a way to store and recall information on action behaviour for resources. It is just a way to store and query this information; actually enforcing the result is up to the caller.</p>
 
-<p><a href="Permissions.html">Permissions</a> are based on the standard
-actions - <code>list</code>, <code>show</code>, <code>create</code>,
-<code>update</code> and <code>delete</code> - with defined permissions of
-constants <a href="Permissions.html#DENY">DENY</a> (prohibit access), <a
-href="Permissions.html#ALLOW">ALLOW</a> (allow access) and <a
-href="Permissions.html#ASK">ASK</a>. The intention of <a
-href="Permissions.html#ASK">ASK</a> is that some other component - usually
-a service application - should be passed details of the request and asked
-if it should be permitted.</p>
+<p><a href="Permissions.html"><code>Permissions</code></a> are based on the standard actions - <code>list</code>, <code>show</code>, <code>create</code>, <code>update</code> and <code>delete</code> - with defined permissions of constants <a href="Permissions.html#DENY"><code>DENY</code></a> (prohibit access), <a href="Permissions.html#ALLOW"><code>ALLOW</code></a> (allow access) and <a href="Permissions.html#ASK"><code>ASK</code></a>. The intention of <a href="Permissions.html#ASK"><code>ASK</code></a> is that some other component - usually a service application - should be passed details of the request and asked if it should be permitted.</p>
 
-<p>Callers must <strong>ensure</strong> they <strong>only</strong> use the <a
-href="Permissions.html#DENY">DENY</a>, <a
-href="Permissions.html#ALLOW">ALLOW</a> and <a
-href="Permissions.html#ASK">ASK</a> constants defined herein, without
-making assumptions about their assigned values.</p>
+<p>Callers must <strong>ensure</strong> they <strong>only</strong> use the <a href="Permissions.html#DENY"><code>DENY</code></a>, <a href="Permissions.html#ALLOW"><code>ALLOW</code></a> and <a href="Permissions.html#ASK"><code>ASK</code></a> constants defined herein, without making assumptions about their assigned values.</p>
 
-<p>There is both a default set of permissions in addition to per-resource
-permissions and there is a fallback for cases where a permission for a
-particular action has not been defined. This lets you define the baseline
-behaviour in the fallback cases and only describe exceptions to that
-baseline through the <a href="Permissions.html">Permissions</a> interface,
-minimising caller workload.</p>
+<p>There is both a default set of permissions in addition to per-resource permissions and there is a fallback for cases where a permission for a particular action has not been defined. This lets you define the baseline behaviour in the fallback cases and only describe exceptions to that baseline through the <a href="Permissions.html"><code>Permissions</code></a> interface, minimising caller workload.</p>
 
-<p><a href="Middleware.html">Hoodoo::Services::Middleware</a> uses an instance
-of this class to determine whether or not it should pass on inbound
-requests to service applications.</p>
+<p><a href="Middleware.html"><code>Hoodoo::Services::Middleware</code></a> uses an instance of this class to determine whether or not it should pass on inbound requests to service applications.</p>
 
 <p>Example:</p>
 
-<p>Here, an object is created with a default fallback of <a
-href="Permissions.html#DENY">DENY</a>, then has the action “list” allowed
-for all resources and says that resource “Member” must ask someone for
-permission if its “show” action is requested. Another resource “Ping”
-allows any action unconditionally.</p>
+<p>Here, an object is created with a default fallback of <a href="Permissions.html#DENY"><code>DENY</code></a>, then has the action “list” allowed for all resources and says that resource “Member” must ask someone for permission if its “show” action is requested. Another resource “Ping” allows any action unconditionally.</p>
 
 <pre><code>p = Hoodoo::Services::Permissions.new
 p.set_default( :list, Hoodoo::Services::Permissions::ALLOW )
@@ -206,8 +180,7 @@ puts JSON.pretty_generate( p.to_h() )
         </tr>
         <tr valign='top'>
             <td>&nbsp;</td>
-            <td colspan="2" class="attr-desc"><p>Something else (e.g. a service application) needs to be asked to see if it
-permits the action.</p></td>
+            <td colspan="2" class="attr-desc"><p>Something else (e.g. a service application) needs to be asked to see if it permits the action.</p></td>
         </tr>
         <tr valign='top' id='ALLOWED_POLICIES'>
             <td class="attr-name">ALLOWED_POLICIES</td>
@@ -235,12 +208,9 @@ ASK
         </div>
 
         <div class="description">
-            <p>Create a new <a href="Permissions.html">Permissions</a> instance,
-optionally from a Hash of the format returned by <a
-href="Permissions.html#method-i-to_h">to_h</a>.</p>
+            <p>Create a new <a href="Permissions.html"><code>Permissions</code></a> instance, optionally from a Hash of the format returned by <a href="Permissions.html#method-i-to_h"><code>to_h</code></a>.</p>
 
-<p>By default the object is initialised with a default fallback which denies
-all actions for all resources.</p>
+<p>By default the object is initialised with a default fallback which denies all actions for all resources.</p>
         </div>
 
 
@@ -276,9 +246,7 @@ all actions for all resources.</p>
             <p>Overwrite this instances&#39;s permissions with those from the given Hash.</p>
 <dl class="rdoc-list note-list"><dt><code>hash</code>
 <dd>
-<p><a href="Permissions.html">Permissions</a> hash, which must come (directly
-or indirectly) from a <a href="Permissions.html#method-i-to_h">to_h</a>
-call.</p>
+<p><a href="Permissions.html"><code>Permissions</code></a> hash, which must come (directly or indirectly) from a <a href="Permissions.html#method-i-to_h"><code>to_h</code></a> call.</p>
 </dd></dl>
         </div>
 
@@ -305,14 +273,10 @@ call.</p>
         </div>
 
         <div class="description">
-            <p>Merge the permissions described by the given Hash with those inside this
-instance. This will add to, or overwrite permissions with those from the
-given input Hash.</p>
+            <p>Merge the permissions described by the given Hash with those inside this instance. This will add to, or overwrite permissions with those from the given input Hash.</p>
 <dl class="rdoc-list note-list"><dt><code>hash</code>
 <dd>
-<p><a href="Permissions.html">Permissions</a> hash, which must come (directly
-or indirectly) from a <a href="Permissions.html#method-i-to_h">to_h</a>
-call.</p>
+<p><a href="Permissions.html"><code>Permissions</code></a> hash, which must come (directly or indirectly) from a <a href="Permissions.html#method-i-to_h"><code>to_h</code></a> call.</p>
 </dd></dl>
         </div>
 
@@ -342,18 +306,13 @@ call.</p>
         </div>
 
         <div class="description">
-            <p>For the given resource, is the given action permitted? Returns one of the
-<a href="Permissions.html#ALLOW">ALLOW</a>, <a
-href="Permissions.html#DENY">DENY</a> or <a
-href="Permissions.html#ASK">ASK</a> constant values.</p>
+            <p>For the given resource, is the given action permitted? Returns one of the <a href="Permissions.html#ALLOW"><code>ALLOW</code></a>, <a href="Permissions.html#DENY"><code>DENY</code></a> or <a href="Permissions.html#ASK"><code>ASK</code></a> constant values.</p>
 <dl class="rdoc-list note-list"><dt><code>resource_name</code>
 <dd>
-<p>Resource name as a Symbol or String, e.g. “<code>Purchase</code>” or
-<code>:Member</code>.</p>
+<p>Resource name as a Symbol or String, e.g. “<code>Purchase</code>” or <code>:Member</code>.</p>
 </dd><dt><code>action_name</code>
 <dd>
-<p>Action as a String or Symbol, from: <code>list</code>, <code>show</code>,
-<code>create</code>, <code>update</code> or <code>delete</code>.</p>
+<p>Action as a String or Symbol, from: <code>list</code>, <code>show</code>, <code>create</code>, <code>update</code> or <code>delete</code>.</p>
 </dd></dl>
         </div>
 
@@ -394,19 +353,13 @@ href="Permissions.html#ASK">ASK</a> constant values.</p>
         </div>
 
         <div class="description">
-            <p>Set the default permission for the given action. If a resource does not
-have a specific entry for it in the <a
-href="Permissions.html">Permissions</a> object but the action matches the
-given name, then this permission is used.</p>
+            <p>Set the default permission for the given action. If a resource does not have a specific entry for it in the <a href="Permissions.html"><code>Permissions</code></a> object but the action matches the given name, then this permission is used.</p>
 <dl class="rdoc-list note-list"><dt><code>action_name</code>
 <dd>
-<p>Action as a String or Symbol, from: <code>list</code>, <code>show</code>,
-<code>create</code>, <code>update</code> or <code>delete</code>.</p>
+<p>Action as a String or Symbol, from: <code>list</code>, <code>show</code>, <code>create</code>, <code>update</code> or <code>delete</code>.</p>
 </dd><dt><code>permission</code>
 <dd>
-<p><a href="Permissions.html#DENY">DENY</a>, <a
-href="Permissions.html#ALLOW">ALLOW</a> or <a
-href="Permissions.html#ASK">ASK</a>.</p>
+<p><a href="Permissions.html#DENY"><code>DENY</code></a>, <a href="Permissions.html#ALLOW"><code>ALLOW</code></a> or <a href="Permissions.html#ASK"><code>ASK</code></a>.</p>
 </dd></dl>
         </div>
 
@@ -437,15 +390,10 @@ href="Permissions.html#ASK">ASK</a>.</p>
         </div>
 
         <div class="description">
-            <p>Set the default fallback for actions. If a resource does not have a
-specific entry for it in the <a href="Permissions.html">Permissions</a>
-object and if the action does not have a default permission, then this
-permission used.</p>
+            <p>Set the default fallback for actions. If a resource does not have a specific entry for it in the <a href="Permissions.html"><code>Permissions</code></a> object and if the action does not have a default permission, then this permission used.</p>
 <dl class="rdoc-list note-list"><dt><code>permission</code>
 <dd>
-<p><a href="Permissions.html#DENY">DENY</a>, <a
-href="Permissions.html#ALLOW">ALLOW</a> or <a
-href="Permissions.html#ASK">ASK</a>.</p>
+<p><a href="Permissions.html#DENY"><code>DENY</code></a>, <a href="Permissions.html#ALLOW"><code>ALLOW</code></a> or <a href="Permissions.html#ASK"><code>ASK</code></a>.</p>
 </dd></dl>
         </div>
 
@@ -478,17 +426,13 @@ href="Permissions.html#ASK">ASK</a>.</p>
             <p>Set the permissions an action on a resource.</p>
 <dl class="rdoc-list note-list"><dt><code>resource_name</code>
 <dd>
-<p>Resource name as a Symbol or String, e.g. “<code>Purchase</code>” or
-<code>:Member</code>.</p>
+<p>Resource name as a Symbol or String, e.g. “<code>Purchase</code>” or <code>:Member</code>.</p>
 </dd><dt><code>action_name</code>
 <dd>
-<p>Action as a String or Symbol, from: <code>list</code>, <code>show</code>,
-<code>create</code>, <code>update</code> or <code>delete</code>.</p>
+<p>Action as a String or Symbol, from: <code>list</code>, <code>show</code>, <code>create</code>, <code>update</code> or <code>delete</code>.</p>
 </dd><dt><code>permission</code>
 <dd>
-<p><a href="Permissions.html#DENY">DENY</a>, <a
-href="Permissions.html#ALLOW">ALLOW</a> or <a
-href="Permissions.html#ASK">ASK</a>.</p>
+<p><a href="Permissions.html#DENY"><code>DENY</code></a>, <a href="Permissions.html#ALLOW"><code>ALLOW</code></a> or <a href="Permissions.html#ASK"><code>ASK</code></a>.</p>
 </dd></dl>
         </div>
 
@@ -521,19 +465,13 @@ href="Permissions.html#ASK">ASK</a>.</p>
         </div>
 
         <div class="description">
-            <p>Set the default fallback for a resource. If the resource is asked to
-perform an action that&#39;s not otherwise listed in the resource&#39;s
-entry in the <a href="Permissions.html">Permissions</a> object, then this
-permission is used.</p>
+            <p>Set the default fallback for a resource. If the resource is asked to perform an action that&#39;s not otherwise listed in the resource&#39;s entry in the <a href="Permissions.html"><code>Permissions</code></a> object, then this permission is used.</p>
 <dl class="rdoc-list note-list"><dt><code>resource_name</code>
 <dd>
-<p>Resource name as a Symbol or String, e.g. “<code>Purchase</code>” or
-<code>:Member</code>.</p>
+<p>Resource name as a Symbol or String, e.g. “<code>Purchase</code>” or <code>:Member</code>.</p>
 </dd><dt><code>permission</code>
 <dd>
-<p><a href="Permissions.html#DENY">DENY</a>, <a
-href="Permissions.html#ALLOW">ALLOW</a> or <a
-href="Permissions.html#ASK">ASK</a>.</p>
+<p><a href="Permissions.html#DENY"><code>DENY</code></a>, <a href="Permissions.html#ALLOW"><code>ALLOW</code></a> or <a href="Permissions.html#ASK"><code>ASK</code></a>.</p>
 </dd></dl>
         </div>
 
@@ -564,10 +502,7 @@ href="Permissions.html#ASK">ASK</a>.</p>
         </div>
 
         <div class="description">
-            <p>Return a Hash representative of this permissions object, which can be
-stored elsewhere, used to initialise another instance or written to an
-existing instance with <a
-href="Permissions.html#method-i-from_h-21">from_h!</a>.</p>
+            <p>Return a Hash representative of this permissions object, which can be stored elsewhere, used to initialise another instance or written to an existing instance with <a href="Permissions.html#method-i-from_h-21"><code>from_h!</code></a>.</p>
         </div>
 
 

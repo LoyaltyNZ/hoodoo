@@ -107,8 +107,7 @@
                 [RW]
             </td>
             <td class='attr-name'>properties</td>
-            <td class='attr-desc'><p>The properties of this object, a <code>hash</code> of <code>Field</code>
-instances.</p></td>
+            <td class='attr-desc'><p>The properties of this object, a <code>hash</code> of <code>Field</code> instances.</p></td>
         </tr>
     </table>
 
@@ -122,18 +121,9 @@ instances.</p></td>
         </div>
 
         <div class="description">
-            <p><a href="Hash.html">Hash</a> DSL: Define a specific named key that is
-allowed (or even required) in the hash. The optional block uses <a
-href="BaseDSL.html">Hoodoo::Presenters::BaseDSL</a> to describe the
-required form of the key&#39;s value. If the block is omitted, any value is
-permitted.</p>
+            <p><a href="Hash.html"><code>Hash</code></a> DSL: Define a specific named key that is allowed (or even required) in the hash. The optional block uses <a href="BaseDSL.html"><code>Hoodoo::Presenters::BaseDSL</code></a> to describe the required form of the key&#39;s value. If the block is omitted, any value is permitted.</p>
 
-<p>The singular <a href="Hash.html#method-i-key">key</a> method is useful when
-you want to describe an object which has known permitted keys yielding to
-required value types. For example, you may have a <a
-href="Hash.html">Hash</a> which defines configuration data for a variety of
-fixed, known types, with the <a href="Hash.html">Hash</a> keys being the
-type name. See Hoodoo::Data::Types::CalculatorConfiguration for an example.</p>
+<p>The singular <a href="Hash.html#method-i-key"><code>key</code></a> method is useful when you want to describe an object which has known permitted keys yielding to required value types. For example, you may have a <a href="Hash.html"><code>Hash</code></a> which defines configuration data for a variety of fixed, known types, with the <a href="Hash.html"><code>Hash</code></a> keys being the type name. See Hoodoo::Data::Types::CalculatorConfiguration for an example.</p>
 
 <p>Example:</p>
 
@@ -232,15 +222,10 @@ end
         </div>
 
         <div class="description">
-            <p><a href="Hash.html">Hash</a> DSL: Define general parameters allowed for
-keys in a <a href="Hash.html">Hash</a> and, if a block is given, use <a
-href="BaseDSL.html">Hoodoo::Presenters::BaseDSL</a> to describe how any of
-the values in the <a href="Hash.html">Hash</a> must look.</p>
+            <p><a href="Hash.html"><code>Hash</code></a> DSL: Define general parameters allowed for keys in a <a href="Hash.html"><code>Hash</code></a> and, if a block is given, use <a href="BaseDSL.html"><code>Hoodoo::Presenters::BaseDSL</code></a> to describe how any of the values in the <a href="Hash.html"><code>Hash</code></a> must look.</p>
 <dl class="rdoc-list note-list"><dt><code>options</code>
 <dd>
-<p>A <code>Hash</code> of options; currently only <code>:length =&gt;
-[n]</code> is supported, describing the maximum permitted length of the
-key. If this option is omitted, keys can be any length.</p>
+<p>A <code>Hash</code> of options; currently only <code>:length =&gt; [n]</code> is supported, describing the maximum permitted length of the key. If this option is omitted, keys can be any length.</p>
 </dd></dl>
 
 <p>Example:</p>
@@ -256,9 +241,7 @@ key. If this option is omitted, keys can be any length.</p>
 end
 </code></pre>
 
-<p>…defines a <a href="Hash.html">Hash</a> with keys that have a maximum
-string length of 4 characters (inclusive) and simple object values with
-just a single text field. This JSON would validate against the definition:</p>
+<p>…defines a <a href="Hash.html"><code>Hash</code></a> with keys that have a maximum string length of 4 characters (inclusive) and simple object values with just a single text field. This JSON would validate against the definition:</p>
 
 <pre><code>{
   &quot;nested_object&quot;: {
@@ -347,17 +330,13 @@ just a single text field. This JSON would validate against the definition:</p>
         </div>
 
         <div class="description">
-            <p>Render a hash into the target hash based on the internal state that
-describes this instance&#39;s current path (position in the heirarchy of
-nested schema entities).</p>
+            <p>Render a hash into the target hash based on the internal state that describes this instance&#39;s current path (position in the heirarchy of nested schema entities).</p>
 <dl class="rdoc-list note-list"><dt><code>data</code>
 <dd>
-<p>The <a href="Hash.html">Hash</a> to render.</p>
+<p>The <a href="Hash.html"><code>Hash</code></a> to render.</p>
 </dd><dt><code>target</code>
 <dd>
-<p>The <a href="Hash.html">Hash</a> that we render into. A “path” of keys
-leading to nested Hashes is built via +super()+, with the final key entry
-yielding the rendered hash.</p>
+<p>The <a href="Hash.html"><code>Hash</code></a> that we render into. A “path” of keys leading to nested Hashes is built via +super()+, with the final key entry yielding the rendered hash.</p>
 </dd></dl>
         </div>
 
@@ -443,8 +422,7 @@ yielding the rendered hash.</p>
         </div>
 
         <div class="description">
-            <p>Check if data is a valid <a href="Hash.html">Hash</a> and return a <a
-href="../Errors.html">Hoodoo::Errors</a> instance.</p>
+            <p>Check if data is a valid <a href="Hash.html"><code>Hash</code></a> and return a <a href="../Errors.html"><code>Hoodoo::Errors</code></a> instance.</p>
         </div>
 
 
@@ -560,8 +538,7 @@ href="../Errors.html">Hoodoo::Errors</a> instance.</p>
         </div>
 
         <div class="description">
-            <p>Invoke a given block, passing this item; call recursively for any defined
-sub-fields too. See Hoodoo::Presenters::Base#walk for why.</p>
+            <p>Invoke a given block, passing this item; call recursively for any defined sub-fields too. See Hoodoo::Presenters::Base#walk for why.</p>
 <dl class="rdoc-list note-list"><dt>&amp;block
 <dd>
 <p>Mandatory block, which is passed &#39;self&#39; when called.</p>

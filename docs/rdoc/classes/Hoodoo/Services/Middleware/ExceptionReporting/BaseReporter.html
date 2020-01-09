@@ -39,8 +39,7 @@
         <div id="content">
     <div class="description">
         
-<p>Subclass this method to create a custom class used to contact external
-exception monitoring / reporting engine. Examples include:</p>
+<p>Subclass this method to create a custom class used to contact external exception monitoring / reporting engine. Examples include:</p>
 <ul><li>
 <p>Raygun:      <a href="https://raygun.io">raygun.io</a></p>
 </li><li>
@@ -51,23 +50,11 @@ exception monitoring / reporting engine. Examples include:</p>
 <p>Airbrake:    <a href="https://airbrake.io">airbrake.io</a></p>
 </li></ul>
 
-<p><a href="../../../../Hoodoo.html">Hoodoo</a> includes some classes for
-integration which you can choose from if you want to use the integrated
-service. Alternatively write your own. When you do this, name your class
-<strong>outside</strong> the <a href="../../../../Hoodoo.html">Hoodoo</a>
-namespace (the class&#39;s name can be anything you like). Otherwise you
-will trample upon Hoodoo&#39; reserved namespace and may cause a naming
-collision in future <a href="../../../../Hoodoo.html">Hoodoo</a> versions.</p>
+<p><a href="../../../../Hoodoo.html"><code>Hoodoo</code></a> includes some classes for integration which you can choose from if you want to use the integrated service. Alternatively write your own. When you do this, name your class <strong>outside</strong> the <a href="../../../../Hoodoo.html"><code>Hoodoo</code></a> namespace (the class&#39;s name can be anything you like). Otherwise you will trample upon Hoodoo&#39; reserved namespace and may cause a naming collision in future <a href="../../../../Hoodoo.html"><code>Hoodoo</code></a> versions.</p>
 
-<p>“Under the hood” the <a
-href="../../../Communicators/Pool.html">Hoodoo::Communicators::Pool</a>
-mechanism is used. All reporters are assumed to be (comparatively) slow
-communicators so are descendants of <a
-href="../../../Communicators/Slow.html">Hoodoo::Communicators::Slow</a>.</p>
+<p>“Under the hood” the <a href="../../../Communicators/Pool.html"><code>Hoodoo::Communicators::Pool</code></a> mechanism is used. All reporters are assumed to be (comparatively) slow communicators so are descendants of <a href="../../../Communicators/Slow.html"><code>Hoodoo::Communicators::Slow</code></a>.</p>
 
-<p>Add a reporter class to the middleware from any service application by
-calling <a
-href="../ExceptionReporting.html#method-c-add">Hoodoo::Services::Middleware::ExceptionReporting.add</a>.</p>
+<p>Add a reporter class to the middleware from any service application by calling <a href="../ExceptionReporting.html#method-c-add"><code>Hoodoo::Services::Middleware::ExceptionReporting.add</code></a>.</p>
 
     </div>
 
@@ -128,19 +115,10 @@ href="../ExceptionReporting.html#method-c-add">Hoodoo::Services::Middleware::Exc
         </div>
 
         <div class="description">
-            <p>Subclasses <strong>MUST</strong> <strong>NOT</strong> override this method,
-which is part of the base class implementation and implements <a
-href="../../../Communicators/Slow.html#method-i-communicate">Hoodoo::Communicators::Slow#communicate</a>.
-It calls through to the <a
-href="BaseReporter.html#method-i-report">report</a> method which subclasses
-do implement, unpacking a payload used for the internal communicators into
-the parameters that <a href="BaseReporter.html#method-i-report">report</a>
-expects.</p>
+            <p>Subclasses <strong>MUST</strong> <strong>NOT</strong> override this method, which is part of the base class implementation and implements <a href="../../../Communicators/Slow.html#method-i-communicate"><code>Hoodoo::Communicators::Slow#communicate</code></a>. It calls through to the <a href="BaseReporter.html#method-i-report"><code>report</code></a> method which subclasses do implement, unpacking a payload used for the internal communicators into the parameters that <a href="BaseReporter.html#method-i-report"><code>report</code></a> expects.</p>
 <dl class="rdoc-list note-list"><dt><code>object</code>
 <dd>
-<p><a
-href="Payload.html">Hoodoo::Services::Middleware::ExceptionReporting::Payload</a>
-instance.</p>
+<p><a href="Payload.html"><code>Hoodoo::Services::Middleware::ExceptionReporting::Payload</code></a> instance.</p>
 </dd></dl>
         </div>
 
@@ -184,30 +162,19 @@ instance.</p>
         </div>
 
         <div class="description">
-            <p>Similar to <a href="BaseReporter.html#method-i-report">report</a>, with the
-same caveats; but has more information available.</p>
+            <p>Similar to <a href="BaseReporter.html#method-i-report"><code>report</code></a>, with the same caveats; but has more information available.</p>
 
-<p>Subclasses report an exception for errors that occur within a fully handled
-<a href="../../../../Rack.html">Rack</a> request context, with a high level
-processed <a href="../../../../Hoodoo.html">Hoodoo</a> representation
-available.</p>
+<p>Subclasses report an exception for errors that occur within a fully handled <a href="../../../../Rack.html"><code>Rack</code></a> request context, with a high level processed <a href="../../../../Hoodoo.html"><code>Hoodoo</code></a> representation available.</p>
 
-<p>Through the protected <a
-href="BaseReporter.html#method-i-user_data_for">user_data_for</a> method,
-subclasses can, if the exception reporting backend supports it, include
-detailed request information with their contextual exception reports.</p>
+<p>Through the protected <a href="BaseReporter.html#method-i-user_data_for"><code>user_data_for</code></a> method, subclasses can, if the exception reporting backend supports it, include detailed request information with their contextual exception reports.</p>
 
-<p><a href="../../Implementation.html">Implementation</a> is optional. If not
-available, the system falls back to the less detailed <a
-href="BaseReporter.html#method-i-report">report</a> method. If called, all
-parameters must be provided; none are optional.</p>
+<p><a href="../../Implementation.html"><code>Implementation</code></a> is optional. If not available, the system falls back to the less detailed <a href="BaseReporter.html#method-i-report"><code>report</code></a> method. If called, all parameters must be provided; none are optional.</p>
 <dl class="rdoc-list note-list"><dt><code>e</code>
 <dd>
 <p>Exception (or subclass) instance to be reported.</p>
 </dd><dt><code>context</code>
 <dd>
-<p><a href="../../Context.html">Hoodoo::Services::Context</a> instance
-describing an in-flight request/response cycle.</p>
+<p><a href="../../Context.html"><code>Hoodoo::Services::Context</code></a> instance describing an in-flight request/response cycle.</p>
 </dd></dl>
         </div>
 
@@ -234,29 +201,13 @@ describing an in-flight request/response cycle.</p>
         </div>
 
         <div class="description">
-            <p>Subclasses implement this method. The middleware creates the singleton
-instance of the subclass, then calls your implementation of the method when
-it catches an exception in its top level handler. The subclass
-implementation sends details of the exception to the desired exception
-monitoring or reporting service. The return value is ignored.</p>
+            <p>Subclasses implement this method. The middleware creates the singleton instance of the subclass, then calls your implementation of the method when it catches an exception in its top level handler. The subclass implementation sends details of the exception to the desired exception monitoring or reporting service. The return value is ignored.</p>
 
-<p>The middleware wraps calls to your subclass in a nested exception handler.
-If you raise an exception, the middleware logs details with a
-<code>:debug</code> level through its logger instance if possible (see <a
-href="../../Middleware.html#method-c-logger">Hoodoo::Services::Middleware.logger</a>)
-along with printing details to $stderr, then continues processing.</p>
+<p>The middleware wraps calls to your subclass in a nested exception handler. If you raise an exception, the middleware logs details with a <code>:debug</code> level through its logger instance if possible (see <a href="../../Middleware.html#method-c-logger"><code>Hoodoo::Services::Middleware::logger</code></a>) along with printing details to $stderr, then continues processing.</p>
 
-<p>If service applications are expecting potential exceptions to occur and
-they catch them without re-raising for the middleware to catch, this
-reporting method will not be called. If a service author thinks such an
-exception ought to be logged, they must re-raise it.</p>
+<p>If service applications are expecting potential exceptions to occur and they catch them without re-raising for the middleware to catch, this reporting method will not be called. If a service author thinks such an exception ought to be logged, they must re-raise it.</p>
 
-<p>The middleware runs calls here in a processing Thread to avoid delays to
-the calling client. This means your implementation of this method can use
-blocking network calls should you so wish; but beware, you are running in
-your own Thread on every call and more than one call might be running
-concurrently. If your implementation is not threadsafe, use a Mutex. For
-example, add a mutex class variable to your class:</p>
+<p>The middleware runs calls here in a processing Thread to avoid delays to the calling client. This means your implementation of this method can use blocking network calls should you so wish; but beware, you are running in your own Thread on every call and more than one call might be running concurrently. If your implementation is not threadsafe, use a Mutex. For example, add a mutex class variable to your class:</p>
 
 <pre><code>@@mutex = Mutex.new
 </code></pre>
@@ -274,9 +225,7 @@ end
 <p>Exception (or subclass) instance to be reported.</p>
 </dd><dt><code>env</code>
 <dd>
-<p>Optional <a href="../../../../Rack.html">Rack</a> environment hash for the
-inbound request, for exception reports made in the context of <a
-href="../../../../Rack.html">Rack</a> request handling.</p>
+<p>Optional <a href="../../../../Rack.html"><code>Rack</code></a> environment hash for the inbound request, for exception reports made in the context of <a href="../../../../Rack.html"><code>Rack</code></a> request handling.</p>
 </dd></dl>
         </div>
 
@@ -305,13 +254,10 @@ href="../../../../Rack.html">Rack</a> request handling.</p>
         </div>
 
         <div class="description">
-            <p>When passed a request context, extracts information that can be given as
-“user data” (or similar) to an exception reporting endpoint, if it supports
-such a concept.</p>
+            <p>When passed a request context, extracts information that can be given as “user data” (or similar) to an exception reporting endpoint, if it supports such a concept.</p>
 <dl class="rdoc-list note-list"><dt><code>context</code>
 <dd>
-<p><a href="../../Context.html">Hoodoo::Services::Context</a> instance
-describing an in-flight request/response cycle.</p>
+<p><a href="../../Context.html"><code>Hoodoo::Services::Context</code></a> instance describing an in-flight request/response cycle.</p>
 </dd></dl>
         </div>
 

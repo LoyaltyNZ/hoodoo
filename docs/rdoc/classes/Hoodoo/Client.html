@@ -55,13 +55,7 @@
         <div id="content">
     <div class="description">
         
-<p><a href="Client.html">Hoodoo::Client</a> provides a high-level abstracted
-interface for making calls to Resource implementations. A <a
-href="Client.html">Client</a> instance is created and used as a factory for
-objects representing individual Resources. Callers use a consistent, high
-level interface in these objects to make requests to those Resources and do
-not usually need to worry about where implementations are, or how they are
-being contacted.</p>
+<p><a href="Client.html"><code>Hoodoo::Client</code></a> provides a high-level abstracted interface for making calls to Resource implementations. A <a href="Client.html"><code>Client</code></a> instance is created and used as a factory for objects representing individual Resources. Callers use a consistent, high level interface in these objects to make requests to those Resources and do not usually need to worry about where implementations are, or how they are being contacted.</p>
 
 <p>Please see the constructor documentation for full details.</p>
 
@@ -148,16 +142,11 @@ being contacted.</p>
         </div>
 
         <div class="description">
-            <p>Create a client instance. This is used as a factory for endpoint instances
-which communicate with Resource implementations.</p>
+            <p>Create a client instance. This is used as a factory for endpoint instances which communicate with Resource implementations.</p>
 
 <h2 id="method-c-new-label-Overview">Overview</h2>
 
-<p>Suppose you have Resources with only <code>public_actions</code> so that no
-sessions are needed, with resource implementations running at host
-“test.com” on paths which follow downcase/pluralisation conventions. In
-this case, creating a <a href="Client.html">Client</a> instance can be as
-simple as:</p>
+<p>Suppose you have Resources with only <code>public_actions</code> so that no sessions are needed, with resource implementations running at host “test.com” on paths which follow downcase/pluralisation conventions. In this case, creating a <a href="Client.html"><code>Client</code></a> instance can be as simple as:</p>
 
 <pre><code>client = Hoodoo::Client.new(
   base_uri:     &#39;http://test.com/&#39;,
@@ -165,39 +154,27 @@ simple as:</p>
 )
 </code></pre>
 
-<p>Ask this client for an endpoint of Resource “Member” implementing version 2
-of its interface:</p>
+<p>Ask this client for an endpoint of Resource “Member” implementing version 2 of its interface:</p>
 
 <pre><code>members = client.resource( :Member, 2 )
 </code></pre>
 
-<p>Perform operations on the endpoints according to the methods in the base
-class - see these for details:</p>
+<p>Perform operations on the endpoints according to the methods in the base class - see these for details:</p>
 <ul><li>
-<p><a
-href="Client/Endpoint.html#method-i-list">Hoodoo::Client::Endpoint#list</a></p>
+<p><a href="Client/Endpoint.html#method-i-list"><code>Hoodoo::Client::Endpoint#list</code></a></p>
 </li><li>
-<p><a
-href="Client/Endpoint.html#method-i-show">Hoodoo::Client::Endpoint#show</a></p>
+<p><a href="Client/Endpoint.html#method-i-show"><code>Hoodoo::Client::Endpoint#show</code></a></p>
 </li><li>
-<p><a
-href="Client/Endpoint.html#method-i-create">Hoodoo::Client::Endpoint#create</a></p>
+<p><a href="Client/Endpoint.html#method-i-create"><code>Hoodoo::Client::Endpoint#create</code></a></p>
 </li><li>
-<p><a
-href="Client/Endpoint.html#method-i-update">Hoodoo::Client::Endpoint#update</a></p>
+<p><a href="Client/Endpoint.html#method-i-update"><code>Hoodoo::Client::Endpoint#update</code></a></p>
 </li><li>
-<p><a
-href="Client/Endpoint.html#method-i-delete">Hoodoo::Client::Endpoint#delete</a></p>
+<p><a href="Client/Endpoint.html#method-i-delete"><code>Hoodoo::Client::Endpoint#delete</code></a></p>
 </li></ul>
 
-<p>The above reference describes the basic approach for each call, with common
-parameters such as the query hash or body hash data described in the base
-class constructor, Hoodoo::Client::Endpoint#new.</p>
+<p>The above reference describes the basic approach for each call, with common parameters such as the query hash or body hash data described in the base class constructor, Hoodoo::Client::Endpoint#new.</p>
 
-<p>As an example, we could list records 50-79 inclusive of “Member” sorted by
-<code>created_at</code> ascending, embedding an “account” for each, where
-field &#39;surname&#39; matches &#39;Smith&#39; - assuming there&#39;s an
-implementation of such a Resource interface available! - as follows:</p>
+<p>As an example, we could list records 50-79 inclusive of “Member” sorted by <code>created_at</code> ascending, embedding an “account” for each, where field &#39;surname&#39; matches &#39;Smith&#39; - assuming there&#39;s an implementation of such a Resource interface available! - as follows:</p>
 
 <pre><code>results = members.list(
   offset:    50,
@@ -209,23 +186,9 @@ implementation of such a Resource interface available! - as follows:</p>
 )
 </code></pre>
 
-<p>This will return a <a
-href="Client/AugmentedArray.html">Hoodoo::Client::AugmentedArray</a>. This
-is an Array subclass which will contain the (up to) 25 results from the
-above call and supports <a
-href="Client/AugmentedArray.html#attribute-i-dataset_size">Hoodoo::Client::AugmentedArray#dataset_size</a>
-which (if the called Resource endpoint implementation provides the
-information) gives the total size of the data set at the time of calling.
-<a
-href="Client/AugmentedArray.html#attribute-i-estimated_dataset_size">Hoodoo::Client::AugmentedArray#estimated_dataset_size</a>
-likewise gives access to the estimated count, if available.</p>
+<p>This will return a <a href="Client/AugmentedArray.html"><code>Hoodoo::Client::AugmentedArray</code></a>. This is an Array subclass which will contain the (up to) 25 results from the above call and supports <a href="Client/AugmentedArray.html#attribute-i-dataset_size"><code>Hoodoo::Client::AugmentedArray#dataset_size</code></a> which (if the called Resource endpoint implementation provides the information) gives the total size of the data set at the time of calling. <a href="Client/AugmentedArray.html#attribute-i-estimated_dataset_size"><code>Hoodoo::Client::AugmentedArray#estimated_dataset_size</code></a> likewise gives access to the estimated count, if available.</p>
 
-<p>The other 4 methods return a <a
-href="Client/AugmentedHash.html">Hoodoo::Client::AugmentedHash</a>. This is
-a Hash subclass. Both the Array and Hash subclasses provide a common
-standard way to handle errors. See the documentation of these classes for
-details; in brief, you <em>must</em> <em>always</em> check for errors
-before examining the Hash or Array data with a pattern such as this:</p>
+<p>The other 4 methods return a <a href="Client/AugmentedHash.html"><code>Hoodoo::Client::AugmentedHash</code></a>. This is a Hash subclass. Both the Array and Hash subclasses provide a common standard way to handle errors. See the documentation of these classes for details; in brief, you <em>must</em> <em>always</em> check for errors before examining the Hash or Array data with a pattern such as this:</p>
 
 <pre><code>if results.platform_errors.has_errors?
   # Examine results.platform_errors, which is a
@@ -238,29 +201,13 @@ end
 
 <h2 id="method-c-new-label-Session+management">Session management</h2>
 
-<p>By default, the <a href="Client.html">Hoodoo::Client</a> constructor
-assumes you want automatic session management.</p>
+<p>By default, the <a href="Client.html"><code>Hoodoo::Client</code></a> constructor assumes you want automatic session management.</p>
 
-<p>If you want to use automatic sessions, a Resource endpoint which implements
-the Session Resource interface is required. This must accept a POST
-(<code>create</code>) action with a payload of two JSON fields:
-<code>caller_id</code> and <code>authentication_secret</code>. It must
-return a Resource with an “id” value that contains the session ID to quote
-in future requests via the X-Session-ID HTTP header; or it should return an
-error if the Caller ID and/or authentication secret are incorrect.</p>
+<p>If you want to use automatic sessions, a Resource endpoint which implements the Session Resource interface is required. This must accept a POST (<code>create</code>) action with a payload of two JSON fields: <code>caller_id</code> and <code>authentication_secret</code>. It must return a Resource with an “id” value that contains the session ID to quote in future requests via the X-Session-ID HTTP header; or it should return an error if the Caller ID and/or authentication secret are incorrect.</p>
 
-<p>The Resource is assumed to live at the same base URI and/or be discovered
-by the same mechanism (e.g. by convention) as everything else you&#39;ll
-use the client instance for. For more about discovery related paramters,
-see later.</p>
+<p>The Resource is assumed to live at the same base URI and/or be discovered by the same mechanism (e.g. by convention) as everything else you&#39;ll use the client instance for. For more about discovery related paramters, see later.</p>
 
-<p>You will need to provide the <code>caller_id</code> and
-<code>authentication_secret</code> (as named parameter
-<code>caller_secret</code>) to the constructor. If the name of the Resource
-implementing the Session interface is not &#39;Session&#39;, or not at
-version 1, then you can also provide alternatives. For example, suppose we
-want to use automatic session management for Caller ID “0123” and secret
-“ABCD” via version 2 of “CustomSession”:</p>
+<p>You will need to provide the <code>caller_id</code> and <code>authentication_secret</code> (as named parameter <code>caller_secret</code>) to the constructor. If the name of the Resource implementing the Session interface is not &#39;Session&#39;, or not at version 1, then you can also provide alternatives. For example, suppose we want to use automatic session management for Caller ID “0123” and secret “ABCD” via version 2 of “CustomSession”:</p>
 
 <pre><code>client = Hoodoo::Client.new(
   base_uri:              &#39;http://test.com/&#39;,
@@ -271,69 +218,28 @@ want to use automatic session management for Caller ID “0123” and secret
 )
 </code></pre>
 
-<p>Finally, you can manually supply a session ID externally for the
-X-Session-ID header through the <code>session_id</code> parameter. This may
-be used in conjunction with auto-session management; in that case, the
-given session is used until it expires (a “platform.invalid_session” error
-is encountered), after which a new one will be obtained.</p>
+<p>Finally, you can manually supply a session ID externally for the X-Session-ID header through the <code>session_id</code> parameter. This may be used in conjunction with auto-session management; in that case, the given session is used until it expires (a “platform.invalid_session” error is encountered), after which a new one will be obtained.</p>
 
 <h2 id="method-c-new-label-Discovery+parameters">Discovery parameters</h2>
 
-<p>The <a href="Client.html">Client</a> instance needs to be able to find the
-place where the requested Resource implementations are located, which it
-does using the <a
-href="Services/Discovery.html">Hoodoo::Services::Discovery</a> framework.
-You should read the description of this framework to get a feel for how
-that works first.</p>
+<p>The <a href="Client.html"><code>Client</code></a> instance needs to be able to find the place where the requested Resource implementations are located, which it does using the <a href="Services/Discovery.html"><code>Hoodoo::Services::Discovery</code></a> framework. You should read the description of this framework to get a feel for how that works first.</p>
 
-<p>One of the following <strong>named</strong> parameters must be supplied in
-order to choose a discovery engine for finding Resource endpoints:</p>
+<p>One of the following <strong>named</strong> parameters must be supplied in order to choose a discovery engine for finding Resource endpoints:</p>
 <dl class="rdoc-list note-list"><dt><code>discoverer</code>
 <dd>
-<p>The <a href="Client.html">Client</a> needs a <strong>Discoverer</strong> to
-map from resource names and versions to locations on the Internet of the
-actual resource endpoint implementation. Via the <code>discoverer</code>
-parameter, you can explicitly pass a <a
-href="Services/Discovery.html">Hoodoo::Services::Discovery</a> subclass
-instance customised to your own requirements. There are also convenience
-parameters available - see below - that create discoverer instances for
-you, covering common use cases. If provided, the <code>discoverer</code>
-parameter takes precedence over any other parameters below.</p>
+<p>The <a href="Client.html"><code>Client</code></a> needs a <strong>Discoverer</strong> to map from resource names and versions to locations on the Internet of the actual resource endpoint implementation. Via the <code>discoverer</code> parameter, you can explicitly pass a <a href="Services/Discovery.html"><code>Hoodoo::Services::Discovery</code></a> subclass instance customised to your own requirements. There are also convenience parameters available - see below - that create discoverer instances for you, covering common use cases. If provided, the <code>discoverer</code> parameter takes precedence over any other parameters below.</p>
 </dd><dt><code>base_uri</code>
 <dd>
-<p>When given, Resource discovery is done by <a
-href="Services/Discovery/ByConvention.html">Hoodoo::Services::Discovery::ByConvention</a>.
-The path that the by-convention discoverer creates is appended to the base
-URI to build the full URI at which a server implementing each requested
-Resource endpoint must be listening (else a 404 /
-&#39;platform.not_found&#39; response arises). Specify as a String. If
-provided, the <code>base_uri</code> parameter takes precedence over any
-other parameters below.</p>
+<p>When given, Resource discovery is done by <a href="Services/Discovery/ByConvention.html"><code>Hoodoo::Services::Discovery::ByConvention</code></a>. The path that the by-convention discoverer creates is appended to the base URI to build the full URI at which a server implementing each requested Resource endpoint must be listening (else a 404 / &#39;platform.not_found&#39; response arises). Specify as a String. If provided, the <code>base_uri</code> parameter takes precedence over any other parameters below.</p>
 </dd><dt><code>drb_uri</code>
 <dd>
-<p>When given, Resource discovery is done by <a
-href="Services/Discovery/ByDRb.html">Hoodoo::Services::Discovery::ByDRb</a>.
-A DRb service providing discovery data must be running at the given URI.
-Specify as a String. See <a
-href="Services/Discovery/ByDRb/DRbServer.html">Hoodoo::Services::Discovery::ByDRb::DRbServer</a>
-and file <code>drb_server_start.rb</code> for more.</p>
+<p>When given, Resource discovery is done by <a href="Services/Discovery/ByDRb.html"><code>Hoodoo::Services::Discovery::ByDRb</code></a>. A DRb service providing discovery data must be running at the given URI. Specify as a String. See <a href="Services/Discovery/ByDRb/DRbServer.html"><code>Hoodoo::Services::Discovery::ByDRb::DRbServer</code></a> and file <code>drb_server_start.rb</code> for more.</p>
 </dd><dt><code>drb_port</code>
 <dd>
-<p>Instead of <code>drb_uri</code>, you can provide the port number of a DRb
-server on localhost. See <a
-href="Services/Discovery/ByDRb.html">Hoodoo::Services::Discovery::ByDRb</a>
-for which of <code>drb_uri</code> or <code>drb_port</code> take precedence,
-if both are provided.</p>
+<p>Instead of <code>drb_uri</code>, you can provide the port number of a DRb server on localhost. See <a href="Services/Discovery/ByDRb.html"><code>Hoodoo::Services::Discovery::ByDRb</code></a> for which of <code>drb_uri</code> or <code>drb_port</code> take precedence, if both are provided.</p>
 </dd></dl>
 
-<p>As an example of using a custom Discoverer, consider a simple HTTP case
-with the <code>base_uri</code> parameter. The default “by convention”
-discoverer pluralises all paths, but let&#39;s say you have exceptions for
-Version and Health singleton resources which you&#39;ve elected to place on
-singular, not plural, paths. You will need to construct a custom discoverer
-with these exceptions. See the documentation for <a
-href="Services/Discovery/ByConvention.html">Hoodoo::Services::Discovery::ByConvention</a>
-to understand the options passed in for the custom routing information.</p>
+<p>As an example of using a custom Discoverer, consider a simple HTTP case with the <code>base_uri</code> parameter. The default “by convention” discoverer pluralises all paths, but let&#39;s say you have exceptions for Version and Health singleton resources which you&#39;ve elected to place on singular, not plural, paths. You will need to construct a custom discoverer with these exceptions. See the documentation for <a href="Services/Discovery/ByConvention.html"><code>Hoodoo::Services::Discovery::ByConvention</code></a> to understand the options passed in for the custom routing information.</p>
 
 <pre><code>base_uri = &#39;https://api.test.com/&#39;
 
@@ -353,45 +259,31 @@ client = Hoodoo::Client.new(
 
 <h2 id="method-c-new-label-Other+parameters">Other parameters</h2>
 
-<p>The following additional <strong>named</strong> parameters are all
-optional:</p>
+<p>The following additional <strong>named</strong> parameters are all optional:</p>
 <dl class="rdoc-list note-list"><dt><code>locale</code>
 <dd>
-<p>The String given in Content-Language <em>and</em> Accept-Language HTTP
-headers for requests; default is “en-nz”.</p>
+<p>The String given in Content-Language <em>and</em> Accept-Language HTTP headers for requests; default is “en-nz”.</p>
 </dd><dt><code>session_id</code>
 <dd>
-<p>An optional session ID to be used for the initial X-Session-ID request
-header value.</p>
+<p>An optional session ID to be used for the initial X-Session-ID request header value.</p>
 </dd><dt><code>auto_session</code>
 <dd>
-<p>If <code>false</code>, automatic session management is disabled. Default is
-<code>true</code>.</p>
+<p>If <code>false</code>, automatic session management is disabled. Default is <code>true</code>.</p>
 </dd><dt><code>auto_session_resource</code>
 <dd>
-<p>Name of the Resource to use for automatic session management as a String or
-Symbol. Default is +“Session”+.</p>
+<p>Name of the Resource to use for automatic session management as a String or Symbol. Default is +“Session”+.</p>
 </dd><dt><code>auto_session_version</code>
 <dd>
-<p>Version of the Resource to use for automatic session management as an
-Integer. Default is 1.</p>
+<p>Version of the Resource to use for automatic session management as an Integer. Default is 1.</p>
 </dd><dt><code>caller_id</code>
 <dd>
-<p>If using automatic session management, a Caller <a
-href="UUID.html">UUID</a> must be provided. It is used as the
-<code>caller_id</code> field&#39;s value in the POST (<code>create</code>)
-call to the session Resource endpoint.</p>
+<p>If using automatic session management, a Caller <a href="UUID.html"><code>UUID</code></a> must be provided. It is used as the <code>caller_id</code> field&#39;s value in the POST (<code>create</code>) call to the session Resource endpoint.</p>
 </dd><dt><code>caller_secret</code>
 <dd>
-<p>If using automatic session management, a Caller authentication secret must
-be provide. It is used as the <code>authentication_secret</code>
-field&#39;s value in the POST (<code>create</code>) call to the session
-Resource endpoint.</p>
+<p>If using automatic session management, a Caller authentication secret must be provide. It is used as the <code>authentication_secret</code> field&#39;s value in the POST (<code>create</code>) call to the session Resource endpoint.</p>
 </dd></dl>
 
-<p>If curious about the implementation details of automatic session
-management, see the Hoodoo::Client::Endpoints::AutoSession class&#39;s
-code.</p>
+<p>If curious about the implementation details of automatic session management, see the Hoodoo::Client::Endpoints::AutoSession class&#39;s code.</p>
         </div>
 
 
@@ -469,10 +361,7 @@ code.</p>
         </div>
 
         <div class="description">
-            <p>Alias of <a href="Client.html#method-i-resource">resource</a>, as syntax
-sugar for those who prefer to think of the return value as an endpoint that
-is used to contact a resource, rather than a remote abstraction of the
-resource as an entity.</p>
+            <p>Alias of <a href="Client.html#method-i-resource"><code>resource</code></a>, as syntax sugar for those who prefer to think of the return value as an endpoint that is used to contact a resource, rather than a remote abstraction of the resource as an entity.</p>
         </div>
 
 
@@ -488,20 +377,15 @@ resource as an entity.</p>
         </div>
 
         <div class="description">
-            <p>Get an endpoint instance which you can use for talking to a Resource. See
-the constructor for full information.</p>
+            <p>Get an endpoint instance which you can use for talking to a Resource. See the constructor for full information.</p>
 
-<p>You&#39;ll always get an endpoint instance back from this call. If an
-implementation of the given version of the given Resource cannot be
-contacted, you will only get a 404 (&#39;platform.not_found&#39;) or 408
-(&#39;platform.timeout&#39;) response when you try to make a call to it.</p>
+<p>You&#39;ll always get an endpoint instance back from this call. If an implementation of the given version of the given Resource cannot be contacted, you will only get a 404 (&#39;platform.not_found&#39;) or 408 (&#39;platform.timeout&#39;) response when you try to make a call to it.</p>
 <dl class="rdoc-list note-list"><dt><code>resource</code>
 <dd>
 <p>Resource name as a Symbol or String (e.g. <code>:Purchase</code>).</p>
 </dd><dt><code>version</code>
 <dd>
-<p><a href="Client/Endpoint.html">Endpoint</a> version as an Integer;
-optional; default is 1.</p>
+<p><a href="Client/Endpoint.html"><code>Endpoint</code></a> version as an Integer; optional; default is 1.</p>
 </dd><dt><code>options</code>
 <dd>
 <p>Optional options Hash (see below).</p>
@@ -510,13 +394,10 @@ optional; default is 1.</p>
 <p>The options Hash key/values are as follows:</p>
 <dl class="rdoc-list note-list"><dt><code>locale</code>
 <dd>
-<p>Locale string for request/response, e.g. “en-gb”. Optional. If omitted,
-defaults to the locale set in this <a href="Client.html">Client</a>
-instance&#39;s constructor.</p>
+<p>Locale string for request/response, e.g. “en-gb”. Optional. If omitted, defaults to the locale set in this <a href="Client.html"><code>Client</code></a> instance&#39;s constructor.</p>
 </dd><dt>OTHERS
 <dd>
-<p>See Hoodoo::Client::Headers&#39; <code>HEADER_TO_PROPERTY</code>. All such
-option keys <em>MUST</em> be Symbols.</p>
+<p>See Hoodoo::Client::Headers&#39; <code>HEADER_TO_PROPERTY</code>. All such option keys <em>MUST</em> be Symbols.</p>
 </dd></dl>
         </div>
 

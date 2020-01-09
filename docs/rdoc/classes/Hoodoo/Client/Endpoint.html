@@ -49,14 +49,9 @@
         
 <p>Base class for endpoint code.</p>
 
-<p>This base class defines the API to which subclasses must adhere, so that
-endpoint users don&#39;t need to care how the endpoint actually
-communicates with a target resource.</p>
+<p>This base class defines the API to which subclasses must adhere, so that endpoint users don&#39;t need to care how the endpoint actually communicates with a target resource.</p>
 
-<p>ENDPOINTS ARE NOT INTENDED TO BE THREAD SAFE. Whenever you want to use one
-from a particular thread, instantiate an endpoint for use by just that
-thread. Don&#39;t share instances between threads via e.g. controlling
-class instance variables recording a reference to a single endpoint object.</p>
+<p>ENDPOINTS ARE NOT INTENDED TO BE THREAD SAFE. Whenever you want to use one from a particular thread, instantiate an endpoint for use by just that thread. Don&#39;t share instances between threads via e.g. controlling class instance variables recording a reference to a single endpoint object.</p>
 
     </div>
 
@@ -195,16 +190,14 @@ class instance variables recording a reference to a single endpoint object.</p>
                 [R]
             </td>
             <td class='attr-name'>interaction</td>
-            <td class='attr-desc'><p>The value of the <code>interaction</code> option key passed to the
-constructor. See the constructor and endpoint_for for more.</p></td>
+            <td class='attr-desc'><p>The value of the <code>interaction</code> option key passed to the constructor. See the constructor and endpoint_for for more.</p></td>
         </tr>
         <tr valign='top' id='attribute-i-locale'>
             <td class='attr-rw'>
                 [RW]
             </td>
             <td class='attr-name'>locale</td>
-            <td class='attr-desc'><p>The locale passed to the constructor or some value provided later; a
-String, e.g. “en-gb”, or if <code>nil</code>, uses “en-nz” by default.</p></td>
+            <td class='attr-desc'><p>The locale passed to the constructor or some value provided later; a String, e.g. “en-gb”, or if <code>nil</code>, uses “en-nz” by default.</p></td>
         </tr>
         <tr valign='top' id='attribute-i-resource'>
             <td class='attr-rw'>
@@ -218,11 +211,7 @@ String, e.g. “en-gb”, or if <code>nil</code>, uses “en-nz” by default.</
                 [RW]
             </td>
             <td class='attr-name'>session_id</td>
-            <td class='attr-desc'><p>The session <a href="../UUID.html">UUID</a> passed to the constructor or
-some value provided later; used for the calls to the target resource via
-the X-Session-ID <a href="Endpoint/HTTP.html">HTTP</a> header or an
-equivalent. If <code>nil</code>, only public actions in the target resource
-will be accessible.</p></td>
+            <td class='attr-desc'><p>The session <a href="../UUID.html"><code>UUID</code></a> passed to the constructor or some value provided later; used for the calls to the target resource via the X-Session-ID <a href="Endpoint/HTTP.html"><code>HTTP</code></a> header or an equivalent. If <code>nil</code>, only public actions in the target resource will be accessible.</p></td>
         </tr>
         <tr valign='top' id='attribute-i-version'>
             <td class='attr-rw'>
@@ -243,80 +232,41 @@ will be accessible.</p></td>
         </div>
 
         <div class="description">
-            <p><a href="Endpoint.html">Endpoint</a> factory - instantiates and endpoint
-for the given resource and implemented API version, using the given
-discoverer.</p>
+            <p><a href="Endpoint.html"><code>Endpoint</code></a> factory - instantiates and endpoint for the given resource and implemented API version, using the given discoverer.</p>
 <dl class="rdoc-list note-list"><dt><code>resource</code>
 <dd>
-<p>Resource name the endpoint targets, e.g. <code>:Purchase</code>. String or
-symbol.</p>
+<p>Resource name the endpoint targets, e.g. <code>:Purchase</code>. String or symbol.</p>
 </dd><dt><code>version</code>
 <dd>
-<p>Optional required interface (API) version for that endpoint. Integer.
-Default is 1.</p>
+<p>Optional required interface (API) version for that endpoint. Integer. Default is 1.</p>
 </dd><dt><code>options</code>
 <dd>
-<p>Options Hash. Options are described below. Note that this Hash may be
-modified during processing.</p>
+<p>Options Hash. Options are described below. Note that this Hash may be modified during processing.</p>
 </dd></dl>
 
-<p>Items in the options hash are required, unless explicitly listed as
-optional. They are:</p>
+<p>Items in the options hash are required, unless explicitly listed as optional. They are:</p>
 <dl class="rdoc-list note-list"><dt><code>discoverer</code>
 <dd>
-<p>A <a href="../Services/Discovery.html">Hoodoo::Services::Discovery</a>
-“By…” family member instance, e.g. a <a
-href="../Services/Discovery/ByDRb.html">Hoodoo::Services::Discovery::ByDRb</a>
-instance. This is used to look up a service instance. The returned
-discovery data type is used to determine the required endpoint type; for
-example, a <a
-href="../Services/Discovery/ForHTTP.html">Hoodoo::Services::Discovery::ForHTTP</a>
-result yields a <a
-href="Endpoint/HTTP.html">Hoodoo::Client::Endpoint::HTTP</a> instance.</p>
+<p>A <a href="../Services/Discovery.html"><code>Hoodoo::Services::Discovery</code></a> “By…” family member instance, e.g. a <a href="../Services/Discovery/ByDRb.html"><code>Hoodoo::Services::Discovery::ByDRb</code></a> instance. This is used to look up a service instance. The returned discovery data type is used to determine the required endpoint type; for example, a <a href="../Services/Discovery/ForHTTP.html"><code>Hoodoo::Services::Discovery::ForHTTP</code></a> result yields a <a href="Endpoint/HTTP.html"><code>Hoodoo::Client::Endpoint::HTTP</code></a> instance.</p>
 </dd><dt><code>session_id</code>
 <dd>
-<p>A session <a href="../UUID.html">UUID</a>, for the X-Session-ID <a
-href="Endpoint/HTTP.html">HTTP</a> header or an equivalent. Optional, but
-if omitted, only public resource actions will be accessible.</p>
+<p>A session <a href="../UUID.html"><code>UUID</code></a>, for the X-Session-ID <a href="Endpoint/HTTP.html"><code>HTTP</code></a> header or an equivalent. Optional, but if omitted, only public resource actions will be accessible.</p>
 </dd><dt><code>interaction</code>
 <dd>
-<p>Optional <a
-href="../Services/Middleware/Interaction.html">Hoodoo::Services::Middleware::Interaction</a>
-instance which describes a <strong>source</strong> interaction at hand.
-This is a middleware concept and most of the time, only the middleware
-would use this; the middleware is handling some API call which the source
-interaction data describes but the resource which is handling the call
-needs to make an inter-resource call, which is why an <a
-href="Endpoint.html">Endpoint</a> is being created.</p>
+<p>Optional <a href="../Services/Middleware/Interaction.html"><code>Hoodoo::Services::Middleware::Interaction</code></a> instance which describes a <strong>source</strong> interaction at hand. This is a middleware concept and most of the time, only the middleware would use this; the middleware is handling some API call which the source interaction data describes but the resource which is handling the call needs to make an inter-resource call, which is why an <a href="Endpoint.html"><code>Endpoint</code></a> is being created.</p>
 </dd><dt><code>locale</code>
 <dd>
-<p>Locale string for request/response, e.g. “en-gb”. Optional. If omitted,
-defaults to “en-nz”.</p>
+<p>Locale string for request/response, e.g. “en-gb”. Optional. If omitted, defaults to “en-nz”.</p>
 </dd><dt>OTHERS
 <dd>
-<p>See Hoodoo::Client::Headers&#39; <code>HEADER_TO_PROPERTY</code>. All such
-option keys <em>MUST</em> be Symbols.</p>
+<p>See Hoodoo::Client::Headers&#39; <code>HEADER_TO_PROPERTY</code>. All such option keys <em>MUST</em> be Symbols.</p>
 </dd></dl>
 
-<p>Returns a <a
-href="../Services/Discovery.html">Hoodoo::Services::Discovery</a> “For…”
-family member instance (e.g. <a
-href="../Services/Discovery/ForHTTP.html">Hoodoo::Services::Discovery::ForHTTP</a>)
-which can be used to talk to the resource in question. Getting an instance
-does not mean the resource endpoint is found - you will not know that until
-you try to talk to it and get a 404 expressed as a platform error in the
-response data. See <a
-href="AugmentedHash.html">Hoodoo::Client::AugmentedHash</a> and <a
-href="AugmentedArray.html">Hoodoo::Client::AugmentedArray</a>.</p>
+<p>Returns a <a href="../Services/Discovery.html"><code>Hoodoo::Services::Discovery</code></a> “For…” family member instance (e.g. <a href="../Services/Discovery/ForHTTP.html"><code>Hoodoo::Services::Discovery::ForHTTP</code></a>) which can be used to talk to the resource in question. Getting an instance does not mean the resource endpoint is found - you will not know that until you try to talk to it and get a 404 expressed as a platform error in the response data. See <a href="AugmentedHash.html"><code>Hoodoo::Client::AugmentedHash</code></a> and <a href="AugmentedArray.html"><code>Hoodoo::Client::AugmentedArray</code></a>.</p>
 
-<p>Callers dealing with inter-resource call code may want to consult their
-discoverer to see if the resource is locally available before bothering to
-instantiate an endpoint.</p>
+<p>Callers dealing with inter-resource call code may want to consult their discoverer to see if the resource is locally available before bothering to instantiate an endpoint.</p>
 
-<p>If the <code>deja_vu</code> option is set, then a confirmed case of deja vu
-results in an empty Hash being returned, with no platform errors
-associated. This is the high-level transport neutral equivalent of (say) a
-204 <a href="Endpoint/HTTP.html">HTTP</a> response with no body.</p>
+<p>If the <code>deja_vu</code> option is set, then a confirmed case of deja vu results in an empty Hash being returned, with no platform errors associated. This is the high-level transport neutral equivalent of (say) a 204 <a href="Endpoint/HTTP.html"><code>HTTP</code></a> response with no body.</p>
         </div>
 
 
@@ -361,31 +311,22 @@ associated. This is the high-level transport neutral equivalent of (say) a
         </div>
 
         <div class="description">
-            <p>Create an endpoint instance that will be used to make requests to a given
-resource.</p>
+            <p>Create an endpoint instance that will be used to make requests to a given resource.</p>
 <dl class="rdoc-list note-list"><dt><code>resource</code>
 <dd>
-<p>Resource name the endpoint targets, e.g. <code>:Purchase</code>. String or
-symbol.</p>
+<p>Resource name the endpoint targets, e.g. <code>:Purchase</code>. String or symbol.</p>
 </dd><dt><code>version</code>
 <dd>
-<p>Optional required interface (API) version for that endpoint. Integer.
-Default is 1.</p>
+<p>Optional required interface (API) version for that endpoint. Integer. Default is 1.</p>
 </dd><dt><code>options</code>
 <dd>
-<p>Options Hash. Options are described below. Note that this Hash may be
-modified during processing.</p>
+<p>Options Hash. Options are described below. Note that this Hash may be modified during processing.</p>
 </dd></dl>
 
-<p>Items in the options hash are required, unless explicitly listed as
-optional. They are:</p>
+<p>Items in the options hash are required, unless explicitly listed as optional. They are:</p>
 <dl class="rdoc-list note-list"><dt><code>discovery_result</code>
 <dd>
-<p>A <a href="../Services/Discovery.html">Hoodoo::Services::Discovery</a>
-“For…” family member instance, e.g. a <a
-href="../Services/Discovery/ForHTTP.html">Hoodoo::Services::Discovery::ForHTTP</a>
-instance. Each subclass describes its required discovery result type, so
-see its documentation for details.</p>
+<p>A <a href="../Services/Discovery.html"><code>Hoodoo::Services::Discovery</code></a> “For…” family member instance, e.g. a <a href="../Services/Discovery/ForHTTP.html"><code>Hoodoo::Services::Discovery::ForHTTP</code></a> instance. Each subclass describes its required discovery result type, so see its documentation for details.</p>
 </dd><dt><code>interaction</code>
 <dd>
 <p>As in the options for endpoint_for.</p>
@@ -397,39 +338,18 @@ see its documentation for details.</p>
 <p>As in the options for endpoint_for.</p>
 </dd><dt>OTHERS
 <dd>
-<p>See Hoodoo::Client::Headers&#39; <code>HEADER_TO_PROPERTY</code>. All such
-option keys <em>MUST</em> be Symbols.</p>
+<p>See Hoodoo::Client::Headers&#39; <code>HEADER_TO_PROPERTY</code>. All such option keys <em>MUST</em> be Symbols.</p>
 </dd></dl>
 
-<p>The out-of-the box initialiser sets up the data for the <a
-href="Endpoint.html#attribute-i-resource">resource</a>, <a
-href="Endpoint.html#attribute-i-version">version</a>, discovery_result, <a
-href="Endpoint.html#attribute-i-interaction">interaction</a>, <a
-href="Endpoint.html#attribute-i-session_id">session_id</a>, <a
-href="Endpoint.html#attribute-i-locale">locale</a>, dated_at and dated_from
-accessors using this data, so subclass authors don&#39;t need to.</p>
+<p>The out-of-the box initialiser sets up the data for the <a href="Endpoint.html#attribute-i-resource"><code>resource</code></a>, <a href="Endpoint.html#attribute-i-version"><code>version</code></a>, discovery_result, <a href="Endpoint.html#attribute-i-interaction"><code>interaction</code></a>, <a href="Endpoint.html#attribute-i-session_id"><code>session_id</code></a>, <a href="Endpoint.html#attribute-i-locale"><code>locale</code></a>, dated_at and dated_from accessors using this data, so subclass authors don&#39;t need to.</p>
 
-<p>The endpoint is then used with <a
-href="Endpoint.html#method-i-list">list</a>, <a
-href="Endpoint.html#method-i-show">show</a>, <a
-href="Endpoint.html#method-i-create">create</a>, <a
-href="Endpoint.html#method-i-update">update</a> or <a
-href="Endpoint.html#method-i-delete">delete</a> methods to perform
-operations on the target resource. See each of those methods for details of
-their specific requirements; however all have common parameters some or all
-of which are used across the method &#39;family&#39;:</p>
+<p>The endpoint is then used with <a href="Endpoint.html#method-i-list"><code>list</code></a>, <a href="Endpoint.html#method-i-show"><code>show</code></a>, <a href="Endpoint.html#method-i-create"><code>create</code></a>, <a href="Endpoint.html#method-i-update"><code>update</code></a> or <a href="Endpoint.html#method-i-delete"><code>delete</code></a> methods to perform operations on the target resource. See each of those methods for details of their specific requirements; however all have common parameters some or all of which are used across the method &#39;family&#39;:</p>
 <dl class="rdoc-list note-list"><dt><code>ident</code>
 <dd>
-<p>Identifier. This is usually a <a href="../UUID.html">UUID</a> but some
-Resources support e.g. a “show” action based on either a <a
-href="../UUID.html">UUID</a> or some other unique value (such as a product
-code, a credit/debit card number or so-on - defined by the Resource in
-question in its documentation).</p>
+<p>Identifier. This is usually a <a href="../UUID.html"><code>UUID</code></a> but some Resources support e.g. a “show” action based on either a <a href="../UUID.html"><code>UUID</code></a> or some other unique value (such as a product code, a credit/debit card number or so-on - defined by the Resource in question in its documentation).</p>
 </dd><dt><code>query_hash</code>
 <dd>
-<p>A hash of <em>unencoded</em> data that can be encoded to form a query
-string. Search and filter data is represented with nested hashes. Embed and
-reference data uses an array. All keys are Strings. Example:</p>
+<p>A hash of <em>unencoded</em> data that can be encoded to form a query string. Search and filter data is represented with nested hashes. Embed and reference data uses an array. All keys are Strings. Example:</p>
 
 <pre><code>{
   offset:    75,
@@ -450,8 +370,7 @@ reference data uses an array. All keys are Strings. Example:</p>
 <p>This parameter is always optional.</p>
 </dd><dt><code>body_hash</code>
 <dd>
-<p>The Hash representation of the body data that might be sent in an <a
-href="Endpoint/HTTP.html">HTTP</a> request (i.e. JSON, as a Hash).</p>
+<p>The Hash representation of the body data that might be sent in an <a href="Endpoint/HTTP.html"><code>HTTP</code></a> request (i.e. JSON, as a Hash).</p>
 </dd></dl>
         </div>
 
@@ -505,15 +424,9 @@ href="Endpoint/HTTP.html">HTTP</a> request (i.e. JSON, as a Hash).</p>
 <p>See the constructor for details.</p>
 </dd></dl>
 
-<p>Returns a <a href="AugmentedHash.html">Hoodoo::Client::AugmentedHash</a>
-representation of the new resource instance.</p>
+<p>Returns a <a href="AugmentedHash.html"><code>Hoodoo::Client::AugmentedHash</code></a> representation of the new resource instance.</p>
 
-<p>Call <a
-href="AugmentedBase.html#method-i-platform_errors">Hoodoo::Client::AugmentedBase#platform_errors</a>
-(or for service authors implementing resource endpoints, possibly call <a
-href="AugmentedBase.html#method-i-adds_errors_to-3F">Hoodoo::Client::AugmentedBase#adds_errors_to?</a>
-instead) on the returned instance to detect and resolve error conditions
-<em>before</em> examining its Hash-derived fields.</p>
+<p>Call <a href="AugmentedBase.html#method-i-platform_errors"><code>Hoodoo::Client::AugmentedHash#platform_errors</code></a> (or for service authors implementing resource endpoints, possibly call <a href="AugmentedBase.html#method-i-adds_errors_to-3F"><code>Hoodoo::Client::AugmentedHash#adds_errors_to?</code></a> instead) on the returned instance to detect and resolve error conditions <em>before</em> examining its Hash-derived fields.</p>
 
 <p>The hash contents are undefined when errors are returned.</p>
         </div>
@@ -550,16 +463,9 @@ instead) on the returned instance to detect and resolve error conditions
 <p>See the constructor for details.</p>
 </dd></dl>
 
-<p>Returns a <a href="AugmentedHash.html">Hoodoo::Client::AugmentedHash</a>
-representation of the now-deleted resource instance,from the instant before
-deletion.</p>
+<p>Returns a <a href="AugmentedHash.html"><code>Hoodoo::Client::AugmentedHash</code></a> representation of the now-deleted resource instance,from the instant before deletion.</p>
 
-<p>Call <a
-href="AugmentedBase.html#method-i-platform_errors">Hoodoo::Client::AugmentedBase#platform_errors</a>
-(or for service authors implementing resource endpoints, possibly call <a
-href="AugmentedBase.html#method-i-adds_errors_to-3F">Hoodoo::Client::AugmentedBase#adds_errors_to?</a>
-instead) on the returned instance to detect and resolve error conditions
-<em>before</em> examining its Hash-derived fields.</p>
+<p>Call <a href="AugmentedBase.html#method-i-platform_errors"><code>Hoodoo::Client::AugmentedHash#platform_errors</code></a> (or for service authors implementing resource endpoints, possibly call <a href="AugmentedBase.html#method-i-adds_errors_to-3F"><code>Hoodoo::Client::AugmentedHash#adds_errors_to?</code></a> instead) on the returned instance to detect and resolve error conditions <em>before</em> examining its Hash-derived fields.</p>
 
 <p>The hash contents are undefined when errors are returned.</p>
         </div>
@@ -590,28 +496,16 @@ instead) on the returned instance to detect and resolve error conditions
             <p>Obtain a list of resource instance representations.</p>
 <dl class="rdoc-list note-list"><dt><code>query_hash</code>
 <dd>
-<p>See the constructor for more. This is the only way to search or filter the
-list, via the target Resource&#39;s documented supported search/filter
-parameters and the platform&#39;s common all-Resources behaviour.</p>
+<p>See the constructor for more. This is the only way to search or filter the list, via the target Resource&#39;s documented supported search/filter parameters and the platform&#39;s common all-Resources behaviour.</p>
 </dd></dl>
 
-<p>Returns a <a href="AugmentedArray.html">Hoodoo::Client::AugmentedArray</a>
-representation of the requested list of resource instances.</p>
+<p>Returns a <a href="AugmentedArray.html"><code>Hoodoo::Client::AugmentedArray</code></a> representation of the requested list of resource instances.</p>
 
-<p>Call <a
-href="AugmentedBase.html#method-i-platform_errors">Hoodoo::Client::AugmentedBase#platform_errors</a>
-(or for service authors implementing resource endpoints, possibly call <a
-href="AugmentedBase.html#method-i-adds_errors_to-3F">Hoodoo::Client::AugmentedBase#adds_errors_to?</a>
-instead) on the returned instance to detect and resolve error conditions
-<em>before</em> examining its Array-derived contents.</p>
+<p>Call <a href="AugmentedBase.html#method-i-platform_errors"><code>Hoodoo::Client::AugmentedArray#platform_errors</code></a> (or for service authors implementing resource endpoints, possibly call <a href="AugmentedBase.html#method-i-adds_errors_to-3F"><code>Hoodoo::Client::AugmentedArray#adds_errors_to?</code></a> instead) on the returned instance to detect and resolve error conditions <em>before</em> examining its Array-derived contents.</p>
 
-<p>The array will be empty in successful responses if no items satisfying the
-list conditions were found. The array contents are undefined in the case of
-errors.</p>
+<p>The array will be empty in successful responses if no items satisfying the list conditions were found. The array contents are undefined in the case of errors.</p>
 
-<p>Call <a
-href="PaginatedEnumeration.html#method-i-enumerate_all">Hoodoo::Client::PaginatedEnumeration#enumerate_all</a>
-to enumerate over the list of resource instances with automatic pagination.</p>
+<p>Call <a href="PaginatedEnumeration.html#method-i-enumerate_all"><code>Hoodoo::Client::PaginatedEnumeration#enumerate_all</code></a> to enumerate over the list of resource instances with automatic pagination.</p>
         </div>
 
 
@@ -646,15 +540,9 @@ to enumerate over the list of resource instances with automatic pagination.</p>
 <p>See the constructor for details.</p>
 </dd></dl>
 
-<p>Returns a <a href="AugmentedHash.html">Hoodoo::Client::AugmentedHash</a>
-representation of the requested resource instance.</p>
+<p>Returns a <a href="AugmentedHash.html"><code>Hoodoo::Client::AugmentedHash</code></a> representation of the requested resource instance.</p>
 
-<p>Call <a
-href="AugmentedBase.html#method-i-platform_errors">Hoodoo::Client::AugmentedBase#platform_errors</a>
-(or for service authors implementing resource endpoints, possibly call <a
-href="AugmentedBase.html#method-i-adds_errors_to-3F">Hoodoo::Client::AugmentedBase#adds_errors_to?</a>
-instead) on the returned instance to detect and resolve error conditions
-<em>before</em> examining its Hash-derived fields.</p>
+<p>Call <a href="AugmentedBase.html#method-i-platform_errors"><code>Hoodoo::Client::AugmentedHash#platform_errors</code></a> (or for service authors implementing resource endpoints, possibly call <a href="AugmentedBase.html#method-i-adds_errors_to-3F"><code>Hoodoo::Client::AugmentedHash#adds_errors_to?</code></a> instead) on the returned instance to detect and resolve error conditions <em>before</em> examining its Hash-derived fields.</p>
 
 <p>The hash contents are undefined when errors are returned.</p>
         </div>
@@ -694,15 +582,9 @@ instead) on the returned instance to detect and resolve error conditions
 <p>See the constructor for details.</p>
 </dd></dl>
 
-<p>Returns a <a href="AugmentedHash.html">Hoodoo::Client::AugmentedHash</a>
-representation of the updated resource instance.</p>
+<p>Returns a <a href="AugmentedHash.html"><code>Hoodoo::Client::AugmentedHash</code></a> representation of the updated resource instance.</p>
 
-<p>Call <a
-href="AugmentedBase.html#method-i-platform_errors">Hoodoo::Client::AugmentedBase#platform_errors</a>
-(or for service authors implementing resource endpoints, possibly call <a
-href="AugmentedBase.html#method-i-adds_errors_to-3F">Hoodoo::Client::AugmentedBase#adds_errors_to?</a>
-instead) on the returned instance to detect and resolve error conditions
-<em>before</em> examining its Hash-derived fields.</p>
+<p>Call <a href="AugmentedBase.html#method-i-platform_errors"><code>Hoodoo::Client::AugmentedHash#platform_errors</code></a> (or for service authors implementing resource endpoints, possibly call <a href="AugmentedBase.html#method-i-adds_errors_to-3F"><code>Hoodoo::Client::AugmentedHash#adds_errors_to?</code></a> instead) on the returned instance to detect and resolve error conditions <em>before</em> examining its Hash-derived fields.</p>
 
 <p>The hash contents are undefined when errors are returned.</p>
         </div>
@@ -732,9 +614,7 @@ instead) on the returned instance to detect and resolve error conditions
         </div>
 
         <div class="description">
-            <p>This protected method is implemented by subclasses and called from the
-initializer. Subclasses should store resource and version data however they
-want and validate any required options, raising errors if need be.</p>
+            <p>This protected method is implemented by subclasses and called from the initializer. Subclasses should store resource and version data however they want and validate any required options, raising errors if need be.</p>
 <dl class="rdoc-list note-list"><dt><code>resource</code>
 <dd>
 <p>Resource name the endpoint targets, e.g. <code>:Purchase</code>. Symbol.</p>
@@ -770,20 +650,11 @@ want and validate any required options, raising errors if need be.</p>
         </div>
 
         <div class="description">
-            <p>Copy the current value of writable options in this <a
-href="Endpoint.html">Endpoint</a> instance, to another <a
-href="Endpoint.html">Endpoint</a> instance. This is useful when one is
-wrapping another, but to the external user of the wrapping endpoint, they
-should just be able to set options in that item and have it act as if
-they&#39;d set them on the thing which it is (not that the caller would
-know) wrapping.</p>
+            <p>Copy the current value of writable options in this <a href="Endpoint.html"><code>Endpoint</code></a> instance, to another <a href="Endpoint.html"><code>Endpoint</code></a> instance. This is useful when one is wrapping another, but to the external user of the wrapping endpoint, they should just be able to set options in that item and have it act as if they&#39;d set them on the thing which it is (not that the caller would know) wrapping.</p>
 
-<p>This includes copying over a <code>session_id</code> field value, though
-often it&#39;ll subsequently be rewritten by the wrapping endpoint as
-it&#39;s wrapping something to provide special session management.</p>
+<p>This includes copying over a <code>session_id</code> field value, though often it&#39;ll subsequently be rewritten by the wrapping endpoint as it&#39;s wrapping something to provide special session management.</p>
 
-<p>WARNING: Any <code>nil</code> internal state values will <em>not</em> be
-copied.</p>
+<p>WARNING: Any <code>nil</code> internal state values will <em>not</em> be copied.</p>
         </div>
 
 
@@ -821,11 +692,7 @@ copied.</p>
         <div class="description">
             <p>Utility method to aid subclass authors. Not usually overridden.</p>
 
-<p>Return an instance of <a
-href="AugmentedArray.html">Hoodoo::Client::AugmentedArray</a> or <a
-href="AugmentedHash.html">Hoodoo::Client::AugmentedHash</a> with an
-associated 404 error (as a fully formed platform error) describing &#39;Not
-Found&#39; for the target resource, version and given action.</p>
+<p>Return an instance of <a href="AugmentedArray.html"><code>Hoodoo::Client::AugmentedArray</code></a> or <a href="AugmentedHash.html"><code>Hoodoo::Client::AugmentedHash</code></a> with an associated 404 error (as a fully formed platform error) describing &#39;Not Found&#39; for the target resource, version and given action.</p>
 <dl class="rdoc-list note-list"><dt><code>action</code>
 <dd>
 <p>A Symbol from Hoodoo::Services::Middleware::ALLOWED_ACTIONS.</p>
@@ -861,21 +728,16 @@ Found&#39; for the target resource, version and given action.</p>
         </div>
 
         <div class="description">
-            <p>Set the <code>augmented_array</code>&#39;s <code>next_page_proc</code>
-attribute to a Proc that will call the list endpoint to retrieve the next
-batch of of Resources using the same query parameters.</p>
+            <p>Set the <code>augmented_array</code>&#39;s <code>next_page_proc</code> attribute to a Proc that will call the list endpoint to retrieve the next batch of of Resources using the same query parameters.</p>
 <dl class="rdoc-list note-list"><dt><code>augmented_array</code>
 <dd>
-<p>The <a href="AugmentedArray.html">Hoodoo::Client::AugmentedArray</a>
-instance containing the initial set of Resources to be enumerated through.</p>
+<p>The <a href="AugmentedArray.html"><code>Hoodoo::Client::AugmentedArray</code></a> instance containing the initial set of Resources to be enumerated through.</p>
 </dd><dt><code>query_hash</code>
 <dd>
-<p>The query parameters to be used for this enumeration. See the constructor
-for more.</p>
+<p>The query parameters to be used for this enumeration. See the constructor for more.</p>
 </dd></dl>
 
-<p>Returns the <code>augmented_array</code> passed in, with the
-<code>next_page_proc</code> value set.</p>
+<p>Returns the <code>augmented_array</code> passed in, with the <code>next_page_proc</code> value set.</p>
         </div>
 
 
@@ -912,10 +774,7 @@ for more.</p>
         <div class="description">
             <p>Utility method to aid subclass authors. Not usually overridden.</p>
 
-<p>Determine the response class needed for a given action - returns <a
-href="AugmentedArray.html">Hoodoo::Client::AugmentedArray</a> or <a
-href="AugmentedHash.html">Hoodoo::Client::AugmentedHash</a> (class
-references, not instances).</p>
+<p>Determine the response class needed for a given action - returns <a href="AugmentedArray.html"><code>Hoodoo::Client::AugmentedArray</code></a> or <a href="AugmentedHash.html"><code>Hoodoo::Client::AugmentedHash</code></a> (class references, not instances).</p>
 <dl class="rdoc-list note-list"><dt><code>action</code>
 <dd>
 <p>A Symbol from Hoodoo::Services::Middleware::ALLOWED_ACTIONS.</p>

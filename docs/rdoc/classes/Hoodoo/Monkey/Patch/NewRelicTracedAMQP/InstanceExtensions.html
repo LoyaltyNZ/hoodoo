@@ -36,8 +36,7 @@
         <div id="content">
     <div class="description">
         
-<p>Instance methods to patch over <a
-href="../../../Client/Endpoint/AMQP.html">Hoodoo::Client::Endpoint::AMQP</a>.</p>
+<p>Instance methods to patch over <a href="../../../Client/Endpoint/AMQP.html"><code>Hoodoo::Client::Endpoint::AMQP</code></a>.</p>
 
     </div>
 
@@ -72,21 +71,13 @@ href="../../../Client/Endpoint/AMQP.html">Hoodoo::Client::Endpoint::AMQP</a>.</p
         </div>
 
         <div class="description">
-            <p>Wrap the request with NewRelic&#39;s cross-app transaction tracing. This
-adds headers to the request and extracts header data from the response. It
-calls the original implementation via <code>super</code>.</p>
+            <p>Wrap the request with NewRelic&#39;s cross-app transaction tracing. This adds headers to the request and extracts header data from the response. It calls the original implementation via <code>super</code>.</p>
 <dl class="rdoc-list note-list"><dt><code>http_message</code>
 <dd>
-<p>Hash describing the message to send. See e.g.
-Hoodoo::Client::Endpoint::AMQP#do_amqp. Note that the header names inside
-this Hash are the mixed case, HTTP specification style ones like
-<code>X-Interaction-ID</code> and <em>not</em> the <a
-href="../../../../Rack.html">Rack</a> names like
-<code>HTTP_X_INTERACTION_ID</code>.</p>
+<p>Hash describing the message to send. See e.g. Hoodoo::Client::Endpoint::AMQP#do_amqp. Note that the header names inside this Hash are the mixed case, HTTP specification style ones like <code>X-Interaction-ID</code> and <em>not</em> the <a href="../../../../Rack.html"><code>Rack</code></a> names like <code>HTTP_X_INTERACTION_ID</code>.</p>
 </dd><dt><code>full_uri</code>
 <dd>
-<p>URI being sent to. This is somewhat meaningless when using AMQP but
-NewRelic requires it.</p>
+<p>URI being sent to. This is somewhat meaningless when using AMQP but NewRelic requires it.</p>
 </dd></dl>
         </div>
 

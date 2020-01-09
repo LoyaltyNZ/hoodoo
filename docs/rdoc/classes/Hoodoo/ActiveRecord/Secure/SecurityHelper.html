@@ -39,12 +39,7 @@
         <div id="content">
     <div class="description">
         
-<p>Help build security exemption Procs to pass into <a
-href="ClassMethods.html#method-i-secure_with">Hoodoo::ActiveRecord::Secure::ClassMethods#secure_with</a>
-via its options Hash. The following extends an example given in the
-documentation (at the time of writing here) for the underlying
-implementation method <a
-href="ClassMethods.html#method-i-secure">Hoodoo::ActiveRecord::Secure::ClassMethods#secure</a>:</p>
+<p>Help build security exemption Procs to pass into <a href="ClassMethods.html#method-i-secure_with"><code>Hoodoo::ActiveRecord::Secure::ClassMethods#secure_with</code></a> via its options Hash. The following extends an example given in the documentation (at the time of writing here) for the underlying implementation method <a href="ClassMethods.html#method-i-secure"><code>Hoodoo::ActiveRecord::Secure::ClassMethods#secure</code></a>:</p>
 
 <pre><code>class Audit &lt; ActiveRecord::Base
   include Hoodoo::ActiveRecord::Secure
@@ -60,11 +55,7 @@ href="ClassMethods.html#method-i-secure">Hoodoo::ActiveRecord::Secure::ClassMeth
 end
 </code></pre>
 
-<p>Note that the <a href="../Secure.html">Hoodoo::ActiveRecord::Secure</a>
-module includes some belper constants to aid brevity for common cases such
-as the single value <code>#eql?</code> or enumerable <code>#include?</code>
-matchers checking for a &#39;*&#39; as an indiscriminate wildcard - see for
-example Hoodoo::ActiveRecord::Secure::ENUMERABLE_INCLUDES_STAR.</p>
+<p>Note that the <a href="../Secure.html"><code>Hoodoo::ActiveRecord::Secure</code></a> module includes some belper constants to aid brevity for common cases such as the single value <code>#eql?</code> or enumerable <code>#include?</code> matchers checking for a &#39;*&#39; as an indiscriminate wildcard - see for example Hoodoo::ActiveRecord::Secure::ENUMERABLE_INCLUDES_STAR.</p>
 
     </div>
 
@@ -118,9 +109,7 @@ security_value.match?( wildcard_regexp ) rescue false
         </tr>
         <tr valign='top'>
             <td>&nbsp;</td>
-            <td colspan="2" class="attr-desc"><p>Internally used by <a
-href="SecurityHelper.html#method-c-matches_wildcard">::matches_wildcard</a>
-for Ruby 2.4.0+ performance.</p></td>
+            <td colspan="2" class="attr-desc"><p>Internally used by <a href="SecurityHelper.html#method-c-matches_wildcard"><code>::matches_wildcard</code></a> for Ruby 2.4.0+ performance.</p></td>
         </tr>
         <tr valign='top' id='RUBY_SLOW_WILDCARD_PROC_CONTENTS'>
             <td class="attr-name">RUBY_SLOW_WILDCARD_PROC_CONTENTS</td>
@@ -131,9 +120,7 @@ wildcard_regexp.match( security_value ) != nil rescue false
         </tr>
         <tr valign='top'>
             <td>&nbsp;</td>
-            <td colspan="2" class="attr-desc"><p>Internally used by <a
-href="SecurityHelper.html#method-c-matches_wildcard">::matches_wildcard</a>
-for Ruby &lt; 2.4 compatibility.</p></td>
+            <td colspan="2" class="attr-desc"><p>Internally used by <a href="SecurityHelper.html#method-c-matches_wildcard"><code>::matches_wildcard</code></a> for Ruby &lt; 2.4 compatibility.</p></td>
         </tr>
     </table>
 
@@ -148,16 +135,13 @@ for Ruby &lt; 2.4 compatibility.</p></td>
         </div>
 
         <div class="description">
-            <p>Match a given wildcard, typically a String, to a single value via
-<code>#eql?</code>.</p>
+            <p>Match a given wildcard, typically a String, to a single value via <code>#eql?</code>.</p>
 <dl class="rdoc-list note-list"><dt><code>wildcard_value</code>
 <dd>
 <p>Wildcard value to match, e.g. <code>&#39;*&#39;</code>.</p>
 </dd></dl>
 
-<p>Returns a Proc suitable for passing to the <code>:exemptions</code> option
-for <a
-href="ClassMethods.html#method-i-secure_with">Hoodoo::ActiveRecord::Secure::ClassMethods#secure_with</a>.</p>
+<p>Returns a Proc suitable for passing to the <code>:exemptions</code> option for <a href="ClassMethods.html#method-i-secure_with"><code>Hoodoo::ActiveRecord::Secure::ClassMethods#secure_with</code></a>.</p>
         </div>
 
 
@@ -185,16 +169,13 @@ href="ClassMethods.html#method-i-secure_with">Hoodoo::ActiveRecord::Secure::Clas
         </div>
 
         <div class="description">
-            <p>Match a given wildcard, typically a String, inside an Enumerable subclass
-via <code>#include?</code>.</p>
+            <p>Match a given wildcard, typically a String, inside an Enumerable subclass via <code>#include?</code>.</p>
 <dl class="rdoc-list note-list"><dt><code>wildcard_value</code>
 <dd>
 <p>Wildcard value to match, e.g. <code>&#39;*&#39;</code>.</p>
 </dd></dl>
 
-<p>Returns a Proc suitable for passing to the <code>:exemptions</code> option
-for <a
-href="ClassMethods.html#method-i-secure_with">Hoodoo::ActiveRecord::Secure::ClassMethods#secure_with</a>.</p>
+<p>Returns a Proc suitable for passing to the <code>:exemptions</code> option for <a href="ClassMethods.html#method-i-secure_with"><code>Hoodoo::ActiveRecord::Secure::ClassMethods#secure_with</code></a>.</p>
         </div>
 
 
@@ -226,13 +207,10 @@ href="ClassMethods.html#method-i-secure_with">Hoodoo::ActiveRecord::Secure::Clas
             <p>Match a given wildcard Regexp to a value via <code>#match?</code>.</p>
 <dl class="rdoc-list note-list"><dt><code>wildcard_value</code>
 <dd>
-<p>Wildcard Regexp to use, e.g. <code>/.*/</code>. Strings are coerced to
-Regexps without any escaping but doing so reduces performance.</p>
+<p>Wildcard Regexp to use, e.g. <code>/.*/</code>. Strings are coerced to Regexps without any escaping but doing so reduces performance.</p>
 </dd></dl>
 
-<p>Returns a Proc suitable for passing to the <code>:exemptions</code> option
-for <a
-href="ClassMethods.html#method-i-secure_with">Hoodoo::ActiveRecord::Secure::ClassMethods#secure_with</a>.</p>
+<p>Returns a Proc suitable for passing to the <code>:exemptions</code> option for <a href="ClassMethods.html#method-i-secure_with"><code>Hoodoo::ActiveRecord::Secure::ClassMethods#secure_with</code></a>.</p>
         </div>
 
 
@@ -275,18 +253,13 @@ href="ClassMethods.html#method-i-secure_with">Hoodoo::ActiveRecord::Secure::Clas
         </div>
 
         <div class="description">
-            <p>Match a given wildcard Regexp to any value in an enumerable object via
-iteration and <code>#match?</code>. Exists with <code>true</code> as soon
-as any match is made.</p>
+            <p>Match a given wildcard Regexp to any value in an enumerable object via iteration and <code>#match?</code>. Exists with <code>true</code> as soon as any match is made.</p>
 <dl class="rdoc-list note-list"><dt><code>wildcard_value</code>
 <dd>
-<p>Wildcard Regexp to use, e.g. <code>/.*/</code>. Strings are coerced to
-Regexps without any escaping but doing so reduces performance.</p>
+<p>Wildcard Regexp to use, e.g. <code>/.*/</code>. Strings are coerced to Regexps without any escaping but doing so reduces performance.</p>
 </dd></dl>
 
-<p>Returns a Proc suitable for passing to the <code>:exemptions</code> option
-for <a
-href="ClassMethods.html#method-i-secure_with">Hoodoo::ActiveRecord::Secure::ClassMethods#secure_with</a>.</p>
+<p>Returns a Proc suitable for passing to the <code>:exemptions</code> option for <a href="ClassMethods.html#method-i-secure_with"><code>Hoodoo::ActiveRecord::Secure::ClassMethods#secure_with</code></a>.</p>
         </div>
 
 

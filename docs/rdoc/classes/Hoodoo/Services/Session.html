@@ -170,8 +170,7 @@
         </tr>
         <tr valign='top'>
             <td>&nbsp;</td>
-            <td colspan="2" class="attr-desc"><p>Time To Live: Number of seconds for which a session remains valid after
-being saved.</p></td>
+            <td colspan="2" class="attr-desc"><p>Time To Live: Number of seconds for which a session remains valid after being saved.</p></td>
         </tr>
         <tr valign='top' id='MockDalliClient'>
             <td class="attr-name">MockDalliClient</td>
@@ -180,14 +179,7 @@ being saved.</p></td>
         </tr>
         <tr valign='top'>
             <td>&nbsp;</td>
-            <td colspan="2" class="attr-desc"><p>Before <a href="../TransientStore.html">Hoodoo::TransientStore</a> was
-created, the <a href="Session.html">Session</a> system was directly tied
-into Memcached and had a mock backend used for tests without a Redis
-dependency. This now lives in <a
-href="../TransientStore/Mocks/DalliClient.html">Hoodoo::TransientStore::Mocks::DalliClient</a>,
-but for any code out in the wild which might use the old <a
-href="Session.html">Session</a> namespace version, we add what amounts to a
-class alias here.</p></td>
+            <td colspan="2" class="attr-desc"><p>Before <a href="../TransientStore.html"><code>Hoodoo::TransientStore</code></a> was created, the <a href="Session.html"><code>Session</code></a> system was directly tied into Memcached and had a mock backend used for tests without a Redis dependency. This now lives in <a href="../TransientStore/Mocks/DalliClient.html"><code>Hoodoo::TransientStore::Mocks::DalliClient</code></a>, but for any code out in the wild which might use the old <a href="Session.html"><code>Session</code></a> namespace version, we add what amounts to a class alias here.</p></td>
         </tr>
     </table>
 
@@ -199,46 +191,30 @@ class alias here.</p></td>
                 [RW]
             </td>
             <td class='attr-name'>caller_fingerprint</td>
-            <td class='attr-desc'><p>An optional property of a session is the Caller&#39;s fingerprint, a <a
-href="../UUID.html">UUID</a> assigned to some Callers which can be
-persisted by resource instances when created and rendered in the
-<code>created_by</code> field via e.g. <a
-href="../Presenters/Base.html">Hoodoo::Presenters::Base</a>.#render_in.</p></td>
+            <td class='attr-desc'><p>An optional property of a session is the Caller&#39;s fingerprint, a <a href="../UUID.html"><code>UUID</code></a> assigned to some Callers which can be persisted by resource instances when created and rendered in the <code>created_by</code> field via e.g. <a href="../Presenters/Base.html"><code>Hoodoo::Presenters::Base</code></a>.#render_in.</p></td>
         </tr>
         <tr valign='top' id='attribute-i-caller_id'>
             <td class='attr-rw'>
                 [RW]
             </td>
             <td class='attr-name'>caller_id</td>
-            <td class='attr-desc'><p>A <a href="Session.html">Session</a> must always refer to a Caller instance
-by <a href="../UUID.html">UUID</a>.</p></td>
+            <td class='attr-desc'><p>A <a href="Session.html"><code>Session</code></a> must always refer to a Caller instance by <a href="../UUID.html"><code>UUID</code></a>.</p></td>
         </tr>
         <tr valign='top' id='attribute-i-caller_identity_name'>
             <td class='attr-rw'>
                 [RW]
             </td>
             <td class='attr-name'>caller_identity_name</td>
-            <td class='attr-desc'><p>An optional property of a session is the Caller&#39;s “identity name”, a
-generic way to refer to this Caller which will appear in logs. The use is
-up to the session creator, in combination with whatever logging engine is
-in use; if it ascribes meaning to the identity name, then the session
-creator must ensure it comforms.</p></td>
+            <td class='attr-desc'><p>An optional property of a session is the Caller&#39;s “identity name”, a generic way to refer to this Caller which will appear in logs. The use is up to the session creator, in combination with whatever logging engine is in use; if it ascribes meaning to the identity name, then the session creator must ensure it comforms.</p></td>
         </tr>
         <tr valign='top' id='attribute-i-caller_version'>
             <td class='attr-rw'>
                 [RW]
             </td>
             <td class='attr-name'>caller_version</td>
-            <td class='attr-desc'><p>Callers can change; if so, related sessions must be invalidated. This must
-be achieved by keeping a version count on the Caller. A session is
-associated with a particular Caller version and if the version changes,
-associated sessions are flushed.</p>
+            <td class='attr-desc'><p>Callers can change; if so, related sessions must be invalidated. This must be achieved by keeping a version count on the Caller. A session is associated with a particular Caller version and if the version changes, associated sessions are flushed.</p>
 
-<p>If you <em>change</em> a Caller version in a <a
-href="Session.html">Session</a>, you <em>really</em> should call <a
-href="Session.html#method-i-save_to_store">save_to_store</a> as soon as
-possible afterwards so that the change gets recognised in the <a
-href="../TransientStore.html">Hoodoo::TransientStore</a>.</p></td>
+<p>If you <em>change</em> a Caller version in a <a href="Session.html"><code>Session</code></a>, you <em>really</em> should call <a href="Session.html#method-i-save_to_store"><code>save_to_store</code></a> as soon as possible afterwards so that the change gets recognised in the <a href="../TransientStore.html"><code>Hoodoo::TransientStore</code></a>.</p></td>
         </tr>
         <tr valign='top' id='attribute-i-created_at'>
             <td class='attr-rw'>
@@ -252,31 +228,21 @@ href="../TransientStore.html">Hoodoo::TransientStore</a>.</p></td>
                 [R]
             </td>
             <td class='attr-name'>expires_at</td>
-            <td class='attr-desc'><p>The expiry date for this session - the session should be considered expired
-at or after this date. Some session stores may support automatic expiry of
-session data, but there may be a small window between the expiry date
-passing and the store expiring the data; so always check the expiry.</p>
+            <td class='attr-desc'><p>The expiry date for this session - the session should be considered expired at or after this date. Some session stores may support automatic expiry of session data, but there may be a small window between the expiry date passing and the store expiring the data; so always check the expiry.</p>
 
-<p>Only set when the session is saved (or loaded from a representation that
-includes an existing expiry date). See e.g.:</p>
+<p>Only set when the session is saved (or loaded from a representation that includes an existing expiry date). See e.g.:</p>
 <ul><li>
-<p><a href="Session.html#method-i-save_to_store">save_to_store</a></p>
+<p><a href="Session.html#method-i-save_to_store"><code>save_to_store</code></a></p>
 </li></ul>
 
-<p>The value is a Time instance in UTC. If <code>nil</code>, the session has
-not yet been saved.</p></td>
+<p>The value is a Time instance in UTC. If <code>nil</code>, the session has not yet been saved.</p></td>
         </tr>
         <tr valign='top' id='attribute-i-identity'>
             <td class='attr-rw'>
                 [R]
             </td>
             <td class='attr-name'>identity</td>
-            <td class='attr-desc'><p>An OpenStruct instance with session-creator defined key/value pairs that
-define the <em>identity</em> of the session holder. This is usually related
-to a Caller resource instance - see also <a
-href="../Data/Resources/Caller.html">Hoodoo::Data::Resources::Caller</a> -
-and will often contain a Caller resource instance&#39;s <a
-href="../UUID.html">UUID</a>, amongst other data.</p>
+            <td class='attr-desc'><p>An OpenStruct instance with session-creator defined key/value pairs that define the <em>identity</em> of the session holder. This is usually related to a Caller resource instance - see also <a href="../Data/Resources/Caller.html"><code>Hoodoo::Data::Resources::Caller</code></a> - and will often contain a Caller resource instance&#39;s <a href="../UUID.html"><code>UUID</code></a>, amongst other data.</p>
 
 <p>The object describes “who the session&#39;s owner is”.</p></td>
         </tr>
@@ -285,7 +251,7 @@ href="../UUID.html">UUID</a>, amongst other data.</p>
                 [RW]
             </td>
             <td class='attr-name'>permissions</td>
-            <td class='attr-desc'><p>A <a href="Permissions.html">Hoodoo::Services::Permissions</a> instance.</p>
+            <td class='attr-desc'><p>A <a href="Permissions.html"><code>Hoodoo::Services::Permissions</code></a> instance.</p>
 
 <p>The instance describes “what the session is allowed to do”.</p></td>
         </tr>
@@ -294,13 +260,7 @@ href="../UUID.html">UUID</a>, amongst other data.</p>
                 [RW]
             </td>
             <td class='attr-name'>scoping</td>
-            <td class='attr-desc'><p>An OpenStruct instance with session-creator defined values that describe
-the <em>scoping</em>, that is, visbility of data, for the session. Its
-contents relate to service resource interface descriptions (see the DSL for
-<a href="Interface.html">Hoodoo::Services::Interface</a>) and may be
-partially or entirely supported by the <a
-href="../ActiveRecord.html">ActiveRecord</a> finder extensions in <a
-href="../ActiveRecord/Finder.html">Hoodoo::ActiveRecord::Finder</a>.</p>
+            <td class='attr-desc'><p>An OpenStruct instance with session-creator defined values that describe the <em>scoping</em>, that is, visbility of data, for the session. Its contents relate to service resource interface descriptions (see the DSL for <a href="Interface.html"><code>Hoodoo::Services::Interface</code></a>) and may be partially or entirely supported by the <a href="../ActiveRecord.html"><code>ActiveRecord</code></a> finder extensions in <a href="../ActiveRecord/Finder.html"><code>Hoodoo::ActiveRecord::Finder</code></a>.</p>
 
 <p>The object describes the “data that the session can &#39;see&#39;”.</p></td>
         </tr>
@@ -309,26 +269,21 @@ href="../ActiveRecord/Finder.html">Hoodoo::ActiveRecord::Finder</a>.</p>
                 [RW]
             </td>
             <td class='attr-name'>session_id</td>
-            <td class='attr-desc'><p>A <a href="Session.html">Session</a> must have its own <a
-href="../UUID.html">UUID</a>.</p></td>
+            <td class='attr-desc'><p>A <a href="Session.html"><code>Session</code></a> must have its own <a href="../UUID.html"><code>UUID</code></a>.</p></td>
         </tr>
         <tr valign='top' id='attribute-i-storage_engine'>
             <td class='attr-rw'>
                 [RW]
             </td>
             <td class='attr-name'>storage_engine</td>
-            <td class='attr-desc'><p>Declares the transient storage engine this session will write to. Both this
-and <code>storage_host_uri</code> are used within <a
-href="../TransientStore.html#method-c-new">Hoodoo::TransientStore.new</a>.</p></td>
+            <td class='attr-desc'><p>Declares the transient storage engine this session will write to. Both this and <code>storage_host_uri</code> are used within <a href="../TransientStore.html#method-c-new"><code>Hoodoo::TransientStore::new</code></a>.</p></td>
         </tr>
         <tr valign='top' id='attribute-i-storage_host_uri'>
             <td class='attr-rw'>
                 [RW]
             </td>
             <td class='attr-name'>storage_host_uri</td>
-            <td class='attr-desc'><p>Connection IP address/port String for the selected storage engine. The
-connection host can be set either through this accessor, or via the
-object&#39;s constructor.</p></td>
+            <td class='attr-desc'><p>Connection IP address/port String for the selected storage engine. The connection host can be set either through this accessor, or via the object&#39;s constructor.</p></td>
         </tr>
     </table>
 
@@ -351,31 +306,22 @@ object&#39;s constructor.</p></td>
 <p>Options are:</p>
 <dl class="rdoc-list note-list"><dt><code>session_id</code>
 <dd>
-<p><a href="../UUID.html">UUID</a> of this session. If unset, a new <a
-href="../UUID.html">UUID</a> is generated for you. You can read the <a
-href="../UUID.html">UUID</a> with the <a
-href="Session.html#attribute-i-session_id">session_id</a> accessor method.</p>
+<p><a href="../UUID.html"><code>UUID</code></a> of this session. If unset, a new <a href="../UUID.html"><code>UUID</code></a> is generated for you. You can read the <a href="../UUID.html"><code>UUID</code></a> with the <a href="Session.html#attribute-i-session_id"><code>session_id</code></a> accessor method.</p>
 </dd><dt><code>caller_id</code>
 <dd>
-<p><a href="../UUID.html">UUID</a> of the Caller instance associated with this
-session. This can be set either now or later, but the session cannot be
-saved without it.</p>
+<p><a href="../UUID.html"><code>UUID</code></a> of the Caller instance associated with this session. This can be set either now or later, but the session cannot be saved without it.</p>
 </dd><dt><code>caller_version</code>
 <dd>
 <p>Version of the Caller instance. Defaults to zero.</p>
 </dd><dt><code>caller_fingerprint</code>
 <dd>
-<p>Optional Caller fingerprint <a href="../UUID.html">UUID</a>. Defaults to
-<code>nil</code>.</p>
+<p>Optional Caller fingerprint <a href="../UUID.html"><code>UUID</code></a>. Defaults to <code>nil</code>.</p>
 </dd><dt><code>storage_engine</code>
 <dd>
-<p>An entry (Symbol) from <a
-href="../TransientStore.html#method-c-supported_storage_engines">Hoodoo::TransientStore.supported_storage_engines</a>.
-Defaults to <code>:memcached</code>.</p>
+<p>An entry (Symbol) from <a href="../TransientStore.html#method-c-supported_storage_engines"><code>Hoodoo::TransientStore::supported_storage_engines</code></a>. Defaults to <code>:memcached</code>.</p>
 </dd><dt><code>storage_host_uri</code>
 <dd>
-<p>URI for <a href="../TransientStore.html">Hoodoo::TransientStore</a> engine
-connections.</p>
+<p>URI for <a href="../TransientStore.html"><code>Hoodoo::TransientStore</code></a> engine connections.</p>
 </dd><dt><code>memcached_host</code>
 <dd>
 <p>Host for Memcached connections (deprecated).</p>
@@ -414,26 +360,16 @@ connections.</p>
         </div>
 
         <div class="description">
-            <p>Speciality interface usually only called by the middleware, or components
-closely related to the middleware.</p>
+            <p>Speciality interface usually only called by the middleware, or components closely related to the middleware.</p>
 
-<p>Takes this session and creates a copy for an inter-resource call which adds
-any additional parameters that the calling interface says it needs in order
-to complete the currently handled action.</p>
+<p>Takes this session and creates a copy for an inter-resource call which adds any additional parameters that the calling interface says it needs in order to complete the currently handled action.</p>
 
-<p>Through calling this method, the middleware implements the access
-permission functionality described by <a
-href="Interface.html#method-i-additional_permissions_for">Hoodoo::Services::Interface#additional_permissions_for</a>.</p>
+<p>Through calling this method, the middleware implements the access permission functionality described by <a href="Interface.html#method-i-additional_permissions_for"><code>Hoodoo::Services::Interface#additional_permissions_for</code></a>.</p>
 <dl class="rdoc-list note-list"><dt><code>interaction</code>
 <dd>
-<p><a
-href="Middleware/Interaction.html">Hoodoo::Services::Middleware::Interaction</a>
-instance describing the current interaction. This is for the request that a
-resource implementation *is handling* at the point it wants to make an
-inter-resource call</p>
+<p><a href="Middleware/Interaction.html"><code>Hoodoo::Services::Middleware::Interaction</code></a> instance describing the current interaction. This is for the request that a resource implementation *is handling* at the point it wants to make an inter-resource call</p>
 <ul><li>
-<p>it is <strong>not</strong> data related to the <strong>target</strong> of
-that</p>
+<p>it is <strong>not</strong> data related to the <strong>target</strong> of that</p>
 </li></ul>
 
 <p>call.</p>
@@ -441,20 +377,12 @@ that</p>
 
 <p>Returns:</p>
 <ul><li>
-<p><a href="Session.html">Hoodoo::Services::Session</a> instance if everything
-works OK; this may be the same as, or different from, the input session
-depending on whether or not there were any permissions that needed adding.</p>
+<p><a href="Session.html"><code>Hoodoo::Services::Session</code></a> instance if everything works OK; this may be the same as, or different from, the input session depending on whether or not there were any permissions that needed adding.</p>
 </li><li>
-<p><code>false</code> if the session can&#39;t be saved due to a mismatched
-caller version - the session must have become invalid <em>during</em>
-handling.</p>
+<p><code>false</code> if the session can&#39;t be saved due to a mismatched caller version - the session must have become invalid <em>during</em> handling.</p>
 </li></ul>
 
-<p>If the augmented session cannot be saved due to a storage problem, an
-exception is raised and the generic handler will turn this into a 500
-response for the caller. At this time, we really can&#39;t do much better
-than that since failure to save the augmented session means the
-inter-resource call cannot proceed; it&#39;s an internal fault.</p>
+<p>If the augmented session cannot be saved due to a storage problem, an exception is raised and the generic handler will turn this into a 500 response for the caller. At this time, we really can&#39;t do much better than that since failure to save the augmented session means the inter-resource call cannot proceed; it&#39;s an internal fault.</p>
         </div>
 
 
@@ -518,10 +446,7 @@ inter-resource call cannot proceed; it&#39;s an internal fault.</p>
         </div>
 
         <div class="description">
-            <p>Deprecated alias for <a
-href="Session.html#method-i-delete_from_store">delete_from_store</a>,
-dating back to when the <a href="Session.html">Session</a> engine was
-hard-coded to Memcached.</p>
+            <p>Deprecated alias for <a href="Session.html#method-i-delete_from_store"><code>delete_from_store</code></a>, dating back to when the <a href="Session.html"><code>Session</code></a> engine was hard-coded to Memcached.</p>
         </div>
 
 
@@ -537,16 +462,13 @@ hard-coded to Memcached.</p>
         </div>
 
         <div class="description">
-            <p>Delete this session from the transient store. The <a
-href="Session.html">Session</a> object is not modified.</p>
+            <p>Delete this session from the transient store. The <a href="Session.html"><code>Session</code></a> object is not modified.</p>
 
 <p>Returns a symbol:</p>
 <ul><li>
-<p><code>:ok</code>: The <a href="Session.html">Session</a> was deleted from
-the transient store successfully.</p>
+<p><code>:ok</code>: The <a href="Session.html"><code>Session</code></a> was deleted from the transient store successfully.</p>
 </li><li>
-<p><code>:fail</code>: The session data could not be deleted (unexpected
-storage engine failure).</p>
+<p><code>:fail</code>: The session data could not be deleted (unexpected storage engine failure).</p>
 </li></ul>
         </div>
 
@@ -602,11 +524,9 @@ storage engine failure).</p>
         </div>
 
         <div class="description">
-            <p>Has this session expired? Only valid if an expiry date is set; see <a
-href="Session.html#attribute-i-expires_at">expires_at</a>.</p>
+            <p>Has this session expired? Only valid if an expiry date is set; see <a href="Session.html#attribute-i-expires_at"><code>expires_at</code></a>.</p>
 
-<p>Returns <code>true</code> if the session has expired, or <code>false</code>
-if it has either not expired, or has no expiry date set yet.</p>
+<p>Returns <code>true</code> if the session has expired, or <code>false</code> if it has either not expired, or has no expiry date set yet.</p>
         </div>
 
 
@@ -635,14 +555,9 @@ if it has either not expired, or has no expiry date set yet.</p>
         </div>
 
         <div class="description">
-            <p>Load session parameters from a given Hash, of the form set by <a
-href="Session.html#method-i-to_h">to_h</a>.</p>
+            <p>Load session parameters from a given Hash, of the form set by <a href="Session.html#method-i-to_h"><code>to_h</code></a>.</p>
 
-<p>If appropriate Hash keys are present, will set any or all of <a
-href="Session.html#attribute-i-session_id">session_id</a>, <a
-href="Session.html#attribute-i-identity">identity</a>, <a
-href="Session.html#attribute-i-scoping">scoping</a> and <a
-href="Session.html#attribute-i-permissions">permissions</a>.</p>
+<p>If appropriate Hash keys are present, will set any or all of <a href="Session.html#attribute-i-session_id"><code>session_id</code></a>, <a href="Session.html#attribute-i-identity"><code>identity</code></a>, <a href="Session.html#attribute-i-scoping"><code>scoping</code></a> and <a href="Session.html#attribute-i-permissions"><code>permissions</code></a>.</p>
         </div>
 
 
@@ -709,8 +624,7 @@ href="Session.html#attribute-i-permissions">permissions</a>.</p>
         </div>
 
         <div class="description">
-            <p>Set the identity data via a Hash of key/value pairs - see also <a
-href="Session.html#attribute-i-identity">identity</a>.</p>
+            <p>Set the identity data via a Hash of key/value pairs - see also <a href="Session.html#attribute-i-identity"><code>identity</code></a>.</p>
         </div>
 
 
@@ -736,10 +650,7 @@ href="Session.html#attribute-i-identity">identity</a>.</p>
         </div>
 
         <div class="description">
-            <p>Deprecated alias for <a
-href="Session.html#method-i-load_from_store-21">load_from_store!</a>,
-dating back to when the <a href="Session.html">Session</a> engine was
-hard-coded to Memcached.</p>
+            <p>Deprecated alias for <a href="Session.html#method-i-load_from_store-21"><code>load_from_store!</code></a>, dating back to when the <a href="Session.html"><code>Session</code></a> engine was hard-coded to Memcached.</p>
         </div>
 
 
@@ -755,27 +666,21 @@ hard-coded to Memcached.</p>
         </div>
 
         <div class="description">
-            <p>Load session data into this instance, overwriting instance values if the
-session is found. Raises an exception if there is a problem connecting to
-the transient store.</p>
+            <p>Load session data into this instance, overwriting instance values if the session is found. Raises an exception if there is a problem connecting to the transient store.</p>
 <dl class="rdoc-list note-list"><dt><code>sid</code>
 <dd>
-<p>The <a href="Session.html">Session</a> <a href="../UUID.html">UUID</a> to
-look up.</p>
+<p>The <a href="Session.html"><code>Session</code></a> <a href="../UUID.html"><code>UUID</code></a> to look up.</p>
 </dd></dl>
 
 <p>Returns a symbol:</p>
 <ul><li>
 <p><code>:ok</code>: The session data was loaded OK and is valid.</p>
 </li><li>
-<p><code>:outdated</code>: The session data was loaded, but is outdated;
-either the session has expired, or its Caller version mismatches the
-associated stored Caller version in the transient store.</p>
+<p><code>:outdated</code>: The session data was loaded, but is outdated; either the session has expired, or its Caller version mismatches the associated stored Caller version in the transient store.</p>
 </li><li>
 <p><code>:not_found</code>: The session was not found.</p>
 </li><li>
-<p><code>:fail</code>: The session data could not be loaded (unexpected
-storage engine failure).</p>
+<p><code>:fail</code>: The session data could not be loaded (unexpected storage engine failure).</p>
 </li></ul>
         </div>
 
@@ -836,16 +741,11 @@ storage engine failure).</p>
         </div>
 
         <div class="description">
-            <p>Deprecated interface (use <a
-href="Session.html#attribute-i-storage_host_uri">storage_host_uri</a>
-instead), dating back to when the <a href="Session.html">Session</a> engine
-was hard-coded to Memcached.</p>
+            <p>Deprecated interface (use <a href="Session.html#attribute-i-storage_host_uri"><code>storage_host_uri</code></a> instead), dating back to when the <a href="Session.html"><code>Session</code></a> engine was hard-coded to Memcached.</p>
 
-<p>Supports backwards compatibility of options key
-<code>memcached_host</code>, aliases <code>storage_host_uri</code>.</p>
+<p>Supports backwards compatibility of options key <code>memcached_host</code>, aliases <code>storage_host_uri</code>.</p>
 
-<p>Provides same functionality as <code>alias_method</code>, however includes
-a deprecation warning.</p>
+<p>Provides same functionality as <code>alias_method</code>, however includes a deprecation warning.</p>
 
 <p>Similar to:</p>
 
@@ -880,13 +780,9 @@ a deprecation warning.</p>
         </div>
 
         <div class="description">
-            <p>Deprecated interface (use <a
-href="Session.html#attribute-i-storage_host_uri">storage_host_uri=</a>
-instead), dating back to when the <a href="Session.html">Session</a> engine
-was hard-coded to Memcached.</p>
+            <p>Deprecated interface (use <a href="Session.html#attribute-i-storage_host_uri"><code>storage_host_uri=</code></a> instead), dating back to when the <a href="Session.html"><code>Session</code></a> engine was hard-coded to Memcached.</p>
 
-<p>Provides same functionality as <code>alias_method</code>, however includes
-a deprecation warning.</p>
+<p>Provides same functionality as <code>alias_method</code>, however includes a deprecation warning.</p>
 
 <p>Similar to:</p>
 
@@ -921,10 +817,7 @@ a deprecation warning.</p>
         </div>
 
         <div class="description">
-            <p>Deprecated alias for <a
-href="Session.html#method-i-save_to_store">save_to_store</a>, dating back
-to when the <a href="Session.html">Session</a> engine was hard-coded to
-Memcached.</p>
+            <p>Deprecated alias for <a href="Session.html#method-i-save_to_store"><code>save_to_store</code></a>, dating back to when the <a href="Session.html"><code>Session</code></a> engine was hard-coded to Memcached.</p>
         </div>
 
 
@@ -940,28 +833,17 @@ Memcached.</p>
         </div>
 
         <div class="description">
-            <p>Save this session to the transient store, in a manner that will allow it to
-be loaded by <a
-href="Session.html#method-i-load_from_store-21">load_from_store!</a> later.</p>
+            <p>Save this session to the transient store, in a manner that will allow it to be loaded by <a href="Session.html#method-i-load_from_store-21"><code>load_from_store!</code></a> later.</p>
 
-<p>A session can only be saved if it has a Caller ID - see <a
-href="Session.html#attribute-i-caller_id">caller_id=</a> or the options
-hash passed to the constructor.</p>
+<p>A session can only be saved if it has a Caller ID - see <a href="Session.html#attribute-i-caller_id"><code>caller_id=</code></a> or the options hash passed to the constructor.</p>
 
-<p>The <a href="Session.html#TTL">Hoodoo::Services::Session::TTL</a> constant
-determines the maximum length of time for which the data persists inside
-the transient store.</p>
+<p>The <a href="Session.html#TTL"><code>Hoodoo::Services::Session::TTL</code></a> constant determines the maximum length of time for which the data persists inside the transient store.</p>
 
 <p>Returns a symbol:</p>
 <ul><li>
-<p><code>:ok</code>: The session data was saved OK and is valid. There was
-either a Caller record with an earlier or matching value in the transient
-store, no preexisting record of the Caller.</p>
+<p><code>:ok</code>: The session data was saved OK and is valid. There was either a Caller record with an earlier or matching value in the transient store, no preexisting record of the Caller.</p>
 </li><li>
-<p><code>:outdated</code>: The session data could not be saved because an
-existing Caller record was found in the transient store with a
-<em>newer</em> version than &#39;this&#39; session, implying that the
-session is already outdated.</p>
+<p><code>:outdated</code>: The session data could not be saved because an existing Caller record was found in the transient store with a <em>newer</em> version than &#39;this&#39; session, implying that the session is already outdated.</p>
 </li><li>
 <p><code>:fail</code>: The session data could not be saved.</p>
 </li></ul>
@@ -1066,8 +948,7 @@ session is already outdated.</p>
         </div>
 
         <div class="description">
-            <p>Set the scoping data via a Hash of key/value pairs - see also <a
-href="Session.html#attribute-i-scoping">scoping</a>.</p>
+            <p>Set the scoping data via a Hash of key/value pairs - see also <a href="Session.html#attribute-i-scoping"><code>scoping</code></a>.</p>
         </div>
 
 
@@ -1093,9 +974,7 @@ href="Session.html#attribute-i-scoping">scoping</a>.</p>
         </div>
 
         <div class="description">
-            <p>Represent this session&#39;s data as a Hash, for uses such as persistence
-or loading into another session instance. See also <a
-href="Session.html#method-i-from_h-21">from_h!</a>.</p>
+            <p>Represent this session&#39;s data as a Hash, for uses such as persistence or loading into another session instance. See also <a href="Session.html#method-i-from_h-21"><code>from_h!</code></a>.</p>
         </div>
 
 
@@ -1157,16 +1036,9 @@ href="Session.html#method-i-from_h-21">from_h!</a>.</p>
         </div>
 
         <div class="description">
-            <p>Deprecated interface (use <a
-href="Session.html#method-i-update_caller_version_in_store">update_caller_version_in_store</a>
-instead), dating back to when the <a href="Session.html">Session</a> engine
-was hard-coded to Memcached.</p>
+            <p>Deprecated interface (use <a href="Session.html#method-i-update_caller_version_in_store"><code>update_caller_version_in_store</code></a> instead), dating back to when the <a href="Session.html"><code>Session</code></a> engine was hard-coded to Memcached.</p>
 
-<p>Parameters as for <a
-href="Session.html#method-i-update_caller_version_in_store">update_caller_version_in_store</a>,
-except <code>store</code> is must be a fully configured Dalli::Client
-instance. Use of this interface is inefficient and discouraged; it will
-result in logged warnings.</p>
+<p>Parameters as for <a href="Session.html#method-i-update_caller_version_in_store"><code>update_caller_version_in_store</code></a>, except <code>store</code> is must be a fully configured Dalli::Client instance. Use of this interface is inefficient and discouraged; it will result in logged warnings.</p>
         </div>
 
 
@@ -1219,39 +1091,27 @@ result in logged warnings.</p>
         </div>
 
         <div class="description">
-            <p>Update the version of a given Caller in the transient store. This is done
-automatically when Sessions are saved to that store, but if external code
-alters any Callers independently, it <strong>MUST</strong> call here to
-keep stored records up to date.</p>
+            <p>Update the version of a given Caller in the transient store. This is done automatically when Sessions are saved to that store, but if external code alters any Callers independently, it <strong>MUST</strong> call here to keep stored records up to date.</p>
 
-<p>If no cached version is in the transient store for the Caller, the method
-assumes it is being called for the first time for that Caller and writes
-the version it has to hand, rather than considering it an error condition.</p>
+<p>If no cached version is in the transient store for the Caller, the method assumes it is being called for the first time for that Caller and writes the version it has to hand, rather than considering it an error condition.</p>
 <dl class="rdoc-list note-list"><dt><code>cid</code>
 <dd>
-<p>Caller <a href="../UUID.html">UUID</a> of the Caller record to update.</p>
+<p>Caller <a href="../UUID.html"><code>UUID</code></a> of the Caller record to update.</p>
 </dd><dt><code>cv</code>
 <dd>
 <p>New version to store (an Integer).</p>
 </dd><dt><code>store</code>
 <dd>
-<p>Optional <a href="../TransientStore.html">Hoodoo::TransientStore</a>
-instance to use for data storage. If omitted, a connection is established
-for you. This is mostly an optimisation parameter, used by code which
-already has established a connection and wants to avoid creating another
-unnecessarily.</p>
+<p>Optional <a href="../TransientStore.html"><code>Hoodoo::TransientStore</code></a> instance to use for data storage. If omitted, a connection is established for you. This is mostly an optimisation parameter, used by code which already has established a connection and wants to avoid creating another unnecessarily.</p>
 </dd></dl>
 
 <p>Returns a Symbol:</p>
 <ul><li>
 <p><code>:ok</code>: The Caller record was updated successfully.</p>
 </li><li>
-<p><code>:outdated</code>: The Caller was already present in the transient
-store with a _higher version_ than the one you wanted to save. Your own
-local Caller data must therefore already be out of date.</p>
+<p><code>:outdated</code>: The Caller was already present in the transient store with a _higher version_ than the one you wanted to save. Your own local Caller data must therefore already be out of date.</p>
 </li><li>
-<p><code>:fail</code>: The Caller could not be updated (unexpected storage
-engine failure).</p>
+<p><code>:fail</code>: The Caller could not be updated (unexpected storage engine failure).</p>
 </li></ul>
         </div>
 

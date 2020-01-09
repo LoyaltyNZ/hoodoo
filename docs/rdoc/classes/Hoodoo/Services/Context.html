@@ -39,9 +39,7 @@
         <div id="content">
     <div class="description">
         
-<p>A collection of objects which describe the context in which a service is
-being called. The service reads session and request information and returns
-results of its processing via the associated response object.</p>
+<p>A collection of objects which describe the context in which a service is being called. The service reads session and request information and returns results of its processing via the associated response object.</p>
 
     </div>
 
@@ -89,38 +87,28 @@ results of its processing via the associated response object.</p>
                 [R]
             </td>
             <td class='attr-name'>owning_interaction</td>
-            <td class='attr-desc'><p>The <a
-href="Middleware/Interaction.html">Hoodoo::Services::Middleware::Interaction</a>
-instance for which this context exists (the &#39;owning&#39; instance).
-Generally speaking this is only needed internally as part of the
-inter-resource call mechanism.</p></td>
+            <td class='attr-desc'><p>The <a href="Middleware/Interaction.html"><code>Hoodoo::Services::Middleware::Interaction</code></a> instance for which this context exists (the &#39;owning&#39; instance). Generally speaking this is only needed internally as part of the inter-resource call mechanism.</p></td>
         </tr>
         <tr valign='top' id='attribute-i-request'>
             <td class='attr-rw'>
                 [R]
             </td>
             <td class='attr-name'>request</td>
-            <td class='attr-desc'><p>The <a href="Request.html">Hoodoo::Services::Request</a> instance giving
-details about the inbound request. Relevant information will depend upon
-the endpoint service implementation action being addressed.</p></td>
+            <td class='attr-desc'><p>The <a href="Request.html"><code>Hoodoo::Services::Request</code></a> instance giving details about the inbound request. Relevant information will depend upon the endpoint service implementation action being addressed.</p></td>
         </tr>
         <tr valign='top' id='attribute-i-response'>
             <td class='attr-rw'>
                 [R]
             </td>
             <td class='attr-name'>response</td>
-            <td class='attr-desc'><p>The <a href="Response.html">Hoodoo::Services::Response</a> instance that a
-service implementation updates with results of its processing.</p></td>
+            <td class='attr-desc'><p>The <a href="Response.html"><code>Hoodoo::Services::Response</code></a> instance that a service implementation updates with results of its processing.</p></td>
         </tr>
         <tr valign='top' id='attribute-i-session'>
             <td class='attr-rw'>
                 [R]
             </td>
             <td class='attr-name'>session</td>
-            <td class='attr-desc'><p>The <a href="Session.html">Hoodoo::Services::Session</a> instance
-describing the authorised call context. If a resource implementation is
-handling a public action this may be <code>nil</code>, else it will be a
-valid instance.</p></td>
+            <td class='attr-desc'><p>The <a href="Session.html"><code>Hoodoo::Services::Session</code></a> instance describing the authorised call context. If a resource implementation is handling a public action this may be <code>nil</code>, else it will be a valid instance.</p></td>
         </tr>
     </table>
 
@@ -134,21 +122,16 @@ valid instance.</p></td>
         </div>
 
         <div class="description">
-            <p>Create a new instance. There is almost certainly never any need to call
-this unless you&#39;re the <a
-href="Middleware/Interaction.html">Hoodoo::Services::Middleware::Interaction</a>
-constructor! If you want to build a context for (say) test purposes,
-it&#39;s probably best to construct an interaction instance and use the
-context instance this provides.</p>
+            <p>Create a new instance. There is almost certainly never any need to call this unless you&#39;re the <a href="Middleware/Interaction.html"><code>Hoodoo::Services::Middleware::Interaction</code></a> constructor! If you want to build a context for (say) test purposes, it&#39;s probably best to construct an interaction instance and use the context instance this provides.</p>
 <dl class="rdoc-list note-list"><dt><code>session</code>
 <dd>
-<p>See <a href="Context.html#attribute-i-session">session</a>.</p>
+<p>See <a href="Context.html#attribute-i-session"><code>session</code></a>.</p>
 </dd><dt><code>request</code>
 <dd>
-<p>See <a href="Context.html#attribute-i-request">request</a>.</p>
+<p>See <a href="Context.html#attribute-i-request"><code>request</code></a>.</p>
 </dd><dt><code>response</code>
 <dd>
-<p>See <a href="Context.html#attribute-i-response">response</a>.</p>
+<p>See <a href="Context.html#attribute-i-response"><code>response</code></a>.</p>
 </dd><dt><code>owning_interaction</code>
 <dd>
 <p>See interaction.</p>
@@ -183,10 +166,7 @@ context instance this provides.</p>
         </div>
 
         <div class="description">
-            <p>Alias of <a href="Context.html#method-i-resource">resource</a>, as syntax
-sugar for those who prefer to think of the return value as an endpoint that
-is used to contact a resource, rather than a remote abstraction of the
-resource as an entity.</p>
+            <p>Alias of <a href="Context.html#method-i-resource"><code>resource</code></a>, as syntax sugar for those who prefer to think of the return value as an endpoint that is used to contact a resource, rather than a remote abstraction of the resource as an entity.</p>
         </div>
 
 
@@ -202,21 +182,11 @@ resource as an entity.</p>
         </div>
 
         <div class="description">
-            <p><a href="Request.html">Request</a> (and lazy-initialize) a new resource
-endpoint instance for talking to a resource&#39;s interface. See <a
-href="../Client/Endpoint.html">Hoodoo::Client::Endpoint</a>.</p>
+            <p><a href="Request.html"><code>Request</code></a> (and lazy-initialize) a new resource endpoint instance for talking to a resource&#39;s interface. See <a href="../Client/Endpoint.html"><code>Hoodoo::Client::Endpoint</code></a>.</p>
 
-<p>You can request an endpoint for any resource name, whether or not an
-implementation actually exists for it. Until you try and talk to the
-interface through the endpoint instance, you won&#39;t know if it is there.
-All endpoint methods return instances of classes that mix in <a
-href="../Client/AugmentedBase.html">Hoodoo::Client::AugmentedBase</a>;
-these mixin methods provide error handling options to detect a “not found”
-error (equivanent to HTTP status code 404) returned when a resource
-implementation turns out to not actually be present.</p>
+<p>You can request an endpoint for any resource name, whether or not an implementation actually exists for it. Until you try and talk to the interface through the endpoint instance, you won&#39;t know if it is there. All endpoint methods return instances of classes that mix in <a href="../Client/AugmentedBase.html"><code>Hoodoo::Client::AugmentedBase</code></a>; these mixin methods provide error handling options to detect a “not found” error (equivanent to HTTP status code 404) returned when a resource implementation turns out to not actually be present.</p>
 
-<p>The idiomatic call sequence is something like the following, where you get
-hold of an endpoint, make a call and handle the response:</p>
+<p>The idiomatic call sequence is something like the following, where you get hold of an endpoint, make a call and handle the response:</p>
 
 <pre><code>clock = context.resource( :Clock, 2 ) # v2 of &#39;Clock&#39; resource
 time  = clock.show( &#39;now&#39; )
@@ -233,19 +203,13 @@ context.response.add_errors( time.platform_errors )
 return if context.response.halt_processing?
 </code></pre>
 
-<p>The return value of calls made to the endpoint is an Array or Hash that
-mixes in <a
-href="../Client/AugmentedBase.html">Hoodoo::Client::AugmentedBase</a>; see
-this class&#39;s documentation for details of the two alternative error
-handling approaches shown above.</p>
+<p>The return value of calls made to the endpoint is an Array or Hash that mixes in <a href="../Client/AugmentedBase.html"><code>Hoodoo::Client::AugmentedBase</code></a>; see this class&#39;s documentation for details of the two alternative error handling approaches shown above.</p>
 <dl class="rdoc-list note-list"><dt><code>resource</code>
 <dd>
-<p>Resource name for the endpoint, e.g. <code>:Purchase</code>. String or
-symbol.</p>
+<p>Resource name for the endpoint, e.g. <code>:Purchase</code>. String or symbol.</p>
 </dd><dt><code>version</code>
 <dd>
-<p>Optional required implemented version for the endpoint, as an Integer -
-defaults to 1.</p>
+<p>Optional required implemented version for the endpoint, as an Integer - defaults to 1.</p>
 </dd><dt><code>options</code>
 <dd>
 <p>Optional options Hash (see below).</p>
@@ -254,18 +218,10 @@ defaults to 1.</p>
 <p>The options Hash key/values are as follows:</p>
 <dl class="rdoc-list note-list"><dt><code>locale</code>
 <dd>
-<p>Locale string for request/response, e.g. “en-gb”. Optional. If omitted,
-defaults to the locale set in this <a href="../Client.html">Client</a>
-instance&#39;s constructor.</p>
+<p>Locale string for request/response, e.g. “en-gb”. Optional. If omitted, defaults to the locale set in this <a href="../Client.html"><code>Client</code></a> instance&#39;s constructor.</p>
 </dd><dt>Others
 <dd>
-<p>See Hoodoo::Client::Headers&#39; <code>HEADER_TO_PROPERTY</code>. For any
-options in that map which describe themselves as being automatically
-transferred from one endpoint to another, you can prevent this by
-explicitly pasisng a <code>nil</code> value for the option; otherwise,
-<em>OMIT</em> the option for normal behaviour. Non-auto-transfer properties
-can be specified as <code>nil</code> or omitted with no change in
-behaviour.</p>
+<p>See Hoodoo::Client::Headers&#39; <code>HEADER_TO_PROPERTY</code>. For any options in that map which describe themselves as being automatically transferred from one endpoint to another, you can prevent this by explicitly pasisng a <code>nil</code> value for the option; otherwise, <em>OMIT</em> the option for normal behaviour. Non-auto-transfer properties can be specified as <code>nil</code> or omitted with no change in behaviour.</p>
 </dd></dl>
         </div>
 

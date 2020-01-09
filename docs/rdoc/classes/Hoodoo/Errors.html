@@ -39,14 +39,7 @@
         <div id="content">
     <div class="description">
         
-<p>During request processing, API service implementations create an <a
-href="Errors.html">Hoodoo::Errors</a> instance and add error(s) to the
-collection as they arise using <a
-href="Errors.html#method-i-add_error">add_error</a>. That same instance can
-then be returned for the on-error handling path of whatever wider service
-framework is in use by the service code in question. <a
-href="Services.html">Services</a> should use new instances for each
-request.</p>
+<p>During request processing, API service implementations create an <a href="Errors.html"><code>Hoodoo::Errors</code></a> instance and add error(s) to the collection as they arise using <a href="Errors.html#method-i-add_error"><code>add_error</code></a>. That same instance can then be returned for the on-error handling path of whatever wider service framework is in use by the service code in question. <a href="Services.html"><code>Services</code></a> should use new instances for each request.</p>
 
     </div>
 
@@ -152,8 +145,7 @@ request.</p>
         </tr>
         <tr valign='top'>
             <td>&nbsp;</td>
-            <td colspan="2" class="attr-desc"><p>Default <a href="ErrorDescriptions.html">Hoodoo::ErrorDescriptions</a>
-instance, used if the instantiator provides no alternative.</p></td>
+            <td colspan="2" class="attr-desc"><p>Default <a href="ErrorDescriptions.html"><code>Hoodoo::ErrorDescriptions</code></a> instance, used if the instantiator provides no alternative.</p></td>
         </tr>
     </table>
 
@@ -165,40 +157,28 @@ instance, used if the instantiator provides no alternative.</p></td>
                 [R]
             </td>
             <td class='attr-name'>descriptions</td>
-            <td class='attr-desc'><p>The <a href="ErrorDescriptions.html">Hoodoo::ErrorDescriptions</a> instance
-associated with this error collection. Only error codes that the
-instance&#39;s <a
-href="ErrorDescriptions.html#method-i-recognised-3F">Hoodoo::ErrorDescriptions#recognised?</a>
-method says are recognised can be added to the error collection, else <a
-href="Errors/UnknownCode.html">Hoodoo::Errors::UnknownCode</a> will be
-raised.</p></td>
+            <td class='attr-desc'><p>The <a href="ErrorDescriptions.html"><code>Hoodoo::ErrorDescriptions</code></a> instance associated with this error collection. Only error codes that the instance&#39;s <a href="ErrorDescriptions.html#method-i-recognised-3F"><code>Hoodoo::ErrorDescriptions#recognised?</code></a> method says are recognised can be added to the error collection, else <a href="Errors/UnknownCode.html"><code>Hoodoo::Errors::UnknownCode</code></a> will be raised.</p></td>
         </tr>
         <tr valign='top' id='attribute-i-errors'>
             <td class='attr-rw'>
                 [R]
             </td>
             <td class='attr-name'>errors</td>
-            <td class='attr-desc'><p>Array of error data - hashes with <code>code</code>, <code>message</code>
-and <code>reference</code> fields giving the error codes, human-readable
-messages and machine-readable reference data, where appropriate.</p></td>
+            <td class='attr-desc'><p>Array of error data - hashes with <code>code</code>, <code>message</code> and <code>reference</code> fields giving the error codes, human-readable messages and machine-readable reference data, where appropriate.</p></td>
         </tr>
         <tr valign='top' id='attribute-i-http_status_code'>
             <td class='attr-rw'>
                 [R]
             </td>
             <td class='attr-name'>http_status_code</td>
-            <td class='attr-desc'><p>HTTP status code associated with the first error in the <a
-href="Errors.html#attribute-i-errors">errors</a> array, _as an Integer_.</p></td>
+            <td class='attr-desc'><p>HTTP status code associated with the first error in the <a href="Errors.html#attribute-i-errors"><code>errors</code></a> array, _as an Integer_.</p></td>
         </tr>
         <tr valign='top' id='attribute-i-uuid'>
             <td class='attr-rw'>
                 [R]
             </td>
             <td class='attr-name'>uuid</td>
-            <td class='attr-desc'><p><a href="Errors.html">Errors</a> are manifestations of the <a
-href="Errors.html">Errors</a> resource. They acquire a <a
-href="UUID.html">UUID</a> when instantiated, even if the instance is never
-used or persisted.</p></td>
+            <td class='attr-desc'><p><a href="Errors.html"><code>Errors</code></a> are manifestations of the <a href="Errors.html"><code>Errors</code></a> resource. They acquire a <a href="UUID.html"><code>UUID</code></a> when instantiated, even if the instance is never used or persisted.</p></td>
         </tr>
     </table>
 
@@ -215,10 +195,7 @@ used or persisted.</p></td>
             <p>Create an instance.</p>
 <dl class="rdoc-list note-list"><dt><code>descriptions</code>
 <dd>
-<p>(Optional) <a href="ErrorDescriptions.html">Hoodoo::ErrorDescriptions</a>
-instance with service-domain-specific error descriptions added, or omit for
-a default instance describing <code>platform</code> and
-<code>generic</code> error domains only.</p>
+<p>(Optional) <a href="ErrorDescriptions.html"><code>Hoodoo::ErrorDescriptions</code></a> instance with service-domain-specific error descriptions added, or omit for a default instance describing <code>platform</code> and <code>generic</code> error domains only.</p>
 </dd></dl>
         </div>
 
@@ -260,29 +237,17 @@ a default instance describing <code>platform</code> and
 <p>An options Hash, optional.</p>
 </dd></dl>
 
-<p>The options hash contains symbol keys named as follows, with values as
-described:</p>
+<p>The options hash contains symbol keys named as follows, with values as described:</p>
 <dl class="rdoc-list note-list"><dt><code>reference</code>
 <dd>
-<p>Reference data Hash, optionality depending upon the error code and the
-reference data its error description mandates. Provide key/value pairs
-where (symbol) keys are names from the array of description requirements
-and values are strings. All values are concatenated into a single string,
-comma-separated. Commas within values are escaped with a backslash;
-backslash is itself escaped with a backslash.</p>
+<p>Reference data Hash, optionality depending upon the error code and the reference data its error description mandates. Provide key/value pairs where (symbol) keys are names from the array of description requirements and values are strings. All values are concatenated into a single string, comma-separated. Commas within values are escaped with a backslash; backslash is itself escaped with a backslash.</p>
 
-<p>You must provide that data at a minimum, but can provide additional keys
-too if you so wish. Required keys are always included first, in order of
-appearance in the requirements array of the error declaration, followed by
-any extra values in undefined order.</p>
+<p>You must provide that data at a minimum, but can provide additional keys too if you so wish. Required keys are always included first, in order of appearance in the requirements array of the error declaration, followed by any extra values in undefined order.</p>
 
-<p>See also <a
-href="ErrorDescriptions/DomainDescriptions.html#method-i-error">Hoodoo::ErrorDescriptions::DomainDescriptions#error</a></p>
+<p>See also <a href="ErrorDescriptions/DomainDescriptions.html#method-i-error"><code>Hoodoo::ErrorDescriptions::DomainDescriptions#error</code></a></p>
 </dd><dt><code>message</code>
 <dd>
-<p>Optional human-readable for-developer message, <code>en-nz</code> locale.
-Default messages are provided for all errors, but if you think you can
-provide something more informative, you can do so through this parameter.</p>
+<p>Optional human-readable for-developer message, <code>en-nz</code> locale. Default messages are provided for all errors, but if you think you can provide something more informative, you can do so through this parameter.</p>
 </dd></dl>
 
 <p>Example:</p>
@@ -294,10 +259,7 @@ provide something more informative, you can do so through this parameter.</p>
 )
 </code></pre>
 
-<p>In the above example, the mandatory reference data <code>entity_name</code>
-comes from the description for the &#39;platform.not_found&#39; message -
-see the Hoodoo::ErrorDescriptions#initialize <em>implementation</em> and
-Platform API.</p>
+<p>In the above example, the mandatory reference data <code>entity_name</code> comes from the description for the &#39;platform.not_found&#39; message - see the Hoodoo::ErrorDescriptions#initialize <em>implementation</em> and Platform API.</p>
         </div>
 
 
@@ -361,22 +323,13 @@ Platform API.</p>
         </div>
 
         <div class="description">
-            <p>Add a precompiled error to the error collection. Pass error code, error
-message and reference data directly.</p>
+            <p>Add a precompiled error to the error collection. Pass error code, error message and reference data directly.</p>
 
-<p>In most cases you should be calling <a
-href="Errors.html#method-i-add_error">add_error</a> instead,
-<strong>NOT</strong> here.</p>
+<p>In most cases you should be calling <a href="Errors.html#method-i-add_error"><code>add_error</code></a> instead, <strong>NOT</strong> here.</p>
 
-<p><strong>No</strong> <strong>validation</strong> is performed. You should
-only really call here if storing an error / errors from another, trusted
-source with assumed validity (e.g. another service called remotely with
-errors in the JSON response). It&#39;s possible to store invalid error data
-using this call, which means counter-to-documentation results could be
-returned to API clients. That is Very Bad.</p>
+<p><strong>No</strong> <strong>validation</strong> is performed. You should only really call here if storing an error / errors from another, trusted source with assumed validity (e.g. another service called remotely with errors in the JSON response). It&#39;s possible to store invalid error data using this call, which means counter-to-documentation results could be returned to API clients. That is Very Bad.</p>
 
-<p>Pass optionally the HTTP status code to use if this happens to be the first
-stored error. If this is omitted, 500 is kept as the default.</p>
+<p>Pass optionally the HTTP status code to use if this happens to be the first stored error. If this is omitted, 500 is kept as the default.</p>
         </div>
 
 
@@ -411,9 +364,7 @@ stored error. If this is omitted, 500 is kept as the default.</p>
         </div>
 
         <div class="description">
-            <p>Clear (delete) all previously added errors (if any). After calling here, <a
-href="Errors.html#method-i-has_errors-3F">has_errors?</a> would always
-return <code>false</code>.</p>
+            <p>Clear (delete) all previously added errors (if any). After calling here, <a href="Errors.html#method-i-has_errors-3F"><code>has_errors?</code></a> would always return <code>false</code>.</p>
         </div>
 
 
@@ -440,8 +391,7 @@ return <code>false</code>.</p>
         </div>
 
         <div class="description">
-            <p>Does this instance have any errors added? Returns <code>true</code> if so,
-else <code>false</code>.</p>
+            <p>Does this instance have any errors added? Returns <code>true</code> if so, else <code>false</code>.</p>
         </div>
 
 
@@ -467,8 +417,7 @@ else <code>false</code>.</p>
         </div>
 
         <div class="description">
-            <p>Make life easier for debugging on the console by having the object
-represent itself more concisely.</p>
+            <p>Make life easier for debugging on the console by having the object represent itself more concisely.</p>
         </div>
 
 
@@ -494,18 +443,13 @@ represent itself more concisely.</p>
         </div>
 
         <div class="description">
-            <p>Merge the contents of a source error object with this one, adding its
-errors to this collection. No checks are made for duplicates (in part
-because, depending on error code and source/target contexts, a duplicate
-may be a valid thing to have).</p>
+            <p>Merge the contents of a source error object with this one, adding its errors to this collection. No checks are made for duplicates (in part because, depending on error code and source/target contexts, a duplicate may be a valid thing to have).</p>
 <dl class="rdoc-list note-list"><dt><code>source</code>
 <dd>
-<p><a href="Errors.html">Hoodoo::Errors</a> instance to merge into the error
-collection of &#39;this&#39; target object.</p>
+<p><a href="Errors.html"><code>Hoodoo::Errors</code></a> instance to merge into the error collection of &#39;this&#39; target object.</p>
 </dd></dl>
 
-<p>Returns <code>true</code> if errors were merged, else <code>false</code>
-(the source collection was empty).</p>
+<p>Returns <code>true</code> if errors were merged, else <code>false</code> (the source collection was empty).</p>
         </div>
 
 
@@ -542,12 +486,10 @@ collection of &#39;this&#39; target object.</p>
         </div>
 
         <div class="description">
-            <p>Return a Hash rendered through the <a
-href="Data/Resources/Errors.html">Hoodoo::Data::Resources::Errors</a>
-collection representing the formalised resource.</p>
+            <p>Return a Hash rendered through the <a href="Data/Resources/Errors.html"><code>Hoodoo::Data::Resources::Errors</code></a> collection representing the formalised resource.</p>
 <dl class="rdoc-list note-list"><dt><code>interaction_id</code>
 <dd>
-<p>Mandatory Interaction ID (UUID) to associate with the collection.</p>
+<p>Mandatory Interaction ID (<a href="UUID.html"><code>UUID</code></a>) to associate with the collection.</p>
 </dd></dl>
         </div>
 
@@ -587,17 +529,12 @@ collection representing the formalised resource.</p>
         </div>
 
         <div class="description">
-            <p>When reference data is specified for errors, the reference values are
-concatenated together into a comma-separated string. Since reference values
-can themselves contain commas, comma is escaped with “\,” and “\” escaped
-with “\\”.</p>
+            <p>When reference data is specified for errors, the reference values are concatenated together into a comma-separated string. Since reference values can themselves contain commas, comma is escaped with “\,” and “\” escaped with “\\”.</p>
 
-<p>Call here with such a string; return an array of &#39;unescaped&#39;
-values.</p>
+<p>Call here with such a string; return an array of &#39;unescaped&#39; values.</p>
 <dl class="rdoc-list note-list"><dt><code>str</code>
 <dd>
-<p>Value-escaped (“\\” / “\,”) comma-separated string. Unescaped commas
-separate individual values.</p>
+<p>Value-escaped (“\\” / “\,”) comma-separated string. Unescaped commas separate individual values.</p>
 </dd></dl>
         </div>
 

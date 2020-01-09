@@ -36,21 +36,12 @@
         <div id="content">
     <div class="description">
         
-<p><a href="Support.html">Support</a> mixin for models subclassed from <a
-href="Base.html">ActiveRecord::Base</a> providing a mapping between <a
-href="../ActiveRecord.html">ActiveRecord</a> validation errors and platform
-errors via <a
-href="../ErrorDescriptions.html">Hoodoo::ErrorDescriptions</a> and <a
-href="../Errors.html">Hoodoo::Errors</a>. See individual module methods for
-examples, along with:</p>
+<p><a href="Support.html"><code>Support</code></a> mixin for models subclassed from <a href="Base.html"><code>ActiveRecord::Base</code></a> providing a mapping between <a href="../ActiveRecord.html"><code>ActiveRecord</code></a> validation errors and platform errors via <a href="../ErrorDescriptions.html"><code>Hoodoo::ErrorDescriptions</code></a> and <a href="../Errors.html"><code>Hoodoo::Errors</code></a>. See individual module methods for examples, along with:</p>
 <ul><li>
-<p><a
-href="http://guides.rubyonrails.org/active_record_basics.html">guides.rubyonrails.org/active_record_basics.html</a></p>
+<p><a href="http://guides.rubyonrails.org/active_record_basics.html">guides.rubyonrails.org/active_record_basics.html</a></p>
 </li></ul>
 
-<p>The error handling mechanism this mixin provides is intentionally analogous
-to that used for resource-to-resource calls through <a
-href="../Client/AugmentedBase.html">Hoodoo::Client::AugmentedBase</a>.</p>
+<p>The error handling mechanism this mixin provides is intentionally analogous to that used for resource-to-resource calls through <a href="../Client/AugmentedBase.html"><code>Hoodoo::Client::AugmentedBase</code></a>.</p>
 
     </div>
 
@@ -93,29 +84,18 @@ href="../Client/AugmentedBase.html">Hoodoo::Client::AugmentedBase</a>.</p>
         </div>
 
         <div class="description">
-            <p>Validates the model instance and adds mapped-to-platform errors to a given
-<a href="../Errors.html">Hoodoo::Errors</a> instance, if any validation
-errors occur. For <a href="../ActiveRecord.html">ActiveRecord</a>
-validation documentation, see:</p>
+            <p>Validates the model instance and adds mapped-to-platform errors to a given <a href="../Errors.html"><code>Hoodoo::Errors</code></a> instance, if any validation errors occur. For <a href="../ActiveRecord.html"><code>ActiveRecord</code></a> validation documentation, see:</p>
 <ul><li>
-<p><a
-href="http://guides.rubyonrails.org/active_record_validations.html">guides.rubyonrails.org/active_record_validations.html</a></p>
+<p><a href="http://guides.rubyonrails.org/active_record_validations.html">guides.rubyonrails.org/active_record_validations.html</a></p>
 </li></ul>
 
-<p>Returns <code>true</code> if any errors were added (model instance is
-invalid) else <code>false</code> if everything is OK (model instance is
-valid).</p>
+<p>Returns <code>true</code> if any errors were added (model instance is invalid) else <code>false</code> if everything is OK (model instance is valid).</p>
 
-<p>Uses Hoodoo::ActiveRecord::Support#translate_errors_on to perform the
-mapping. For detailed information on how the mapping works, please see that
-method.</p>
+<p>Uses Hoodoo::ActiveRecord::Support#translate_errors_on to perform the mapping. For detailed information on how the mapping works, please see that method.</p>
 
-<h2 id="method-i-adds_errors_to-3F-label-Mapping+ActiveRecord+errors+to+Hoodoo+errors">Mapping <a href="../ActiveRecord.html">ActiveRecord</a> errors to <a href="../../Hoodoo.html">Hoodoo</a> errors</h2>
+<h2 id="method-i-adds_errors_to-3F-label-Mapping+ActiveRecord+errors+to+Hoodoo+errors">Mapping <a href="../ActiveRecord.html"><code>ActiveRecord</code></a> errors to <a href="../../Hoodoo.html"><code>Hoodoo</code></a> errors</h2>
 
-<p>The method makes an idiomatic example for “check errors in the model, map
-them to platform errors in my service&#39;s response and return the result”
-very simple, at the expense of modifying the passed-in error collection
-contents (mutating a parameter is a risky pattern).</p>
+<p>The method makes an idiomatic example for “check errors in the model, map them to platform errors in my service&#39;s response and return the result” very simple, at the expense of modifying the passed-in error collection contents (mutating a parameter is a risky pattern).</p>
 
 <p>Given this example model:</p>
 
@@ -152,14 +132,7 @@ end
 end
 </code></pre>
 
-<p>An alternative pattern which avoids mutating the input parameter uses the
-potentially less efficient, but conceptually cleaner method <a
-href="ErrorMapping.html#method-i-platform_errors">platform_errors</a>.
-Using <a
-href="ErrorMapping.html#method-i-adds_errors_to-3F">adds_errors_to?</a> as
-per the above code is faster, but the above example&#39;s use of
-<code>save</code>, as per its comments, does not fully handle some
-concurrency edge cases.</p>
+<p>An alternative pattern which avoids mutating the input parameter uses the potentially less efficient, but conceptually cleaner method <a href="ErrorMapping.html#method-i-platform_errors"><code>platform_errors</code></a>. Using <a href="ErrorMapping.html#method-i-adds_errors_to-3F"><code>adds_errors_to?</code></a> as per the above code is faster, but the above example&#39;s use of <code>save</code>, as per its comments, does not fully handle some concurrency edge cases.</p>
 
 <p>To win on both fronts use Hoodoo::ActiveRecord::Writer:</p>
 
@@ -178,26 +151,10 @@ concurrency edge cases.</p>
 end
 </code></pre>
 
-<p>In this case, the less efficient <a
-href="ErrorMapping.html#method-i-platform_errors">platform_errors</a> call
-only happens when we know we are in an error recovery situation anyway, in
-which case it isn&#39;t as important to operate in as efficient a manner as
-possible - provided one assumes that the non-error path is the much more
-common case!</p>
+<p>In this case, the less efficient <a href="ErrorMapping.html#method-i-platform_errors"><code>platform_errors</code></a> call only happens when we know we are in an error recovery situation anyway, in which case it isn&#39;t as important to operate in as efficient a manner as possible - provided one assumes that the non-error path is the much more common case!</p>
 <dl class="rdoc-list note-list"><dt><code>collection</code>
 <dd>
-<p>A <a href="../Errors.html">Hoodoo::Errors</a> instance, typically obtained
-from the <a href="../Services/Context.html">Hoodoo::Services::Context</a>
-instance passed to a service implementation in calls like <a
-href="../Services/Implementation.html#method-i-list">Hoodoo::Services::Implementation#list</a>
-or <a
-href="../Services/Implementation.html#method-i-show">Hoodoo::Services::Implementation#show</a>,
-via <code>context.response.errors</code> (i.e. <a
-href="../Services/Context.html#attribute-i-response">Hoodoo::Services::Context#response</a>
-/ <a
-href="../Services/Response.html#attribute-i-errors">Hoodoo::Services::Response#errors</a>).
-The collection you pass is updated if there are any errors recorded in the
-model, by adding equivalent structured errors to the collection.</p>
+<p>A <a href="../Errors.html"><code>Hoodoo::Errors</code></a> instance, typically obtained from the <a href="../Services/Context.html"><code>Hoodoo::Services::Context</code></a> instance passed to a service implementation in calls like <a href="../Services/Implementation.html#method-i-list"><code>Hoodoo::Services::Implementation#list</code></a> or <a href="../Services/Implementation.html#method-i-show"><code>Hoodoo::Services::Implementation#show</code></a>, via <code>context.response.errors</code> (i.e. <a href="../Services/Context.html#attribute-i-response"><code>Hoodoo::Services::Context#response</code></a> / <a href="../Services/Response.html#attribute-i-errors"><code>Hoodoo::Services::Response#errors</code></a>). The collection you pass is updated if there are any errors recorded in the model, by adding equivalent structured errors to the collection.</p>
 </dd></dl>
         </div>
 
@@ -227,29 +184,14 @@ model, by adding equivalent structured errors to the collection.</p>
         </div>
 
         <div class="description">
-            <p>Validate the model instance and return a <a
-href="../Errors.html">Hoodoo::Errors</a> instance which contains no
-platform errors if there are no model validation errors, else
-mapped-to-platform errors if validation errors are encountered. For <a
-href="../ActiveRecord.html">ActiveRecord</a> validation documentation, see:</p>
+            <p>Validate the model instance and return a <a href="../Errors.html"><code>Hoodoo::Errors</code></a> instance which contains no platform errors if there are no model validation errors, else mapped-to-platform errors if validation errors are encountered. For <a href="../ActiveRecord.html"><code>ActiveRecord</code></a> validation documentation, see:</p>
 <ul><li>
-<p><a
-href="http://guides.rubyonrails.org/active_record_validations.html">guides.rubyonrails.org/active_record_validations.html</a></p>
+<p><a href="http://guides.rubyonrails.org/active_record_validations.html">guides.rubyonrails.org/active_record_validations.html</a></p>
 </li></ul>
 
-<p>This mixin method provides support for an alternative coding style to
-method <a
-href="ErrorMapping.html#method-i-adds_errors_to-3F">adds_errors_to?</a>, by
-generating an <a href="../Errors.html">Errors</a> collection internally
-rather than modifying one passed by the caller. It is less efficient than
-calling <a
-href="ErrorMapping.html#method-i-adds_errors_to-3F">adds_errors_to?</a> if
-you have an existing errors collection already constructed, but otherwise
-follows a cleaner design pattern.</p>
+<p>This mixin method provides support for an alternative coding style to method <a href="ErrorMapping.html#method-i-adds_errors_to-3F"><code>adds_errors_to?</code></a>, by generating an <a href="../Errors.html"><code>Errors</code></a> collection internally rather than modifying one passed by the caller. It is less efficient than calling <a href="ErrorMapping.html#method-i-adds_errors_to-3F"><code>adds_errors_to?</code></a> if you have an existing errors collection already constructed, but otherwise follows a cleaner design pattern.</p>
 
-<p>See <a
-href="ErrorMapping.html#method-i-adds_errors_to-3F">adds_errors_to?</a>
-examples first, then compare the idiom shown there:</p>
+<p>See <a href="ErrorMapping.html#method-i-adds_errors_to-3F"><code>adds_errors_to?</code></a> examples first, then compare the idiom shown there:</p>
 
 <pre><code>return if model.adds_errors_to?( context.response.errors )
 </code></pre>
@@ -260,13 +202,7 @@ examples first, then compare the idiom shown there:</p>
 return if context.response.halt_processing?
 </code></pre>
 
-<p>It is a little more verbose and in this example will run a little slower
-due to the construction of the internal <a
-href="../Errors.html">Hoodoo::Errors</a> instance followed by the addition
-to the <code>context.response</code> collection, but you may prefer the
-conceptually cleaner approach. You can lean on the return value of
-add_errors and end up back at one line of (very slightly less obvious)
-code, too:</p>
+<p>It is a little more verbose and in this example will run a little slower due to the construction of the internal <a href="../Errors.html"><code>Hoodoo::Errors</code></a> instance followed by the addition to the <code>context.response</code> collection, but you may prefer the conceptually cleaner approach. You can lean on the return value of add_errors and end up back at one line of (very slightly less obvious) code, too:</p>
 
 <pre><code>return if context.response.add_errors( model.platform_errors )
 </code></pre>

@@ -39,24 +39,13 @@
         <div id="content">
     <div class="description">
         
-<p>Internal implementation detail of <a
-href="../Pool.html">Hoodoo::Communicators::Pool</a>.</p>
+<p>Internal implementation detail of <a href="../Pool.html"><code>Hoodoo::Communicators::Pool</code></a>.</p>
 
-<p>Since pool clients can say “wait until (one or all) workers have processed
-their Queue contents”, we need to have some way of seeing when all work is
-done. The clean way to do it is to push &#39;sync now&#39; messages onto
-the communicator Threads work Queues, so that as they work through the
-Queue they&#39;ll eventually reach that message. They then push a message
-onto a sync Queue for that worker. Meanwhile the waiting pool does (e.g.) a
-<code>pop</code> on the sync Queue, which means it blocks until the workers
-say they&#39;ve finished. No busy waiting, Ruby gets to make its best guess
-at scheduling, etc.; all good.</p>
+<p>Since pool clients can say “wait until (one or all) workers have processed their Queue contents”, we need to have some way of seeing when all work is done. The clean way to do it is to push &#39;sync now&#39; messages onto the communicator Threads work Queues, so that as they work through the Queue they&#39;ll eventually reach that message. They then push a message onto a sync Queue for that worker. Meanwhile the waiting pool does (e.g.) a <code>pop</code> on the sync Queue, which means it blocks until the workers say they&#39;ve finished. No busy waiting, Ruby gets to make its best guess at scheduling, etc.; all good.</p>
 
-<p>The catch? You can&#39;t use <code>Timeout::timeout...do...</code> around a
-Queue <code>pop</code>. It just doesn&#39;t work. It&#39;s a strange
-omission and requires code gymnastics to work around.</p>
+<p>The catch? You can&#39;t use <code>Timeout::timeout...do...</code> around a Queue <code>pop</code>. It just doesn&#39;t work. It&#39;s a strange omission and requires code gymnastics to work around.</p>
 
-<p>Enter <a href="QueueWithTimeout.html">QueueWithTimeout</a>, from:</p>
+<p>Enter <a href="QueueWithTimeout.html"><code>QueueWithTimeout</code></a>, from:</p>
 
 <pre><code>http://spin.atomicobject.com/2014/07/07/ruby-queue-pop-timeout/
 </code></pre>
@@ -173,17 +162,13 @@ omission and requires code gymnastics to work around.</p>
         </div>
 
         <div class="description">
-            <p>Take an entry from the front of the queue (FIFO) with optional timeout if
-the queue is empty.</p>
+            <p>Take an entry from the front of the queue (FIFO) with optional timeout if the queue is empty.</p>
 <dl class="rdoc-list note-list"><dt><code>timeout</code>
 <dd>
-<p>Timeout (in seconds, Integer or Float) to wait for an item to appear on the
-queue, if the queue is empty. If <code>nil</code>, there is no timeout
-(waits indefinitely). Optional; default is <code>nil</code>.</p>
+<p>Timeout (in seconds, Integer or Float) to wait for an item to appear on the queue, if the queue is empty. If <code>nil</code>, there is no timeout (waits indefinitely). Optional; default is <code>nil</code>.</p>
 </dd></dl>
 
-<p>If given a non-<code>nil</code> timeout value and the timeout expires,
-raises a ThreadError exception (just as non-blocking Ruby Queue#pop would).</p>
+<p>If given a non-<code>nil</code> timeout value and the timeout expires, raises a ThreadError exception (just as non-blocking Ruby Queue#pop would).</p>
         </div>
 
 
