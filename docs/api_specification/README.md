@@ -275,7 +275,7 @@ In the case of HTTP `GET` requests, individual resource representations are fetc
 
   At the receiving service end, the query string is unescaped and split into its key/value pairs, then search and filter values are treated as nested escaped key/value strings which are unescaped and split again.
 
-  For (contrived) example, to list some resource from offset 75 in a page size of 25 sorting by hypothetical field `name` ascending, searching for `name` values of string literal `str?ange=value` (!) and hypothetical awkwardly named field `address,street` value of `11 Cable Street`, the escaped values to search for become `str%3Fange%3Dvalue` and `11%20Cable%20Street`, so assembling the search string and percent-encoding the whole thing gives, in total:
+  For (contrived) example, to list some resource from offset 75 in a page size of 25 sorting by hypothetical field `name` ascending, searching for `name` values of string literal `str?ange=value` (!) and hypothetical awkwardly named field `address,street` value of `11 Cable Street`, the escaped values to search for become `str%3Fange%3Dvalue` and `11+Cable+Street`, so assembling the search string and percent-encoding the whole thing gives, in total:
 
   `offset=75&limit=25&sort=name&direction=asc&search=name%3Dstr%253Fange%253Dvalue%26address%252Cstreet%3D11%2BCable%2BStreet`
 
