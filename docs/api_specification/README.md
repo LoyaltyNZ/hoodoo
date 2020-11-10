@@ -277,21 +277,21 @@ In the case of HTTP `GET` requests, individual resource representations are fetc
 
   For (contrived) example, to list some resource from offset 75 in a page size of 25 sorting by hypothetical field `name` ascending, searching for `name` values of string literal `str?ange=value` (!) and hypothetical awkwardly named field `address,street` value of `11 Cable Street`, the escaped values to search for become `str%3Fange%3Dvalue` and `11%20Cable%20Street`, so assembling the search string and percent-encoding the whole thing gives, in total:
 
-  `offset=75&limit=25&sort=name&direction=asc&search=name%3Dstr%253Fange%253Dvalue%26address%252Cstreet%3D11%2520Cable%2520Street`
+  `offset=75&limit=25&sort=name&direction=asc&search=name%3Dstr%253Fange%253Dvalue%26address%252Cstreet%3D11%2BCable%2BStreet`
 
   ...or annotating those single and double escape sequences for clarity:
 
-  `offset=75&limit=25&sort=name&direction=asc&search=name` `%3D` `str` `%253F` `ange` `%253D` `value` `%26` `address` `%252C` `street` `%3D` `11` `%2520` `Cable` `%2520` `Street`
+  `offset=75&limit=25&sort=name&direction=asc&search=name` `%3D` `str` `%253F` `ange` `%253D` `value` `%26` `address` `%252C` `street` `%3D` `11` `%2B` `Cable` `%2B` `Street`
 
   ...so that the implementation can easily split out all the query string key/value pairs, leaving a `search` value of:
 
-  * `name%3Dstr%253Fange%253Dvalue%26address%252Cstreet%3D11%2520Cable%2520Street`
-  * `name` `%3D` `str` `%253F` `ange` `%253D` `value` `%26` `address` `%252C` `street` `%3D` `11` `%2520` `Cable` `%2520` `Street`
+  * `name%3Dstr%253Fange%253Dvalue%26address%252Cstreet%3D11%2BCable%2BStreet`
+  * `name` `%3D` `str` `%253F` `ange` `%253D` `value` `%26` `address` `%252C` `street` `%3D` `11` `%2B` `Cable` `%2B` `Street`
 
   ...which unescapes to:
 
-  * `name=str%3Fange%3Dvalue&address%2Cstreet=11%20Cable%20Street`
-  * `name` `=` `str` `%3F` `ange` `%3D` `value` `&` `address` `%2C` `street` `=` `11` `%20` `Cable` `%20` `Street`
+  * `name=str%3Fange%3Dvalue&address%2Cstreet=11+Cable+Street`
+  * `name` `=` `str` `%3F` `ange` `%3D` `value` `&` `address` `%2C` `street` `=` `11` `+` `Cable` `+` `Street`
 
   ...yielding the nested key/value pairs to be split and unescaped by the search mechanism.
 
