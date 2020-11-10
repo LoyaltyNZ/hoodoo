@@ -498,22 +498,74 @@ describe Hoodoo::Utilities do
       ENV[ 'HOODOO_CLOCK_DRIFT_TOLERANCE' ] = @old_drift
     end
 
-    it 'says "no" for "now"' do
-      expect( Hoodoo::Utilities.is_in_future?( Time.now ) ).to eq( false )
+    context 'when comparing to now' do
+      it 'says "no" for "now"' do
+        expect( Hoodoo::Utilities.is_in_future?( Time.now ) ).to eq( false )
+      end
+
+      it 'says "no" inside default drift allowance' do
+        expect( Hoodoo::Utilities.is_in_future?( Time.now + ( @default / 2 ) ) ).to eq( false )
+      end
+
+      # Hoodoo Guides: "...less than or equal to... ...is permitted...".
+      #
+      it 'says "no" at default drift allowance' do
+        expect( Hoodoo::Utilities.is_in_future?( Time.now + @default ) ).to eq( false )
+      end
+
+      it 'says "yes" outside default drift allowance' do
+        expect( Hoodoo::Utilities.is_in_future?( Time.now + @default + 1 ) ).to eq( true )
+      end
     end
 
-    it 'says "no" inside default drift allowance' do
-      expect( Hoodoo::Utilities.is_in_future?( Time.now + ( @default / 2 ) ) ).to eq( false )
+    context 'when comparing to a date in the past' do
+
+      before(:each) do
+        @past_date = Time.now - ( @default * 2 )
+      end
+
+      it 'says "yes" for "now"' do
+        expect( Hoodoo::Utilities.is_in_future?( Time.now, @past_date ) ).to eq( true )
+      end
+
+      it 'says "no" inside default drift allowance' do
+        expect( Hoodoo::Utilities.is_in_future?( @past_date + ( @default / 2 ), @past_date ) ).to eq( false )
+      end
+
+      it 'says "no" at default drift allowance' do
+        expect( Hoodoo::Utilities.is_in_future?( @past_date + @default, @past_date ) ).to eq( false )
+      end
+
+      it 'says "yes" outside default drift allowance' do
+        expect( Hoodoo::Utilities.is_in_future?( @past_date + @default + 1, @past_date ) ).to eq( true )
+      end
     end
 
-    # Hoodoo Guides: "...less than or equal to... ...is permitted...".
-    #
-    it 'says "no" at default drift allowance' do
-      expect( Hoodoo::Utilities.is_in_future?( Time.now + @default ) ).to eq( false )
-    end
+    context 'when comparing to a date in the future' do
 
-    it 'says "yes" outside default drift allowance' do
-      expect( Hoodoo::Utilities.is_in_future?( Time.now + @default + 1 ) ).to eq( true )
+      before(:each) do
+        @future_date = Time.now + ( @default * 2 )
+      end
+
+      it 'says "no" for "now"' do
+        expect( Hoodoo::Utilities.is_in_future?( Time.now, @future_date ) ).to eq( false )
+      end
+
+      it 'says "no" for a date before the future date, but after "now"' do
+        expect( Hoodoo::Utilities.is_in_future?( Time.now + ( @default / 2 ), @future_date ) ).to eq( false )
+      end
+
+      it 'says "no" inside default drift allowance' do
+        expect( Hoodoo::Utilities.is_in_future?( @future_date + ( @default / 2 ), @future_date ) ).to eq( false )
+      end
+
+      it 'says "no" at default drift allowance' do
+        expect( Hoodoo::Utilities.is_in_future?( @future_date + @default, @future_date ) ).to eq( false )
+      end
+
+      it 'says "yes" outside default drift allowance' do
+        expect( Hoodoo::Utilities.is_in_future?( @future_date + @default + 1, @future_date ) ).to eq( true )
+      end
     end
 
     it 'drift allowance can be reconfigured' do
@@ -552,7 +604,7 @@ describe Hoodoo::Utilities do
     end
 
     after :each do
-      @old_tz.blank? ? ENV.delete( 'TZ' ) : ENV[ 'TZ' ] = @old_tz
+      (@old_tz.nil? || @old_tz == '') ? ENV.delete( 'TZ' ) : ENV[ 'TZ' ] = @old_tz
     end
 
     it 'accepts a non-UTC Time and renders a UTC date-time' do
@@ -626,11 +678,11 @@ describe Hoodoo::Utilities do
     it 'rejects invalid input with an exception' do
       expect {
         Hoodoo::Utilities.rationalise_datetime( "hello" )
-      }.to raise_exception
+      }.to raise_exception( /Invalid parameter 'hello'/ )
 
       expect {
         Hoodoo::Utilities.rationalise_datetime( Array.new )
-      }.to raise_exception
+      }.to raise_exception( /Invalid parameter '\[\]'/ )
     end
   end
 end

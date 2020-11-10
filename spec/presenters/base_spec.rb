@@ -362,7 +362,8 @@ describe '#schema' do
           Hoodoo::UUID.generate,
           Time.now,
           'en-gb',
-          Hoodoo::UUID.generate
+          Hoodoo::UUID.generate,
+          Time.now
         )
 
         expect(Hoodoo::Data::Resources::World.validate(rendered, true).errors).to eq([])
@@ -707,6 +708,7 @@ describe '#schema' do
           'id' => @uuid,
           'kind' => 'World',
           'created_at' => Hoodoo::Utilities.standard_datetime( @time ),
+          'updated_at' => Hoodoo::Utilities.standard_datetime( @time ),
           'language' => 'en-gb',
           'errors_id' => @input['errors_id'],
           'test_tags' => 'foo,bar,baz',
@@ -729,7 +731,9 @@ describe '#schema' do
             @input,
             @uuid,
             @time,
-            'en-gb'
+            'en-gb',
+            nil,
+            @time
           )
         ).to( eq( @output ) )
       end
@@ -744,7 +748,8 @@ describe '#schema' do
             @uuid,
             @time,
             'en-gb',
-            fingerprint
+            fingerprint,
+            @time
           )
         ).to( eq( @output ) )
       end

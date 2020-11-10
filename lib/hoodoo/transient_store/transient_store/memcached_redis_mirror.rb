@@ -61,8 +61,9 @@ module Hoodoo
       # Hoodoo::TransientStore::new.
       #
       # The +storage_host_uri+ parameter is necessarily unusual here. It must
-      # be _a Hash_ with Symbol keys +:memcached+ and +:redis+, those values
-      # giving the actual storage engine host URI for the respective engines.
+      # be either _a Hash_ with Symbol keys +:memcached+ and +:redis+, or a
+      # serialised JSON string representing the same information. These values
+      # define the actual storage engine host URI for the respective engines.
       # For example, to connect to locally running engines configured on their
       # default ports, pass this Hash in +storage_host_uri+:
       #
@@ -70,6 +71,13 @@ module Hoodoo
       #       :memcached => 'localhost:11211',
       #       :redis     => 'redis://localhost:6379'
       #     }
+      #
+      # ...or:
+      #
+      #     "{
+      #       \"memcached\": \"localhost:11211\",
+      #       \"redis\":     \"redis://localhost:6379\"
+      #     }"
       #
       # See Hoodoo::TransientStore::Memcached::new and
       # Hoodoo::TransientStore::Redis::new for details of connection URI
@@ -79,6 +87,8 @@ module Hoodoo
       #
       def initialize( storage_host_uri:, namespace: )
         super # Pass all arguments through -> *not* 'super()'
+
+        storage_host_uri = deserialize_and_symbolize( storage_host_uri ) if storage_host_uri.is_a?( String )
 
         unless storage_host_uri.is_a?( Hash ) &&
                storage_host_uri.has_key?( :memcached ) &&
@@ -168,6 +178,18 @@ module Hoodoo
       def close
         @memcached_store.close() rescue nil # Rescue so that Redis "close()" is still attempted.
             @redis_store.close()
+      end
+
+      private
+
+      # Helper method for deserialising JSON objects and enforcing hash
+      # keys are symbolised.
+      #
+      def deserialize_and_symbolize( serialized_string )
+        Hoodoo::Utilities.symbolize( JSON.parse( serialized_string ) )
+
+      rescue JSON::ParserError
+        raise 'Hoodoo::TransientStore::MemcachedRedisMirror: Bad storage host URI data passed to constructor'
       end
 
     end

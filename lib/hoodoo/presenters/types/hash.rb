@@ -58,9 +58,12 @@ module Hoodoo
         end
 
         @specific   = true
-        value_klass = block_given?               ?
-                      Hoodoo::Presenters::Object :
-                      type_option_to_class( options.delete( :type ) )
+
+        # If an explicit type is given, use that. Otherwise, default to Field
+        # if no block is given, or Object is a block is given.
+        #
+        value_klass = !(options[:type].nil? || options[:type] == '') ? type_option_to_class( options.delete( :type ) ) :
+                        (block_given? ? Hoodoo::Presenters::Object : Hoodoo::Presenters::Field)
 
         # If we're defining specific keys and some of those keys have fields
         # with defaults, we need to merge those up to provide a whole-Hash

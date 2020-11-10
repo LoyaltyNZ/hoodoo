@@ -354,11 +354,14 @@ module Hoodoo
     # +input+:: A value that's passed to ::rationalise_datetime with the
     #           result checked against `now` allowing for clock drift.
     #
-    # If the given input is not parseable as a date-time like object, then
-    # the method it will throw a RuntimeError exception via
+    # +backdated_to+:: Optional. The "now" of the context, defaulting to
+    #                  +DateTime.now+.
+    #
+    # If the given input or `backdated_to` is not parseable as a date-time like
+    # object, then the method it will throw a RuntimeError exception via
     # ::rationalise_datetime.
     #
-    def self.is_in_future?( input )
+    def self.is_in_future?( input, backdated_to=DateTime.now )
 
       # See also ::clear_clock_drift_configuration_cache!.
       #
@@ -370,10 +373,12 @@ module Hoodoo
 
       value = self.rationalise_datetime( input )
 
+      backdated_now = self.rationalise_datetime( backdated_to )
+
       # Unlike Time, integer addition to DateTime adds days. There are 86400
       # seconds per day, so below we add @@clock_drift_tolerance seconds.
       #
-      value > DateTime.now + Rational(@@clock_drift_tolerance, 86400)
+      value > backdated_now + Rational(@@clock_drift_tolerance, 86400)
 
     end
 
