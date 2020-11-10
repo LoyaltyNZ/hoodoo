@@ -1,5 +1,9 @@
 # Hoodoo v2.x
 
+## 2.12.6 (2020-11-10)
+
+- Update examples for encoding search value
+
 ## 2.12.5 (2020-01-10)
 
 * Increase logged payload size in the `Middleware` to ensure payload data is not lost from the logs.
