@@ -275,23 +275,23 @@ In the case of HTTP `GET` requests, individual resource representations are fetc
 
   At the receiving service end, the query string is unescaped and split into its key/value pairs, then search and filter values are treated as nested escaped key/value strings which are unescaped and split again.
 
-  For (contrived) example, to list some resource from offset 75 in a page size of 25 sorting by hypothetical field `name` ascending, searching for `name` values of string literal `str?ange=value` (!) and hypothetical awkwardly named field `address,street` value of `11 Cable Street`, the escaped values to search for become `str%3Fange%3Dvalue` and `11+Cable+Street`, so assembling the search string and percent-encoding the whole thing gives, in total:
+  For (contrived) example, to list some resource from offset 75 in a page size of 25 sorting by hypothetical field `name` ascending, searching for `name` values of string literal `str?ange=value` (!), scope by `created_after` value of `2016-08-06T08:30:21+12:00` and hypothetical awkwardly named field `address,street` value of `11 Cable Street`, the escaped values to search for become `str%3Fange%3Dvalue`, `11+Cable+Street` and `2020-10-26T10%3A00%3A00%2B12%3A00`. Assembling the search string and percent-encoding the whole thing gives, in total:
 
-  `offset=75&limit=25&sort=name&direction=asc&search=name%3Dstr%253Fange%253Dvalue%26address%252Cstreet%3D11%2BCable%2BStreet`
+  `offset=75&limit=25&sort=name&direction=asc&search=name%3Dstr%253Fange%253Dvalue%26address%252Cstreet%3D11%2BCable%2BStreet%26created_after%3D2020-10-26T10%253A00%253A00%252B12%253A00`
 
   ...or annotating those single and double escape sequences for clarity:
 
-  `offset=75&limit=25&sort=name&direction=asc&search=name` `%3D` `str` `%253F` `ange` `%253D` `value` `%26` `address` `%252C` `street` `%3D` `11` `%2B` `Cable` `%2B` `Street`
+  `offset=75&limit=25&sort=name&direction=asc&search=name` `%3D` `str` `%253F` `ange` `%253D` `value` `%26` `address` `%252C` `street` `%3D` `11` `%2B` `Cable` `%2B` `Street` `%26` `created_after` `%3D` `2020-10-26T10` `%253A` `00` `%253A` `00` `%252B` `12` `%253A` `00`
 
   ...so that the implementation can easily split out all the query string key/value pairs, leaving a `search` value of:
 
-  * `name%3Dstr%253Fange%253Dvalue%26address%252Cstreet%3D11%2BCable%2BStreet`
-  * `name` `%3D` `str` `%253F` `ange` `%253D` `value` `%26` `address` `%252C` `street` `%3D` `11` `%2B` `Cable` `%2B` `Street`
+  * `name%3Dstr%253Fange%253Dvalue%26address%252Cstreet%3D11%2BCable%2BStreet%26created_after%3D2020-10-26T10%253A00%253A00%252B12%253A00`
+  * `name` `%3D` `str` `%253F` `ange` `%253D` `value` `%26` `address` `%252C` `street` `%3D` `11` `%2B` `Cable` `%2B` `Street` `%26` `created_after` `%3D` `2020-10-26T10` `%253A` `00` `%253A` `00` `%252B` `12` `%253A` `00`
 
   ...which unescapes to:
 
-  * `name=str%3Fange%3Dvalue&address%2Cstreet=11+Cable+Street`
-  * `name` `=` `str` `%3F` `ange` `%3D` `value` `&` `address` `%2C` `street` `=` `11` `+` `Cable` `+` `Street`
+  * `name=str%3Fange%3Dvalue&address%2Cstreet=11+Cable+Street&created_after=2020-10-26T10%3A00%3A00%2B12%3A00`
+  * `name` `=` `str` `%3F` `ange` `%3D` `value` `&` `address` `%2C` `street` `=` `11` `+` `Cable` `+` `Street` `&` `created_after` `=` `2020-10-26T10` `%3A` `00` `%3A` `00` `%2B` `12` `%3A` `00`
 
   ...yielding the nested key/value pairs to be split and unescaped by the search mechanism.
 
