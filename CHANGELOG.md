@@ -3,6 +3,8 @@
 ## 2.12.6 (2020-11-10)
 
 - Update examples for encoding search value
+- Bundle audit update and fixed broken specs after rack update
+- Remove ruby 2.2 from support matrix
 
 ## 2.12.5 (2020-01-10)
 
