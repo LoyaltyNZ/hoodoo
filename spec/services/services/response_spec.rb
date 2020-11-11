@@ -160,7 +160,7 @@ describe Hoodoo::Services::Response do
       expected = JSON.generate({})
       expect(status).to eq(200)
       expect(headers).to eq({'Content-Length' => expected.length.to_s})
-      expect(body.body).to eq([expected])
+      expect(body).to eq([expected])
     end
 
     it 'should return header data correctly' do
@@ -172,7 +172,7 @@ describe Hoodoo::Services::Response do
       expected = JSON.generate({})
       expect(status).to eq(200)
       expect(headers).to eq({'X-Foo' => 'baz', 'X-Bar' => 'boo', 'Content-Length' => expected.length.to_s})
-      expect(body.body).to eq([expected])
+      expect(body).to eq([expected])
     end
 
     it 'should return error condition Rack data correctly' do
@@ -187,7 +187,7 @@ describe Hoodoo::Services::Response do
       expected = JSON.generate(errors_hash)
       expect(status).to eq(422) # From the first error we stored, not the second
       expect(headers).to eq({'Content-Length' => expected.length.to_s})
-      expect(body.body).to eq([expected])
+      expect(body).to eq([expected])
     end
 
     it 'should return non-error condition Rack data correctly with a Hash body' do
@@ -199,7 +199,7 @@ describe Hoodoo::Services::Response do
       expected = JSON.generate(response_hash)
       expect(status).to eq(200) # From the first error we stored, not the second
       expect(headers).to eq({'Content-Length' => expected.length.to_s})
-      expect(body.body).to eq([expected])
+      expect(body).to eq([expected])
     end
 
     it 'returns non-error condition Rack data correctly with an Array body' do
@@ -211,7 +211,7 @@ describe Hoodoo::Services::Response do
       expected = JSON.generate({'_data' => response_array})
       expect(status).to eq(200) # From the first error we stored, not the second
       expect(headers).to eq({'Content-Length' => expected.length.to_s})
-      expect(body.body).to eq([expected])
+      expect(body).to eq([expected])
     end
 
     it 'returns non-error condition Rack data correctly with a dataset size' do
@@ -223,7 +223,7 @@ describe Hoodoo::Services::Response do
       expected = JSON.generate( { '_data' => response_array, '_dataset_size' => response_array.count } )
       expect( status    ).to eq( 200 )
       expect( headers   ).to eq( { 'Content-Length' => expected.length.to_s } )
-      expect( body.body ).to eq( [ expected ] )
+      expect( body ).to eq( [ expected ] )
     end
 
     it 'returns non-error condition Rack data correctly with an estimated dataset size' do
@@ -235,7 +235,7 @@ describe Hoodoo::Services::Response do
       expected = JSON.generate( { '_data' => response_array, '_estimated_dataset_size' => response_array.count } )
       expect( status    ).to eq( 200 )
       expect( headers   ).to eq( { 'Content-Length' => expected.length.to_s } )
-      expect( body.body ).to eq( [ expected ] )
+      expect( body ).to eq( [ expected ] )
     end
 
     it 'returns non-error condition Rack data correctly with both an accurate and an estimated dataset size' do
@@ -252,7 +252,7 @@ describe Hoodoo::Services::Response do
 
       expect( status    ).to eq( 200 )
       expect( headers   ).to eq( { 'Content-Length' => expected.length.to_s } )
-      expect( body.body ).to eq( [ expected ] )
+      expect( body ).to eq( [ expected ] )
     end
 
     it 'should allow pre-encoded strings in the body' do
@@ -261,7 +261,7 @@ describe Hoodoo::Services::Response do
       status, headers, body = @r.for_rack
 
       expect(status).to eq(200)
-      expect(body.body).to eq(['Hello World!'])
+      expect(body).to eq(['Hello World!'])
     end
 
     it 'should raise an exception when the body is in an unsupported format' do

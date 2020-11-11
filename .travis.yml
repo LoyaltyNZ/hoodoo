@@ -1,4 +1,4 @@
-# Hoodoo requires Ruby 2.2 or later with Rack 2.x.y.
+# Hoodoo requires Ruby 2.3 or later with Rack 2.x.y.
 #
 language: ruby
 dist: trusty
@@ -7,7 +7,6 @@ matrix:
     - rvm: 2.5.1
     - rvm: 2.4.4
     - rvm: 2.3.7
-    - rvm: 2.2.10
 
 # http://blog.travis-ci.com/2014-12-17-faster-builds-with-container-based-infrastructure/
 #
@@ -23,6 +22,15 @@ addons:
 services:
   - memcached
   - redis-server
+
+# Fix for bundler 2.0 (which tries to exec the exact version listed in Gemfile.lock under BUNDLED WITH)
+# the travis test runner probably doesn't have this installed. We'll install it and rubygems 3.0+
+# see: https://bundler.io/v2.0/guides/bundler_2_upgrade.html
+before_install:
+  - gem update --system
+  - bundler_version=$(grep -A 1 "BUNDLED WITH" Gemfile.lock | sed -n 2p | tr -d ' ') && gem install bundler --version "${bundler_version}"
+  - gem --version
+  - gem list bundler
 
 script:
   - "bundle exec bundle-audit update && bundle exec bundle-audit check"
