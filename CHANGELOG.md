@@ -1,5 +1,9 @@
 # Hoodoo v2.x
 
+## 2.12.7 (2021-02-12)
+
+- If an exception occurs while logging a message, pretty print the object that caused the error to stderr, so that callers have more context for troubleshooting.
+
 ## 2.12.6 (2020-11-10)
 
 - Update examples for encoding search value

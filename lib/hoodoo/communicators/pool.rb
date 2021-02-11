@@ -9,6 +9,8 @@
 #           15-Dec-2014 (ADH): Created.
 ########################################################################
 
+require 'pp'
+
 module Hoodoo
   module Communicators
 
@@ -151,7 +153,7 @@ module Hoodoo
             begin
               communicator.communicate( object )
             rescue => exception
-              handle_exception( exception, communicator )
+              handle_exception( exception, communicator, object )
             end
 
           else
@@ -333,6 +335,7 @@ module Hoodoo
           #
           loop do
 
+            obj = nil
             # Exception handler block.
             #
             begin
@@ -342,20 +345,23 @@ module Hoodoo
               #
               loop do
                 entry = work_queue.shift() # ".shift" => FIFO, ".pop" would be LIFO
+                obj = nil
 
                 if entry.terminate?
                   ::Thread.exit
                 elsif entry.sync?
+
                   sync_queue << :sync
                 elsif entry.dropped?
                   communicator.dropped( entry.dropped )
                 else
+                  obj = entry.payload
                   communicator.communicate( entry.payload )
                 end
               end
 
             rescue => exception
-              handle_exception( exception, communicator )
+              handle_exception( exception, communicator, obj )
 
             end
           end
@@ -453,12 +459,14 @@ module Hoodoo
       #
       # +exception+::    Exception (or Exception subclass) instance to print.
       # +communicator+:: Communicator instance that raised the exception.
+      # +obj+::          Parameter passed to the communicator subclass instance
+      #                  #communicate methods
       #
-      def handle_exception( exception, communicator )
+      def handle_exception( exception, communicator, obj )
         begin
           report = "Communicator class #{ communicator.class.name } raised exception '#{ exception }': #{ exception.backtrace }"
           $stderr.puts( report )
-
+          pp( obj, $stderr )
         rescue
           # If the above fails then everything else is probably about to
           # collapse, but optimistically try to ignore the error and keep
