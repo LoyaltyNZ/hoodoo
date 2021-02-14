@@ -4,6 +4,8 @@
 
 - If an exception occurs while logging a message, pretty print the object that caused the error to stderr, so that callers have more context for troubleshooting.
 - Maintenance Travis migrated to use travis-ci.com
+- bundle update to fix security vulnerability `CVE-2021-22880`
+
 
 ## 2.12.6 (2020-11-10)
 
