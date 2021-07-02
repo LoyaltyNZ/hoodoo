@@ -17,8 +17,7 @@ Gem::Specification.new do | s |
   s.test_files  = Dir.glob( 'spec/**/*.rb' )
   s.homepage    = 'https://loyaltynz.github.io/hoodoo/'
 
-  # s.required_ruby_version = '>= 2.2.10'
-  s.required_ruby_version = '>= 2.6.7'
+  s.required_ruby_version = '>= 2.5.5'
 
   s.add_runtime_dependency     'dalli',            '~>  2.7' # Memcached client
   s.add_runtime_dependency     'rack'
