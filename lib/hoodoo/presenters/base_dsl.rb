@@ -161,7 +161,7 @@ module Hoodoo
       #     # E.g.:
       #     #
       #     # {
-      #     #   "numbers" => [ BigDecimal.new( '2.2511' ) ]
+      #     #   "numbers" => [ BigDecimal( '2.2511' ) ]
       #     # }
       #
       def array( name, options = {}, &block )

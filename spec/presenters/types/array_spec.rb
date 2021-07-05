@@ -274,9 +274,9 @@ describe Hoodoo::Presenters::Array do
     'boolean'   => { :valid => [ true                    ], :invalid => [ 4.51, 'false'                    ] },
     'date'      => { :valid => [ Date.today.iso8601      ], :invalid => [ Date.today, '23rd January 2041'  ] },
     'date_time' => { :valid => [ DateTime.now.iso8601    ], :invalid => [ DateTime.now, '2017-01-27 12:00' ] },
-    'decimal'   => { :valid => [ '4.51'                  ], :invalid => [ 4.51, BigDecimal.new( '4.51' )   ] },
+    'decimal'   => { :valid => [ '4.51'                  ], :invalid => [ 4.51, BigDecimal( '4.51' )       ] },
     'enum'      => { :valid => [ 'one'                   ], :invalid => [ 'One', 1                         ] },
-    'float'     => { :valid => [ 4.51                    ], :invalid => [ BigDecimal.new(4.51, 2), '4.51'  ] },
+    'float'     => { :valid => [ 4.51                    ], :invalid => [ BigDecimal(4.51, 2), '4.51'      ] },
     'integer'   => { :valid => [ 4                       ], :invalid => [ '4'                              ] },
     'string'    => { :valid => [ 'four'                  ], :invalid => [ 'toolong', 4, true               ] },
     'tags'      => { :valid => [ 'tag_a,tag_b,tag_c'     ], :invalid => [ 4, true                          ] },
@@ -446,9 +446,9 @@ describe Hoodoo::Presenters::Array do
       let( :valid_data ) do
         {
           'numbers' => [
-            BigDecimal.new( '42.55111' ), # Precision is FYI data generators, not the renderer :-/
-            BigDecimal.new( '42.4'     ),
-            BigDecimal.new( '42'       )
+            BigDecimal( '42.55111' ), # Precision is FYI data generators, not the renderer :-/
+            BigDecimal( '42.4'     ),
+            BigDecimal( '42'       )
           ]
         }
       end

@@ -58,21 +58,16 @@ module Hoodoo; module Services; class Discovery # Just used as a namespace here
       # server is already running, expect an "address in use" connection
       # exception from DRb.
       #
-      # $SAFE will be set to 1 (unless it is already higher) in this thread.
-      #
       # +port+:: Passed to ::uri method.
       #
       def self.start( port = nil )
 
         uri = self.uri( port )
 
-        # For security, "disable eval() and friends":
-        #
-        # http://www.ruby-doc.org/stdlib-2.2.3/libdoc/drb/rdoc/DRb.html
-        # https://ruby-hacking-guide.github.io/security.html
-        # http://blog.recurity-labs.com/archives/2011/05/12/druby_for_penetration_testers/
-
-        $SAFE = 1
+        # $SAFE and taint tracking is being removed from ruby 2.7+
+        # https://bugs.ruby-lang.org/issues/16131
+        # Set to 0 to disable taint tracking in earlier versions
+        $SAFE = 0
 
         # Have to allow a tained port string from "outside" just to be able
         # to start the service on a given port; so untaint that deliberately.
