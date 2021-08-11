@@ -1,6 +1,6 @@
 # Hoodoo v2.x
 ## 2.12.8 (2021-05-31)
-- bundle update `rdoc` to fix security vulnerability [CVE-2021-31799](https://www.ruby-lang.org/en/news/2021/05/02/os-command-injection-in-rdoc/)
+- bundle update to fix security vulnerability [CVE-2021-31799](https://www.ruby-lang.org/en/news/2021/05/02/os-command-injection-in-rdoc/)
 
 ## 2.12.7 (2021-02-12)
 
