@@ -4,9 +4,9 @@ language: ruby
 dist: trusty
 matrix:
   include:
-    - rvm: 2.5.1
-    - rvm: 2.4.4
-    - rvm: 2.3.7
+    - rvm: 2.5.5
+    - rvm: 2.6.7
+    - rvm: 2.7.3
 
 # http://blog.travis-ci.com/2014-12-17-faster-builds-with-container-based-infrastructure/
 #
@@ -17,11 +17,11 @@ sudo: false
 cache: bundler
 
 addons:
-  postgresql: "9.4" # (...or later)
+  postgresql: "9.6"
 
 services:
   - memcached
-  - redis-server
+  - redis
 
 # Fix for bundler 2.0 (which tries to exec the exact version listed in Gemfile.lock under BUNDLED WITH)
 # the travis test runner probably doesn't have this installed. We'll install it and rubygems 3.0+
