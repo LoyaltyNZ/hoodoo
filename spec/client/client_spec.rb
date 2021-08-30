@@ -654,6 +654,8 @@ describe Hoodoo::Client do
                 @dated_from = Time.now - 2.years
               when :deja_vu
                 @deja_vu = true
+              when :disable_downstream_sync
+                @disable_downstream_sync = true
               else
                 raise "Update client_spec.rb with new non-secured properties for test"
             end

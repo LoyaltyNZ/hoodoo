@@ -33,6 +33,7 @@ _Release 8, 2018-07-27_
       * [`X-Deja-Vu`](#http_x_deja_vu)
       * [`X-Resource-UUID`](#http_x_resource_uuid)
       * [`X-Assume-Identity-Of`](#http_x_assume_identity_of)
+      * [`X-Disable-Downstream-Sync`](#http_x_disable_downstream_sync)
   * [Security](#security)
     * [Access security](#access_security)
       * [Scoping and resource representation](#scoping_and_resource_representation)
@@ -650,7 +651,33 @@ X-Assume-Identity-Of: account_id=account1&member_id=member%20number%203
 
 This would be an extremely dangerous header without other safeguards, since it would allow an API caller to masquerade as any identity in the entire system without limit. To avoid such a large security risk, the Session's associated [Caller](#caller.resource) must include rules that describe the allowed key/value pair data in the HTTP header. If these rules are absent or prohibit one or more of the attempted key/value pairs used, a 403 `platform.forbidden` response will be returned. See the [Caller resource documentation](#caller.resource) for more information about the rule definiton and behaviour.
 
+##### <a name="http_x_disable_downstream_sync"></a>`X-Disable-Downstream-Sync`
 
+* Relevant for HTTP `POST` only
+* Only allowed value is `yes`; header must be omitted for implicit `no`
+
+When present, The caller can _indicate_ to the service being called that it should process the request but do not forward the changes to downstream services This behaviour is not guaranteed because the service may not implement the logic to handle this header.
+
+This is useful for scenarios where the immediate syncrhonisation of data is not requried or desired.
+
+*IMPORTANT:* Inside the code, this header must be referenced following Rack header format `HTTP_X_DISABLE_DOWNSTREAM_SYNC` because headers coersion on the receiver side is not implemented. `X-Disable-Downstream-Sync` is used in the making of the request.
+
+Examples:
+```
+# caller
+client   = Hoodoo::Client.new(options)
+version  = 1
+resource = client.resource(:ResourceName, version, { disable_downstream_sync: true })
+
+# receiver
+context.request.headers['HTTP_X_DISABLE_DOWNSTREAM_SYNC'] == 'yes'
+
+# Postman
+X-Disable-Downstream-Sync=yes
+
+# curl
+-H "X-Disable-Downstream-Sync: yes"
+```
 
 ### <a name="security"></a>Security
 

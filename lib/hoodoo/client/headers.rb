@@ -211,6 +211,13 @@ module Hoodoo
           :header        => 'X-Deja-Vu',
           :header_proc   => BOOLEAN_HEADER_PROC,
         },
+
+        'HTTP_X_DISABLE_DOWNSTREAM_SYNC' => {
+          :property      => :disable_downstream_sync,
+          :property_proc => BOOLEAN_PROPERTY_PROC,
+          :header        => 'X-Disable-Downstream-Sync',
+          :header_proc   => BOOLEAN_HEADER_PROC,
+        },
       }
 
       # For speed, fill in a "property_writer" value, where "foo" becomes

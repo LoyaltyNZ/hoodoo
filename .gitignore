@@ -7,3 +7,4 @@ test.log
 tags
 _site
 .sass-cache
+.byebug_history
