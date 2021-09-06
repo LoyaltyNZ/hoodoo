@@ -1,4 +1,8 @@
 # Hoodoo v2.x
+
+## 2.12.9 (2021-09-07)
+- Add HTTP Header [X-Disable-Downstream-Sync](./docs/api_specification#http_x_disable_downstream_sync)
+
 ## 2.12.8 (2021-05-31)
 - bundle update to fix security vulnerability [CVE-2021-31799](https://www.ruby-lang.org/en/news/2021/05/02/os-command-injection-in-rdoc/)
 - Set $SAFE = 0 to disable taint tracking and keep the behaviour consistent between older ruby versions & 2.7+

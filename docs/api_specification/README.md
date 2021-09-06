@@ -658,7 +658,7 @@ This would be an extremely dangerous header without other safeguards, since it w
 
 When present, The caller can _indicate_ to the service being called that it should process the request but do not forward the changes to downstream services This behaviour is not guaranteed because the service may not implement the logic to handle this header.
 
-This is useful for scenarios where the immediate syncrhonisation of data is not requried or desired.
+This is useful for scenarios where the immediate synchronisation of data is not requried or desired.
 
 *IMPORTANT:* Inside the code, this header must be referenced following Rack header format `HTTP_X_DISABLE_DOWNSTREAM_SYNC` because headers coersion on the receiver side is not implemented. `X-Disable-Downstream-Sync` is used in the making of the request.
 
