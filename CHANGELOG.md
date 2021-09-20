@@ -1,5 +1,8 @@
 # Hoodoo v2.x
 
+## 2.12.10 (2021-09-20)
+- Fix travis release to limit publishing build to a single ruby version.
+
 ## 2.12.9 (2021-09-07)
 - Add HTTP Header [X-Disable-Downstream-Sync](./docs/api_specification#http_x_disable_downstream_sync)
 
