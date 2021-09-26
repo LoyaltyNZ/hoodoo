@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    hoodoo (2.12.10)
+    hoodoo (2.12.10.pre)
       dalli (~> 2.7)
       rack
 
