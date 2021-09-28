@@ -1,16 +1,11 @@
 language: ruby
 dist: trusty
-matrix:
-  include:
-    - rvm: 2.3.5
-    - rvm: 2.4.10
-    - rvm: 2.5.9
-    - rvm: 2.6.7
-    - rvm: 2.7.3
-
-# http://blog.travis-ci.com/2014-12-17-faster-builds-with-container-based-infrastructure/
-#
-sudo: false
+rvm:
+  - 2.3.5
+  - 2.4.10
+  - 2.5.9
+  - 2.6.7
+  - 2.7.3
 
 # http://docs.travis-ci.com/user/caching/
 #
