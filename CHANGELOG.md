@@ -1,3 +1,7 @@
+TODO
+
+- Update Postgres to version 13.3 [FT-811](https://loyaltynz.atlassian.net/browse/FT-811)
+
 # Hoodoo v2.x
 
 ## 2.12.10 (2021-09-20)
