@@ -199,6 +199,7 @@ def spec_helper_connect_to_postgres( database_name = 'postgres' )
   ActiveRecord::Base.establish_connection(
     :adapter  => 'postgresql',
     :username => ENV[ 'DATABASE_USER' ],
+    :host     => '127.0.0.1',
     :database => database_name
   )
 end
