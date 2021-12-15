@@ -1,5 +1,8 @@
 # Hoodoo v2.x
 
+## 2.12.11 (2021-11-30)
+- Update Postgres to version 13.3 [FT-811](https://loyaltynz.atlassian.net/browse/FT-811)
+
 ## 2.12.10 (2021-09-20)
 - Fix travis release to limit publishing build to a single ruby version.
 

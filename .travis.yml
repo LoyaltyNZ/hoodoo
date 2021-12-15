@@ -12,17 +12,20 @@ rvm:
 #
 cache: bundler
 
-addons:
-  postgresql: "9.6"
-
 services:
   - memcached
   - redis
+  - docker
 
 # Fix for bundler 2.0 (which tries to exec the exact version listed in Gemfile.lock under BUNDLED WITH)
 # the travis test runner probably doesn't have this installed. We'll install it and rubygems 3.0+
 # see: https://bundler.io/v2.0/guides/bundler_2_upgrade.html
 before_install:
+  - docker run -d -e POSTGRES_PASSWORD='' -e POSTGRES_HOST_AUTH_METHOD='trust' -p 127.0.0.1:15432:5432 postgres:13.3
+  - docker ps -a
+  - curl -LJO https://raw.githubusercontent.com/vishnubob/wait-for-it/master/wait-for-it.sh
+  - chmod +x ./wait-for-it.sh
+  - ./wait-for-it.sh 127.0.0.1:15432
   - gem update --system
   - bundler_version=$(grep -A 1 "BUNDLED WITH" Gemfile.lock | sed -n 2p | tr -d ' ') && gem install bundler --version "${bundler_version}"
   - gem --version
