@@ -1,5 +1,10 @@
 # Hoodoo v2.x
 
+## 3.0.0 (2022-02-01)
+- Update ruby-version to 2.7.3
+- Update activerecord [DS-1484](https://loyaltynz.atlassian.net/browse/DS-1484)
+- Removes support for ruby versions < 2.7.3
+
 ## 2.12.11 (2021-11-30)
 - Update Postgres to version 13.3 [FT-811](https://loyaltynz.atlassian.net/browse/FT-811)
 
