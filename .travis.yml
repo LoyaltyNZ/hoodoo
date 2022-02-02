@@ -2,10 +2,6 @@ language: ruby
 os: linux
 dist: trusty
 rvm:
-  - 2.3.5
-  - 2.4.10
-  - 2.5.9
-  - 2.6.7
   - 2.7.3
 
 # http://docs.travis-ci.com/user/caching/
