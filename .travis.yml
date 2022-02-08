@@ -28,8 +28,9 @@ before_install:
   - gem list bundler
 
 script:
+  - fail here please
   - "bundle exec bundle-audit update && bundle exec bundle-audit check"
-  - TZ=Pacific/Auckland DATABASE_USER=postgres bundle exec rspec spec --backtrace
+  - TZ=Pacific/Auckland DATABASE_USER=postgres DATABASE_PORT=15432 bundle exec rspec spec --backtrace
 
 # https://docs.travis-ci.com/user/build-stages/deploy-rubygems/
 # https://docs.travis-ci.com/user/deployment/rubygems
