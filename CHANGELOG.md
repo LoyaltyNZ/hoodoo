@@ -1,5 +1,35 @@
 # Hoodoo v2.x
 
+## 3.0.0 (2022-02-01)
+- Update ruby-version to 2.7.3
+- Update activerecord [DS-1484](https://loyaltynz.atlassian.net/browse/DS-1484)
+- Removes support for ruby versions < 2.7.3
+
+## 2.12.11 (2021-11-30)
+- Update Postgres to version 13.3 [FT-811](https://loyaltynz.atlassian.net/browse/FT-811)
+
+## 2.12.10 (2021-09-20)
+- Fix travis release to limit publishing build to a single ruby version.
+
+## 2.12.9 (2021-09-07)
+- Add HTTP Header [X-Disable-Downstream-Sync](./docs/api_specification#http_x_disable_downstream_sync)
+
+## 2.12.8 (2021-05-31)
+- bundle update to fix security vulnerability [CVE-2021-31799](https://www.ruby-lang.org/en/news/2021/05/02/os-command-injection-in-rdoc/)
+- Set $SAFE = 0 to disable taint tracking and keep the behaviour consistent between older ruby versions & 2.7+
+
+## 2.12.7 (2021-02-12)
+
+- If an exception occurs while logging a message, pretty print the object that caused the error to stderr, so that callers have more context for troubleshooting.
+- Maintenance Travis migrated to use travis-ci.com
+- bundle update `activerecord` to fix security vulnerability `CVE-2021-22880`.
+
+## 2.12.6 (2020-11-10)
+
+- Update examples for encoding search value
+- Bundle audit update and fixed broken specs after rack update
+- Remove ruby 2.2 from support matrix
+
 ## 2.12.5 (2020-01-10)
 
 * Increase logged payload size in the `Middleware` to ensure payload data is not lost from the logs.

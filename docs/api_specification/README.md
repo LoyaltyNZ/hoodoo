@@ -33,6 +33,7 @@ _Release 8, 2018-07-27_
       * [`X-Deja-Vu`](#http_x_deja_vu)
       * [`X-Resource-UUID`](#http_x_resource_uuid)
       * [`X-Assume-Identity-Of`](#http_x_assume_identity_of)
+      * [`X-Disable-Downstream-Sync`](#http_x_disable_downstream_sync)
   * [Security](#security)
     * [Access security](#access_security)
       * [Scoping and resource representation](#scoping_and_resource_representation)
@@ -275,23 +276,23 @@ In the case of HTTP `GET` requests, individual resource representations are fetc
 
   At the receiving service end, the query string is unescaped and split into its key/value pairs, then search and filter values are treated as nested escaped key/value strings which are unescaped and split again.
 
-  For (contrived) example, to list some resource from offset 75 in a page size of 25 sorting by hypothetical field `name` ascending, searching for `name` values of string literal `str?ange=value` (!) and hypothetical awkwardly named field `address,street` value of `11 Cable Street`, the escaped values to search for become `str%3Fange%3Dvalue` and `11%20Cable%20Street`, so assembling the search string and percent-encoding the whole thing gives, in total:
+  For (contrived) example, to list some resource from offset 75 in a page size of 25 sorting by hypothetical field `name` ascending, searching for `name` values of string literal `str?ange=value` (!), scope by `created_after` value of `2020-10-26T10:00:00+12:00` and hypothetical awkwardly named field `address,street` value of `11 Cable Street`, the escaped values to search for become `str%3Fange%3Dvalue`, `11+Cable+Street` and `2020-10-26T10%3A00%3A00%2B12%3A00`. Assembling the search string and percent-encoding the whole thing gives, in total:
 
-  `offset=75&limit=25&sort=name&direction=asc&search=name%3Dstr%253Fange%253Dvalue%26address%252Cstreet%3D11%2520Cable%2520Street`
+  `offset=75&limit=25&sort=name&direction=asc&search=name%3Dstr%253Fange%253Dvalue%26address%252Cstreet%3D11%2BCable%2BStreet%26created_after%3D2020-10-26T10%253A00%253A00%252B12%253A00`
 
   ...or annotating those single and double escape sequences for clarity:
 
-  `offset=75&limit=25&sort=name&direction=asc&search=name` `%3D` `str` `%253F` `ange` `%253D` `value` `%26` `address` `%252C` `street` `%3D` `11` `%2520` `Cable` `%2520` `Street`
+  `offset=75&limit=25&sort=name&direction=asc&search=name` `%3D` `str` `%253F` `ange` `%253D` `value` `%26` `address` `%252C` `street` `%3D` `11` `%2B` `Cable` `%2B` `Street` `%26` `created_after` `%3D` `2020-10-26T10` `%253A` `00` `%253A` `00` `%252B` `12` `%253A` `00`
 
   ...so that the implementation can easily split out all the query string key/value pairs, leaving a `search` value of:
 
-  * `name%3Dstr%253Fange%253Dvalue%26address%252Cstreet%3D11%2520Cable%2520Street`
-  * `name` `%3D` `str` `%253F` `ange` `%253D` `value` `%26` `address` `%252C` `street` `%3D` `11` `%2520` `Cable` `%2520` `Street`
+  * `name%3Dstr%253Fange%253Dvalue%26address%252Cstreet%3D11%2BCable%2BStreet%26created_after%3D2020-10-26T10%253A00%253A00%252B12%253A00`
+  * `name` `%3D` `str` `%253F` `ange` `%253D` `value` `%26` `address` `%252C` `street` `%3D` `11` `%2B` `Cable` `%2B` `Street` `%26` `created_after` `%3D` `2020-10-26T10` `%253A` `00` `%253A` `00` `%252B` `12` `%253A` `00`
 
   ...which unescapes to:
 
-  * `name=str%3Fange%3Dvalue&address%2Cstreet=11%20Cable%20Street`
-  * `name` `=` `str` `%3F` `ange` `%3D` `value` `&` `address` `%2C` `street` `=` `11` `%20` `Cable` `%20` `Street`
+  * `name=str%3Fange%3Dvalue&address%2Cstreet=11+Cable+Street&created_after=2020-10-26T10%3A00%3A00%2B12%3A00`
+  * `name` `=` `str` `%3F` `ange` `%3D` `value` `&` `address` `%2C` `street` `=` `11` `+` `Cable` `+` `Street` `&` `created_after` `=` `2020-10-26T10` `%3A` `00` `%3A` `00` `%2B` `12` `%3A` `00`
 
   ...yielding the nested key/value pairs to be split and unescaped by the search mechanism.
 
@@ -650,7 +651,33 @@ X-Assume-Identity-Of: account_id=account1&member_id=member%20number%203
 
 This would be an extremely dangerous header without other safeguards, since it would allow an API caller to masquerade as any identity in the entire system without limit. To avoid such a large security risk, the Session's associated [Caller](#caller.resource) must include rules that describe the allowed key/value pair data in the HTTP header. If these rules are absent or prohibit one or more of the attempted key/value pairs used, a 403 `platform.forbidden` response will be returned. See the [Caller resource documentation](#caller.resource) for more information about the rule definiton and behaviour.
 
+##### <a name="http_x_disable_downstream_sync"></a>`X-Disable-Downstream-Sync`
 
+* Relevant for HTTP `POST` only
+* Only allowed value is `yes`; header must be omitted for implicit `no`
+
+When present, The caller can _indicate_ to the service being called that it should process the request but do not forward the changes to downstream services This behaviour is not guaranteed because the service may not implement the logic to handle this header.
+
+This is useful for scenarios where the immediate synchronisation of data is not requried or desired.
+
+*IMPORTANT:* Inside the code, this header must be referenced following Rack header format `HTTP_X_DISABLE_DOWNSTREAM_SYNC` because headers coersion on the receiver side is not implemented. `X-Disable-Downstream-Sync` is used in the making of the request.
+
+Examples:
+```
+# caller
+client   = Hoodoo::Client.new(options)
+version  = 1
+resource = client.resource(:ResourceName, version, { disable_downstream_sync: true })
+
+# receiver
+context.request.headers['HTTP_X_DISABLE_DOWNSTREAM_SYNC'] == 'yes'
+
+# Postman
+X-Disable-Downstream-Sync=yes
+
+# curl
+-H "X-Disable-Downstream-Sync: yes"
+```
 
 ### <a name="security"></a>Security
 

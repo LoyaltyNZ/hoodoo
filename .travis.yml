@@ -1,41 +1,50 @@
-# Hoodoo requires Ruby 2.2 or later with Rack 2.x.y.
-#
 language: ruby
+os: linux
 dist: trusty
-matrix:
-  include:
-    - rvm: 2.5.1
-    - rvm: 2.4.4
-    - rvm: 2.3.7
-    - rvm: 2.2.10
-
-# http://blog.travis-ci.com/2014-12-17-faster-builds-with-container-based-infrastructure/
-#
-sudo: false
+rvm:
+  - 2.7.3
 
 # http://docs.travis-ci.com/user/caching/
 #
 cache: bundler
 
-addons:
-  postgresql: "9.4" # (...or later)
-
 services:
   - memcached
-  - redis-server
+  - redis
+  - docker
+
+# Fix for bundler 2.0 (which tries to exec the exact version listed in Gemfile.lock under BUNDLED WITH)
+# the travis test runner probably doesn't have this installed. We'll install it and rubygems 3.0+
+# see: https://bundler.io/v2.0/guides/bundler_2_upgrade.html
+before_install:
+  - docker run -d -e POSTGRES_PASSWORD='' -e POSTGRES_HOST_AUTH_METHOD='trust' -p 127.0.0.1:15432:5432 postgres:13.3
+  - docker ps -a
+  - curl -LJO https://raw.githubusercontent.com/vishnubob/wait-for-it/master/wait-for-it.sh
+  - chmod +x ./wait-for-it.sh
+  - ./wait-for-it.sh 127.0.0.1:15432
+  - gem update --system
+  - bundler_version=$(grep -A 1 "BUNDLED WITH" Gemfile.lock | sed -n 2p | tr -d ' ') && gem install bundler --version "${bundler_version}"
+  - gem --version
+  - gem list bundler
 
 script:
   - "bundle exec bundle-audit update && bundle exec bundle-audit check"
   - TZ=Pacific/Auckland DATABASE_USER=postgres bundle exec rspec spec --backtrace
 
+# https://docs.travis-ci.com/user/build-stages/deploy-rubygems/
 # https://docs.travis-ci.com/user/deployment/rubygems
 # API key is encrypted and secure.
 #
-deploy:
-  provider: rubygems
-  api_key:
-    secure: "ki55eFpiy306DB7An4d/ZoKr/EEqfLnDzCQx0Uc0aFTn8Q7MXKCjHdKAYVq7vboHghOoXZn5fI8+1SQbh+nFO5lm9kKQKJ47m9JrgbGuzLKLGyaZW4gvduikKoXMMTh1zGrkVnR5gAbVyOrn/O5PbduEE/YgZ2ibqU+FfipEi3jb2J2B3E9udsZQtIjf4qsitjDq90U4bVVuzjGilrIrqeUXpM75blKpfIc5J5i9rbmY3VC5eBjZJDXPbeViANI0ko798KmsJAA6Beg3veUhbZ71x7X1kjOiyPyjjqL7GpzBxiNh+rzvE+uDZ9QBpNuQwv50R52up2tATH8A0ox8D3Wj6L8/dIchWwrJmXKavz1FJ9KHuJZ2zm4CQREvoPx6lkDGOIsE08ZXomTl41mdQ1niNT/V4Uu6ALyj4oq3Bvk7ugFHWri8/85pGBAPnuzE1z13UApQeGs1LfzagNfpzJmU+8UVmPjdJBYgiETpVCFePjrGVd8dGFFBs9B1RJV5eMNdx0k6oR0tA/e1m3pyg6kXirXLtV30fo+JFuNT9d8xwjtI16uy05V/MxdJM0AHPd+qXObfXzyQZHdttw4bJ+HRVzVN7864A8hwGlC1BWLUuHtzS64IKNgKxYtF1e/gDFy4BfBkBpA9l16Vb7CA6H6z6Y3yHdHHrLNGVCP88Kc="
-  gem: hoodoo
-  on:
-    tags: true
-    repo: LoyaltyNZ/hoodoo
+jobs:
+  include:
+    - stage: gem release
+      rvm: 2.7.3
+      script: echo "Deploying to rubygems.org ..."
+      deploy:
+        provider: rubygems
+        api_key:
+          secure: "ki55eFpiy306DB7An4d/ZoKr/EEqfLnDzCQx0Uc0aFTn8Q7MXKCjHdKAYVq7vboHghOoXZn5fI8+1SQbh+nFO5lm9kKQKJ47m9JrgbGuzLKLGyaZW4gvduikKoXMMTh1zGrkVnR5gAbVyOrn/O5PbduEE/YgZ2ibqU+FfipEi3jb2J2B3E9udsZQtIjf4qsitjDq90U4bVVuzjGilrIrqeUXpM75blKpfIc5J5i9rbmY3VC5eBjZJDXPbeViANI0ko798KmsJAA6Beg3veUhbZ71x7X1kjOiyPyjjqL7GpzBxiNh+rzvE+uDZ9QBpNuQwv50R52up2tATH8A0ox8D3Wj6L8/dIchWwrJmXKavz1FJ9KHuJZ2zm4CQREvoPx6lkDGOIsE08ZXomTl41mdQ1niNT/V4Uu6ALyj4oq3Bvk7ugFHWri8/85pGBAPnuzE1z13UApQeGs1LfzagNfpzJmU+8UVmPjdJBYgiETpVCFePjrGVd8dGFFBs9B1RJV5eMNdx0k6oR0tA/e1m3pyg6kXirXLtV30fo+JFuNT9d8xwjtI16uy05V/MxdJM0AHPd+qXObfXzyQZHdttw4bJ+HRVzVN7864A8hwGlC1BWLUuHtzS64IKNgKxYtF1e/gDFy4BfBkBpA9l16Vb7CA6H6z6Y3yHdHHrLNGVCP88Kc="
+        gem: hoodoo
+        on:
+          tags: true
+          repo: LoyaltyNZ/hoodoo
