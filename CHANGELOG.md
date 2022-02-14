@@ -1,39 +1,47 @@
-# Hoodoo v2.x
+# Hoodoo v3.x
 
 ## 3.0.0 (2022-02-01)
-- Update ruby-version to 2.7.3
-- Update activerecord [DS-1484](https://loyaltynz.atlassian.net/browse/DS-1484)
-- Removes support for ruby versions < 2.7.3
+
+* Update minimum Ruby version to 2.7.3.
+* Update `activerecord` to address [DS-1484](https://loyaltynz.atlassian.net/browse/DS-1484).
+
+
+
+# Hoodoo v2.x
 
 ## 2.12.11 (2021-11-30)
-- Update Postgres to version 13.3 [FT-811](https://loyaltynz.atlassian.net/browse/FT-811)
+
+* Update PostgreSQL to version 13.3 [FT-811](https://loyaltynz.atlassian.net/browse/FT-811).
 
 ## 2.12.10 (2021-09-20)
-- Fix travis release to limit publishing build to a single ruby version.
+
+* Fix Travis release to limit publishing build to a single Ruby version.
 
 ## 2.12.9 (2021-09-07)
-- Add HTTP Header [X-Disable-Downstream-Sync](./docs/api_specification#http_x_disable_downstream_sync)
+
+* Add HTTP Header [`X-Disable-Downstream-Sync`](./docs/api_specification#http_x_disable_downstream_sync).
 
 ## 2.12.8 (2021-05-31)
-- bundle update to fix security vulnerability [CVE-2021-31799](https://www.ruby-lang.org/en/news/2021/05/02/os-command-injection-in-rdoc/)
-- Set $SAFE = 0 to disable taint tracking and keep the behaviour consistent between older ruby versions & 2.7+
+
+* `bundle update` to fix security vulnerability [CVE-2021-31799](https://www.ruby-lang.org/en/news/2021/05/02/os-command-injection-in-rdoc/).
+* Set `$SAFE = 0` to disable taint tracking and keep the behaviour consistent between older Ruby versions and 2.7+.
 
 ## 2.12.7 (2021-02-12)
 
-- If an exception occurs while logging a message, pretty print the object that caused the error to stderr, so that callers have more context for troubleshooting.
-- Maintenance Travis migrated to use travis-ci.com
-- bundle update `activerecord` to fix security vulnerability `CVE-2021-22880`.
+* If an exception occurs while logging a message, pretty print the object that caused the error to `stderr`, so that callers have more context for troubleshooting.
+* Maintenance - Travis migrated to use `travis-ci.com`.
+* Update `activerecord` to fix security vulnerability `CVE-2021-22880`.
 
 ## 2.12.6 (2020-11-10)
 
-- Update examples for encoding search value
-- Bundle audit update and fixed broken specs after rack update
-- Remove ruby 2.2 from support matrix
+* Update examples for encoding search value.
+* Bundle audit update and fixed broken specs after Rack update.
+* Remove Ruby 2.2 from support matrix.
 
 ## 2.12.5 (2020-01-10)
 
-* Increase logged payload size in the `Middleware` to ensure payload data is not lost from the logs.
-* Maintenance bundle update
+* Increase logged payload size in the middleware to ensure payload data is not lost from the logs.
+* Maintenance `bundle update`.
 
 ## 2.12.4 (2019-11-15)
 
@@ -42,7 +50,6 @@
 ## 2.12.3 (2019-11-12)
 
 * Bug fix, removed dependency on the Rails `blank?` method.
-
 
 ## 2.12.2 (2019-07-11)
 
@@ -226,6 +233,8 @@ Supporting new methods are:
 * The Caller resource now specifies that instances can be shown by primary UUID or fingerprint UUID; both are equally unique. If you are updating a Caller resource implementation, ensure that it records its fingerprint and is compliant with the Hoodoo 2 specification. If you have an ActiveRecord model supporting the resource, adding the line `acquire_with :foo` to that model where `:foo` is the name of the column used to store the fingerprint UUID (without modification) will suffice and use a migration to add an index for that column if there isn't one present already. The fingerprint is expected to be of the same form as any other Hoodoo 32-character UUID (see [`Hoodoo::UUID.generate`](https://cdn.rawgit.com/LoyaltyNZ/hoodoo/master/docs/rdoc/classes/Hoodoo/UUID.html#method-c-generate)). This is intended for API lookup only; **ensure you have test coverage to prove that Sessions can still only be created with a Caller ID, not a fingerprint!**
 
 * New concept of framework-level search/filter query string of `created_by`, to go with fingerprint support introduced back in version 1.19.0. This requires _opt-out_ of services that don't support it, so is slightly backwards-incompatible with existing service code. If an interface already defines such a search key it'll override that provided by Hoodoo. Otherwise-unmodified older services which update to Hoodoo 2 and forget to opt-out will either return an error if the feature is used in an API call, or ignore it and return a list without that particular search/filter field applied.
+
+
 
 # Hoodoo v1.x
 
