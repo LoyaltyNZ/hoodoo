@@ -1,9 +1,9 @@
 language: ruby
+os: linux
 dist: trusty
+
 rvm:
   - 2.7.3
-
-sudo: false
 
 # http://docs.travis-ci.com/user/caching/
 #
@@ -40,7 +40,7 @@ jobs:
   include:
     - stage: gem release
       rvm: 2.7.3
-      script: echo "Deploying to rubygems.org ..."
+      before_deploy: echo "Deploying to rubygems.org ..."
       deploy:
         provider: rubygems
         api_key:
