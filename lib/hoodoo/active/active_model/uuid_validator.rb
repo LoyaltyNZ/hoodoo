@@ -30,9 +30,8 @@ module Hoodoo
         #     end
         #
         def validate_each( record, attribute, value )
-
           unless value.nil? || Hoodoo::UUID.valid?( value )
-            record.errors[ attribute ] << ( options[ :message ] || 'is invalid' )
+            record.errors.add(attribute, options[ :message ] || 'is invalid' )
           end
 
         end

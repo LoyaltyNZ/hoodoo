@@ -2,6 +2,7 @@ language: ruby
 os: linux
 dist: trusty
 rvm:
+  - 2.6.7
   - 2.7.3
 
 # http://docs.travis-ci.com/user/caching/
@@ -28,7 +29,6 @@ before_install:
   - gem list bundler
 
 script:
-  - fail here please
   - "bundle exec bundle-audit update && bundle exec bundle-audit check"
   - TZ=Pacific/Auckland DATABASE_USER=postgres DATABASE_PORT=15432 bundle exec rspec spec --backtrace
 
