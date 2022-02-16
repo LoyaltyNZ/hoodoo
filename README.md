@@ -79,6 +79,7 @@ Some additional higher level hand written documentation may also be present as M
 - [Jesse Whitham](https://github.com/whithajess)
 - [Jordan Carter](https://github.com/jordandcarter)
 - [Joseph Leniston](https://github.com/josephleniston)
+- [Lukas Nguyen](https://github.com/kasperite)
 - [Mai Nguyen](https://github.com/mjnguyenloyalty)
 - [Max Copley](https://github.com/copley)
 - [Max Dietrich](https://github.com/mbdietrich)
