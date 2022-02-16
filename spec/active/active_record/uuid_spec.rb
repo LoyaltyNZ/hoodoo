@@ -28,7 +28,7 @@ describe Hoodoo::ActiveRecord::UUID do
   it 'should complain about a bad UUID' do
     m = RSpecModelUUIDTest.new
     m.id = "hello"
-
+    
     expect( m.save ).to eq( false )
     expect( Hoodoo::UUID.valid?( m.id ) ).to eq( false )
     expect( m.errors ).to_not be_empty

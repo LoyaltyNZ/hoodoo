@@ -46,7 +46,6 @@ describe Hoodoo::ActiveRecord::Creator do
         @interaction.context.response,
         @interaction
       )
-
       @context = @interaction.context
       @session = @interaction.context.session
     end
@@ -65,8 +64,8 @@ describe Hoodoo::ActiveRecord::Creator do
 
         instance = klass.new_in( @context )
 
-        expect( instance.created_at ).to eq( @time )
-        expect( instance.updated_at ).to eq( @time )
+        expect( Hoodoo::Utilities.standard_datetime(instance.created_at) ).to eq( Hoodoo::Utilities.standard_datetime(@time) )
+        expect( Hoodoo::Utilities.standard_datetime(instance.updated_at) ).to eq( Hoodoo::Utilities.standard_datetime(@time) )
       end
 
       it 'creates with provided attributes' do

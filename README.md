@@ -6,6 +6,10 @@ Simplify the implementation of services within an API-based software platform.
 
 See [Hoodoo Guides](https://loyaltynz.github.io/hoodoo/) for extensive documentation and examples.
 
+## Note
+
+Latest version `v3.0.1` only supports `activerecord 7.0` onwards. Use `v2.12.11` if you need to support lower `activerecord` version
+
 ## Usage
 
 Add the gem to your `Gemfile`:
@@ -18,13 +22,13 @@ Require hoodoo when needed:
 
 Functionality includes:
 
-* _Middleware:_ The heart of services; Rack-based service applications (think Sinatra, Grape, Rails...) -- Hoodoo::Services::Middleware; but start at Hoodoo::Services::Service and see also Hoodoo::Services::Interface, Hoodoo::Services::Implementation and related classes Hoodoo::Services::Request, Hoodoo::Services::Response, Hoodoo::Services::Session, Hoodoo::Services::Context
-* _Generic Presenter Layer:_ Input and output validation and rendering -- Hoodoo::Presenters::Base, Hoodoo::Presenters::BaseDSL
-* _Unified Error Helpers:_ Adds standard platform error capability to any API/class -- Hoodoo::ErrorDescriptions, Hoodoo::Errors
-* _Unified Logger:_ A single logger for use with platform or local logs -- Hoodoo::Logger
-* _Platform Sessions:_ Authentication of sessions, session context -- Hoodoo::Services::Session
-* _Platform Events:_ Publishes Platform Events when running on a queue-based infrastructure -- Hoodoo::Events::PlatformEvent
-* _ActiveRecord Assistance_: If using ActiveRecord (optional), provides support methods/mixins for models to help bridge the gap between API resources and persistence -- Hoodoo::ActiveRecord
+- _Middleware:_ The heart of services; Rack-based service applications (think Sinatra, Grape, Rails...) -- Hoodoo::Services::Middleware; but start at Hoodoo::Services::Service and see also Hoodoo::Services::Interface, Hoodoo::Services::Implementation and related classes Hoodoo::Services::Request, Hoodoo::Services::Response, Hoodoo::Services::Session, Hoodoo::Services::Context
+- _Generic Presenter Layer:_ Input and output validation and rendering -- Hoodoo::Presenters::Base, Hoodoo::Presenters::BaseDSL
+- _Unified Error Helpers:_ Adds standard platform error capability to any API/class -- Hoodoo::ErrorDescriptions, Hoodoo::Errors
+- _Unified Logger:_ A single logger for use with platform or local logs -- Hoodoo::Logger
+- _Platform Sessions:_ Authentication of sessions, session context -- Hoodoo::Services::Session
+- _Platform Events:_ Publishes Platform Events when running on a queue-based infrastructure -- Hoodoo::Events::PlatformEvent
+- _ActiveRecord Assistance_: If using ActiveRecord (optional), provides support methods/mixins for models to help bridge the gap between API resources and persistence -- Hoodoo::ActiveRecord
 
 Master documentation is through RDoc (see below).
 
@@ -60,33 +64,34 @@ Some additional higher level hand written documentation may also be present as M
 
 ## Contributors
 
-* [Andrew Hodgkinson](https://github.com/pond)
-* [Tom Cully](https://github.com/tomdionysus)
+- [Andrew Hodgkinson](https://github.com/pond)
+- [Tom Cully](https://github.com/tomdionysus)
 
-* [Andrew Amesbury](https://github.com/aames)
-* [Andrew Pett](https://github.com/aspett)
-* [Ben Greville](https://github.com/bengreville)
-* [Charles Peach](https://github.com/charlespeach)
-* [Dave Harris](https://github.com/daveharris)
-* [David Mitchell](https://github.com/davidamitchell)
-* [David Oram](https://github.com/davidoram)
-* [Graham Jenson](https://github.com/grahamjenson)
-* [Jeremy Olliver](https://github.com/jeremyolliver)
-* [Jesse Whitham](https://github.com/whithajess)
-* [Jordan Carter](https://github.com/jordandcarter)
-* [Joseph Leniston](https://github.com/josephleniston)
-* [Mai Nguyen](https://github.com/mjnguyenloyalty)
-* [Max Copley](https://github.com/copley)
-* [Max Dietrich](https://github.com/mbdietrich)
-* [Natasha Dowse](https://github.com/natashadowse)
-* [Olivia Baddeley](https://github.com/OBaddeley)
-* [Patrick Copeland](https://github.com/pjscopeland)
-* [Rory Stephenson](https://github.com/thelollies)
-* [Wayne Hoover](https://github.com/waynehoover)
+- [Andrew Amesbury](https://github.com/aames)
+- [Andrew Pett](https://github.com/aspett)
+- [Ben Greville](https://github.com/bengreville)
+- [Charles Peach](https://github.com/charlespeach)
+- [Dave Harris](https://github.com/daveharris)
+- [David Mitchell](https://github.com/davidamitchell)
+- [David Oram](https://github.com/davidoram)
+- [Graham Jenson](https://github.com/grahamjenson)
+- [Jeremy Olliver](https://github.com/jeremyolliver)
+- [Jesse Whitham](https://github.com/whithajess)
+- [Jordan Carter](https://github.com/jordandcarter)
+- [Joseph Leniston](https://github.com/josephleniston)
+- [Lukas Nguyen](https://github.com/kasperite)
+- [Mai Nguyen](https://github.com/mjnguyenloyalty)
+- [Max Copley](https://github.com/copley)
+- [Max Dietrich](https://github.com/mbdietrich)
+- [Natasha Dowse](https://github.com/natashadowse)
+- [Olivia Baddeley](https://github.com/OBaddeley)
+- [Patrick Copeland](https://github.com/pjscopeland)
+- [Rory Stephenson](https://github.com/thelollies)
+- [Wayne Hoover](https://github.com/waynehoover)
 
 ## Licence
 
 Please see the `LICENSE` and `hoodoo.gemspec` file for licence details. Those files are authoritative. At the time of writing - though this note might get out of date - Hoodoo is released under the LGPL v3; see:
 
-* http://www.gnu.org/licenses/lgpl-3.0-standalone.html
-* https://tldrlegal.com/license/gnu-lesser-general-public-license-v3-(lgpl-3)
+- http://www.gnu.org/licenses/lgpl-3.0-standalone.html
+- https://tldrlegal.com/license/gnu-lesser-general-public-license-v3-(lgpl-3)

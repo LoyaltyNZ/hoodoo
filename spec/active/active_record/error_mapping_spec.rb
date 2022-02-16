@@ -152,7 +152,7 @@ describe Hoodoo::ActiveRecord::ErrorMapping do
     } )
 
     array_col = RSpecModelErrorMappingTest.columns_hash[ 'array' ]
-    expect( array_col ).to receive( :array ).once.and_return( true )
+    expect(array_col.array).to eq( true )
 
     m.adds_errors_to?( @errors )
 

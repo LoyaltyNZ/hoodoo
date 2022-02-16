@@ -200,7 +200,7 @@ def spec_helper_connect_to_postgres( database_name = 'postgres' )
     :adapter  => 'postgresql',
     :username => ENV[ 'DATABASE_USER' ],
     :host     => '127.0.0.1',
-    :port     => 15432,
+    :port     => ENV[ 'DATABASE_PORT' ] || 5432,
     :database => database_name
   )
 end

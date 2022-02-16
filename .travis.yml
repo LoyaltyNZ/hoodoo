@@ -1,6 +1,7 @@
 language: ruby
 os: linux
 dist: trusty
+
 rvm:
   - 2.7.3
 
@@ -29,22 +30,15 @@ before_install:
 
 script:
   - "bundle exec bundle-audit update && bundle exec bundle-audit check"
-  - TZ=Pacific/Auckland DATABASE_USER=postgres bundle exec rspec spec --backtrace
+  - TZ=Pacific/Auckland DATABASE_USER=postgres DATABASE_PORT=15432 bundle exec rspec spec --backtrace
 
-# https://docs.travis-ci.com/user/build-stages/deploy-rubygems/
-# https://docs.travis-ci.com/user/deployment/rubygems
-# API key is encrypted and secure.
-#
-jobs:
-  include:
-    - stage: gem release
-      rvm: 2.7.3
-      script: echo "Deploying to rubygems.org ..."
-      deploy:
-        provider: rubygems
-        api_key:
-          secure: "ki55eFpiy306DB7An4d/ZoKr/EEqfLnDzCQx0Uc0aFTn8Q7MXKCjHdKAYVq7vboHghOoXZn5fI8+1SQbh+nFO5lm9kKQKJ47m9JrgbGuzLKLGyaZW4gvduikKoXMMTh1zGrkVnR5gAbVyOrn/O5PbduEE/YgZ2ibqU+FfipEi3jb2J2B3E9udsZQtIjf4qsitjDq90U4bVVuzjGilrIrqeUXpM75blKpfIc5J5i9rbmY3VC5eBjZJDXPbeViANI0ko798KmsJAA6Beg3veUhbZ71x7X1kjOiyPyjjqL7GpzBxiNh+rzvE+uDZ9QBpNuQwv50R52up2tATH8A0ox8D3Wj6L8/dIchWwrJmXKavz1FJ9KHuJZ2zm4CQREvoPx6lkDGOIsE08ZXomTl41mdQ1niNT/V4Uu6ALyj4oq3Bvk7ugFHWri8/85pGBAPnuzE1z13UApQeGs1LfzagNfpzJmU+8UVmPjdJBYgiETpVCFePjrGVd8dGFFBs9B1RJV5eMNdx0k6oR0tA/e1m3pyg6kXirXLtV30fo+JFuNT9d8xwjtI16uy05V/MxdJM0AHPd+qXObfXzyQZHdttw4bJ+HRVzVN7864A8hwGlC1BWLUuHtzS64IKNgKxYtF1e/gDFy4BfBkBpA9l16Vb7CA6H6z6Y3yHdHHrLNGVCP88Kc="
-        gem: hoodoo
-        on:
-          tags: true
-          repo: LoyaltyNZ/hoodoo
+before_deploy: echo "Deploying to rubygems.org ..."
+
+deploy:
+  provider: rubygems
+  api_key:
+    secure: "ki55eFpiy306DB7An4d/ZoKr/EEqfLnDzCQx0Uc0aFTn8Q7MXKCjHdKAYVq7vboHghOoXZn5fI8+1SQbh+nFO5lm9kKQKJ47m9JrgbGuzLKLGyaZW4gvduikKoXMMTh1zGrkVnR5gAbVyOrn/O5PbduEE/YgZ2ibqU+FfipEi3jb2J2B3E9udsZQtIjf4qsitjDq90U4bVVuzjGilrIrqeUXpM75blKpfIc5J5i9rbmY3VC5eBjZJDXPbeViANI0ko798KmsJAA6Beg3veUhbZ71x7X1kjOiyPyjjqL7GpzBxiNh+rzvE+uDZ9QBpNuQwv50R52up2tATH8A0ox8D3Wj6L8/dIchWwrJmXKavz1FJ9KHuJZ2zm4CQREvoPx6lkDGOIsE08ZXomTl41mdQ1niNT/V4Uu6ALyj4oq3Bvk7ugFHWri8/85pGBAPnuzE1z13UApQeGs1LfzagNfpzJmU+8UVmPjdJBYgiETpVCFePjrGVd8dGFFBs9B1RJV5eMNdx0k6oR0tA/e1m3pyg6kXirXLtV30fo+JFuNT9d8xwjtI16uy05V/MxdJM0AHPd+qXObfXzyQZHdttw4bJ+HRVzVN7864A8hwGlC1BWLUuHtzS64IKNgKxYtF1e/gDFy4BfBkBpA9l16Vb7CA6H6z6Y3yHdHHrLNGVCP88Kc="
+  gem: hoodoo
+  on:
+    tags: true
+    repo: LoyaltyNZ/hoodoo
