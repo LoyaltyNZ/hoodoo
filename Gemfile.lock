@@ -89,6 +89,7 @@ GEM
       addressable (>= 2.8.0)
       crack (>= 0.3.2)
       hashdiff (>= 0.4.0, < 2.0.0)
+    webrick (1.7.0)
 
 PLATFORMS
   ruby
@@ -113,6 +114,7 @@ DEPENDENCIES
   simplecov-rcov (~> 0.2)
   timecop (~> 0.9)
   webmock (~> 3.4)
+  webrick
 
 BUNDLED WITH
    1.17.3
