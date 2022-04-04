@@ -218,7 +218,7 @@ module Hoodoo
             # Now we've a copy, we can use high level URI methods to manipulate
             # it to form the full request URI.
 
-            remote_uri.path << "/#{ URI::escape( ident ) }" unless ident.nil?
+            remote_uri.path << "/#{ CGI::escape( ident ) }" unless ident.nil?
 
             # Grey area over whether this encodes spaces as "%20" or "+", but
             # so long as the middleware consistently uses the URI encode/decode
