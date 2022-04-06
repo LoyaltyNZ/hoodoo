@@ -567,7 +567,7 @@ describe Hoodoo::Client do
         )
 
         expect_any_instance_of( Net::HTTP ).to receive( :open_timeout= ).with( timeout ).and_call_original
-        expect( Timeout ).to receive( :timeout ).with( timeout, Net::OpenTimeout ).once do
+        allow_any_instance_of( Net::HTTP ).to receive( :connect ) do
           raise Net::OpenTimeout
         end
       end
@@ -575,7 +575,6 @@ describe Hoodoo::Client do
       it 'times out elegantly' do
         mock_ident = Hoodoo::UUID.generate()
         result     = @endpoint.show( mock_ident )
-
         expect( result.platform_errors.has_errors? ).to eq( true )
         expect( result.platform_errors.errors[ 0 ][ 'code' ] ).to eq( 'platform.timeout' )
       end
