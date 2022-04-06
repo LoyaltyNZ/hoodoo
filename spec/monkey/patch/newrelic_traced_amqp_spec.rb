@@ -14,9 +14,9 @@ describe Hoodoo::Monkey::Patch::NewRelicTracedAMQP, :order => :defined do
   # count them.
   #
   before :all do
-    @@endpoint_do_amqp_count       = 0
-    @@newrelic_crossapp_count      = 0
-    @@newrelic_agent_disable_count = 0
+    CounterAMQ.endpoint_do_amqp_count = 0
+    CounterAMQ.newrelic_crossapp_count = 0
+    CounterAMQ.newrelic_agent_disable_count = 0
 
     Hoodoo::Monkey.enable( extension_module: Hoodoo::Monkey::Patch::NewRelicTracedAMQP )
 
@@ -44,14 +44,14 @@ describe Hoodoo::Monkey::Patch::NewRelicTracedAMQP, :order => :defined do
     #
     allow_any_instance_of( Hoodoo::Client::Endpoint::AMQP ).to receive( :do_amqp ) do | instance, description_of_request |
       result = original_do_amqp.bind( instance ).call( description_of_request )
-      @@endpoint_do_amqp_count += 1
+      CounterAMQ.endpoint_do_amqp_count += 1
       result
     end
 
     # We should always start a new Segment...
     #
     allow( ::NewRelic::Agent::Transaction ).to receive( :start_external_request_segment ) do | type, uri, method |
-      @@newrelic_crossapp_count += 1
+      CounterAMQ.newrelic_crossapp_count += 1
 
       expect( type   ).to   eq( 'AlchemyFlux' )
       expect( uri    ).to be_a( URI           )
@@ -64,7 +64,7 @@ describe Hoodoo::Monkey::Patch::NewRelicTracedAMQP, :order => :defined do
     # that segment.
     #
     allow_any_instance_of( ::NewRelic::Agent::Transaction::Segment ).to receive( :finish ) do
-      @@newrelic_agent_disable_count += 1
+      CounterAMQ.newrelic_agent_disable_count += 1
     end
   end
 
@@ -72,9 +72,9 @@ describe Hoodoo::Monkey::Patch::NewRelicTracedAMQP, :order => :defined do
 
   context 'afterwards' do
     it 'has non-zero NewRelic method call counts' do
-      expect( @@endpoint_do_amqp_count       ).to be > 5
-      expect( @@newrelic_crossapp_count      ).to eq( @@endpoint_do_amqp_count )
-      expect( @@newrelic_agent_disable_count ).to eq( @@endpoint_do_amqp_count )
+      expect( CounterAMQ.endpoint_do_amqp_count       ).to be > 5
+      expect( CounterAMQ.newrelic_crossapp_count      ).to eq( CounterAMQ.endpoint_do_amqp_count )
+      expect( CounterAMQ.newrelic_agent_disable_count ).to eq( CounterAMQ.endpoint_do_amqp_count )
     end
   end
 end
@@ -189,5 +189,12 @@ describe Hoodoo::Monkey::Patch::NewRelicTracedAMQP::AlchemyFluxHTTPResponseWrapp
 
   it 'can report headers as a Hash' do
     expect( @wrapper.to_hash ).to eq( @http_response[ 'headers' ] )
+  end
+end
+
+# Hits accumulator
+class CounterAMQ
+  class << self
+    attr_accessor :endpoint_do_amqp_count, :newrelic_crossapp_count, :newrelic_agent_disable_count
   end
 end
