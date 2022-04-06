@@ -271,7 +271,7 @@ describe Hoodoo::Client do
   def set_vars_for( opts )
     @locale          = rand( 2 ) == 0 ? nil : SecureRandom.urlsafe_base64(2)
     @expected_locale = @locale.nil? ? 'en-nz' : @locale.downcase
-    @client          = Hoodoo::Client.new( opts.merge( :locale => @locale ) )
+    @client          = Hoodoo::Client.new( **opts.merge( :locale => @locale ) )
 
     endpoint_opts = {}
 

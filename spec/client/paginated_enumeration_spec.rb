@@ -222,11 +222,10 @@ describe Hoodoo::Client do
   end
 
   before :each do
-
-    @client = Hoodoo::Client.new({
+    @client = Hoodoo::Client.new(
       drb_port:     URI.parse( Hoodoo::Services::Discovery::ByDRb::DRbServer.uri() ).port,
       auto_session: false
-    })
+    )
 
   end
 
