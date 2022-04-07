@@ -35,8 +35,8 @@ Gem::Specification.new do | s |
   s.add_development_dependency 'rack-test',        '~>  1.1'
   s.add_development_dependency 'rake',             '~> 12.0'
   s.add_development_dependency 'redis',            '~>  4.0' # Redis client
-  s.add_development_dependency 'rspec',            '~>  3.8'
-  s.add_development_dependency 'rspec-mocks',      '~>  3.8'
+  s.add_development_dependency 'rspec',            '~>  3.11'
+  s.add_development_dependency 'rspec-mocks',      '~>  3.11'
   s.add_development_dependency 'simplecov-rcov',   '~>  0.2'
   s.add_development_dependency 'webrick'
   s.add_development_dependency 'timecop',          '~>  0.9'
