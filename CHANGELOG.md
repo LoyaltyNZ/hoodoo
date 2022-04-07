@@ -1,5 +1,12 @@
 # Hoodoo v2.x
 
+## 3.1.0 (2022-04-07)
+
+- Update ruby-version to 3.1.0 [DS-2034](https://loyaltynz.atlassian.net/browse/DS-2034)
+- Update bundler to 2.3.10
+- Update Rspec to 3.11
+- Update other general gems in patch level
+
 ## 3.0.1 (2022-02-16)
 
 - Fixed travis false positive build and broken specs [DS-1930](https://loyaltynz.atlassian.net/browse/DS-1930)
