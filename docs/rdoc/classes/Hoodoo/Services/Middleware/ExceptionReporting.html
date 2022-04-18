@@ -15,153 +15,203 @@
 
     <meta property="og:title" value="Hoodoo::Services::Middleware::ExceptionReporting">
 
+  
+    
     <meta name="description" content="Exception reporting / monitoring through external services.">
     <meta property="og:description" content="Exception reporting / monitoring through external services.">
+  
 
     <meta name="keywords" content="Hoodoo::Services::Middleware::ExceptionReporting class">
+  
     <meta name="keywords" content="add, remove, report, contextual_report, wait">
+  
 </head>
 
 <body>
     <div class="banner">
+        
         <h1>
             <span class="type">Class</span>
             Hoodoo::Services::Middleware::ExceptionReporting
-            <span class="parent">&lt;
-                Object
-            </span>
+            
+                <span class="parent">&lt;
+                    
+                    Object
+                    
+                </span>
+            
         </h1>
         <ul class="files">
+            
             <li><a href="../../../../files/lib/hoodoo/services/middleware/exception_reporting/base_reporter_rb.html">lib/hoodoo/services/middleware/exception_reporting/base_reporter.rb</a></li>
+            
             <li><a href="../../../../files/lib/hoodoo/services/middleware/exception_reporting/exception_reporting_rb.html">lib/hoodoo/services/middleware/exception_reporting/exception_reporting.rb</a></li>
+            
             <li><a href="../../../../files/lib/hoodoo/services/middleware/exception_reporting/reporters/airbrake_reporter_rb.html">lib/hoodoo/services/middleware/exception_reporting/reporters/airbrake_reporter.rb</a></li>
-            <li><a href="../../../../files/lib/hoodoo/services/middleware/exception_reporting/reporters/raygun_reporter_rb.html">lib/hoodoo/services/middleware/exception_reporting/reporters/raygun_reporter.rb</a></li>
+            
         </ul>
     </div>
     <div id="bodyContent">
         <div id="content">
+  
     <div class="description">
-        
+      
 <p>Exception reporting / monitoring through external services.</p>
 
     </div>
+  
 
 
+  
 
+
+  
+  
+
+
+  
     <!-- Namespace -->
     <div class="sectiontitle">Namespace</div>
     <ul>
-
+      
         <li>
-            <span class="type">CLASS</span>
-              <a href="ExceptionReporting/AirbrakeReporter.html">Hoodoo::Services::Middleware::ExceptionReporting::AirbrakeReporter</a>
+          <span class="type">CLASS</span>
+          <a href="ExceptionReporting/AirbrakeReporter.html">Hoodoo::Services::Middleware::ExceptionReporting::AirbrakeReporter</a>
         </li>
-
+      
         <li>
-            <span class="type">CLASS</span>
-              <a href="ExceptionReporting/BaseReporter.html">Hoodoo::Services::Middleware::ExceptionReporting::BaseReporter</a>
+          <span class="type">CLASS</span>
+          <a href="ExceptionReporting/BaseReporter.html">Hoodoo::Services::Middleware::ExceptionReporting::BaseReporter</a>
         </li>
-
+      
         <li>
-            <span class="type">CLASS</span>
-              <a href="ExceptionReporting/Payload.html">Hoodoo::Services::Middleware::ExceptionReporting::Payload</a>
+          <span class="type">CLASS</span>
+          <a href="ExceptionReporting/Payload.html">Hoodoo::Services::Middleware::ExceptionReporting::Payload</a>
         </li>
-
-        <li>
-            <span class="type">CLASS</span>
-              <a href="ExceptionReporting/RaygunReporter.html">Hoodoo::Services::Middleware::ExceptionReporting::RaygunReporter</a>
-        </li>
+      
     </ul>
+  
 
+
+  
     <!-- Method ref -->
     <div class="sectiontitle">Methods</div>
     <dl class="methods">
+      
         <dt>A</dt>
         <dd>
-            <ul>
-                <li>
-                    <a href="#method-c-add">add</a>
-                </li>
-            </ul>
+          <ul>
+            
+              
+              <li>
+                <a href="#method-c-add">add</a>
+              </li>
+            
+          </ul>
         </dd>
+      
         <dt>C</dt>
         <dd>
-            <ul>
-                <li>
-                    <a href="#method-c-contextual_report">contextual_report</a>
-                </li>
-            </ul>
+          <ul>
+            
+              
+              <li>
+                <a href="#method-c-contextual_report">contextual_report</a>
+              </li>
+            
+          </ul>
         </dd>
+      
         <dt>R</dt>
         <dd>
-            <ul>
-                <li>
-                    <a href="#method-c-remove">remove</a>,
-                </li>
-                <li>
-                    <a href="#method-c-report">report</a>
-                </li>
-            </ul>
+          <ul>
+            
+              
+              <li>
+                <a href="#method-c-remove">remove</a>,
+              </li>
+            
+              
+              <li>
+                <a href="#method-c-report">report</a>
+              </li>
+            
+          </ul>
         </dd>
+      
         <dt>W</dt>
         <dd>
-            <ul>
-                <li>
-                    <a href="#method-c-wait">wait</a>
-                </li>
-            </ul>
+          <ul>
+            
+              
+              <li>
+                <a href="#method-c-wait">wait</a>
+              </li>
+            
+          </ul>
         </dd>
+      
     </dl>
+  
+
+  
 
 
 
+  
+
+    
+
+    
+
+    
 
 
+    
 
-<!-- Methods -->
 
-    <div class="sectiontitle">Class Public methods</div>
-    <div class="method">
-        <div class="title method-title" id="method-c-add">
-            <b>add</b>( klass )
+    <!-- Methods -->
+    
+      <div class="sectiontitle">Class Public methods</div>
+      
+        <div class="method">
+          <div class="title method-title" id="method-c-add">
+            
+              <b>add</b>( klass )
+            
             <a href="../../../../classes/Hoodoo/Services/Middleware/ExceptionReporting.html#method-c-add" name="method-c-add" class="permalink">Link</a>
-        </div>
+          </div>
 
-        <div class="description">
-            <p>Add an exception reporter class to the set of reporters. See the <a
-href="ExceptionReporting/BaseReporter.html">Hoodoo::Services::Middleware::ExceptionReporting::BaseReporter</a>
-class for an overview.</p>
+          
+            <div class="description">
+              <p>Add an exception reporter class to the set of reporters. See the <a href="ExceptionReporting/BaseReporter.html"><code>Hoodoo::Services::Middleware::ExceptionReporting::BaseReporter</code></a> class for an overview.</p>
 
-<p>Whenever the middleware&#39;s own exception handler catches an exception,
-it will run through the set of exception reporters (if any) and call each
-one to report exception details.</p>
+<p>Whenever the middleware’s own exception handler catches an exception, it will run through the set of exception reporters (if any) and call each one to report exception details.</p>
 
-<p>Reporters are maintained in a Set. Only one class will ever be stored and
-called once per exception; the original order of addition before duplicates
-is maintained (so if you add class A, then B, then A again, then class A is
-called first and only once, then B once).</p>
+<p>Reporters are maintained in a Set. Only one class will ever be stored and called once per exception; the original order of addition before duplicates is maintained (so if you add class A, then B, then A again, then class A is called first and only once, then B once).</p>
 
-<p>Each reporter is called from its own Ruby Thread so that client API call
-response is kept fast. If a call fails, a debug log entry is made but
-processing of other reporters continues uninterrupted. It is up to
-individual reporter classes to manage thread safety.</p>
+<p>Each reporter is called from its own Ruby Thread so that client API call response is kept fast. If a call fails, a debug log entry is made but processing of other reporters continues uninterrupted. It is up to individual reporter classes to manage thread safety.</p>
 <dl class="rdoc-list note-list"><dt><code>klass</code>
 <dd>
-<p><a
-href="ExceptionReporting/BaseReporter.html">Hoodoo::Services::Middleware::ExceptionReporting::BaseReporter</a>
-subclass (class, not instance) to add.</p>
+<p><a href="ExceptionReporting/BaseReporter.html"><code>Hoodoo::Services::Middleware::ExceptionReporting::BaseReporter</code></a> subclass (class, not instance) to add.</p>
 </dd></dl>
-        </div>
+            </div>
+          
 
+          
 
+          
 
-        <div class="sourcecode">
-
-            <p class="source-link">
+          
+            
+            <div class="sourcecode">
+              
+              <p class="source-link">
                 Source:
                 <a href="javascript:toggleSource('method-c-add_source')" id="l_method-c-add_source">show</a>
-            </p>
-            <div id="method-c-add_source" class="dyn-source">
+                
+              </p>
+              <div id="method-c-add_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/exception_reporting/exception_reporting.rb, line 43</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">add</span>( <span class="ruby-identifier">klass</span> )
   <span class="ruby-keyword">unless</span> <span class="ruby-identifier">klass</span> <span class="ruby-operator">&lt;</span> <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Services</span><span class="ruby-operator">::</span><span class="ruby-constant">Middleware</span><span class="ruby-operator">::</span><span class="ruby-constant">ExceptionReporting</span><span class="ruby-operator">::</span><span class="ruby-constant">BaseReporter</span>
@@ -170,76 +220,88 @@ subclass (class, not instance) to add.</p>
 
   <span class="ruby-identifier">@@reporter_pool</span>.<span class="ruby-identifier">add</span>( <span class="ruby-identifier">klass</span>.<span class="ruby-identifier">instance</span> )
 <span class="ruby-keyword">end</span></pre>
+              </div>
             </div>
-        </div>
-    </div>
-    <div class="method">
-        <div class="title method-title" id="method-c-contextual_report">
-            <b>contextual_report</b>( exception, context )
+            
+          </div>
+        
+        <div class="method">
+          <div class="title method-title" id="method-c-contextual_report">
+            
+              <b>contextual_report</b>( exception, context )
+            
             <a href="../../../../classes/Hoodoo/Services/Middleware/ExceptionReporting.html#method-c-contextual_report" name="method-c-contextual_report" class="permalink">Link</a>
-        </div>
+          </div>
 
-        <div class="description">
-            <p>Call all added exception reporters (see <a
-href="ExceptionReporting.html#method-c-add">::add</a>) to report an
-exception based on the context of an in-flight request/response cycle.
-Reporters need to support the contextual reporting mechanism. If any do
-not, the simpler <a
-href="ExceptionReporting.html#method-c-report">::report</a> mechanism is
-used as a fallback.</p>
+          
+            <div class="description">
+              <p>Call all added exception reporters (see <a href="ExceptionReporting.html#method-c-add"><code>::add</code></a>) to report an exception based on the context of an in-flight request/response cycle. Reporters need to support the contextual reporting mechanism. If any do not, the simpler <a href="ExceptionReporting.html#method-c-report"><code>::report</code></a> mechanism is used as a fallback.</p>
 <dl class="rdoc-list note-list"><dt><code>exception</code>
 <dd>
 <p>Exception or Exception subclass instance to report.</p>
 </dd><dt><code>context</code>
 <dd>
-<p><a href="../Context.html">Hoodoo::Services::Context</a> instance describing
-the in-flight request/response cycle.</p>
+<p><a href="../Context.html"><code>Hoodoo::Services::Context</code></a> instance describing the in-flight request/response cycle.</p>
 </dd></dl>
-        </div>
+            </div>
+          
 
+          
 
+          
 
-        <div class="sourcecode">
-
-            <p class="source-link">
+          
+            
+            <div class="sourcecode">
+              
+              <p class="source-link">
                 Source:
                 <a href="javascript:toggleSource('method-c-contextual_report_source')" id="l_method-c-contextual_report_source">show</a>
-            </p>
-            <div id="method-c-contextual_report_source" class="dyn-source">
+                
+              </p>
+              <div id="method-c-contextual_report_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/exception_reporting/exception_reporting.rb, line 88</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">contextual_report</span>( <span class="ruby-identifier">exception</span>, <span class="ruby-identifier">context</span> )
   <span class="ruby-identifier">payload</span> = <span class="ruby-constant">Payload</span>.<span class="ruby-identifier">new</span>( <span class="ruby-value">exception:</span> <span class="ruby-identifier">exception</span>, <span class="ruby-value">context:</span> <span class="ruby-identifier">context</span> )
   <span class="ruby-identifier">@@reporter_pool</span>.<span class="ruby-identifier">communicate</span>( <span class="ruby-identifier">payload</span> )
 <span class="ruby-keyword">end</span></pre>
+              </div>
             </div>
-        </div>
-    </div>
-    <div class="method">
-        <div class="title method-title" id="method-c-remove">
-            <b>remove</b>( klass )
+            
+          </div>
+        
+        <div class="method">
+          <div class="title method-title" id="method-c-remove">
+            
+              <b>remove</b>( klass )
+            
             <a href="../../../../classes/Hoodoo/Services/Middleware/ExceptionReporting.html#method-c-remove" name="method-c-remove" class="permalink">Link</a>
-        </div>
+          </div>
 
-        <div class="description">
-            <p>Remove an exception reporter class from the set of reporters. See <a
-href="ExceptionReporting.html#method-c-add">::add</a> for details.</p>
+          
+            <div class="description">
+              <p>Remove an exception reporter class from the set of reporters. See <a href="ExceptionReporting.html#method-c-add"><code>::add</code></a> for details.</p>
 <dl class="rdoc-list note-list"><dt><code>klass</code>
 <dd>
-<p><a
-href="ExceptionReporting/BaseReporter.html">Hoodoo::Services::Middleware::ExceptionReporting::BaseReporter</a>
-subclass (class, not instance) to remove.</p>
+<p><a href="ExceptionReporting/BaseReporter.html"><code>Hoodoo::Services::Middleware::ExceptionReporting::BaseReporter</code></a> subclass (class, not instance) to remove.</p>
 </dd></dl>
-        </div>
+            </div>
+          
 
+          
 
+          
 
-        <div class="sourcecode">
-
-            <p class="source-link">
+          
+            
+            <div class="sourcecode">
+              
+              <p class="source-link">
                 Source:
                 <a href="javascript:toggleSource('method-c-remove_source')" id="l_method-c-remove_source">show</a>
-            </p>
-            <div id="method-c-remove_source" class="dyn-source">
+                
+              </p>
+              <div id="method-c-remove_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/exception_reporting/exception_reporting.rb, line 57</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">remove</span>( <span class="ruby-identifier">klass</span> )
   <span class="ruby-keyword">unless</span> <span class="ruby-identifier">klass</span> <span class="ruby-operator">&lt;</span> <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Services</span><span class="ruby-operator">::</span><span class="ruby-constant">Middleware</span><span class="ruby-operator">::</span><span class="ruby-constant">ExceptionReporting</span><span class="ruby-operator">::</span><span class="ruby-constant">BaseReporter</span>
@@ -248,78 +310,101 @@ subclass (class, not instance) to remove.</p>
 
   <span class="ruby-identifier">@@reporter_pool</span>.<span class="ruby-identifier">remove</span>( <span class="ruby-identifier">klass</span>.<span class="ruby-identifier">instance</span> )
 <span class="ruby-keyword">end</span></pre>
+              </div>
             </div>
-        </div>
-    </div>
-    <div class="method">
-        <div class="title method-title" id="method-c-report">
-            <b>report</b>( exception, rack_env = nil )
+            
+          </div>
+        
+        <div class="method">
+          <div class="title method-title" id="method-c-report">
+            
+              <b>report</b>( exception, rack_env = nil )
+            
             <a href="../../../../classes/Hoodoo/Services/Middleware/ExceptionReporting.html#method-c-report" name="method-c-report" class="permalink">Link</a>
-        </div>
+          </div>
 
-        <div class="description">
-            <p>Call all added exception reporters (see <a
-href="ExceptionReporting.html#method-c-add">::add</a>) to report an
-exception.</p>
+          
+            <div class="description">
+              <p>Call all added exception reporters (see <a href="ExceptionReporting.html#method-c-add"><code>::add</code></a>) to report an exception.</p>
 <dl class="rdoc-list note-list"><dt><code>exception</code>
 <dd>
 <p>Exception or Exception subclass instance to report.</p>
 </dd><dt><code>rack_env</code>
 <dd>
-<p>Optional <a href="../../../Rack.html">Rack</a> environment hash for the
-inbound request, for exception reports made in the context of <a
-href="../../../Rack.html">Rack</a> request handling.</p>
+<p>Optional <a href="../../../Rack.html"><code>Rack</code></a> environment hash for the inbound request, for exception reports made in the context of <a href="../../../Rack.html"><code>Rack</code></a> request handling.</p>
 </dd></dl>
-        </div>
+            </div>
+          
 
+          
 
+          
 
-        <div class="sourcecode">
-
-            <p class="source-link">
+          
+            
+            <div class="sourcecode">
+              
+              <p class="source-link">
                 Source:
                 <a href="javascript:toggleSource('method-c-report_source')" id="l_method-c-report_source">show</a>
-            </p>
-            <div id="method-c-report_source" class="dyn-source">
+                
+              </p>
+              <div id="method-c-report_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/exception_reporting/exception_reporting.rb, line 73</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">report</span>( <span class="ruby-identifier">exception</span>, <span class="ruby-identifier">rack_env</span> = <span class="ruby-keyword">nil</span> )
   <span class="ruby-identifier">payload</span> = <span class="ruby-constant">Payload</span>.<span class="ruby-identifier">new</span>( <span class="ruby-value">exception:</span> <span class="ruby-identifier">exception</span>, <span class="ruby-value">rack_env:</span> <span class="ruby-identifier">rack_env</span> )
   <span class="ruby-identifier">@@reporter_pool</span>.<span class="ruby-identifier">communicate</span>( <span class="ruby-identifier">payload</span> )
 <span class="ruby-keyword">end</span></pre>
+              </div>
             </div>
-        </div>
-    </div>
-    <div class="method">
-        <div class="title method-title" id="method-c-wait">
-            <b>wait</b>( timeout = 5 )
+            
+          </div>
+        
+        <div class="method">
+          <div class="title method-title" id="method-c-wait">
+            
+              <b>wait</b>( timeout = 5 )
+            
             <a href="../../../../classes/Hoodoo/Services/Middleware/ExceptionReporting.html#method-c-wait" name="method-c-wait" class="permalink">Link</a>
-        </div>
+          </div>
 
-        <div class="description">
-            <p>Wait for all executing reporter threads to catch up before continuing.</p>
+          
+            <div class="description">
+              <p>Wait for all executing reporter threads to catch up before continuing.</p>
 <dl class="rdoc-list note-list"><dt><code>timeout</code>
 <dd>
-<p>Optional timeout wait delay <strong>for</strong> <strong>each</strong>
-<strong>thread</strong>. Default is 5 seconds.</p>
+<p>Optional timeout wait delay <strong>for</strong> <strong>each</strong> <strong>thread</strong>. Default is 5 seconds.</p>
 </dd></dl>
-        </div>
+            </div>
+          
 
+          
 
+          
 
-        <div class="sourcecode">
-
-            <p class="source-link">
+          
+            
+            <div class="sourcecode">
+              
+              <p class="source-link">
                 Source:
                 <a href="javascript:toggleSource('method-c-wait_source')" id="l_method-c-wait_source">show</a>
-            </p>
-            <div id="method-c-wait_source" class="dyn-source">
+                
+              </p>
+              <div id="method-c-wait_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/exception_reporting/exception_reporting.rb, line 98</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">wait</span>( <span class="ruby-identifier">timeout</span> = <span class="ruby-value">5</span> )
   <span class="ruby-identifier">@@reporter_pool</span>.<span class="ruby-identifier">wait</span>( <span class="ruby-value">per_instance_timeout:</span> <span class="ruby-identifier">timeout</span> )
 <span class="ruby-keyword">end</span></pre>
+              </div>
             </div>
-        </div>
-    </div>
+            
+          </div>
+        
+      
+    
+    
+  
 </div>
 
     </div>

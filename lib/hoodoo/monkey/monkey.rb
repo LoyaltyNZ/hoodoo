@@ -261,7 +261,7 @@ module Hoodoo
     #
     # Disabling the same extension multiple times has no side effects.
     #
-    def self.disable( target_unit: nil, extension_module: )
+    def self.disable( extension_module:, target_unit: nil )
       if ( target_units_hash = @@modules[ extension_module ] ).nil?
         raise "Hoodoo::Monkey::disable: Extension module '#{ extension_module.inspect }' is not registered"
       end

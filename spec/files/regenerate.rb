@@ -29,7 +29,7 @@ cert.extensions = [
 cert.add_extension ef.create_extension("authorityKeyIdentifier",
                                        "keyid:always,issuer:always")
 
-cert.sign key, OpenSSL::Digest::SHA256.new
+cert.sign key, OpenSSL::Digest.new('SHA256')
 
 open  keyd, 'w' do |io| io.write  key.to_pem end
 open certd, 'w' do |io| io.write cert.to_pem end

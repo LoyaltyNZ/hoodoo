@@ -386,10 +386,8 @@ module Hoodoo
       def self.included( model )
         model.class_attribute(
           :nz_co_loyalty_hoodoo_manually_dated,
-          {
-            :instance_predicate => false,
-            :instance_accessor  => false
-          }
+          :instance_predicate => false,
+          :instance_accessor  => false
         )
 
         unless model == Hoodoo::ActiveRecord::Base

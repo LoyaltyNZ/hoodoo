@@ -8,3 +8,5 @@ tags
 _site
 .sass-cache
 .byebug_history
+/.idea
+.DS_Store

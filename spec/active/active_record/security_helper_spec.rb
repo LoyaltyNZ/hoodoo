@@ -79,13 +79,6 @@ describe Hoodoo::ActiveRecord::Secure::SecurityHelper do
       it 'and matches when it should' do
         expect( proc().call( '12!' ) ).to eql( true )
         expect( proc().call( '12!3' ) ).to eql( true )
-
-        if ''.respond_to?( :match? )
-          expect( proc().call( TestAllMatchersObject.new ) ).to eql( true )
-        else
-          expect_any_instance_of( Regexp ).to receive( :match ).and_return( true )
-          proc().call( TestAllMatchersObject.new )
-        end
       end
 
       it 'and misses when it should' do
@@ -95,59 +88,15 @@ describe Hoodoo::ActiveRecord::Secure::SecurityHelper do
         expect( proc().call( { :hello => :world } ) ).to eql( false )
         expect( proc().call( [ 1, 2, 3, 4 ] ) ).to eql( false )
       end
-
-      it 'and rescues' do
-        if ''.respond_to?( :match? )
-          expect( proc().call( TestRescueAllMatchersObject.new ) ).to eql( false )
-        else
-          expect_any_instance_of( Regexp ).to receive( :match ).and_raise( RuntimeError )
-          proc().call( TestRescueAllMatchersObject.new )
-        end
-      end
+    end
+    
+    context 'constructed with a String' do
+      it_behaves_like 'a ::matches_wildcard Proc'
     end
 
-    # Tests running on Ruby >= 2.4 need String#match? knocking out for a
-    # while, for code coverage.
-    #
-    context 'with slow matcher' do
-      before :each do
-        @unbound_method = nil
-
-        if ''.respond_to?( :match? )
-          @unbound_method = String.instance_method( :match? )
-          String.send( :remove_method, :match? )
-        end
-      end
-
-      after :each do
-        unless @unbound_method.nil?
-          String.send( :define_method, :match?, @unbound_method )
-        end
-      end
-
-      context 'constructed with a String' do
-        it_behaves_like 'a ::matches_wildcard Proc'
-      end
-
-      context 'constructed with a Regexp' do
-        let( :param ) { /^..!.*/ }
-        it_behaves_like 'a ::matches_wildcard Proc'
-      end
-    end
-
-    # Tests running on Ruby < 2.4 can't do the fast match tests.
-    #
-    if ''.respond_to?( :match? )
-      context 'with fast matcher' do
-        context 'constructed with a String' do
-          it_behaves_like 'a ::matches_wildcard Proc'
-        end
-
-        context 'constructed with a Regexp' do
-          let( :param ) { /^..!.*/ }
-          it_behaves_like 'a ::matches_wildcard Proc'
-        end
-      end
+    context 'constructed with a Regexp' do
+      let( :param ) { /^..!.*/ }
+      it_behaves_like 'a ::matches_wildcard Proc'
     end
   end
 

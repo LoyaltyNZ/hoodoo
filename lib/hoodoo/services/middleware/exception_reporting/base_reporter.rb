@@ -17,7 +17,6 @@ module Hoodoo; module Services
       # Subclass this method to create a custom class used to contact external
       # exception monitoring / reporting engine. Examples include:
       #
-      # * Raygun:      https://raygun.io
       # * Honeybadger: https://www.honeybadger.io
       # * Exceptional: http://www.exceptional.io
       # * Airbrake:    https://airbrake.io

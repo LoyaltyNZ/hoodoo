@@ -56,10 +56,8 @@ module Hoodoo
           :nz_co_loyalty_hoodoo_estimate_counts_with,
           :nz_co_loyalty_hoodoo_search_with,
           :nz_co_loyalty_hoodoo_filter_with,
-          {
-            :instance_predicate => false,
-            :instance_accessor  => false
-          }
+          :instance_predicate => false,
+          :instance_accessor  => false
         )
 
         unless model == Hoodoo::ActiveRecord::Base
