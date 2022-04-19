@@ -1,6 +1,6 @@
 # Hoodoo
 
-[![Gem Version](https://badge.fury.io/rb/hoodoo.svg)](https://rubygems.org/gems/hoodoo) [![Build Status](https://travis-ci.org/LoyaltyNZ/hoodoo.svg?branch=master)](https://travis-ci.org/LoyaltyNZ/hoodoo) [![License](https://img.shields.io/badge/license-LGPL--3.0-blue.svg)](http://www.gnu.org/licenses/lgpl-3.0.en.html)
+[![Gem Version](https://badge.fury.io/rb/hoodoo.svg)](https://rubygems.org/gems/hoodoo) [![Build Status](https://travis-ci.com/LoyaltyNZ/hoodoo.svg?branch=master)](https://travis-ci.com/LoyaltyNZ/hoodoo) [![License](https://img.shields.io/badge/license-LGPL--3.0-blue.svg)](http://www.gnu.org/licenses/lgpl-3.0.en.html)
 
 Simplify the implementation of services within an API-based software platform.
 
@@ -8,13 +8,13 @@ See [Hoodoo Guides](https://loyaltynz.github.io/hoodoo/) for extensive documenta
 
 ## Note
 
-Latest version `v3.0.1` only supports `activerecord 7.0` onwards. Use `v2.12.11` if you need to support lower `activerecord` version
+Latest version `v3.1.1` only supports `activerecord 7.0` onwards. Use `v2.12.11` if you need to support lower `activerecord` version
 
 ## Usage
 
 Add the gem to your `Gemfile`:
 
-    gem 'hoodoo', '~> 2.0'
+    gem 'hoodoo', '~> 3.0'
 
 Require hoodoo when needed:
 
