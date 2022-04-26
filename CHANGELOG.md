@@ -1,5 +1,9 @@
 # Hoodoo v2.x
 
+## 3.1.2 (2022-04-26)
+
+- Testing Hoodoo release [DS-2034](https://loyaltynz.atlassian.net/browse/DS-2034)
+
 ## 3.1.1 (2022-04-19)
 
 - Tagging Hoodoo [DS-2034](https://loyaltynz.atlassian.net/browse/DS-2034)
