@@ -1,18 +1,22 @@
-# Hoodoo v2.x
+# Hoodoo v3.x
+
+## 3.1.3 (2022-04-27)
+
+- Introduces guideline steps about how-to deploy a `Hoodoo` release to Rubygems [DS-2034](https://loyaltynz.atlassian.net/browse/DS-2034)
 
 ## 3.1.2 (2022-04-26)
 
-- Testing Hoodoo release [DS-2034](https://loyaltynz.atlassian.net/browse/DS-2034)
+- Testing `Hoodoo` release [DS-2034](https://loyaltynz.atlassian.net/browse/DS-2034)
 
 ## 3.1.1 (2022-04-19)
 
-- Tagging Hoodoo [DS-2034](https://loyaltynz.atlassian.net/browse/DS-2034)
+- Tagging `Hoodoo` [DS-2034](https://loyaltynz.atlassian.net/browse/DS-2034)
 
 ## 3.1.0 (2022-04-07)
 
 - Update ruby-version to 3.1.0 [DS-2034](https://loyaltynz.atlassian.net/browse/DS-2034)
-- Update bundler to 2.3.10
-- Update Rspec to 3.11
+- Update `Bundler` to 2.3.10
+- Update `Rspec` to 3.11
 - Update other general gems in patch level
 
 ## 3.0.1 (2022-02-16)
@@ -22,16 +26,18 @@
 ## 3.0.0 (2022-02-01)
 
 - Update ruby-version to 2.7.3
-- Update activerecord [DS-1484](https://loyaltynz.atlassian.net/browse/DS-1484)
+- Update `activerecord` [DS-1484](https://loyaltynz.atlassian.net/browse/DS-1484)
 - Removes support for ruby versions < 2.7.3
+
+# Hoodoo v2.x
 
 ## 2.12.11 (2021-11-30)
 
-- Update Postgres to version 13.3 [FT-811](https://loyaltynz.atlassian.net/browse/FT-811)
+- Update `Postgres` to version 13.3 [FT-811](https://loyaltynz.atlassian.net/browse/FT-811)
 
 ## 2.12.10 (2021-09-20)
 
-- Fix travis release to limit publishing build to a single ruby version.
+- Fix travis release to limit publishing build to a single `ruby` version.
 
 ## 2.12.9 (2021-09-07)
 

@@ -88,6 +88,7 @@ Some additional higher level hand written documentation may also be present as M
 - [Patrick Copeland](https://github.com/pjscopeland)
 - [Rory Stephenson](https://github.com/thelollies)
 - [Wayne Hoover](https://github.com/waynehoover)
+- [Ildomar Grings](https://github.com/ildomar-grings)
 
 ## Licence
 
