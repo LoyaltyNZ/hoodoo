@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+<meta charset="UTF-8">
+
+<title>module Hoodoo::ActiveRecord::ErrorMapping - Hoodoo</title>
+
+<script type="text/javascript">
+  var rdoc_rel_prefix = "../../";
+  var index_rel_prefix = "../../";
+</script>
+
+<script src="../../js/navigation.js" defer></script>
+<script src="../../js/search.js" defer></script>
+<script src="../../js/search_index.js" defer></script>
+<script src="../../js/searcher.js" defer></script>
+<script src="../../js/darkfish.js" defer></script>
+
+<link href="../../css/fonts.css" rel="stylesheet">
+<link href="../../css/rdoc.css" rel="stylesheet">
+
+
+<body id="top" role="document" class="module">
+<nav role="navigation">
+  <div id="project-navigation">
+    <div id="home-section" role="region" title="Quick navigation" class="nav-section">
+  <h2>
+    <a href="../../index.html" rel="home">Home</a>
+  </h2>
+
+  <div id="table-of-contents-navigation">
+    <a href="../../table_of_contents.html#pages">Pages</a>
+    <a href="../../table_of_contents.html#classes">Classes</a>
+    <a href="../../table_of_contents.html#methods">Methods</a>
+  </div>
+</div>
+
+    <div id="search-section" role="search" class="project-section initially-hidden">
+  <form action="#" method="get" accept-charset="utf-8">
+    <div id="search-field-wrapper">
+      <input id="search-field" role="combobox" aria-label="Search"
+             aria-autocomplete="list" aria-controls="search-results"
+             type="text" name="search" placeholder="Search" spellcheck="false"
+             title="Type to search, Up and Down to navigate, Enter to load">
+    </div>
+
+    <ul id="search-results" aria-label="Search Results"
+        aria-busy="false" aria-expanded="false"
+        aria-atomic="false" class="initially-hidden"></ul>
+  </form>
+</div>
+
+  </div>
+
+  
+
+  <div id="class-metadata">
+    
+    
+    
+    
+    
+<!-- Method Quickref -->
+<div id="method-list-section" class="nav-section">
+  <h3>Methods</h3>
+
+  <ul class="link-list" role="directory">
+    <li ><a href="#method-i-adds_errors_to-3F">#adds_errors_to?</a>
+    <li ><a href="#method-i-platform_errors">#platform_errors</a>
+  </ul>
+</div>
+
+  </div>
+</nav>
+
+<main role="main" aria-labelledby="module-Hoodoo::ActiveRecord::ErrorMapping">
+  <h1 id="module-Hoodoo::ActiveRecord::ErrorMapping" class="module">
+    module Hoodoo::ActiveRecord::ErrorMapping
+  </h1>
+
+  <section class="description">
+    
+<p><a href="Support.html"><code>Support</code></a> mixin for models subclassed from <a href="Base.html"><code>ActiveRecord::Base</code></a> providing a mapping between <a href="../ActiveRecord.html"><code>ActiveRecord</code></a> validation errors and platform errors via <a href="../ErrorDescriptions.html"><code>Hoodoo::ErrorDescriptions</code></a> and <a href="../Errors.html"><code>Hoodoo::Errors</code></a>. See individual module methods for examples, along with:</p>
+<ul><li>
+<p><a href="http://guides.rubyonrails.org/active_record_basics.html">guides.rubyonrails.org/active_record_basics.html</a></p>
+</li></ul>
+
+<p>The error handling mechanism this mixin provides is intentionally analogous to that used for resource-to-resource calls through <a href="../Client/AugmentedBase.html"><code>Hoodoo::Client::AugmentedBase</code></a>.</p>
+
+  </section>
+
+  <section id="5Buntitled-5D" class="documentation-section">
+
+
+
+
+
+     <section id="public-instance-5Buntitled-5D-method-details" class="method-section">
+       <header>
+         <h3>Public Instance Methods</h3>
+       </header>
+
+      <div id="method-i-adds_errors_to-3F" class="method-detail ">
+        <div class="method-heading">
+          <span class="method-name">adds_errors_to?</span><span
+            class="method-args">( collection )</span>
+          <span class="method-click-advice">click to toggle source</span>
+        </div>
+
+        <div class="method-description">
+          <p>Validates the model instance and adds mapped-to-platform errors to a given <a href="../Errors.html"><code>Hoodoo::Errors</code></a> instance, if any validation errors occur. For <a href="../ActiveRecord.html"><code>ActiveRecord</code></a> validation documentation, see:</p>
+<ul><li>
+<p><a href="http://guides.rubyonrails.org/active_record_validations.html">guides.rubyonrails.org/active_record_validations.html</a></p>
+</li></ul>
+
+<p>Returns <code>true</code> if any errors were added (model instance is invalid) else <code>false</code> if everything is OK (model instance is valid).</p>
+
+<p>Uses Hoodoo::ActiveRecord::Support#translate_errors_on to perform the mapping. For detailed information on how the mapping works, please see that method.</p>
+
+<h2 id="method-i-adds_errors_to-3F-label-Mapping+ActiveRecord+errors+to+Hoodoo+errors">Mapping <a href="../ActiveRecord.html"><code>ActiveRecord</code></a> errors to <a href="../../Hoodoo.html"><code>Hoodoo</code></a> errors<span><a href="#method-i-adds_errors_to-3F-label-Mapping+ActiveRecord+errors+to+Hoodoo+errors">&para;</a> <a href="#top">&uarr;</a></span></h2>
+
+<p>The method makes an idiomatic example for “check errors in the model, map them to platform errors in my service’s response and return the result” very simple, at the expense of modifying the passed-in error collection contents (mutating a parameter is a risky pattern).</p>
+
+<p>Given this example model:</p>
+
+<pre class="ruby"><span class="ruby-keyword">class</span> <span class="ruby-constant">SomeModel</span> <span class="ruby-operator">&lt;</span> <span class="ruby-constant">ActiveRecord</span><span class="ruby-operator">::</span><span class="ruby-constant">Base</span>
+  <span class="ruby-identifier">include</span> <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">ActiveRecord</span><span class="ruby-operator">::</span><span class="ruby-constant">ErrorMapping</span>
+  <span class="ruby-comment"># ...</span>
+<span class="ruby-keyword">end</span>
+</pre>
+
+<p>…then a service’s create method could do something like:</p>
+
+<pre class="ruby"><span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">create</span>( <span class="ruby-identifier">context</span> )
+
+  <span class="ruby-comment"># Validate inbound creation data by e.g. schema through the</span>
+  <span class="ruby-comment"># presenter layer - Hoodoo::Presenters::Base and</span>
+  <span class="ruby-comment"># Hoodoo::Presenters::Base - then...</span>
+
+  <span class="ruby-identifier">model</span>         = <span class="ruby-constant">SomeModel</span>.<span class="ruby-identifier">new</span>
+  <span class="ruby-identifier">model</span>.<span class="ruby-identifier">param_1</span> = <span class="ruby-string">&#39;something based on inbound creation data&#39;</span>
+
+  <span class="ruby-comment"># Ideally use the Writer mixin for concurrency-safe saving,</span>
+  <span class="ruby-comment"># but in this simple example we&#39;ll just use #save directly;</span>
+  <span class="ruby-comment"># unhandled database exceptions might be thrown:</span>
+
+  <span class="ruby-identifier">model</span>.<span class="ruby-identifier">save</span>()
+
+  <span class="ruby-comment"># Now exit, adding mapped errors to the response, if there</span>
+  <span class="ruby-comment"># were validation failures when attempting to save.</span>
+
+  <span class="ruby-keyword">return</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">model</span>.<span class="ruby-identifier">adds_errors_to?</span>( <span class="ruby-identifier">context</span>.<span class="ruby-identifier">response</span>.<span class="ruby-identifier">errors</span> )
+
+  <span class="ruby-comment"># ...else set &#39;context.response&#39; data appropriately.</span>
+
+<span class="ruby-keyword">end</span>
+</pre>
+
+<p>An alternative pattern which avoids mutating the input parameter uses the potentially less efficient, but conceptually cleaner method <a href="ErrorMapping.html#method-i-platform_errors"><code>platform_errors</code></a>. Using <a href="ErrorMapping.html#method-i-adds_errors_to-3F"><code>adds_errors_to?</code></a> as per the above code is faster, but the above example’s use of <code>save</code>, as per its comments, does not fully handle some concurrency edge cases.</p>
+
+<p>To win on both fronts use <a href="Writer.html"><code>Hoodoo::ActiveRecord::Writer</code></a>:</p>
+
+<pre class="ruby"><span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">create</span>( <span class="ruby-identifier">context</span> )
+
+  <span class="ruby-identifier">model</span>         = <span class="ruby-constant">SomeModel</span>.<span class="ruby-identifier">new</span>
+  <span class="ruby-identifier">model</span>.<span class="ruby-identifier">param_1</span> = <span class="ruby-string">&#39;something based on inbound creation data&#39;</span>
+
+  <span class="ruby-keyword">unless</span> <span class="ruby-identifier">model</span>.<span class="ruby-identifier">persist_in</span>( <span class="ruby-identifier">context</span> ).<span class="ruby-identifier">equal?</span>( <span class="ruby-value">:success</span> )
+    <span class="ruby-identifier">context</span>.<span class="ruby-identifier">response</span>.<span class="ruby-identifier">add_errors</span>( <span class="ruby-identifier">model</span>.<span class="ruby-identifier">platform_errors</span> )
+    <span class="ruby-keyword">return</span>
+  <span class="ruby-keyword">end</span>
+
+  <span class="ruby-comment"># ...else set &#39;context.response&#39; data appropriately.</span>
+
+<span class="ruby-keyword">end</span>
+</pre>
+
+<p>In this case, the less efficient <a href="ErrorMapping.html#method-i-platform_errors"><code>platform_errors</code></a> call only happens when we know we are in an error recovery situation anyway, in which case it isn’t as important to operate in as efficient a manner as possible - provided one assumes that the non-error path is the much more common case!</p>
+<dl class="rdoc-list note-list"><dt><code>collection</code>
+<dd>
+<p>A <a href="../Errors.html"><code>Hoodoo::Errors</code></a> instance, typically obtained from the <a href="../Services/Context.html"><code>Hoodoo::Services::Context</code></a> instance passed to a service implementation in calls like <a href="../Services/Implementation.html#method-i-list"><code>Hoodoo::Services::Implementation#list</code></a> or <a href="../Services/Implementation.html#method-i-show"><code>Hoodoo::Services::Implementation#show</code></a>, via <code>context.response.errors</code> (i.e. <a href="../Services/Context.html#attribute-i-response"><code>Hoodoo::Services::Context#response</code></a> / <a href="../Services/Response.html#attribute-i-errors"><code>Hoodoo::Services::Response#errors</code></a>). The collection you pass is updated if there are any errors recorded in the model, by adding equivalent structured errors to the collection.</p>
+</dd></dl>
+
+          <div class="method-source-code" id="adds_errors_to-3F-source">
+            <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/error_mapping.rb, line 131</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">adds_errors_to?</span>( <span class="ruby-identifier">collection</span> )
+  <span class="ruby-keyword">self</span>.<span class="ruby-identifier">validate</span>()
+  <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">ActiveRecord</span><span class="ruby-operator">::</span><span class="ruby-constant">Support</span>.<span class="ruby-identifier">translate_errors_on</span>( <span class="ruby-keyword">self</span>, <span class="ruby-identifier">collection</span> )
+
+  <span class="ruby-keyword">return</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">errors</span>.<span class="ruby-identifier">any?</span>
+<span class="ruby-keyword">end</span></pre>
+          </div>
+        </div>
+
+
+      </div>
+
+      <div id="method-i-platform_errors" class="method-detail ">
+        <div class="method-heading">
+          <span class="method-name">platform_errors</span><span
+            class="method-args">()</span>
+          <span class="method-click-advice">click to toggle source</span>
+        </div>
+
+        <div class="method-description">
+          <p>Validate the model instance and return a <a href="../Errors.html"><code>Hoodoo::Errors</code></a> instance which contains no platform errors if there are no model validation errors, else mapped-to-platform errors if validation errors are encountered. For <a href="../ActiveRecord.html"><code>ActiveRecord</code></a> validation documentation, see:</p>
+<ul><li>
+<p><a href="http://guides.rubyonrails.org/active_record_validations.html">guides.rubyonrails.org/active_record_validations.html</a></p>
+</li></ul>
+
+<p>This mixin method provides support for an alternative coding style to method <a href="ErrorMapping.html#method-i-adds_errors_to-3F"><code>adds_errors_to?</code></a>, by generating an <a href="../Errors.html"><code>Errors</code></a> collection internally rather than modifying one passed by the caller. It is less efficient than calling <a href="ErrorMapping.html#method-i-adds_errors_to-3F"><code>adds_errors_to?</code></a> if you have an existing errors collection already constructed, but otherwise follows a cleaner design pattern.</p>
+
+<p>See <a href="ErrorMapping.html#method-i-adds_errors_to-3F"><code>adds_errors_to?</code></a> examples first, then compare the idiom shown there:</p>
+
+<pre class="ruby"><span class="ruby-keyword">return</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">model</span>.<span class="ruby-identifier">adds_errors_to?</span>( <span class="ruby-identifier">context</span>.<span class="ruby-identifier">response</span>.<span class="ruby-identifier">errors</span> )
+</pre>
+
+<p>…with the idiomatic use of this method:</p>
+
+<pre class="ruby"><span class="ruby-identifier">context</span>.<span class="ruby-identifier">response</span>.<span class="ruby-identifier">add_errors</span>( <span class="ruby-identifier">model</span>.<span class="ruby-identifier">platform_errors</span> )
+<span class="ruby-keyword">return</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">context</span>.<span class="ruby-identifier">response</span>.<span class="ruby-identifier">halt_processing?</span>
+</pre>
+
+<p>It is a little more verbose and in this example will run a little slower due to the construction of the internal <a href="../Errors.html"><code>Hoodoo::Errors</code></a> instance followed by the addition to the <code>context.response</code> collection, but you may prefer the conceptually cleaner approach. You can lean on the return value of add_errors and end up back at one line of (very slightly less obvious) code, too:</p>
+
+<pre class="ruby"><span class="ruby-keyword">return</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">context</span>.<span class="ruby-identifier">response</span>.<span class="ruby-identifier">add_errors</span>( <span class="ruby-identifier">model</span>.<span class="ruby-identifier">platform_errors</span> )
+</pre>
+
+          <div class="method-source-code" id="platform_errors-source">
+            <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/error_mapping.rb, line 170</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">platform_errors</span>
+  <span class="ruby-identifier">collection</span> = <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Errors</span>.<span class="ruby-identifier">new</span>
+  <span class="ruby-keyword">self</span>.<span class="ruby-identifier">adds_errors_to?</span>( <span class="ruby-identifier">collection</span> )
+
+  <span class="ruby-keyword">return</span> <span class="ruby-identifier">collection</span>
+<span class="ruby-keyword">end</span></pre>
+          </div>
+        </div>
+
+
+      </div>
+
+    </section>
+
+  </section>
+</main>
+
+
+<footer id="validator-badges" role="contentinfo">
+  <p><a href="https://validator.w3.org/check/referer">Validate</a>
+  <p>Generated by <a href="https://ruby.github.io/rdoc/">RDoc</a> 6.4.0.
+  <p>Based on <a href="http://deveiate.org/projects/Darkfish-RDoc/">Darkfish</a> by <a href="http://deveiate.org">Michael Granger</a>.
+</footer>
+

@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+<meta charset="UTF-8">
+
+<title>class Hoodoo::Client - Hoodoo</title>
+
+<script type="text/javascript">
+  var rdoc_rel_prefix = "../";
+  var index_rel_prefix = "../";
+</script>
+
+<script src="../js/navigation.js" defer></script>
+<script src="../js/search.js" defer></script>
+<script src="../js/search_index.js" defer></script>
+<script src="../js/searcher.js" defer></script>
+<script src="../js/darkfish.js" defer></script>
+
+<link href="../css/fonts.css" rel="stylesheet">
+<link href="../css/rdoc.css" rel="stylesheet">
+
+
+<body id="top" role="document" class="class">
+<nav role="navigation">
+  <div id="project-navigation">
+    <div id="home-section" role="region" title="Quick navigation" class="nav-section">
+  <h2>
+    <a href="../index.html" rel="home">Home</a>
+  </h2>
+
+  <div id="table-of-contents-navigation">
+    <a href="../table_of_contents.html#pages">Pages</a>
+    <a href="../table_of_contents.html#classes">Classes</a>
+    <a href="../table_of_contents.html#methods">Methods</a>
+  </div>
+</div>
+
+    <div id="search-section" role="search" class="project-section initially-hidden">
+  <form action="#" method="get" accept-charset="utf-8">
+    <div id="search-field-wrapper">
+      <input id="search-field" role="combobox" aria-label="Search"
+             aria-autocomplete="list" aria-controls="search-results"
+             type="text" name="search" placeholder="Search" spellcheck="false"
+             title="Type to search, Up and Down to navigate, Enter to load">
+    </div>
+
+    <ul id="search-results" aria-label="Search Results"
+        aria-busy="false" aria-expanded="false"
+        aria-atomic="false" class="initially-hidden"></ul>
+  </form>
+</div>
+
+  </div>
+
+  
+
+  <div id="class-metadata">
+    
+    
+<div id="parent-class-section" class="nav-section">
+  <h3>Parent</h3>
+
+  <p class="link">Object
+</div>
+
+    
+    
+    
+<!-- Method Quickref -->
+<div id="method-list-section" class="nav-section">
+  <h3>Methods</h3>
+
+  <ul class="link-list" role="directory">
+    <li ><a href="#method-c-new">::new</a>
+    <li ><a href="#method-i-endpoint">#endpoint</a>
+    <li ><a href="#method-i-resource">#resource</a>
+  </ul>
+</div>
+
+  </div>
+</nav>
+
+<main role="main" aria-labelledby="class-Hoodoo::Client">
+  <h1 id="class-Hoodoo::Client" class="class">
+    class Hoodoo::Client
+  </h1>
+
+  <section class="description">
+    
+<p><a href="Client.html"><code>Hoodoo::Client</code></a> provides a high-level abstracted interface for making calls to Resource implementations. A <a href="Client.html"><code>Client</code></a> instance is created and used as a factory for objects representing individual Resources. Callers use a consistent, high level interface in these objects to make requests to those Resources and do not usually need to worry about where implementations are, or how they are being contacted.</p>
+
+<p>Please see the constructor documentation for full details.</p>
+
+  </section>
+
+  <section id="5Buntitled-5D" class="documentation-section">
+
+
+
+
+
+     <section id="public-class-5Buntitled-5D-method-details" class="method-section">
+       <header>
+         <h3>Public Class Methods</h3>
+       </header>
+
+      <div id="method-c-new" class="method-detail ">
+        <div class="method-heading">
+          <span class="method-name">new</span><span
+            class="method-args">( base_uri: nil, drb_uri: nil, drb_port: nil, discoverer: nil, locale: nil, session_id: nil, auto_session: :true, auto_session_resource: &#39;Session&#39;, auto_session_version: 1, caller_id: nil, caller_secret: nil )</span>
+          <span class="method-click-advice">click to toggle source</span>
+        </div>
+
+        <div class="method-description">
+          <p>Create a client instance. This is used as a factory for endpoint instances which communicate with Resource implementations.</p>
+
+<h2 id="method-c-new-label-Overview">Overview<span><a href="#method-c-new-label-Overview">&para;</a> <a href="#top">&uarr;</a></span></h2>
+
+<p>Suppose you have Resources with only <code>public_actions</code> so that no sessions are needed, with resource implementations running at host “test.com” on paths which follow downcase/pluralisation conventions. In this case, creating a <a href="Client.html"><code>Client</code></a> instance can be as simple as:</p>
+
+<pre class="ruby"><span class="ruby-identifier">client</span> = <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Client</span>.<span class="ruby-identifier">new</span>(
+  <span class="ruby-value">base_uri:</span>     <span class="ruby-string">&#39;http://test.com/&#39;</span>,
+  <span class="ruby-value">auto_session:</span> <span class="ruby-keyword">false</span>
+)
+</pre>
+
+<p>Ask this client for an endpoint of Resource “Member” implementing version 2 of its interface:</p>
+
+<pre class="ruby"><span class="ruby-identifier">members</span> = <span class="ruby-identifier">client</span>.<span class="ruby-identifier">resource</span>( <span class="ruby-value">:Member</span>, <span class="ruby-value">2</span> )
+</pre>
+
+<p>Perform operations on the endpoints according to the methods in the base class - see these for details:</p>
+<ul><li>
+<p><a href="Client/Endpoint.html#method-i-list"><code>Hoodoo::Client::Endpoint#list</code></a></p>
+</li><li>
+<p><a href="Client/Endpoint.html#method-i-show"><code>Hoodoo::Client::Endpoint#show</code></a></p>
+</li><li>
+<p><a href="Client/Endpoint.html#method-i-create"><code>Hoodoo::Client::Endpoint#create</code></a></p>
+</li><li>
+<p><a href="Client/Endpoint.html#method-i-update"><code>Hoodoo::Client::Endpoint#update</code></a></p>
+</li><li>
+<p><a href="Client/Endpoint.html#method-i-delete"><code>Hoodoo::Client::Endpoint#delete</code></a></p>
+</li></ul>
+
+<p>The above reference describes the basic approach for each call, with common parameters such as the query hash or body hash data described in the base class constructor, Hoodoo::Client::Endpoint#new.</p>
+
+<p>As an example, we could list records 50-79 inclusive of “Member” sorted by <code>created_at</code> ascending, embedding an “account” for each, where field ‘surname’ matches ‘Smith’ - assuming there’s an implementation of such a Resource interface available! - as follows:</p>
+
+<pre class="ruby"><span class="ruby-identifier">results</span> = <span class="ruby-identifier">members</span>.<span class="ruby-identifier">list</span>(
+  <span class="ruby-value">offset:</span>    <span class="ruby-value">50</span>,
+  <span class="ruby-value">limit:</span>     <span class="ruby-value">25</span>,
+  <span class="ruby-value">sort:</span>      <span class="ruby-string">&#39;created_at&#39;</span>,
+  <span class="ruby-value">direction:</span> <span class="ruby-string">&#39;asc&#39;</span>,
+  <span class="ruby-value">search:</span>    { <span class="ruby-string">&#39;surname&#39;</span> <span class="ruby-operator">=&gt;</span> <span class="ruby-string">&#39;Smith&#39;</span> },
+  <span class="ruby-value">_embed:</span>    <span class="ruby-string">&#39;account&#39;</span>
+)
+</pre>
+
+<p>This will return a <a href="Client/AugmentedArray.html"><code>Hoodoo::Client::AugmentedArray</code></a>. This is an Array subclass which will contain the (up to) 25 results from the above call and supports <a href="Client/AugmentedArray.html#attribute-i-dataset_size"><code>Hoodoo::Client::AugmentedArray#dataset_size</code></a> which (if the called Resource endpoint implementation provides the information) gives the total size of the data set at the time of calling. <a href="Client/AugmentedArray.html#attribute-i-estimated_dataset_size"><code>Hoodoo::Client::AugmentedArray#estimated_dataset_size</code></a> likewise gives access to the estimated count, if available.</p>
+
+<p>The other 4 methods return a <a href="Client/AugmentedHash.html"><code>Hoodoo::Client::AugmentedHash</code></a>. This is a Hash subclass. Both the Array and Hash subclasses provide a common standard way to handle errors. See the documentation of these classes for details; in brief, you <em>must</em> <em>always</em> check for errors before examining the Hash or Array data with a pattern such as this:</p>
+
+<pre class="ruby"><span class="ruby-keyword">if</span> <span class="ruby-identifier">results</span>.<span class="ruby-identifier">platform_errors</span>.<span class="ruby-identifier">has_errors?</span>
+  <span class="ruby-comment"># Examine results.platform_errors, which is a</span>
+  <span class="ruby-comment"># Hoodoo::Errors instance, and deal with the contents.</span>
+<span class="ruby-keyword">else</span>
+  <span class="ruby-comment"># Treat &#39;results&#39; as a Hash containing the Resource</span>
+  <span class="ruby-comment"># data (String keys) or Array of Hashes of such data.</span>
+<span class="ruby-keyword">end</span>
+</pre>
+
+<h2 id="method-c-new-label-Session+management">Session management<span><a href="#method-c-new-label-Session+management">&para;</a> <a href="#top">&uarr;</a></span></h2>
+
+<p>By default, the <a href="Client.html"><code>Hoodoo::Client</code></a> constructor assumes you want automatic session management.</p>
+
+<p>If you want to use automatic sessions, a Resource endpoint which implements the Session Resource interface is required. This must accept a POST (<code>create</code>) action with a payload of two JSON fields: <code>caller_id</code> and <code>authentication_secret</code>. It must return a Resource with an “id” value that contains the session ID to quote in future requests via the X-Session-ID HTTP header; or it should return an error if the Caller ID and/or authentication secret are incorrect.</p>
+
+<p>The Resource is assumed to live at the same base URI and/or be discovered by the same mechanism (e.g. by convention) as everything else you’ll use the client instance for. For more about discovery related paramters, see later.</p>
+
+<p>You will need to provide the <code>caller_id</code> and <code>authentication_secret</code> (as named parameter <code>caller_secret</code>) to the constructor. If the name of the Resource implementing the Session interface is not ‘Session’, or not at version 1, then you can also provide alternatives. For example, suppose we want to use automatic session management for Caller ID “0123” and secret “ABCD” via version 2 of “CustomSession”:</p>
+
+<pre class="ruby"><span class="ruby-identifier">client</span> = <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Client</span>.<span class="ruby-identifier">new</span>(
+  <span class="ruby-value">base_uri:</span>              <span class="ruby-string">&#39;http://test.com/&#39;</span>,
+  <span class="ruby-value">auto_session_resource:</span> <span class="ruby-string">&#39;CustomSession&#39;</span>,
+  <span class="ruby-value">auto_session_version:</span>  <span class="ruby-value">2</span>,
+  <span class="ruby-value">caller_id:</span>             <span class="ruby-string">&#39;0123&#39;</span>,
+  <span class="ruby-value">caller_secret:</span>         <span class="ruby-string">&#39;ABCD&#39;</span>
+)
+</pre>
+
+<p>Finally, you can manually supply a session ID externally for the X-Session-ID header through the <code>session_id</code> parameter. This may be used in conjunction with auto-session management; in that case, the given session is used until it expires (a “platform.invalid_session” error is encountered), after which a new one will be obtained.</p>
+
+<h2 id="method-c-new-label-Discovery+parameters">Discovery parameters<span><a href="#method-c-new-label-Discovery+parameters">&para;</a> <a href="#top">&uarr;</a></span></h2>
+
+<p>The <a href="Client.html"><code>Client</code></a> instance needs to be able to find the place where the requested Resource implementations are located, which it does using the <a href="Services/Discovery.html"><code>Hoodoo::Services::Discovery</code></a> framework. You should read the description of this framework to get a feel for how that works first.</p>
+
+<p>One of the following <strong>named</strong> parameters must be supplied in order to choose a discovery engine for finding Resource endpoints:</p>
+<dl class="rdoc-list note-list"><dt><code>discoverer</code>
+<dd>
+<p>The <a href="Client.html"><code>Client</code></a> needs a <strong>Discoverer</strong> to map from resource names and versions to locations on the Internet of the actual resource endpoint implementation. Via the <code>discoverer</code> parameter, you can explicitly pass a <a href="Services/Discovery.html"><code>Hoodoo::Services::Discovery</code></a> subclass instance customised to your own requirements. There are also convenience parameters available - see below - that create discoverer instances for you, covering common use cases. If provided, the <code>discoverer</code> parameter takes precedence over any other parameters below.</p>
+</dd><dt><code>base_uri</code>
+<dd>
+<p>When given, Resource discovery is done by <a href="Services/Discovery/ByConvention.html"><code>Hoodoo::Services::Discovery::ByConvention</code></a>. The path that the by-convention discoverer creates is appended to the base URI to build the full URI at which a server implementing each requested Resource endpoint must be listening (else a 404 / ‘platform.not_found’ response arises). Specify as a String. If provided, the <code>base_uri</code> parameter takes precedence over any other parameters below.</p>
+</dd><dt><code>drb_uri</code>
+<dd>
+<p>When given, Resource discovery is done by <a href="Services/Discovery/ByDRb.html"><code>Hoodoo::Services::Discovery::ByDRb</code></a>. A DRb service providing discovery data must be running at the given URI. Specify as a String. See <a href="Services/Discovery/ByDRb/DRbServer.html"><code>Hoodoo::Services::Discovery::ByDRb::DRbServer</code></a> and file <code>drb_server_start.rb</code> for more.</p>
+</dd><dt><code>drb_port</code>
+<dd>
+<p>Instead of <code>drb_uri</code>, you can provide the port number of a DRb server on localhost. See <a href="Services/Discovery/ByDRb.html"><code>Hoodoo::Services::Discovery::ByDRb</code></a> for which of <code>drb_uri</code> or <code>drb_port</code> take precedence, if both are provided.</p>
+</dd></dl>
+
+<p>As an example of using a custom Discoverer, consider a simple HTTP case with the <code>base_uri</code> parameter. The default “by convention” discoverer pluralises all paths, but let’s say you have exceptions for Version and Health singleton resources which you’ve elected to place on singular, not plural, paths. You will need to construct a custom discoverer with these exceptions. See the documentation for <a href="Services/Discovery/ByConvention.html"><code>Hoodoo::Services::Discovery::ByConvention</code></a> to understand the options passed in for the custom routing information.</p>
+
+<pre class="ruby"><span class="ruby-identifier">base_uri</span> = <span class="ruby-string">&#39;https://api.test.com/&#39;</span>
+
+<span class="ruby-identifier">discoverer</span> = <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Services</span><span class="ruby-operator">::</span><span class="ruby-constant">Discovery</span><span class="ruby-operator">::</span><span class="ruby-constant">ByConvention</span>.<span class="ruby-identifier">new</span>(
+  <span class="ruby-value">:base_uri</span> <span class="ruby-operator">=&gt;</span> <span class="ruby-identifier">base_uri</span>,
+  <span class="ruby-value">:routing</span>  <span class="ruby-operator">=&gt;</span> {
+    <span class="ruby-value">:Version</span> <span class="ruby-operator">=&gt;</span> { <span class="ruby-value">1</span> <span class="ruby-operator">=&gt;</span> <span class="ruby-string">&#39;/v1/version&#39;</span> },
+    <span class="ruby-value">:Health</span>  <span class="ruby-operator">=&gt;</span> { <span class="ruby-value">1</span> <span class="ruby-operator">=&gt;</span> <span class="ruby-string">&#39;/v1/health&#39;</span>  }
+  }
+)
+
+<span class="ruby-identifier">client</span> = <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Client</span>.<span class="ruby-identifier">new</span>(
+  <span class="ruby-value">:discoverer</span> <span class="ruby-operator">=&gt;</span> <span class="ruby-identifier">discoverer</span>,
+  <span class="ruby-comment"># ...other options...</span>
+)
+</pre>
+
+<h2 id="method-c-new-label-Other+parameters">Other parameters<span><a href="#method-c-new-label-Other+parameters">&para;</a> <a href="#top">&uarr;</a></span></h2>
+
+<p>The following additional <strong>named</strong> parameters are all optional:</p>
+<dl class="rdoc-list note-list"><dt><code>locale</code>
+<dd>
+<p>The String given in Content-Language <em>and</em> Accept-Language HTTP headers for requests; default is “en-nz”.</p>
+</dd><dt><code>session_id</code>
+<dd>
+<p>An optional session ID to be used for the initial X-Session-ID request header value.</p>
+</dd><dt><code>auto_session</code>
+<dd>
+<p>If <code>false</code>, automatic session management is disabled. Default is <code>true</code>.</p>
+</dd><dt><code>auto_session_resource</code>
+<dd>
+<p>Name of the Resource to use for automatic session management as a String or Symbol. Default is +“Session”+.</p>
+</dd><dt><code>auto_session_version</code>
+<dd>
+<p>Version of the Resource to use for automatic session management as an Integer. Default is 1.</p>
+</dd><dt><code>caller_id</code>
+<dd>
+<p>If using automatic session management, a Caller <a href="UUID.html"><code>UUID</code></a> must be provided. It is used as the <code>caller_id</code> field’s value in the POST (<code>create</code>) call to the session Resource endpoint.</p>
+</dd><dt><code>caller_secret</code>
+<dd>
+<p>If using automatic session management, a Caller authentication secret must be provide. It is used as the <code>authentication_secret</code> field’s value in the POST (<code>create</code>) call to the session Resource endpoint.</p>
+</dd></dl>
+
+<p>If curious about the implementation details of automatic session management, see the Hoodoo::Client::Endpoints::AutoSession class’s code.</p>
+
+          <div class="method-source-code" id="new-source">
+            <pre><span class="ruby-comment"># File lib/hoodoo/client/client.rb, line 242</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">initialize</span>( <span class="ruby-value">base_uri:</span>              <span class="ruby-keyword">nil</span>,
+                <span class="ruby-value">drb_uri:</span>               <span class="ruby-keyword">nil</span>,
+                <span class="ruby-value">drb_port:</span>              <span class="ruby-keyword">nil</span>,
+                <span class="ruby-value">discoverer:</span>            <span class="ruby-keyword">nil</span>,
+
+                <span class="ruby-value">locale:</span>                <span class="ruby-keyword">nil</span>,
+
+                <span class="ruby-value">session_id:</span>            <span class="ruby-keyword">nil</span>,
+                <span class="ruby-value">auto_session:</span>          <span class="ruby-value">:true</span>,
+                <span class="ruby-value">auto_session_resource:</span> <span class="ruby-string">&#39;Session&#39;</span>,
+                <span class="ruby-value">auto_session_version:</span>  <span class="ruby-value">1</span>,
+                <span class="ruby-value">caller_id:</span>             <span class="ruby-keyword">nil</span>,
+                <span class="ruby-value">caller_secret:</span>         <span class="ruby-keyword">nil</span> )
+
+  <span class="ruby-ivar">@base_uri</span> = <span class="ruby-identifier">base_uri</span>
+  <span class="ruby-ivar">@drb_uri</span>  = <span class="ruby-identifier">drb_uri</span>
+  <span class="ruby-ivar">@drb_port</span> = <span class="ruby-identifier">drb_port</span>
+
+  <span class="ruby-ivar">@locale</span>   = <span class="ruby-identifier">locale</span>
+
+  <span class="ruby-ivar">@discoverer</span> = <span class="ruby-keyword">if</span> <span class="ruby-identifier">discoverer</span> <span class="ruby-operator">!=</span> <span class="ruby-keyword">nil</span>
+    <span class="ruby-identifier">discoverer</span>
+  <span class="ruby-keyword">elsif</span> <span class="ruby-ivar">@base_uri</span> <span class="ruby-operator">!=</span> <span class="ruby-keyword">nil</span>
+    <span class="ruby-keyword">if</span> <span class="ruby-keyword">defined?</span>( <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Services</span><span class="ruby-operator">::</span><span class="ruby-constant">Discovery</span><span class="ruby-operator">::</span><span class="ruby-constant">ByConvention</span> )
+      <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Services</span><span class="ruby-operator">::</span><span class="ruby-constant">Discovery</span><span class="ruby-operator">::</span><span class="ruby-constant">ByConvention</span>.<span class="ruby-identifier">new</span>(
+        <span class="ruby-value">:base_uri</span> <span class="ruby-operator">=&gt;</span> <span class="ruby-ivar">@base_uri</span>
+      )
+    <span class="ruby-keyword">else</span>
+      <span class="ruby-identifier">raise</span> <span class="ruby-string">&#39;Hoodoo::Client: The constructor parameters indicate the use of a &quot;by convention&quot; discoverer. This discoverer requires ActiveSupport; ensure the ActiveSupport gem is present and &quot;require&quot;-able.&#39;</span>
+    <span class="ruby-keyword">end</span>
+  <span class="ruby-keyword">elsif</span> <span class="ruby-ivar">@drb_uri</span> <span class="ruby-operator">!=</span> <span class="ruby-keyword">nil</span> <span class="ruby-operator">||</span> <span class="ruby-ivar">@drb_port</span> <span class="ruby-operator">!=</span> <span class="ruby-keyword">nil</span>
+    <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Services</span><span class="ruby-operator">::</span><span class="ruby-constant">Discovery</span><span class="ruby-operator">::</span><span class="ruby-constant">ByDRb</span>.<span class="ruby-identifier">new</span>(
+      <span class="ruby-value">:drb_uri</span>  <span class="ruby-operator">=&gt;</span> <span class="ruby-ivar">@drb_uri</span>,
+      <span class="ruby-value">:drb_port</span> <span class="ruby-operator">=&gt;</span> <span class="ruby-ivar">@drb_port</span>
+    )
+  <span class="ruby-keyword">else</span>
+    <span class="ruby-identifier">raise</span> <span class="ruby-string">&#39;Hoodoo::Client: Please pass one of the &quot;discoverer&quot;, &quot;base_uri&quot;, &quot;drb_uri&quot; or &quot;drb_port&quot; parameters.&#39;</span>
+  <span class="ruby-keyword">end</span>
+
+  <span class="ruby-comment"># If doing automatic sessions, acquire a session creation endpoint</span>
+
+  <span class="ruby-ivar">@session_id</span>    = <span class="ruby-identifier">session_id</span>
+  <span class="ruby-ivar">@caller_id</span>     = <span class="ruby-identifier">caller_id</span>
+  <span class="ruby-ivar">@caller_secret</span> = <span class="ruby-identifier">caller_secret</span>
+
+  <span class="ruby-keyword">if</span> <span class="ruby-identifier">auto_session</span>
+    <span class="ruby-ivar">@auto_session_endpoint</span> = <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Client</span><span class="ruby-operator">::</span><span class="ruby-constant">Endpoint</span>.<span class="ruby-identifier">endpoint_for</span>(
+      <span class="ruby-identifier">auto_session_resource</span>,
+      <span class="ruby-identifier">auto_session_version</span>,
+      { <span class="ruby-value">:discoverer</span> <span class="ruby-operator">=&gt;</span> <span class="ruby-ivar">@discoverer</span> }
+    )
+  <span class="ruby-keyword">end</span>
+<span class="ruby-keyword">end</span></pre>
+          </div>
+        </div>
+
+
+      </div>
+
+    </section>
+
+     <section id="public-instance-5Buntitled-5D-method-details" class="method-section">
+       <header>
+         <h3>Public Instance Methods</h3>
+       </header>
+
+      <div id="method-i-endpoint" class="method-detail method-alias">
+        <div class="method-heading">
+          <span class="method-name">endpoint</span><span
+            class="method-args">( resource, version = 1, options = {} )</span>
+        </div>
+
+        <div class="method-description">
+          <p>Alias of <a href="Client.html#method-i-resource"><code>resource</code></a>, as syntax sugar for those who prefer to think of the return value as an endpoint that is used to contact a resource, rather than a remote abstraction of the resource as an entity.</p>
+
+        </div>
+
+
+        <div class="aliases">
+          Alias for: <a href="Client.html#method-i-resource">resource</a>
+        </div>
+      </div>
+
+      <div id="method-i-resource" class="method-detail ">
+        <div class="method-heading">
+          <span class="method-name">resource</span><span
+            class="method-args">( resource, version = 1, options = {} )</span>
+          <span class="method-click-advice">click to toggle source</span>
+        </div>
+
+        <div class="method-description">
+          <p>Get an endpoint instance which you can use for talking to a Resource. See the constructor for full information.</p>
+
+<p>You’ll always get an endpoint instance back from this call. If an implementation of the given version of the given Resource cannot be contacted, you will only get a 404 (‘platform.not_found’) or 408 (‘platform.timeout’) response when you try to make a call to it.</p>
+<dl class="rdoc-list note-list"><dt><code>resource</code>
+<dd>
+<p>Resource name as a Symbol or String (e.g. <code>:Purchase</code>).</p>
+</dd><dt><code>version</code>
+<dd>
+<p><a href="Client/Endpoint.html"><code>Endpoint</code></a> version as an Integer; optional; default is 1.</p>
+</dd><dt><code>options</code>
+<dd>
+<p>Optional options Hash (see below).</p>
+</dd></dl>
+
+<p>The options Hash key/values are as follows:</p>
+<dl class="rdoc-list note-list"><dt><code>locale</code>
+<dd>
+<p>Locale string for request/response, e.g. “en-gb”. Optional. If omitted, defaults to the locale set in this <a href="Client.html"><code>Client</code></a> instance’s constructor.</p>
+</dd><dt>OTHERS
+<dd>
+<p>See <a href="Client/Headers.html"><code>Hoodoo::Client::Headers</code></a>‘ <code>HEADER_TO_PROPERTY</code>. All such option keys <em>MUST</em> be Symbols.</p>
+</dd></dl>
+
+          <div class="method-source-code" id="resource-source">
+            <pre><span class="ruby-comment"># File lib/hoodoo/client/client.rb, line 319</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">resource</span>( <span class="ruby-identifier">resource</span>, <span class="ruby-identifier">version</span> = <span class="ruby-value">1</span>, <span class="ruby-identifier">options</span> = {} )
+
+  <span class="ruby-identifier">endpoint_options</span> = {
+    <span class="ruby-value">:discoverer</span> <span class="ruby-operator">=&gt;</span> <span class="ruby-ivar">@discoverer</span>,
+    <span class="ruby-value">:session_id</span> <span class="ruby-operator">=&gt;</span> <span class="ruby-ivar">@session_id</span>,
+    <span class="ruby-value">:locale</span>     <span class="ruby-operator">=&gt;</span> <span class="ruby-identifier">options</span>[ <span class="ruby-value">:locale</span> ] <span class="ruby-operator">||</span> <span class="ruby-ivar">@locale</span>
+  }
+
+  <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Client</span><span class="ruby-operator">::</span><span class="ruby-constant">Headers</span><span class="ruby-operator">::</span><span class="ruby-constant">HEADER_TO_PROPERTY</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span> <span class="ruby-identifier">rack_header</span>, <span class="ruby-identifier">description</span> <span class="ruby-operator">|</span>
+    <span class="ruby-identifier">property</span> = <span class="ruby-identifier">description</span>[ <span class="ruby-value">:property</span> ]
+    <span class="ruby-identifier">endpoint_options</span>[ <span class="ruby-identifier">property</span> ] = <span class="ruby-identifier">options</span>[ <span class="ruby-identifier">property</span> ] <span class="ruby-keyword">if</span> <span class="ruby-identifier">options</span>.<span class="ruby-identifier">has_key?</span>( <span class="ruby-identifier">property</span> )
+  <span class="ruby-keyword">end</span>
+
+  <span class="ruby-identifier">endpoint</span> = <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Client</span><span class="ruby-operator">::</span><span class="ruby-constant">Endpoint</span>.<span class="ruby-identifier">endpoint_for</span>(
+    <span class="ruby-identifier">resource</span>,
+    <span class="ruby-identifier">version</span>,
+    <span class="ruby-identifier">endpoint_options</span>
+  )
+
+  <span class="ruby-keyword">unless</span> <span class="ruby-ivar">@auto_session_endpoint</span>.<span class="ruby-identifier">nil?</span>
+    <span class="ruby-identifier">remote_discovery_result</span> = <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Services</span><span class="ruby-operator">::</span><span class="ruby-constant">Discovery</span><span class="ruby-operator">::</span><span class="ruby-constant">ForRemote</span>.<span class="ruby-identifier">new</span>(
+      <span class="ruby-value">:resource</span>         <span class="ruby-operator">=&gt;</span> <span class="ruby-identifier">resource</span>,
+      <span class="ruby-value">:version</span>          <span class="ruby-operator">=&gt;</span> <span class="ruby-identifier">version</span>,
+      <span class="ruby-value">:wrapped_endpoint</span> <span class="ruby-operator">=&gt;</span> <span class="ruby-identifier">endpoint</span>
+    )
+
+    <span class="ruby-identifier">endpoint</span> = <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Client</span><span class="ruby-operator">::</span><span class="ruby-constant">Endpoint</span><span class="ruby-operator">::</span><span class="ruby-constant">AutoSession</span>.<span class="ruby-identifier">new</span>(
+      <span class="ruby-identifier">resource</span>,
+      <span class="ruby-identifier">version</span>,
+      <span class="ruby-value">:caller_id</span>        <span class="ruby-operator">=&gt;</span> <span class="ruby-ivar">@caller_id</span>,
+      <span class="ruby-value">:caller_secret</span>    <span class="ruby-operator">=&gt;</span> <span class="ruby-ivar">@caller_secret</span>,
+      <span class="ruby-value">:session_endpoint</span> <span class="ruby-operator">=&gt;</span> <span class="ruby-ivar">@auto_session_endpoint</span>,
+      <span class="ruby-value">:discovery_result</span> <span class="ruby-operator">=&gt;</span> <span class="ruby-identifier">remote_discovery_result</span>
+    )
+  <span class="ruby-keyword">end</span>
+
+  <span class="ruby-keyword">return</span> <span class="ruby-identifier">endpoint</span>
+<span class="ruby-keyword">end</span></pre>
+          </div>
+        </div>
+
+        <div class="aliases">
+          Also aliased as: <a href="Client.html#method-i-endpoint">endpoint</a>
+        </div>
+
+      </div>
+
+    </section>
+
+  </section>
+</main>
+
+
+<footer id="validator-badges" role="contentinfo">
+  <p><a href="https://validator.w3.org/check/referer">Validate</a>
+  <p>Generated by <a href="https://ruby.github.io/rdoc/">RDoc</a> 6.4.0.
+  <p>Based on <a href="http://deveiate.org/projects/Darkfish-RDoc/">Darkfish</a> by <a href="http://deveiate.org">Michael Granger</a>.
+</footer>
+

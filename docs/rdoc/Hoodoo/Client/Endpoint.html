@@ -1,0 +1,708 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+<meta charset="UTF-8">
+
+<title>class Hoodoo::Client::Endpoint - Hoodoo</title>
+
+<script type="text/javascript">
+  var rdoc_rel_prefix = "../../";
+  var index_rel_prefix = "../../";
+</script>
+
+<script src="../../js/navigation.js" defer></script>
+<script src="../../js/search.js" defer></script>
+<script src="../../js/search_index.js" defer></script>
+<script src="../../js/searcher.js" defer></script>
+<script src="../../js/darkfish.js" defer></script>
+
+<link href="../../css/fonts.css" rel="stylesheet">
+<link href="../../css/rdoc.css" rel="stylesheet">
+
+
+<body id="top" role="document" class="class">
+<nav role="navigation">
+  <div id="project-navigation">
+    <div id="home-section" role="region" title="Quick navigation" class="nav-section">
+  <h2>
+    <a href="../../index.html" rel="home">Home</a>
+  </h2>
+
+  <div id="table-of-contents-navigation">
+    <a href="../../table_of_contents.html#pages">Pages</a>
+    <a href="../../table_of_contents.html#classes">Classes</a>
+    <a href="../../table_of_contents.html#methods">Methods</a>
+  </div>
+</div>
+
+    <div id="search-section" role="search" class="project-section initially-hidden">
+  <form action="#" method="get" accept-charset="utf-8">
+    <div id="search-field-wrapper">
+      <input id="search-field" role="combobox" aria-label="Search"
+             aria-autocomplete="list" aria-controls="search-results"
+             type="text" name="search" placeholder="Search" spellcheck="false"
+             title="Type to search, Up and Down to navigate, Enter to load">
+    </div>
+
+    <ul id="search-results" aria-label="Search Results"
+        aria-busy="false" aria-expanded="false"
+        aria-atomic="false" class="initially-hidden"></ul>
+  </form>
+</div>
+
+  </div>
+
+  
+
+  <div id="class-metadata">
+    
+    
+<div id="parent-class-section" class="nav-section">
+  <h3>Parent</h3>
+
+  <p class="link">Object
+</div>
+
+    
+    
+    
+<!-- Method Quickref -->
+<div id="method-list-section" class="nav-section">
+  <h3>Methods</h3>
+
+  <ul class="link-list" role="directory">
+    <li ><a href="#method-c-endpoint_for">::endpoint_for</a>
+    <li ><a href="#method-c-new">::new</a>
+    <li ><a href="#method-i-configure_with">#configure_with</a>
+    <li ><a href="#method-i-copy_updated_options_to">#copy_updated_options_to</a>
+    <li ><a href="#method-i-create">#create</a>
+    <li ><a href="#method-i-delete">#delete</a>
+    <li ><a href="#method-i-generate_404_response_for">#generate_404_response_for</a>
+    <li ><a href="#method-i-inject_enumeration_state">#inject_enumeration_state</a>
+    <li ><a href="#method-i-list">#list</a>
+    <li ><a href="#method-i-response_class_for">#response_class_for</a>
+    <li ><a href="#method-i-show">#show</a>
+    <li ><a href="#method-i-update">#update</a>
+  </ul>
+</div>
+
+  </div>
+</nav>
+
+<main role="main" aria-labelledby="class-Hoodoo::Client::Endpoint">
+  <h1 id="class-Hoodoo::Client::Endpoint" class="class">
+    class Hoodoo::Client::Endpoint
+  </h1>
+
+  <section class="description">
+    
+<p>Base class for endpoint code.</p>
+
+<p>This base class defines the API to which subclasses must adhere, so that endpoint users don’t need to care how the endpoint actually communicates with a target resource.</p>
+
+<p>ENDPOINTS ARE NOT INTENDED TO BE THREAD SAFE. Whenever you want to use one from a particular thread, instantiate an endpoint for use by just that thread. Don’t share instances between threads via e.g. controlling class instance variables recording a reference to a single endpoint object.</p>
+
+  </section>
+
+  <section id="5Buntitled-5D" class="documentation-section">
+
+
+
+    <section class="attribute-method-details" class="method-section">
+      <header>
+        <h3>Attributes</h3>
+      </header>
+
+      <div id="attribute-i-interaction" class="method-detail">
+        <div class="method-heading attribute-method-heading">
+          <span class="method-name">interaction</span><span
+            class="attribute-access-type">[R]</span>
+        </div>
+
+        <div class="method-description">
+        <p>The value of the <code>interaction</code> option key passed to the constructor. See the constructor and endpoint_for for more.</p>
+        </div>
+      </div>
+      <div id="attribute-i-locale" class="method-detail">
+        <div class="method-heading attribute-method-heading">
+          <span class="method-name">locale</span><span
+            class="attribute-access-type">[RW]</span>
+        </div>
+
+        <div class="method-description">
+        <p>The locale passed to the constructor or some value provided later; a String, e.g. “en-gb”, or if <code>nil</code>, uses “en-nz” by default.</p>
+        </div>
+      </div>
+      <div id="attribute-i-resource" class="method-detail">
+        <div class="method-heading attribute-method-heading">
+          <span class="method-name">resource</span><span
+            class="attribute-access-type">[R]</span>
+        </div>
+
+        <div class="method-description">
+        <p>The resource name passed to the constructor, as a String.</p>
+        </div>
+      </div>
+      <div id="attribute-i-session_id" class="method-detail">
+        <div class="method-heading attribute-method-heading">
+          <span class="method-name">session_id</span><span
+            class="attribute-access-type">[RW]</span>
+        </div>
+
+        <div class="method-description">
+        <p>The session <a href="../UUID.html"><code>UUID</code></a> passed to the constructor or some value provided later; used for the calls to the target resource via the X-Session-ID <a href="Endpoint/HTTP.html"><code>HTTP</code></a> header or an equivalent. If <code>nil</code>, only public actions in the target resource will be accessible.</p>
+        </div>
+      </div>
+      <div id="attribute-i-version" class="method-detail">
+        <div class="method-heading attribute-method-heading">
+          <span class="method-name">version</span><span
+            class="attribute-access-type">[R]</span>
+        </div>
+
+        <div class="method-description">
+        <p>The version number passed to the constructor, as an Integer.</p>
+        </div>
+      </div>
+    </section>
+
+
+     <section id="public-class-5Buntitled-5D-method-details" class="method-section">
+       <header>
+         <h3>Public Class Methods</h3>
+       </header>
+
+      <div id="method-c-endpoint_for" class="method-detail ">
+        <div class="method-heading">
+          <span class="method-name">endpoint_for</span><span
+            class="method-args">( resource, version, options )</span>
+          <span class="method-click-advice">click to toggle source</span>
+        </div>
+
+        <div class="method-description">
+          <p><a href="Endpoint.html"><code>Endpoint</code></a> factory - instantiates and endpoint for the given resource and implemented API version, using the given discoverer.</p>
+<dl class="rdoc-list note-list"><dt><code>resource</code>
+<dd>
+<p>Resource name the endpoint targets, e.g. <code>:Purchase</code>. String or symbol.</p>
+</dd><dt><code>version</code>
+<dd>
+<p>Optional required interface (API) version for that endpoint. Integer. Default is 1.</p>
+</dd><dt><code>options</code>
+<dd>
+<p>Options Hash. Options are described below. Note that this Hash may be modified during processing.</p>
+</dd></dl>
+
+<p>Items in the options hash are required, unless explicitly listed as optional. They are:</p>
+<dl class="rdoc-list note-list"><dt><code>discoverer</code>
+<dd>
+<p>A <a href="../Services/Discovery.html"><code>Hoodoo::Services::Discovery</code></a> “By…” family member instance, e.g. a <a href="../Services/Discovery/ByDRb.html"><code>Hoodoo::Services::Discovery::ByDRb</code></a> instance. This is used to look up a service instance. The returned discovery data type is used to determine the required endpoint type; for example, a <a href="../Services/Discovery/ForHTTP.html"><code>Hoodoo::Services::Discovery::ForHTTP</code></a> result yields a <a href="Endpoint/HTTP.html"><code>Hoodoo::Client::Endpoint::HTTP</code></a> instance.</p>
+</dd><dt><code>session_id</code>
+<dd>
+<p>A session <a href="../UUID.html"><code>UUID</code></a>, for the X-Session-ID <a href="Endpoint/HTTP.html"><code>HTTP</code></a> header or an equivalent. Optional, but if omitted, only public resource actions will be accessible.</p>
+</dd><dt><code>interaction</code>
+<dd>
+<p>Optional <a href="../Services/Middleware/Interaction.html"><code>Hoodoo::Services::Middleware::Interaction</code></a> instance which describes a <strong>source</strong> interaction at hand. This is a middleware concept and most of the time, only the middleware would use this; the middleware is handling some API call which the source interaction data describes but the resource which is handling the call needs to make an inter-resource call, which is why an <a href="Endpoint.html"><code>Endpoint</code></a> is being created.</p>
+</dd><dt><code>locale</code>
+<dd>
+<p>Locale string for request/response, e.g. “en-gb”. Optional. If omitted, defaults to “en-nz”.</p>
+</dd><dt>OTHERS
+<dd>
+<p>See <a href="Headers.html"><code>Hoodoo::Client::Headers</code></a>‘ <code>HEADER_TO_PROPERTY</code>. All such option keys <em>MUST</em> be Symbols.</p>
+</dd></dl>
+
+<p>Returns a <a href="../Services/Discovery.html"><code>Hoodoo::Services::Discovery</code></a> “For…” family member instance (e.g. <a href="../Services/Discovery/ForHTTP.html"><code>Hoodoo::Services::Discovery::ForHTTP</code></a>) which can be used to talk to the resource in question. Getting an instance does not mean the resource endpoint is found - you will not know that until you try to talk to it and get a 404 expressed as a platform error in the response data. See <a href="AugmentedHash.html"><code>Hoodoo::Client::AugmentedHash</code></a> and <a href="AugmentedArray.html"><code>Hoodoo::Client::AugmentedArray</code></a>.</p>
+
+<p>Callers dealing with inter-resource call code may want to consult their discoverer to see if the resource is locally available before bothering to instantiate an endpoint.</p>
+
+<p>If the <code>deja_vu</code> option is set, then a confirmed case of deja vu results in an empty Hash being returned, with no platform errors associated. This is the high-level transport neutral equivalent of (say) a 204 <a href="Endpoint/HTTP.html"><code>HTTP</code></a> response with no body.</p>
+
+          <div class="method-source-code" id="endpoint_for-source">
+            <pre><span class="ruby-comment"># File lib/hoodoo/client/endpoint/endpoint.rb, line 88</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">endpoint_for</span>( <span class="ruby-identifier">resource</span>, <span class="ruby-identifier">version</span>, <span class="ruby-identifier">options</span> )
+  <span class="ruby-identifier">discoverer</span>       = <span class="ruby-identifier">options</span>.<span class="ruby-identifier">delete</span>( <span class="ruby-value">:discoverer</span> )
+  <span class="ruby-identifier">discovery_result</span> = <span class="ruby-identifier">discoverer</span>.<span class="ruby-identifier">discover</span>( <span class="ruby-identifier">resource</span>.<span class="ruby-identifier">to_sym</span>, <span class="ruby-identifier">version</span>.<span class="ruby-identifier">to_i</span> )
+
+  <span class="ruby-identifier">klass</span> = <span class="ruby-keyword">if</span> <span class="ruby-identifier">discovery_result</span>.<span class="ruby-identifier">is_a?</span>( <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Services</span><span class="ruby-operator">::</span><span class="ruby-constant">Discovery</span><span class="ruby-operator">::</span><span class="ruby-constant">ForHTTP</span> )
+    <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Client</span><span class="ruby-operator">::</span><span class="ruby-constant">Endpoint</span><span class="ruby-operator">::</span><span class="ruby-constant">HTTP</span>
+  <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">discovery_result</span>.<span class="ruby-identifier">is_a?</span>( <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Services</span><span class="ruby-operator">::</span><span class="ruby-constant">Discovery</span><span class="ruby-operator">::</span><span class="ruby-constant">ForAMQP</span> )
+    <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Client</span><span class="ruby-operator">::</span><span class="ruby-constant">Endpoint</span><span class="ruby-operator">::</span><span class="ruby-constant">AMQP</span>
+  <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">discovery_result</span>.<span class="ruby-identifier">nil?</span>
+    <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Client</span><span class="ruby-operator">::</span><span class="ruby-constant">Endpoint</span><span class="ruby-operator">::</span><span class="ruby-constant">NotFound</span>
+  <span class="ruby-keyword">else</span>
+    <span class="ruby-keyword">nil</span>
+  <span class="ruby-keyword">end</span>
+
+  <span class="ruby-identifier">options</span>[ <span class="ruby-value">:discovery_result</span> ] = <span class="ruby-identifier">discovery_result</span>
+
+  <span class="ruby-keyword">if</span> <span class="ruby-identifier">klass</span>.<span class="ruby-identifier">nil?</span>
+    <span class="ruby-identifier">raise</span> <span class="ruby-node">&quot;Hoodoo::Client::Endpoint::endpoint_for: Unrecognised discoverer result class of &#39;#{ discovery_result.class.name }&#39;&quot;</span>
+  <span class="ruby-keyword">else</span>
+    <span class="ruby-keyword">return</span> <span class="ruby-identifier">klass</span>.<span class="ruby-identifier">new</span>( <span class="ruby-identifier">resource</span>, <span class="ruby-identifier">version</span>, <span class="ruby-identifier">options</span> )
+  <span class="ruby-keyword">end</span>
+<span class="ruby-keyword">end</span></pre>
+          </div>
+        </div>
+
+
+      </div>
+
+      <div id="method-c-new" class="method-detail ">
+        <div class="method-heading">
+          <span class="method-name">new</span><span
+            class="method-args">( resource, version = 1, options )</span>
+          <span class="method-click-advice">click to toggle source</span>
+        </div>
+
+        <div class="method-description">
+          <p>Create an endpoint instance that will be used to make requests to a given resource.</p>
+<dl class="rdoc-list note-list"><dt><code>resource</code>
+<dd>
+<p>Resource name the endpoint targets, e.g. <code>:Purchase</code>. String or symbol.</p>
+</dd><dt><code>version</code>
+<dd>
+<p>Optional required interface (API) version for that endpoint. Integer. Default is 1.</p>
+</dd><dt><code>options</code>
+<dd>
+<p>Options Hash. Options are described below. Note that this Hash may be modified during processing.</p>
+</dd></dl>
+
+<p>Items in the options hash are required, unless explicitly listed as optional. They are:</p>
+<dl class="rdoc-list note-list"><dt><code>discovery_result</code>
+<dd>
+<p>A <a href="../Services/Discovery.html"><code>Hoodoo::Services::Discovery</code></a> “For…” family member instance, e.g. a <a href="../Services/Discovery/ForHTTP.html"><code>Hoodoo::Services::Discovery::ForHTTP</code></a> instance. Each subclass describes its required discovery result type, so see its documentation for details.</p>
+</dd><dt><code>interaction</code>
+<dd>
+<p>As in the options for endpoint_for.</p>
+</dd><dt><code>session_id</code>
+<dd>
+<p>As in the options for endpoint_for.</p>
+</dd><dt><code>locale</code>
+<dd>
+<p>As in the options for endpoint_for.</p>
+</dd><dt>OTHERS
+<dd>
+<p>See <a href="Headers.html"><code>Hoodoo::Client::Headers</code></a>‘ <code>HEADER_TO_PROPERTY</code>. All such option keys <em>MUST</em> be Symbols.</p>
+</dd></dl>
+
+<p>The out-of-the box initialiser sets up the data for the <a href="Endpoint.html#attribute-i-resource"><code>resource</code></a>, <a href="Endpoint.html#attribute-i-version"><code>version</code></a>, discovery_result, <a href="Endpoint.html#attribute-i-interaction"><code>interaction</code></a>, <a href="Endpoint.html#attribute-i-session_id"><code>session_id</code></a>, <a href="Endpoint.html#attribute-i-locale"><code>locale</code></a>, dated_at and dated_from accessors using this data, so subclass authors don’t need to.</p>
+
+<p>The endpoint is then used with <a href="Endpoint.html#method-i-list"><code>list</code></a>, <a href="Endpoint.html#method-i-show"><code>show</code></a>, <a href="Endpoint.html#method-i-create"><code>create</code></a>, <a href="Endpoint.html#method-i-update"><code>update</code></a> or <a href="Endpoint.html#method-i-delete"><code>delete</code></a> methods to perform operations on the target resource. See each of those methods for details of their specific requirements; however all have common parameters some or all of which are used across the method ‘family’:</p>
+<dl class="rdoc-list note-list"><dt><code>ident</code>
+<dd>
+<p>Identifier. This is usually a <a href="../UUID.html"><code>UUID</code></a> but some Resources support e.g. a “show” action based on either a <a href="../UUID.html"><code>UUID</code></a> or some other unique value (such as a product code, a credit/debit card number or so-on - defined by the Resource in question in its documentation).</p>
+</dd><dt><code>query_hash</code>
+<dd>
+<p>A hash of <em>unencoded</em> data that can be encoded to form a query string. Search and filter data is represented with nested hashes. Embed and reference data uses an array. All keys are Strings. Example:</p>
+
+<pre class="ruby">{
+  <span class="ruby-value">offset:</span>    <span class="ruby-value">75</span>,
+  <span class="ruby-value">limit:</span>     <span class="ruby-value">50</span>,
+  <span class="ruby-value">sort:</span>      <span class="ruby-string">&#39;created_at&#39;</span>, <span class="ruby-comment"># ...or an Array of sort fields</span>
+  <span class="ruby-value">direction:</span> <span class="ruby-string">&#39;asc&#39;</span>,        <span class="ruby-comment"># ...or a matching Array of directions</span>
+  <span class="ruby-value">search:</span>    {
+    <span class="ruby-value">member_id:</span> <span class="ruby-string">&quot;...some UUID...&quot;</span>
+  },
+  <span class="ruby-value">_embed:</span>    [
+    <span class="ruby-string">&#39;vouchers&#39;</span>,
+    <span class="ruby-string">&#39;balances&#39;</span>
+  ],
+  <span class="ruby-comment"># and/or ...filter: {}..., _reference: []...</span>
+}
+</pre>
+
+<p>This parameter is always optional.</p>
+</dd><dt><code>body_hash</code>
+<dd>
+<p>The Hash representation of the body data that might be sent in an <a href="Endpoint/HTTP.html"><code>HTTP</code></a> request (i.e. JSON, as a Hash).</p>
+</dd></dl>
+
+          <div class="method-source-code" id="new-source">
+            <pre><span class="ruby-comment"># File lib/hoodoo/client/endpoint/endpoint.rb, line 214</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">initialize</span>( <span class="ruby-identifier">resource</span>, <span class="ruby-identifier">version</span> = <span class="ruby-value">1</span>, <span class="ruby-identifier">options</span> )
+  <span class="ruby-ivar">@resource</span>         = <span class="ruby-identifier">resource</span>.<span class="ruby-identifier">to_sym</span>
+  <span class="ruby-ivar">@version</span>          = <span class="ruby-identifier">version</span>.<span class="ruby-identifier">to_i</span>
+
+  <span class="ruby-ivar">@discovery_result</span> = <span class="ruby-identifier">options</span>[ <span class="ruby-value">:discovery_result</span> ]
+  <span class="ruby-ivar">@interaction</span>      = <span class="ruby-identifier">options</span>[ <span class="ruby-value">:interaction</span>      ]
+
+  <span class="ruby-keyword">self</span>.<span class="ruby-identifier">session_id</span>   = <span class="ruby-identifier">options</span>[ <span class="ruby-value">:session_id</span> ]
+  <span class="ruby-keyword">self</span>.<span class="ruby-identifier">locale</span>       = <span class="ruby-identifier">options</span>[ <span class="ruby-value">:locale</span>     ]
+
+  <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Client</span><span class="ruby-operator">::</span><span class="ruby-constant">Headers</span><span class="ruby-operator">::</span><span class="ruby-constant">HEADER_TO_PROPERTY</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span> <span class="ruby-identifier">rack_header</span>, <span class="ruby-identifier">description</span> <span class="ruby-operator">|</span>
+    <span class="ruby-identifier">property</span>        = <span class="ruby-identifier">description</span>[ <span class="ruby-value">:property</span>        ]
+    <span class="ruby-identifier">property_writer</span> = <span class="ruby-identifier">description</span>[ <span class="ruby-value">:property_writer</span> ]
+
+    <span class="ruby-keyword">self</span>.<span class="ruby-identifier">send</span>( <span class="ruby-identifier">property_writer</span>, <span class="ruby-identifier">options</span>[ <span class="ruby-identifier">property</span> ] ) <span class="ruby-keyword">if</span> <span class="ruby-identifier">options</span>.<span class="ruby-identifier">has_key?</span>( <span class="ruby-identifier">property</span> )
+  <span class="ruby-keyword">end</span>
+
+  <span class="ruby-identifier">configure_with</span>( <span class="ruby-ivar">@resource</span>, <span class="ruby-ivar">@version</span>, <span class="ruby-identifier">options</span> )
+<span class="ruby-keyword">end</span></pre>
+          </div>
+        </div>
+
+
+      </div>
+
+    </section>
+
+     <section id="public-instance-5Buntitled-5D-method-details" class="method-section">
+       <header>
+         <h3>Public Instance Methods</h3>
+       </header>
+
+      <div id="method-i-create" class="method-detail ">
+        <div class="method-heading">
+          <span class="method-name">create</span><span
+            class="method-args">( body_hash, query_hash = nil )</span>
+          <span class="method-click-advice">click to toggle source</span>
+        </div>
+
+        <div class="method-description">
+          <p>Create a resource instance.</p>
+<dl class="rdoc-list note-list"><dt><code>body_hash</code>
+<dd>
+<p>See the constructor for details.</p>
+</dd><dt><code>query_hash</code>
+<dd>
+<p>See the constructor for details.</p>
+</dd></dl>
+
+<p>Returns a <a href="AugmentedHash.html"><code>Hoodoo::Client::AugmentedHash</code></a> representation of the new resource instance.</p>
+
+<p>Call <a href="AugmentedBase.html#method-i-platform_errors"><code>Hoodoo::Client::AugmentedHash#platform_errors</code></a> (or for service authors implementing resource endpoints, possibly call <a href="AugmentedBase.html#method-i-adds_errors_to-3F"><code>Hoodoo::Client::AugmentedHash#adds_errors_to?</code></a> instead) on the returned instance to detect and resolve error conditions <em>before</em> examining its Hash-derived fields.</p>
+
+<p>The hash contents are undefined when errors are returned.</p>
+
+          <div class="method-source-code" id="create-source">
+            <pre><span class="ruby-comment"># File lib/hoodoo/client/endpoint/endpoint.rb, line 410</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">create</span>( <span class="ruby-identifier">body_hash</span>, <span class="ruby-identifier">query_hash</span> = <span class="ruby-keyword">nil</span> )
+  <span class="ruby-identifier">raise</span> <span class="ruby-string">&quot;Subclasses must implement Hoodoo::Client::Endpoint\#create&quot;</span>
+<span class="ruby-keyword">end</span></pre>
+          </div>
+        </div>
+
+
+      </div>
+
+      <div id="method-i-delete" class="method-detail ">
+        <div class="method-heading">
+          <span class="method-name">delete</span><span
+            class="method-args">( ident, query_hash = nil )</span>
+          <span class="method-click-advice">click to toggle source</span>
+        </div>
+
+        <div class="method-description">
+          <p>Delete a resource instance.</p>
+<dl class="rdoc-list note-list"><dt><code>ident</code>
+<dd>
+<p>See the constructor for details.</p>
+</dd><dt><code>query_hash</code>
+<dd>
+<p>See the constructor for details.</p>
+</dd></dl>
+
+<p>Returns a <a href="AugmentedHash.html"><code>Hoodoo::Client::AugmentedHash</code></a> representation of the now-deleted resource instance,from the instant before deletion.</p>
+
+<p>Call <a href="AugmentedBase.html#method-i-platform_errors"><code>Hoodoo::Client::AugmentedHash#platform_errors</code></a> (or for service authors implementing resource endpoints, possibly call <a href="AugmentedBase.html#method-i-adds_errors_to-3F"><code>Hoodoo::Client::AugmentedHash#adds_errors_to?</code></a> instead) on the returned instance to detect and resolve error conditions <em>before</em> examining its Hash-derived fields.</p>
+
+<p>The hash contents are undefined when errors are returned.</p>
+
+          <div class="method-source-code" id="delete-source">
+            <pre><span class="ruby-comment"># File lib/hoodoo/client/endpoint/endpoint.rb, line 451</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">delete</span>( <span class="ruby-identifier">ident</span>, <span class="ruby-identifier">query_hash</span> = <span class="ruby-keyword">nil</span> )
+  <span class="ruby-identifier">raise</span> <span class="ruby-string">&quot;Subclasses must implement Hoodoo::Client::Endpoint\#delete&quot;</span>
+<span class="ruby-keyword">end</span></pre>
+          </div>
+        </div>
+
+
+      </div>
+
+      <div id="method-i-list" class="method-detail ">
+        <div class="method-heading">
+          <span class="method-name">list</span><span
+            class="method-args">( query_hash = nil )</span>
+          <span class="method-click-advice">click to toggle source</span>
+        </div>
+
+        <div class="method-description">
+          <p>Obtain a list of resource instance representations.</p>
+<dl class="rdoc-list note-list"><dt><code>query_hash</code>
+<dd>
+<p>See the constructor for more. This is the only way to search or filter the list, via the target Resource’s documented supported search/filter parameters and the platform’s common all-Resources behaviour.</p>
+</dd></dl>
+
+<p>Returns a <a href="AugmentedArray.html"><code>Hoodoo::Client::AugmentedArray</code></a> representation of the requested list of resource instances.</p>
+
+<p>Call <a href="AugmentedBase.html#method-i-platform_errors"><code>Hoodoo::Client::AugmentedArray#platform_errors</code></a> (or for service authors implementing resource endpoints, possibly call <a href="AugmentedBase.html#method-i-adds_errors_to-3F"><code>Hoodoo::Client::AugmentedArray#adds_errors_to?</code></a> instead) on the returned instance to detect and resolve error conditions <em>before</em> examining its Array-derived contents.</p>
+
+<p>The array will be empty in successful responses if no items satisfying the list conditions were found. The array contents are undefined in the case of errors.</p>
+
+<p>Call <a href="PaginatedEnumeration.html#method-i-enumerate_all"><code>Hoodoo::Client::PaginatedEnumeration#enumerate_all</code></a> to enumerate over the list of resource instances with automatic pagination.</p>
+
+          <div class="method-source-code" id="list-source">
+            <pre><span class="ruby-comment"># File lib/hoodoo/client/endpoint/endpoint.rb, line 370</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">list</span>( <span class="ruby-identifier">query_hash</span> = <span class="ruby-keyword">nil</span> )
+  <span class="ruby-identifier">raise</span> <span class="ruby-string">&quot;Subclasses must implement Hoodoo::Client::Endpoint\#list&quot;</span>
+<span class="ruby-keyword">end</span></pre>
+          </div>
+        </div>
+
+
+      </div>
+
+      <div id="method-i-show" class="method-detail ">
+        <div class="method-heading">
+          <span class="method-name">show</span><span
+            class="method-args">( ident, query_hash = nil )</span>
+          <span class="method-click-advice">click to toggle source</span>
+        </div>
+
+        <div class="method-description">
+          <p>Obtain a resource instance representation.</p>
+<dl class="rdoc-list note-list"><dt><code>ident</code>
+<dd>
+<p>See the constructor for details.</p>
+</dd><dt><code>query_hash</code>
+<dd>
+<p>See the constructor for details.</p>
+</dd></dl>
+
+<p>Returns a <a href="AugmentedHash.html"><code>Hoodoo::Client::AugmentedHash</code></a> representation of the requested resource instance.</p>
+
+<p>Call <a href="AugmentedBase.html#method-i-platform_errors"><code>Hoodoo::Client::AugmentedHash#platform_errors</code></a> (or for service authors implementing resource endpoints, possibly call <a href="AugmentedBase.html#method-i-adds_errors_to-3F"><code>Hoodoo::Client::AugmentedHash#adds_errors_to?</code></a> instead) on the returned instance to detect and resolve error conditions <em>before</em> examining its Hash-derived fields.</p>
+
+<p>The hash contents are undefined when errors are returned.</p>
+
+          <div class="method-source-code" id="show-source">
+            <pre><span class="ruby-comment"># File lib/hoodoo/client/endpoint/endpoint.rb, line 390</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">show</span>( <span class="ruby-identifier">ident</span>, <span class="ruby-identifier">query_hash</span> = <span class="ruby-keyword">nil</span> )
+  <span class="ruby-identifier">raise</span> <span class="ruby-string">&quot;Subclasses must implement Hoodoo::Client::Endpoint\#show&quot;</span>
+<span class="ruby-keyword">end</span></pre>
+          </div>
+        </div>
+
+
+      </div>
+
+      <div id="method-i-update" class="method-detail ">
+        <div class="method-heading">
+          <span class="method-name">update</span><span
+            class="method-args">( ident, body_hash, query_hash = nil )</span>
+          <span class="method-click-advice">click to toggle source</span>
+        </div>
+
+        <div class="method-description">
+          <p>Update a resource instance.</p>
+<dl class="rdoc-list note-list"><dt><code>ident</code>
+<dd>
+<p>See the constructor for details.</p>
+</dd><dt><code>body_hash</code>
+<dd>
+<p>See the constructor for details.</p>
+</dd><dt><code>query_hash</code>
+<dd>
+<p>See the constructor for details.</p>
+</dd></dl>
+
+<p>Returns a <a href="AugmentedHash.html"><code>Hoodoo::Client::AugmentedHash</code></a> representation of the updated resource instance.</p>
+
+<p>Call <a href="AugmentedBase.html#method-i-platform_errors"><code>Hoodoo::Client::AugmentedHash#platform_errors</code></a> (or for service authors implementing resource endpoints, possibly call <a href="AugmentedBase.html#method-i-adds_errors_to-3F"><code>Hoodoo::Client::AugmentedHash#adds_errors_to?</code></a> instead) on the returned instance to detect and resolve error conditions <em>before</em> examining its Hash-derived fields.</p>
+
+<p>The hash contents are undefined when errors are returned.</p>
+
+          <div class="method-source-code" id="update-source">
+            <pre><span class="ruby-comment"># File lib/hoodoo/client/endpoint/endpoint.rb, line 431</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">update</span>( <span class="ruby-identifier">ident</span>, <span class="ruby-identifier">body_hash</span>, <span class="ruby-identifier">query_hash</span> = <span class="ruby-keyword">nil</span> )
+  <span class="ruby-identifier">raise</span> <span class="ruby-string">&quot;Subclasses must implement Hoodoo::Client::Endpoint\#update&quot;</span>
+<span class="ruby-keyword">end</span></pre>
+          </div>
+        </div>
+
+
+      </div>
+
+    </section>
+
+     <section id="protected-instance-5Buntitled-5D-method-details" class="method-section">
+       <header>
+         <h3>Protected Instance Methods</h3>
+       </header>
+
+      <div id="method-i-configure_with" class="method-detail ">
+        <div class="method-heading">
+          <span class="method-name">configure_with</span><span
+            class="method-args">( resource, version, options )</span>
+          <span class="method-click-advice">click to toggle source</span>
+        </div>
+
+        <div class="method-description">
+          <p>This protected method is implemented by subclasses and called from the initializer. Subclasses should store resource and version data however they want and validate any required options, raising errors if need be.</p>
+<dl class="rdoc-list note-list"><dt><code>resource</code>
+<dd>
+<p>Resource name the endpoint targets, e.g. <code>:Purchase</code>. Symbol.</p>
+</dd><dt><code>version</code>
+<dd>
+<p>Optional required interface (API) version for that endpoint. Integer.</p>
+</dd><dt><code>options</code>
+<dd>
+<p>Options Hash. Same as for initialize.</p>
+</dd></dl>
+
+          <div class="method-source-code" id="configure_with-source">
+            <pre><span class="ruby-comment"># File lib/hoodoo/client/endpoint/endpoint.rb, line 253</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">configure_with</span>( <span class="ruby-identifier">resource</span>, <span class="ruby-identifier">version</span>, <span class="ruby-identifier">options</span> )
+  <span class="ruby-identifier">raise</span> <span class="ruby-string">&quot;Subclasses must implement Hoodoo::Client::Endpoint\#configure_with&quot;</span>
+<span class="ruby-keyword">end</span></pre>
+          </div>
+        </div>
+
+
+      </div>
+
+      <div id="method-i-copy_updated_options_to" class="method-detail ">
+        <div class="method-heading">
+          <span class="method-name">copy_updated_options_to</span><span
+            class="method-args">( target_endpoint )</span>
+          <span class="method-click-advice">click to toggle source</span>
+        </div>
+
+        <div class="method-description">
+          <p>Copy the current value of writable options in this <a href="Endpoint.html"><code>Endpoint</code></a> instance, to another <a href="Endpoint.html"><code>Endpoint</code></a> instance. This is useful when one is wrapping another, but to the external user of the wrapping endpoint, they should just be able to set options in that item and have it act as if they’d set them on the thing which it is (not that the caller would know) wrapping.</p>
+
+<p>This includes copying over a <code>session_id</code> field value, though often it’ll subsequently be rewritten by the wrapping endpoint as it’s wrapping something to provide special session management.</p>
+
+<p>WARNING: Any <code>nil</code> internal state values will <em>not</em> be copied.</p>
+
+          <div class="method-source-code" id="copy_updated_options_to-source">
+            <pre><span class="ruby-comment"># File lib/hoodoo/client/endpoint/endpoint.rb, line 303</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">copy_updated_options_to</span>( <span class="ruby-identifier">target_endpoint</span> )
+  <span class="ruby-identifier">target_endpoint</span>.<span class="ruby-identifier">session_id</span> = <span class="ruby-keyword">self</span>.<span class="ruby-identifier">session_id</span> <span class="ruby-keyword">unless</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">session_id</span>.<span class="ruby-identifier">nil?</span>
+  <span class="ruby-identifier">target_endpoint</span>.<span class="ruby-identifier">locale</span>     = <span class="ruby-keyword">self</span>.<span class="ruby-identifier">locale</span>     <span class="ruby-keyword">unless</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">locale</span>.<span class="ruby-identifier">nil?</span>
+
+  <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Client</span><span class="ruby-operator">::</span><span class="ruby-constant">Headers</span><span class="ruby-operator">::</span><span class="ruby-constant">HEADER_TO_PROPERTY</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span> <span class="ruby-identifier">rack_header</span>, <span class="ruby-identifier">description</span> <span class="ruby-operator">|</span>
+    <span class="ruby-identifier">property</span>        = <span class="ruby-identifier">description</span>[ <span class="ruby-value">:property</span>        ]
+    <span class="ruby-identifier">property_writer</span> = <span class="ruby-identifier">description</span>[ <span class="ruby-value">:property_writer</span> ]
+
+    <span class="ruby-identifier">value</span> = <span class="ruby-keyword">self</span>.<span class="ruby-identifier">send</span>( <span class="ruby-identifier">property</span> )
+
+    <span class="ruby-identifier">target_endpoint</span>.<span class="ruby-identifier">send</span>( <span class="ruby-identifier">property_writer</span>, <span class="ruby-identifier">value</span> ) <span class="ruby-keyword">unless</span> <span class="ruby-identifier">value</span>.<span class="ruby-identifier">nil?</span>
+  <span class="ruby-keyword">end</span>
+<span class="ruby-keyword">end</span></pre>
+          </div>
+        </div>
+
+
+      </div>
+
+      <div id="method-i-generate_404_response_for" class="method-detail ">
+        <div class="method-heading">
+          <span class="method-name">generate_404_response_for</span><span
+            class="method-args">( action )</span>
+          <span class="method-click-advice">click to toggle source</span>
+        </div>
+
+        <div class="method-description">
+          <p>Utility method to aid subclass authors. Not usually overridden.</p>
+
+<p>Return an instance of <a href="AugmentedArray.html"><code>Hoodoo::Client::AugmentedArray</code></a> or <a href="AugmentedHash.html"><code>Hoodoo::Client::AugmentedHash</code></a> with an associated 404 error (as a fully formed platform error) describing ‘Not Found’ for the target resource, version and given action.</p>
+<dl class="rdoc-list note-list"><dt><code>action</code>
+<dd>
+<p>A Symbol from Hoodoo::Services::Middleware::ALLOWED_ACTIONS.</p>
+</dd></dl>
+
+          <div class="method-source-code" id="generate_404_response_for-source">
+            <pre><span class="ruby-comment"># File lib/hoodoo/client/endpoint/endpoint.rb, line 280</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">generate_404_response_for</span>( <span class="ruby-identifier">action</span> )
+  <span class="ruby-identifier">data</span> = <span class="ruby-identifier">response_class_for</span>( <span class="ruby-identifier">action</span> ).<span class="ruby-identifier">new</span>
+  <span class="ruby-identifier">data</span>.<span class="ruby-identifier">platform_errors</span>.<span class="ruby-identifier">add_error</span>(
+    <span class="ruby-string">&#39;platform.not_found&#39;</span>,
+    <span class="ruby-string">&#39;reference&#39;</span> <span class="ruby-operator">=&gt;</span> { <span class="ruby-value">:entity_name</span> <span class="ruby-operator">=&gt;</span> <span class="ruby-node">&quot;v#{ @version } of #{ @resource } interface endpoint&quot;</span> }
+  )
+
+  <span class="ruby-keyword">return</span> <span class="ruby-identifier">data</span>
+<span class="ruby-keyword">end</span></pre>
+          </div>
+        </div>
+
+
+      </div>
+
+      <div id="method-i-inject_enumeration_state" class="method-detail ">
+        <div class="method-heading">
+          <span class="method-name">inject_enumeration_state</span><span
+            class="method-args">( augmented_array, query_hash )</span>
+          <span class="method-click-advice">click to toggle source</span>
+        </div>
+
+        <div class="method-description">
+          <p>Set the <code>augmented_array</code>‘s <code>next_page_proc</code> attribute to a Proc that will call the list endpoint to retrieve the next batch of of Resources using the same query parameters.</p>
+<dl class="rdoc-list note-list"><dt><code>augmented_array</code>
+<dd>
+<p>The <a href="AugmentedArray.html"><code>Hoodoo::Client::AugmentedArray</code></a> instance containing the initial set of Resources to be enumerated through.</p>
+</dd><dt><code>query_hash</code>
+<dd>
+<p>The query parameters to be used for this enumeration. See the constructor for more.</p>
+</dd></dl>
+
+<p>Returns the <code>augmented_array</code> passed in, with the <code>next_page_proc</code> value set.</p>
+
+          <div class="method-source-code" id="inject_enumeration_state-source">
+            <pre><span class="ruby-comment"># File lib/hoodoo/client/endpoint/endpoint.rb, line 331</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">inject_enumeration_state</span>( <span class="ruby-identifier">augmented_array</span>, <span class="ruby-identifier">query_hash</span> )
+  <span class="ruby-identifier">endpoint</span>   = <span class="ruby-keyword">self</span>
+  <span class="ruby-identifier">query_hash</span> = <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Utilities</span>.<span class="ruby-identifier">stringify</span>( <span class="ruby-identifier">query_hash</span> <span class="ruby-operator">||</span> {} )
+  <span class="ruby-identifier">batch_size</span> = [ <span class="ruby-value">1</span>, <span class="ruby-identifier">augmented_array</span>.<span class="ruby-identifier">size</span> ].<span class="ruby-identifier">max</span>
+
+  <span class="ruby-identifier">augmented_array</span>.<span class="ruby-identifier">next_page_proc</span> = <span class="ruby-constant">Proc</span>.<span class="ruby-identifier">new</span> <span class="ruby-keyword">do</span>
+    <span class="ruby-identifier">query_hash</span>[ <span class="ruby-string">&#39;offset&#39;</span> ] = ( <span class="ruby-identifier">query_hash</span>[ <span class="ruby-string">&#39;offset&#39;</span> ] <span class="ruby-operator">||</span> <span class="ruby-value">0</span> ) <span class="ruby-operator">+</span> <span class="ruby-identifier">batch_size</span>
+    <span class="ruby-identifier">endpoint</span>.<span class="ruby-identifier">list</span>( <span class="ruby-identifier">query_hash</span> )
+  <span class="ruby-keyword">end</span>
+
+  <span class="ruby-keyword">return</span> <span class="ruby-identifier">augmented_array</span>
+<span class="ruby-keyword">end</span></pre>
+          </div>
+        </div>
+
+
+      </div>
+
+      <div id="method-i-response_class_for" class="method-detail ">
+        <div class="method-heading">
+          <span class="method-name">response_class_for</span><span
+            class="method-args">( action )</span>
+          <span class="method-click-advice">click to toggle source</span>
+        </div>
+
+        <div class="method-description">
+          <p>Utility method to aid subclass authors. Not usually overridden.</p>
+
+<p>Determine the response class needed for a given action - returns <a href="AugmentedArray.html"><code>Hoodoo::Client::AugmentedArray</code></a> or <a href="AugmentedHash.html"><code>Hoodoo::Client::AugmentedHash</code></a> (class references, not instances).</p>
+<dl class="rdoc-list note-list"><dt><code>action</code>
+<dd>
+<p>A Symbol from Hoodoo::Services::Middleware::ALLOWED_ACTIONS.</p>
+</dd></dl>
+
+          <div class="method-source-code" id="response_class_for-source">
+            <pre><span class="ruby-comment"># File lib/hoodoo/client/endpoint/endpoint.rb, line 266</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">response_class_for</span>( <span class="ruby-identifier">action</span> )
+  <span class="ruby-keyword">return</span> <span class="ruby-identifier">action</span>.<span class="ruby-identifier">equal?</span>( <span class="ruby-value">:list</span> ) <span class="ruby-operator">?</span> <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Client</span><span class="ruby-operator">::</span><span class="ruby-constant">AugmentedArray</span> <span class="ruby-operator">:</span> <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Client</span><span class="ruby-operator">::</span><span class="ruby-constant">AugmentedHash</span>
+<span class="ruby-keyword">end</span></pre>
+          </div>
+        </div>
+
+
+      </div>
+
+    </section>
+
+  </section>
+</main>
+
+
+<footer id="validator-badges" role="contentinfo">
+  <p><a href="https://validator.w3.org/check/referer">Validate</a>
+  <p>Generated by <a href="https://ruby.github.io/rdoc/">RDoc</a> 6.4.0.
+  <p>Based on <a href="http://deveiate.org/projects/Darkfish-RDoc/">Darkfish</a> by <a href="http://deveiate.org">Michael Granger</a>.
+</footer>
+

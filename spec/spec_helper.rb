@@ -198,7 +198,8 @@ Dir[ "#{ File.dirname( __FILE__ ) }/shared_examples/**/*.rb" ].sort.each { | f |
 def spec_helper_connect_to_postgres( database_name = 'postgres' )
   ActiveRecord::Base.establish_connection(
     :adapter  => 'postgresql',
-    :username => ENV[ 'DATABASE_USER' ],
+    :username => ENV[ 'DATABASE_USER' ] || 'postgres',
+    :password => 'password',
     :host     => '127.0.0.1',
     :port     => ENV[ 'DATABASE_PORT' ] || 5432,
     :database => database_name

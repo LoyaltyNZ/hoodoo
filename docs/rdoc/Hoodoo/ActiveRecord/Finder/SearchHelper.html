@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+<meta charset="UTF-8">
+
+<title>class Hoodoo::ActiveRecord::Finder::SearchHelper - Hoodoo</title>
+
+<script type="text/javascript">
+  var rdoc_rel_prefix = "../../../";
+  var index_rel_prefix = "../../../";
+</script>
+
+<script src="../../../js/navigation.js" defer></script>
+<script src="../../../js/search.js" defer></script>
+<script src="../../../js/search_index.js" defer></script>
+<script src="../../../js/searcher.js" defer></script>
+<script src="../../../js/darkfish.js" defer></script>
+
+<link href="../../../css/fonts.css" rel="stylesheet">
+<link href="../../../css/rdoc.css" rel="stylesheet">
+
+
+<body id="top" role="document" class="class">
+<nav role="navigation">
+  <div id="project-navigation">
+    <div id="home-section" role="region" title="Quick navigation" class="nav-section">
+  <h2>
+    <a href="../../../index.html" rel="home">Home</a>
+  </h2>
+
+  <div id="table-of-contents-navigation">
+    <a href="../../../table_of_contents.html#pages">Pages</a>
+    <a href="../../../table_of_contents.html#classes">Classes</a>
+    <a href="../../../table_of_contents.html#methods">Methods</a>
+  </div>
+</div>
+
+    <div id="search-section" role="search" class="project-section initially-hidden">
+  <form action="#" method="get" accept-charset="utf-8">
+    <div id="search-field-wrapper">
+      <input id="search-field" role="combobox" aria-label="Search"
+             aria-autocomplete="list" aria-controls="search-results"
+             type="text" name="search" placeholder="Search" spellcheck="false"
+             title="Type to search, Up and Down to navigate, Enter to load">
+    </div>
+
+    <ul id="search-results" aria-label="Search Results"
+        aria-busy="false" aria-expanded="false"
+        aria-atomic="false" class="initially-hidden"></ul>
+  </form>
+</div>
+
+  </div>
+
+  
+
+  <div id="class-metadata">
+    
+    
+<div id="parent-class-section" class="nav-section">
+  <h3>Parent</h3>
+
+  <p class="link">Object
+</div>
+
+    
+    
+    
+<!-- Method Quickref -->
+<div id="method-list-section" class="nav-section">
+  <h3>Methods</h3>
+
+  <ul class="link-list" role="directory">
+    <li ><a href="#method-c-ci_match_generic">::ci_match_generic</a>
+    <li ><a href="#method-c-ci_match_postgres">::ci_match_postgres</a>
+    <li ><a href="#method-c-ciaw_match_generic">::ciaw_match_generic</a>
+    <li ><a href="#method-c-ciaw_match_postgres">::ciaw_match_postgres</a>
+    <li ><a href="#method-c-cs_gt">::cs_gt</a>
+    <li ><a href="#method-c-cs_gte">::cs_gte</a>
+    <li ><a href="#method-c-cs_lt">::cs_lt</a>
+    <li ><a href="#method-c-cs_lte">::cs_lte</a>
+    <li ><a href="#method-c-cs_match">::cs_match</a>
+    <li ><a href="#method-c-cs_match_array">::cs_match_array</a>
+    <li ><a href="#method-c-cs_match_csv">::cs_match_csv</a>
+    <li ><a href="#method-c-csaw_match">::csaw_match</a>
+  </ul>
+</div>
+
+  </div>
+</nav>
+
+<main role="main" aria-labelledby="class-Hoodoo::ActiveRecord::Finder::SearchHelper">
+  <h1 id="class-Hoodoo::ActiveRecord::Finder::SearchHelper" class="class">
+    class Hoodoo::ActiveRecord::Finder::SearchHelper
+  </h1>
+
+  <section class="description">
+    
+<p>Help build up Hash maps to pass into <a href="../Finder.html"><code>Hoodoo::ActiveRecord::Finder</code></a> methods <a href="ClassMethods.html#method-i-search_with"><code>Hoodoo::ActiveRecord::Finder::ClassMethods#search_with</code></a> and <a href="ClassMethods.html#method-i-filter_with"><code>Hoodoo::ActiveRecord::Finder::ClassMethods#filter_with</code></a>. Used also by the default framework search scopes.</p>
+
+<p>The usage pattern is as follows, using “sh” as a local variable just for brevity - it isn’t required:</p>
+
+<pre>sh = Hoodoo::ActiveRecord::Finder::SearchHelper
+
+class SomeModel &lt; ActiveRecord::Base
+  search_with(
+    :colour       =&gt; sh.cs_match_generic,
+    :name         =&gt; sh.ci_match_generic,
+    :resource_ids =&gt; sh.cs_match_csv( :associated_id )
+  end
+end</pre>
+
+<p>The helper methods just provide values to pass into the Hash used with the search/filter <a href="../Finder.html"><code>Hoodoo::ActiveRecord::Finder</code></a> methods, so they’re optional and compatible with calls that write it out “by hand”.</p>
+
+<p>In all cases, in normal use the generated SQL _will not_ match <code>null</code> values; if negated for a filter (“<code>where.not</code>”), the generated SQL <em>will</em> match <code>null</code> values. As a result, passing in explicit searches for <code>nil</code> won’t work - but that’s never expected as a use case here since search values are coming in via e.g. query string information from a URI.</p>
+
+  </section>
+
+  <section id="5Buntitled-5D" class="documentation-section">
+
+
+
+
+
+     <section id="public-class-5Buntitled-5D-method-details" class="method-section">
+       <header>
+         <h3>Public Class Methods</h3>
+       </header>
+
+      <div id="method-c-ci_match_generic" class="method-detail ">
+        <div class="method-heading">
+          <span class="method-name">ci_match_generic</span><span
+            class="method-args">( model_field_name = nil )</span>
+          <span class="method-click-advice">click to toggle source</span>
+        </div>
+
+        <div class="method-description">
+          <p>Case-insensitive match which should be fairly database independent but will run relatively slowly as a result. If you are using PostgreSQL, consider using the faster <a href="SearchHelper.html#method-c-ci_match_postgres"><code>Hoodoo::ActiveRecord::Finder::SearchHelper::ci_match_postgres</code></a> method instead.</p>
+
+<p>Results in a <code>lower(foo) = bar AND foo IS NOT NULL</code> query with <code>bar</code> coerced to a String and converted to lower case by Ruby first.</p>
+<dl class="rdoc-list note-list"><dt><code>model_field_name</code>
+<dd>
+<p>If the model attribute name differs from the search key you want to use in the URI, give the model attribute name here, else omit.</p>
+</dd></dl>
+
+<p>Returns a value that can be asssigned to a URI query string key in the Hash given to <a href="ClassMethods.html#method-i-search_with"><code>Hoodoo::ActiveRecord::Finder::ClassMethods#search_with</code></a> or <a href="ClassMethods.html#method-i-filter_with"><code>Hoodoo::ActiveRecord::Finder::ClassMethods#filter_with</code></a>.</p>
+
+          <div class="method-source-code" id="ci_match_generic-source">
+            <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/search_helper.rb, line 158</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">ci_match_generic</span>( <span class="ruby-identifier">model_field_name</span> = <span class="ruby-keyword">nil</span> )
+  <span class="ruby-constant">Proc</span>.<span class="ruby-identifier">new</span> { <span class="ruby-operator">|</span> <span class="ruby-identifier">attr</span>, <span class="ruby-identifier">value</span> <span class="ruby-operator">|</span>
+    <span class="ruby-identifier">column</span> = <span class="ruby-identifier">model_field_name</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">attr</span>
+    <span class="ruby-identifier">value</span>  = ( <span class="ruby-identifier">value</span> <span class="ruby-operator">||</span> <span class="ruby-string">&#39;&#39;</span> ).<span class="ruby-identifier">to_s</span>.<span class="ruby-identifier">downcase</span>
+
+    [ <span class="ruby-node">&quot;lower(#{ column }) = ? AND #{ column } IS NOT NULL&quot;</span>, <span class="ruby-identifier">value</span> ]
+  }
+<span class="ruby-keyword">end</span></pre>
+          </div>
+        </div>
+
+
+      </div>
+
+      <div id="method-c-ci_match_postgres" class="method-detail ">
+        <div class="method-heading">
+          <span class="method-name">ci_match_postgres</span><span
+            class="method-args">( model_field_name = nil )</span>
+          <span class="method-click-advice">click to toggle source</span>
+        </div>
+
+        <div class="method-description">
+          <p>Case-insensitive match which requires PostgreSQL but should run quickly. If you need a database agnostic solution, consider using the slower <a href="SearchHelper.html#method-c-ci_match_generic"><code>Hoodoo::ActiveRecord::Finder::SearchHelper::ci_match_generic</code></a> method instead.</p>
+
+<p>Results in a <code>foo ILIKE bar AND foo IS NOT NULL</code> query.</p>
+<dl class="rdoc-list note-list"><dt><code>model_field_name</code>
+<dd>
+<p>If the model attribute name differs from the search key you want to use in the URI, give the model attribute name here, else omit.</p>
+</dd></dl>
+
+<p>Returns a value that can be asssigned to a URI query string key in the Hash given to <a href="ClassMethods.html#method-i-search_with"><code>Hoodoo::ActiveRecord::Finder::ClassMethods#search_with</code></a> or <a href="ClassMethods.html#method-i-filter_with"><code>Hoodoo::ActiveRecord::Finder::ClassMethods#filter_with</code></a>.</p>
+
+          <div class="method-source-code" id="ci_match_postgres-source">
+            <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/search_helper.rb, line 199</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">ci_match_postgres</span>( <span class="ruby-identifier">model_field_name</span> = <span class="ruby-keyword">nil</span> )
+  <span class="ruby-constant">Proc</span>.<span class="ruby-identifier">new</span> { <span class="ruby-operator">|</span> <span class="ruby-identifier">attr</span>, <span class="ruby-identifier">value</span> <span class="ruby-operator">|</span>
+    <span class="ruby-identifier">column</span> = <span class="ruby-identifier">model_field_name</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">attr</span>
+
+    [ <span class="ruby-node">&quot;#{ column } ILIKE ? AND #{ column } IS NOT NULL&quot;</span>, <span class="ruby-identifier">value</span> ]
+  }
+<span class="ruby-keyword">end</span></pre>
+          </div>
+        </div>
+
+
+      </div>
+
+      <div id="method-c-ciaw_match_generic" class="method-detail ">
+        <div class="method-heading">
+          <span class="method-name">ciaw_match_generic</span><span
+            class="method-args">( model_field_name = nil )</span>
+          <span class="method-click-advice">click to toggle source</span>
+        </div>
+
+        <div class="method-description">
+          <p>As <a href="SearchHelper.html#method-c-ci_match_generic"><code>Hoodoo::ActiveRecord::Finder::SearchHelper::ci_match_generic</code></a>, but adds wildcards at the front and end of the string for a case-insensitive-all-wildcard match.</p>
+
+<p>Results in a <code>foo LIKE %bar% AND foo IS NOT NULL</code> query.</p>
+
+          <div class="method-source-code" id="ciaw_match_generic-source">
+            <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/search_helper.rb, line 173</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">ciaw_match_generic</span>( <span class="ruby-identifier">model_field_name</span> = <span class="ruby-keyword">nil</span> )
+  <span class="ruby-constant">Proc</span>.<span class="ruby-identifier">new</span> { <span class="ruby-operator">|</span> <span class="ruby-identifier">attr</span>, <span class="ruby-identifier">value</span> <span class="ruby-operator">|</span>
+    <span class="ruby-identifier">column</span> = <span class="ruby-identifier">model_field_name</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">attr</span>
+    <span class="ruby-identifier">value</span>  = ( <span class="ruby-identifier">value</span> <span class="ruby-operator">||</span> <span class="ruby-string">&#39;&#39;</span> ).<span class="ruby-identifier">to_s</span>.<span class="ruby-identifier">downcase</span>
+
+    [ <span class="ruby-node">&quot;lower(#{ column }) LIKE ? AND #{ column } IS NOT NULL&quot;</span>, <span class="ruby-node">&quot;%#{ value }%&quot;</span> ]
+  }
+<span class="ruby-keyword">end</span></pre>
+          </div>
+        </div>
+
+
+      </div>
+
+      <div id="method-c-ciaw_match_postgres" class="method-detail ">
+        <div class="method-heading">
+          <span class="method-name">ciaw_match_postgres</span><span
+            class="method-args">( model_field_name = nil )</span>
+          <span class="method-click-advice">click to toggle source</span>
+        </div>
+
+        <div class="method-description">
+          <p>As <a href="SearchHelper.html#method-c-ci_match_postgres"><code>Hoodoo::ActiveRecord::Finder::SearchHelper::ci_match_postgres</code></a>, but adds wildcards at the front and end of the string for a case-insensitive-all-wildcard match.</p>
+
+<p>Results in a <code>foo ILIKE %bar% AND foo IS NOT NULL</code> query.</p>
+
+          <div class="method-source-code" id="ciaw_match_postgres-source">
+            <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/search_helper.rb, line 213</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">ciaw_match_postgres</span>( <span class="ruby-identifier">model_field_name</span> = <span class="ruby-keyword">nil</span> )
+  <span class="ruby-constant">Proc</span>.<span class="ruby-identifier">new</span> { <span class="ruby-operator">|</span> <span class="ruby-identifier">attr</span>, <span class="ruby-identifier">value</span> <span class="ruby-operator">|</span>
+    <span class="ruby-identifier">column</span> = <span class="ruby-identifier">model_field_name</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">attr</span>
+
+    [ <span class="ruby-node">&quot;#{ column } ILIKE ? AND #{ column } IS NOT NULL&quot;</span>, <span class="ruby-node">&quot;%#{ value }%&quot;</span> ]
+  }
+<span class="ruby-keyword">end</span></pre>
+          </div>
+        </div>
+
+
+      </div>
+
+      <div id="method-c-cs_gt" class="method-detail ">
+        <div class="method-heading">
+          <span class="method-name">cs_gt</span><span
+            class="method-args">( model_field_name = nil )</span>
+          <span class="method-click-advice">click to toggle source</span>
+        </div>
+
+        <div class="method-description">
+          <p>As <a href="SearchHelper.html#method-c-cs_lt"><code>Hoodoo::ActiveRecord::Finder::SearchHelper::cs_lt</code></a>, but compares with greater-than.</p>
+
+<p>Results in a <code>foo &gt; bar AND foo IS NOT NULL</code> query.</p>
+
+          <div class="method-source-code" id="cs_gt-source">
+            <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/search_helper.rb, line 267</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">cs_gt</span>( <span class="ruby-identifier">model_field_name</span> = <span class="ruby-keyword">nil</span> )
+  <span class="ruby-constant">Proc</span>.<span class="ruby-identifier">new</span> { <span class="ruby-operator">|</span> <span class="ruby-identifier">attr</span>, <span class="ruby-identifier">value</span> <span class="ruby-operator">|</span>
+    <span class="ruby-identifier">column</span> = <span class="ruby-identifier">model_field_name</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">attr</span>
+
+    [ <span class="ruby-node">&quot;#{ column } &gt; ? AND #{ column } IS NOT NULL&quot;</span>, <span class="ruby-identifier">value</span> ]
+  }
+<span class="ruby-keyword">end</span></pre>
+          </div>
+        </div>
+
+
+      </div>
+
+      <div id="method-c-cs_gte" class="method-detail ">
+        <div class="method-heading">
+          <span class="method-name">cs_gte</span><span
+            class="method-args">( model_field_name = nil )</span>
+          <span class="method-click-advice">click to toggle source</span>
+        </div>
+
+        <div class="method-description">
+          <p>As <a href="SearchHelper.html#method-c-cs_lt"><code>Hoodoo::ActiveRecord::Finder::SearchHelper::cs_lt</code></a>, but compares with greater-than-or-equal-to.</p>
+
+<p>Results in a <code>foo &gt;= bar AND foo IS NOT NULL</code> query.</p>
+
+          <div class="method-source-code" id="cs_gte-source">
+            <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/search_helper.rb, line 280</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">cs_gte</span>( <span class="ruby-identifier">model_field_name</span> = <span class="ruby-keyword">nil</span> )
+  <span class="ruby-constant">Proc</span>.<span class="ruby-identifier">new</span> { <span class="ruby-operator">|</span> <span class="ruby-identifier">attr</span>, <span class="ruby-identifier">value</span> <span class="ruby-operator">|</span>
+    <span class="ruby-identifier">column</span> = <span class="ruby-identifier">model_field_name</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">attr</span>
+
+    [ <span class="ruby-node">&quot;#{ column } &gt;= ? AND #{ column } IS NOT NULL&quot;</span>, <span class="ruby-identifier">value</span> ]
+  }
+<span class="ruby-keyword">end</span></pre>
+          </div>
+        </div>
+
+
+      </div>
+
+      <div id="method-c-cs_lt" class="method-detail ">
+        <div class="method-heading">
+          <span class="method-name">cs_lt</span><span
+            class="method-args">( model_field_name = nil )</span>
+          <span class="method-click-advice">click to toggle source</span>
+        </div>
+
+        <div class="method-description">
+          <p>Case-sensitive less-than (default-style comparison). <strong>WARNING:</strong> This will be case sensitive only if your database is configured for case sensitive matching by default.</p>
+
+<p>If comparing non-string column types be sure to pass in a value of an appropriate matching type (e.g. compare dates with DateTimes), else returned results will be incorrect but errors may not arise depending on database engine in use.</p>
+
+<p>Results in a <code>foo &lt; bar AND foo IS NOT NULL</code> query.</p>
+<dl class="rdoc-list note-list"><dt><code>model_field_name</code>
+<dd>
+<p>If the model attribute name differs from the search key you want to use in the URI, give the model attribute name here, else omit.</p>
+</dd></dl>
+
+<p>Returns a value that can be asssigned to a URI query string key in the Hash given to <a href="ClassMethods.html#method-i-search_with"><code>Hoodoo::ActiveRecord::Finder::ClassMethods#search_with</code></a> or <a href="ClassMethods.html#method-i-filter_with"><code>Hoodoo::ActiveRecord::Finder::ClassMethods#filter_with</code></a>.</p>
+
+          <div class="method-source-code" id="cs_lt-source">
+            <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/search_helper.rb, line 241</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">cs_lt</span>( <span class="ruby-identifier">model_field_name</span> = <span class="ruby-keyword">nil</span> )
+  <span class="ruby-constant">Proc</span>.<span class="ruby-identifier">new</span> { <span class="ruby-operator">|</span> <span class="ruby-identifier">attr</span>, <span class="ruby-identifier">value</span> <span class="ruby-operator">|</span>
+    <span class="ruby-identifier">column</span> = <span class="ruby-identifier">model_field_name</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">attr</span>
+
+    [ <span class="ruby-node">&quot;#{ column } &lt; ? AND #{ column } IS NOT NULL&quot;</span>, <span class="ruby-identifier">value</span> ]
+  }
+<span class="ruby-keyword">end</span></pre>
+          </div>
+        </div>
+
+
+      </div>
+
+      <div id="method-c-cs_lte" class="method-detail ">
+        <div class="method-heading">
+          <span class="method-name">cs_lte</span><span
+            class="method-args">( model_field_name = nil )</span>
+          <span class="method-click-advice">click to toggle source</span>
+        </div>
+
+        <div class="method-description">
+          <p>As <a href="SearchHelper.html#method-c-cs_lt"><code>Hoodoo::ActiveRecord::Finder::SearchHelper::cs_lt</code></a>, but compares with less-than-or-equal-to.</p>
+
+<p>Results in a <code>foo &lt;= bar AND foo IS NOT NULL</code> query.</p>
+
+          <div class="method-source-code" id="cs_lte-source">
+            <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/search_helper.rb, line 254</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">cs_lte</span>( <span class="ruby-identifier">model_field_name</span> = <span class="ruby-keyword">nil</span> )
+  <span class="ruby-constant">Proc</span>.<span class="ruby-identifier">new</span> { <span class="ruby-operator">|</span> <span class="ruby-identifier">attr</span>, <span class="ruby-identifier">value</span> <span class="ruby-operator">|</span>
+    <span class="ruby-identifier">column</span> = <span class="ruby-identifier">model_field_name</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">attr</span>
+
+    [ <span class="ruby-node">&quot;#{ column } &lt;= ? AND #{ column } IS NOT NULL&quot;</span>, <span class="ruby-identifier">value</span> ]
+  }
+<span class="ruby-keyword">end</span></pre>
+          </div>
+        </div>
+
+
+      </div>
+
+      <div id="method-c-cs_match" class="method-detail ">
+        <div class="method-heading">
+          <span class="method-name">cs_match</span><span
+            class="method-args">( model_field_name = nil )</span>
+          <span class="method-click-advice">click to toggle source</span>
+        </div>
+
+        <div class="method-description">
+          <p>Case-sensitive match (default-style matching). <strong>WARNING:</strong> This will be case sensitive only if your database is configured for case sensitive matching by default.</p>
+
+<p>Results in a <code>foo = bar AND foo IS NOT NULL</code> query.</p>
+<dl class="rdoc-list note-list"><dt><code>model_field_name</code>
+<dd>
+<p>If the model attribute name differs from the search key you want to use in the URI, give the model attribute name here, else omit.</p>
+</dd></dl>
+
+<p>Returns a value that can be asssigned to a URI query string key in the Hash given to <a href="ClassMethods.html#method-i-search_with"><code>Hoodoo::ActiveRecord::Finder::ClassMethods#search_with</code></a> or <a href="ClassMethods.html#method-i-filter_with"><code>Hoodoo::ActiveRecord::Finder::ClassMethods#filter_with</code></a>.</p>
+
+          <div class="method-source-code" id="cs_match-source">
+            <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/search_helper.rb, line 64</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">cs_match</span>( <span class="ruby-identifier">model_field_name</span> = <span class="ruby-keyword">nil</span> )
+  <span class="ruby-constant">Proc</span>.<span class="ruby-identifier">new</span> { <span class="ruby-operator">|</span> <span class="ruby-identifier">attr</span>, <span class="ruby-identifier">value</span> <span class="ruby-operator">|</span>
+    <span class="ruby-identifier">column</span> = <span class="ruby-identifier">model_field_name</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">attr</span>
+
+    [ <span class="ruby-node">&quot;#{ column } = ? AND #{ column } IS NOT NULL&quot;</span>, <span class="ruby-identifier">value</span> ]
+  }
+<span class="ruby-keyword">end</span></pre>
+          </div>
+        </div>
+
+
+      </div>
+
+      <div id="method-c-cs_match_array" class="method-detail ">
+        <div class="method-heading">
+          <span class="method-name">cs_match_array</span><span
+            class="method-args">( model_field_name = nil )</span>
+          <span class="method-click-advice">click to toggle source</span>
+        </div>
+
+        <div class="method-description">
+          <p>Case-sensitive match of a series of values given as an Array. Normally, query string information comes in as a String so the use cases for this are quite unusual; you probably want to use <a href="SearchHelper.html#method-c-cs_match_csv"><code>Hoodoo::ActiveRecord::Finder::SearchHelper::cs_match_csv</code></a> most of the time.</p>
+
+<p>Results in a <code>foo IN (bar,baz,boo) AND foo IS NOT NULL</code> query.</p>
+<dl class="rdoc-list note-list"><dt><code>model_field_name</code>
+<dd>
+<p>If the model attribute name differs from the search key you want to use in the URI, give the model attribute name here, else omit.</p>
+</dd></dl>
+
+<p>Returns a value that can be asssigned to a URI query string key in the Hash given to <a href="ClassMethods.html#method-i-search_with"><code>Hoodoo::ActiveRecord::Finder::ClassMethods#search_with</code></a> or <a href="ClassMethods.html#method-i-filter_with"><code>Hoodoo::ActiveRecord::Finder::ClassMethods#filter_with</code></a>.</p>
+
+          <div class="method-source-code" id="cs_match_array-source">
+            <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/search_helper.rb, line 115</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">cs_match_array</span>( <span class="ruby-identifier">model_field_name</span> = <span class="ruby-keyword">nil</span> )
+  <span class="ruby-constant">Proc</span>.<span class="ruby-identifier">new</span> { <span class="ruby-operator">|</span> <span class="ruby-identifier">attr</span>, <span class="ruby-identifier">value</span> <span class="ruby-operator">|</span>
+    <span class="ruby-identifier">column</span> = <span class="ruby-identifier">model_field_name</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">attr</span>
+    <span class="ruby-identifier">value</span>  = [ <span class="ruby-identifier">value</span> ].<span class="ruby-identifier">flatten</span>
+
+    [ <span class="ruby-node">&quot;#{ column } IN (?) AND #{ column } IS NOT NULL&quot;</span>, <span class="ruby-identifier">value</span> ]
+  }
+<span class="ruby-keyword">end</span></pre>
+          </div>
+        </div>
+
+
+      </div>
+
+      <div id="method-c-cs_match_csv" class="method-detail ">
+        <div class="method-heading">
+          <span class="method-name">cs_match_csv</span><span
+            class="method-args">( model_field_name = nil )</span>
+          <span class="method-click-advice">click to toggle source</span>
+        </div>
+
+        <div class="method-description">
+          <p>Case-sensitive match of a series of values separated by commas, which are split into an array then processed by AREL back to something SQL-safe.</p>
+
+<p>Results in a <code>foo IN (bar,baz,boo) AND foo IS NOT NULL</code> query.</p>
+<dl class="rdoc-list note-list"><dt><code>model_field_name</code>
+<dd>
+<p>If the model attribute name differs from the search key you want to use in the URI, give the model attribute name here, else omit.</p>
+</dd></dl>
+
+<p>Returns a value that can be asssigned to a URI query string key in the Hash given to <a href="ClassMethods.html#method-i-search_with"><code>Hoodoo::ActiveRecord::Finder::ClassMethods#search_with</code></a> or <a href="ClassMethods.html#method-i-filter_with"><code>Hoodoo::ActiveRecord::Finder::ClassMethods#filter_with</code></a>.</p>
+
+          <div class="method-source-code" id="cs_match_csv-source">
+            <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/search_helper.rb, line 88</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">cs_match_csv</span>( <span class="ruby-identifier">model_field_name</span> = <span class="ruby-keyword">nil</span> )
+  <span class="ruby-constant">Proc</span>.<span class="ruby-identifier">new</span> { <span class="ruby-operator">|</span> <span class="ruby-identifier">attr</span>, <span class="ruby-identifier">value</span> <span class="ruby-operator">|</span>
+    <span class="ruby-identifier">column</span> = <span class="ruby-identifier">model_field_name</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">attr</span>
+    <span class="ruby-identifier">value</span>  = <span class="ruby-identifier">value</span>.<span class="ruby-identifier">split</span>( <span class="ruby-string">&#39;,&#39;</span> )
+
+    [ <span class="ruby-node">&quot;#{ column } IN (?) AND #{ column } IS NOT NULL&quot;</span>, <span class="ruby-identifier">value</span> ]
+  }
+<span class="ruby-keyword">end</span></pre>
+          </div>
+        </div>
+
+
+      </div>
+
+      <div id="method-c-csaw_match" class="method-detail ">
+        <div class="method-heading">
+          <span class="method-name">csaw_match</span><span
+            class="method-args">( model_field_name = nil )</span>
+          <span class="method-click-advice">click to toggle source</span>
+        </div>
+
+        <div class="method-description">
+          <p>As <a href="SearchHelper.html#method-c-cs_match"><code>Hoodoo::ActiveRecord::Finder::SearchHelper::cs_match</code></a>, but adds wildcards at the front and end of the string for a case-sensitive-all-wildcard match.</p>
+
+<p>Results in a <code>foo LIKE bar AND foo IS NOT NULL</code> query.</p>
+
+          <div class="method-source-code" id="csaw_match-source">
+            <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/search_helper.rb, line 130</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">csaw_match</span>( <span class="ruby-identifier">model_field_name</span> = <span class="ruby-keyword">nil</span> )
+  <span class="ruby-constant">Proc</span>.<span class="ruby-identifier">new</span> { <span class="ruby-operator">|</span> <span class="ruby-identifier">attr</span>, <span class="ruby-identifier">value</span> <span class="ruby-operator">|</span>
+    <span class="ruby-identifier">column</span> = <span class="ruby-identifier">model_field_name</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">attr</span>
+    <span class="ruby-identifier">value</span>  = ( <span class="ruby-identifier">value</span> <span class="ruby-operator">||</span> <span class="ruby-string">&#39;&#39;</span> ).<span class="ruby-identifier">to_s</span>
+
+    [ <span class="ruby-node">&quot;#{ column } LIKE ? AND #{ column } IS NOT NULL&quot;</span>, <span class="ruby-node">&quot;%#{ value }%&quot;</span> ]
+  }
+<span class="ruby-keyword">end</span></pre>
+          </div>
+        </div>
+
+
+      </div>
+
+    </section>
+
+  </section>
+</main>
+
+
+<footer id="validator-badges" role="contentinfo">
+  <p><a href="https://validator.w3.org/check/referer">Validate</a>
+  <p>Generated by <a href="https://ruby.github.io/rdoc/">RDoc</a> 6.4.0.
+  <p>Based on <a href="http://deveiate.org/projects/Darkfish-RDoc/">Darkfish</a> by <a href="http://deveiate.org">Michael Granger</a>.
+</footer>
+

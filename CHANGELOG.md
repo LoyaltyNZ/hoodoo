@@ -1,5 +1,9 @@
 # Hoodoo v3.x
 
+## 3.1.4 (2022-08-02)
+
+- Fix rdoc generation. Removed refences to sdoc gem which has security vulnerabilities. [FT-1253](https://loyaltynz.atlassian.net/browse/FT-1253)
+
 ## 3.1.3 (2022-04-27)
 
 - Introduces guideline steps about how-to deploy a `Hoodoo` release to Rubygems [DS-2034](https://loyaltynz.atlassian.net/browse/DS-2034)

@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+<meta charset="UTF-8">
+
+<title>module Hoodoo::ActiveRecord::ManuallyDated - Hoodoo</title>
+
+<script type="text/javascript">
+  var rdoc_rel_prefix = "../../";
+  var index_rel_prefix = "../../";
+</script>
+
+<script src="../../js/navigation.js" defer></script>
+<script src="../../js/search.js" defer></script>
+<script src="../../js/search_index.js" defer></script>
+<script src="../../js/searcher.js" defer></script>
+<script src="../../js/darkfish.js" defer></script>
+
+<link href="../../css/fonts.css" rel="stylesheet">
+<link href="../../css/rdoc.css" rel="stylesheet">
+
+
+<body id="top" role="document" class="module">
+<nav role="navigation">
+  <div id="project-navigation">
+    <div id="home-section" role="region" title="Quick navigation" class="nav-section">
+  <h2>
+    <a href="../../index.html" rel="home">Home</a>
+  </h2>
+
+  <div id="table-of-contents-navigation">
+    <a href="../../table_of_contents.html#pages">Pages</a>
+    <a href="../../table_of_contents.html#classes">Classes</a>
+    <a href="../../table_of_contents.html#methods">Methods</a>
+  </div>
+</div>
+
+    <div id="search-section" role="search" class="project-section initially-hidden">
+  <form action="#" method="get" accept-charset="utf-8">
+    <div id="search-field-wrapper">
+      <input id="search-field" role="combobox" aria-label="Search"
+             aria-autocomplete="list" aria-controls="search-results"
+             type="text" name="search" placeholder="Search" spellcheck="false"
+             title="Type to search, Up and Down to navigate, Enter to load">
+    </div>
+
+    <ul id="search-results" aria-label="Search Results"
+        aria-busy="false" aria-expanded="false"
+        aria-atomic="false" class="initially-hidden"></ul>
+  </form>
+</div>
+
+  </div>
+
+  
+<div class="nav-section">
+  <h3>Table of Contents</h3>
+
+  <ul class="link-list" role="directory">
+    <li><a href="#module-Hoodoo::ActiveRecord::ManuallyDated-label-Overview">Overview</a>
+    <li><a href="#module-Hoodoo::ActiveRecord::ManuallyDated-label-Prerequisites">Prerequisites</a>
+    <li><a href="#module-Hoodoo::ActiveRecord::ManuallyDated-label-Vital+caveats">Vital caveats</a>
+    <li><a href="#module-Hoodoo::ActiveRecord::ManuallyDated-label-Accuracy">Accuracy</a>
+    <li><a href="#module-Hoodoo::ActiveRecord::ManuallyDated-label-Typical+workflow">Typical workflow</a>
+    <li><a href="#module-Hoodoo::ActiveRecord::ManuallyDated-label-Show+and+List">Show and List</a>
+    <li><a href="#module-Hoodoo::ActiveRecord::ManuallyDated-label-Create">Create</a>
+    <li><a href="#module-Hoodoo::ActiveRecord::ManuallyDated-label-Update+and+Delete">Update and Delete</a>
+    <li><a href="#module-Hoodoo::ActiveRecord::ManuallyDated-label-Rendering">Rendering</a>
+    <li><a href="#module-Hoodoo::ActiveRecord::ManuallyDated-label-Associations">Associations</a>
+    <li><a href="#module-Hoodoo::ActiveRecord::ManuallyDated-label-Required+migrations">Required migrations</a>
+  </ul>
+</div>
+
+
+  <div id="class-metadata">
+    
+    
+    
+    
+    
+<!-- Method Quickref -->
+<div id="method-list-section" class="nav-section">
+  <h3>Methods</h3>
+
+  <ul class="link-list" role="directory">
+    <li class="calls-super" ><a href="#method-c-included">::included</a>
+    <li ><a href="#method-c-instantiate">::instantiate</a>
+  </ul>
+</div>
+
+  </div>
+</nav>
+
+<main role="main" aria-labelledby="module-Hoodoo::ActiveRecord::ManuallyDated">
+  <h1 id="module-Hoodoo::ActiveRecord::ManuallyDated" class="module">
+    module Hoodoo::ActiveRecord::ManuallyDated
+  </h1>
+
+  <section class="description">
+    
+<p><a href="Support.html"><code>Support</code></a> mixin for models subclassed from <a href="Base.html"><code>ActiveRecord::Base</code></a> providing as-per-API-standard dating support with services needing to know that dating is enabled and cooperate with this mixin’s API, rather than working automatically via database triggers as per <a href="Dated.html"><code>Hoodoo::ActiveRecord::Dated</code></a>. The latter is close to transparent for ActiveRecord-based code, but it involves very complex database queries that can have high cost and is tied into PostgreSQL.</p>
+
+<p>Depends upon and auto-includes <a href="Finder.html"><code>Hoodoo::ActiveRecord::Finder</code></a>.</p>
+
+<h2 id="module-Hoodoo::ActiveRecord::ManuallyDated-label-Overview">Overview<span><a href="#module-Hoodoo::ActiveRecord::ManuallyDated-label-Overview">&para;</a> <a href="#top">&uarr;</a></span></h2>
+
+<p>This mixin lets you record and retrieve the historical state of any given <a href="../ActiveRecord.html"><code>ActiveRecord</code></a> model. This is achieved by adding two date/time columns to the model and using these to track the start (inclusive) and end (exclusive and always set to precisely <a href="ManuallyDated.html#DATE_MAXIMUM"><code>DATE_MAXIMUM</code></a> for “this is the ‘contemporary’ record) date/times for which a particular row is valid.</p>
+
+<p>The majority of the functionality is implemented within class methods defined in module <a href="ManuallyDated/ClassMethods.html"><code>Hoodoo::ActiveRecord::ManuallyDated::ClassMethods</code></a>.</p>
+
+<h2 id="module-Hoodoo::ActiveRecord::ManuallyDated-label-Prerequisites">Prerequisites<span><a href="#module-Hoodoo::ActiveRecord::ManuallyDated-label-Prerequisites">&para;</a> <a href="#top">&uarr;</a></span></h2>
+
+<p>A table in the database needs to have various changes and additions to support manual dating. For these to be possible:</p>
+<ul><li>
+<p>Your database table may not already have columns called <code>uuid</code>, <code>effective_start</code> or <code>effective_end</code>. If it does, you’ll need to first migrate this to change the names and update any references in code.</p>
+</li><li>
+<p>Your database table must have a column called <code>created_at</code> with the creation timestamp of a record which will become the time from which it is “visible” in historically-dated read queries. There can be no <code>NULL</code> values in this column.</p>
+</li><li>
+<p>Your database table must have a column called <code>updated_at</code> with a non <code>NULL</code> value. If this isn’t already present, migrate your data to add it, setting the initial value to the same as <code>created_at</code>.</p>
+</li></ul>
+
+<p>For data safety it is very strongly recommended that you add in database level non-null constraints on <code>created_at</code> and <code>updated_at</code> if you don’t have them already. The <a href="../ActiveRecord.html"><code>ActiveRecord</code></a> <code>change_column_null</code> method can be used in migrations to do this in a database-engine-neutral fashion.</p>
+
+<h2 id="module-Hoodoo::ActiveRecord::ManuallyDated-label-Vital+caveats">Vital caveats<span><a href="#module-Hoodoo::ActiveRecord::ManuallyDated-label-Vital+caveats">&para;</a> <a href="#top">&uarr;</a></span></h2>
+
+<p>Since both the ‘contemporary’ and historic states of the model are all recorded in one table, anyone using this mechanism must ensure that (unless they specifically want to run a query across all of the representations) the mixin’s scoping methods are <em>always</em> used to target either current, or historic, or specifically-dated rows only.</p>
+
+<p>With this mechanism in place, the <code>id</code> attribute of the model is <em>still</em> <em>a</em> <em>unique</em> <em>primary</em> <em>key</em> AND THIS IS <strong>NO</strong> <strong>LONGER</strong> THE RESOURCE <a href="UUID.html"><code>UUID</code></a>. The <a href="UUID.html"><code>UUID</code></a> moves to a <em>non-unique</em> <code>uuid</code> column. When rendering resources, YOU <strong>MUST</strong> USE THE <code>uuid</code> COLUMN for the resource ID. This is a potentially serious gotcha and strong test coverage is advised! If you send back the wrong field value, it’ll look like a reasonable <a href="UUID.html"><code>UUID</code></a> but will not match any records at all through API-based interfaces, assuming <a href="Finder.html"><code>Hoodoo::ActiveRecord::Finder</code></a> is in use for read-based queries. The <a href="UUID.html"><code>UUID</code></a> will appear to refer to a non-existant resource.</p>
+<ul><li>
+<p>The <code>id</code> column becomes a unique database primary key and of little to no interest whatsoever to a service or API callers.</p>
+</li><li>
+<p>The <code>uuid</code> column becomes the non-unique resource <a href="UUID.html"><code>UUID</code></a> which is of great interest to a service and API callers.</p>
+</li><li>
+<p>The <code>uuid</code> column is also the target for foreign keys with relationships between records, NOT <code>id</code>. The relationships can only be used when scoped by date.</p>
+</li></ul>
+
+<h2 id="module-Hoodoo::ActiveRecord::ManuallyDated-label-Accuracy">Accuracy<span><a href="#module-Hoodoo::ActiveRecord::ManuallyDated-label-Accuracy">&para;</a> <a href="#top">&uarr;</a></span></h2>
+
+<p>Time accuracy is intentionally limited, to aid database indices and help avoid clock accuracy differences across operating systems or datbase engines. <a href="ManuallyDated.html#SECONDS_DECIMAL_PLACES"><code>Hoodoo::ActiveRecord::ManuallyDated::SECONDS_DECIMAL_PLACES</code></a> describes the accuracy applicable.</p>
+
+<p>If a record is, say, both created and then deleted within the accuracy window, then a dated query attempting to read the resource state from that (within-accuracy) identical time will return an undefined result. It might find the resource before it were deleted, or might not find the resource because it considers it to be no longer current. Of course, any dated query from outside the accuracy window will work as you would expect; only rapid changes in state within the accuracy window result in ambiguity.</p>
+
+<h2 id="module-Hoodoo::ActiveRecord::ManuallyDated-label-Typical+workflow">Typical workflow<span><a href="#module-Hoodoo::ActiveRecord::ManuallyDated-label-Typical+workflow">&para;</a> <a href="#top">&uarr;</a></span></h2>
+
+<p>Having included the mixin, run any required migrations (see below) and declared manual dating as active inside your <code>ActiveRecord::Base</code> subclass by calling <a href="ManuallyDated/ClassMethods.html#method-i-manual_dating_enabled"><code>Hoodoo::ActiveRecord::ManuallyDated::ClassMethods#manual_dating_enabled</code></a>, you <strong>MUST</strong> include the ActiveRecord::Relation instances (scopes) inside any query chain used to read or write data.</p>
+
+<h3 id="module-Hoodoo::ActiveRecord::ManuallyDated-label-Show+and+List">Show and List<span><a href="#module-Hoodoo::ActiveRecord::ManuallyDated-label-Show+and+List">&para;</a> <a href="#top">&uarr;</a></span></h3>
+
+<p>You might use <a href="Finder/ClassMethods.html#method-i-list_in"><code>Hoodoo::ActiveRecord::Finder::ClassMethods#list_in</code></a> or <a href="Finder/ClassMethods.html#method-i-acquire_in"><code>Hoodoo::ActiveRecord::Finder::ClassMethods#acquire_in</code></a> for <code>list</code> or <code>show</code> actions; such code changes from e.g.:</p>
+
+<pre class="ruby"><span class="ruby-constant">SomeModel</span>.<span class="ruby-identifier">list_in</span>( <span class="ruby-identifier">context</span> )
+</pre>
+
+<p>…to:</p>
+
+<pre class="ruby"><span class="ruby-constant">SomeModel</span>.<span class="ruby-identifier">manually_dated</span>( <span class="ruby-identifier">context</span> ).<span class="ruby-identifier">list_in</span>( <span class="ruby-identifier">context</span> )
+</pre>
+
+<h3 id="module-Hoodoo::ActiveRecord::ManuallyDated-label-Create">Create<span><a href="#module-Hoodoo::ActiveRecord::ManuallyDated-label-Create">&para;</a> <a href="#top">&uarr;</a></span></h3>
+
+<p>As with automatic dating - see <a href="Dated.html"><code>Hoodoo::ActiveRecord::Dated</code></a> - you should use method <a href="Creator/ClassMethods.html#method-i-new_in"><code>Hoodoo::ActiveRecord::Creator::ClassMethods.new_in</code></a> to create new resource instances, to help ensure correct initial date setup and to help isolate your code from future functionality extensions/changes. An <a href="../ActiveRecord.html"><code>ActiveRecord</code></a> <code>before_create</code> filter deals with some of the “behind the scenes” maintenance but the initial acquisition of dating information from the prevailing request context only happens for you if you use Hoodoo::ActiveRecord::Creator::ClassMethods::new_in.</p>
+
+<h3 id="module-Hoodoo::ActiveRecord::ManuallyDated-label-Update+and+Delete">Update and Delete<span><a href="#module-Hoodoo::ActiveRecord::ManuallyDated-label-Update+and+Delete">&para;</a> <a href="#top">&uarr;</a></span></h3>
+
+<p>You <strong>MUST</strong> <strong>NOT</strong> update or delete records using conventional <a href="../ActiveRecord.html"><code>ActiveRecord</code></a> methods if you want to use manual dating to record state changes. Instead, use <a href="ManuallyDated/ClassMethods.html#method-i-manually_dated_update_in"><code>Hoodoo::ActiveRecord::ManuallyDated::ClassMethods#manually_dated_update_in</code></a> or <a href="ManuallyDated/ClassMethods.html#method-i-manually_dated_destruction_in"><code>Hoodoo::ActiveRecord::ManuallyDated::ClassMethods#manually_dated_destruction_in</code></a>. For example to update a model based on the <code>context.request.body</code> data without changes to the item in <code>context.request.ident</code>, handling “not found” or valiation error cases with the assumption that the <a href="ErrorMapping.html"><code>Hoodoo::ActiveRecord::ErrorMapping</code></a> mixin is in use, do this:</p>
+
+<pre class="ruby"><span class="ruby-identifier">result</span> = <span class="ruby-constant">SomeModel</span>.<span class="ruby-identifier">manually_dated_destruction_in</span>( <span class="ruby-identifier">context</span> )
+
+<span class="ruby-keyword">if</span> <span class="ruby-identifier">result</span>.<span class="ruby-identifier">nil?</span>
+  <span class="ruby-identifier">context</span>.<span class="ruby-identifier">response</span>.<span class="ruby-identifier">not_found</span>( <span class="ruby-identifier">context</span>.<span class="ruby-identifier">request</span>.<span class="ruby-identifier">ident</span> )
+<span class="ruby-keyword">elsif</span> <span class="ruby-identifier">result</span>.<span class="ruby-identifier">adds_errors_to?</span>( <span class="ruby-identifier">context</span>.<span class="ruby-identifier">response</span>.<span class="ruby-identifier">errors</span> ) <span class="ruby-operator">==</span> <span class="ruby-keyword">false</span>
+  <span class="ruby-identifier">rendered_data</span> = <span class="ruby-identifier">render_model</span>( <span class="ruby-identifier">result</span> )
+  <span class="ruby-identifier">context</span>.<span class="ruby-identifier">response</span>.<span class="ruby-identifier">set_data</span>( <span class="ruby-identifier">rendered_data</span> )
+<span class="ruby-keyword">end</span>
+</pre>
+
+<p>See the documentation for the update/destroy methods mentioned above for information on overriding the identifier used to find the target record and the attribute data used for updates.</p>
+
+<h2 id="module-Hoodoo::ActiveRecord::ManuallyDated-label-Rendering">Rendering<span><a href="#module-Hoodoo::ActiveRecord::ManuallyDated-label-Rendering">&para;</a> <a href="#top">&uarr;</a></span></h2>
+
+<p>When rendering, you <strong>MUST</strong> remember to set the resource’s <code>id</code> field from the model’s <code>uuid</code> field:</p>
+
+<pre class="ruby"><span class="ruby-constant">SomePresenter</span>.<span class="ruby-identifier">render_in</span>(
+  <span class="ruby-identifier">context</span>,
+  <span class="ruby-identifier">model</span>.<span class="ruby-identifier">attributes</span>,
+  {
+    <span class="ruby-value">:uuid</span>         <span class="ruby-operator">=&gt;</span> <span class="ruby-identifier">model</span>.<span class="ruby-identifier">uuid</span>, <span class="ruby-comment"># &lt;-- &quot;.uuid&quot; - IMPORTANT!</span>
+    <span class="ruby-value">:created_at</span>   <span class="ruby-operator">=&gt;</span> <span class="ruby-identifier">model</span>.<span class="ruby-identifier">created_at</span>
+  }
+)
+</pre>
+
+<h2 id="module-Hoodoo::ActiveRecord::ManuallyDated-label-Associations">Associations<span><a href="#module-Hoodoo::ActiveRecord::ManuallyDated-label-Associations">&para;</a> <a href="#top">&uarr;</a></span></h2>
+
+<p>Generally, use of <a href="../ActiveRecord.html"><code>ActiveRecord</code></a> associations is minimal in most services because there is an implied database-level coupling of resources and a temptation to use cross-table <a href="../ActiveRecord.html"><code>ActiveRecord</code></a> mechanisms for things like relational <a href="UUID.html"><code>UUID</code></a> integrity checks, rather than inter-resource calls. Doing so couples resources together at the database rather than keeping them isolated purely by API, which is often a really bad idea. It is, however, sometimes necessary for best possible performance, or sometimes one complex resource may be represented by several models with relationships between them.</p>
+
+<p>In such cases, remember to set foreign keys for relational declarations to a manually dated table via the <code>uuid</code> column - e.g. go from this:</p>
+
+<pre class="ruby"><span class="ruby-identifier">member</span>.<span class="ruby-identifier">account_id</span> = <span class="ruby-identifier">account</span>.<span class="ruby-identifier">id</span>
+</pre>
+
+<p>…to this:</p>
+
+<pre class="ruby"><span class="ruby-identifier">member</span>.<span class="ruby-identifier">account_id</span> = <span class="ruby-identifier">account</span>.<span class="ruby-identifier">uuid</span>
+</pre>
+
+<p>…with the relational declarations in Member changing from:</p>
+
+<pre class="ruby"><span class="ruby-identifier">belongs_to</span> <span class="ruby-value">:account</span>
+</pre>
+
+<p>…to:</p>
+
+<pre class="ruby"><span class="ruby-identifier">belongs_to</span> <span class="ruby-value">:account</span>, <span class="ruby-value">:primary_key</span> <span class="ruby-operator">=&gt;</span> <span class="ruby-value">:uuid</span>
+</pre>
+
+<h2 id="module-Hoodoo::ActiveRecord::ManuallyDated-label-Required+migrations">Required migrations<span><a href="#module-Hoodoo::ActiveRecord::ManuallyDated-label-Required+migrations">&para;</a> <a href="#top">&uarr;</a></span></h2>
+
+<p>You must write an <a href="../ActiveRecord.html"><code>ActiveRecord</code></a> migration for any table that wishes to use manual dating. The template below can handle multiple tables in one pass and can be rolled back safely <strong>IF</strong> no historic records have been added. Rollback becomes impossible once historic entries appear.</p>
+
+<pre>require &#39;hoodoo/active&#39;
+
+class ConvertToManualDating &lt; ActiveRecord::Migration
+
+  # This example migration can handle multiple tables at once - e.g. pass an
+  # array of &quot;:accounts, :members&quot; if you were adding manual dating support to
+  # tables supporting an Account and Member ActiveRecord model.
+  #
+  TABLES_TO_CONVERT = [ :table_name, :another_table_name, ... ]
+
+  # This will come in handy later.
+  #
+  SQL_DATE_MAXIMUM = ActiveRecord::Base.connection.quoted_date( Hoodoo::ActiveRecord::ManuallyDated::DATE_MAXIMUM )
+
+  def up
+
+    # If you have any uniqueness constraints on this table, you&#39;ll need to
+    # remove them and re-add them with date-based scope. The main table will
+    # contain duplicated entries once historical versions of a row appear.
+    #
+    #   remove_index :table_name, &lt;index fields(s) or name: &#39;index name&#39;&gt;
+    #
+    # For example, suppose you had declared this index somewhere:
+    #
+    #   add_index :accounts, :account_number, :unique =&gt; true
+    #
+    # Remove it with:
+    #
+    #   remove_index :accounts, :account_number
+
+    TABLES_TO_CONVERT.each do | table |
+
+      add_column table, :effective_start, :datetime, :null  =&gt; true # (initially, but see below)
+      add_column table, :effective_end,   :datetime, :null  =&gt; true # (initially, but see below)
+      add_column table, :uuid,            :string,   :limit =&gt; 32
+
+      add_index table, [        :effective_start, :effective_end ], :name =&gt; &quot;index_#{ table }_start_end&quot;
+      add_index table, [ :uuid, :effective_start, :effective_end ], :name =&gt; &quot;index_#{ table }_uuid_start_end&quot;
+
+      # We can&#39;t allow duplicate UUIDs. Here&#39;s how to correctly scope based on
+      # any &#39;contemporary&#39; record, given its known fixed &#39;effective_end&#39;.
+      #
+      ActiveRecord::Migration.add_index table,
+                                        :uuid,
+                                        :unique =&gt; true,
+                                        :name   =&gt; &quot;index_#{ table }_uuid_end_unique&quot;,
+                                        :where  =&gt; &quot;(effective_end = &#39;#{ SQL_DATE_MAXIMUM }&#39;)&quot;
+
+      # If there&#39;s any data in the table already, it can&#39;t have any historic
+      # entries. So, we want to set the UUID to the &#39;id&#39; field&#39;s old value,
+      # but we can also leave the &#39;id&#39; field as-is. New rows for historical
+      # entries will acquire a new value of &#39;id&#39; via Hoodoo.
+      #
+      execute &quot;UPDATE #{ table } SET uuid = id&quot;
+
+      # This won&#39;t follow the date/time rounding described by manual dating
+      # but it&#39;s good enough for an initial migration.
+      #
+      execute &quot;UPDATE #{ table } SET effective_start = created_at&quot;
+
+      # Mark these records as contemporary/current.
+      #
+      execute &quot;UPDATE #{ table } SET effective_end = &#39;#{ ActiveRecord::Base.connection.quoted_date( Hoodoo::ActiveRecord::ManuallyDated::DATE_MAXIMUM ) }&#39;&quot;
+
+      # We couldn&#39;t add the UUID column with a not-null constraint until the
+      # above SQL had run to update any existing records with a value. Now we
+      # should put this back in, for rigour. Likewise for the start/end times.
+      #
+      change_column_null table, :uuid,            false
+      change_column_null table, :effective_start, false
+      change_column_null table, :effective_end,   false
+
+    end
+
+    # Now add back any indices dropped earlier, but add them back as a
+    # conditional index as shown earlier for the &quot;uuid&quot; column. For example,
+    # suppose you had declared this index somewhere:
+    #
+    #   add_index :accounts, :account_number, :unique =&gt; true
+    #
+    # You need to have done &quot;remove_index :accounts, :account_number&quot; earlier;
+    # then now add the new equivalent. You may well find you have to give it a
+    # custom name to avoid hitting index name length limits in your database:
+    #
+    # ActiveRecord::Migration.add_index :accounts,
+    #                                   :account_number,
+    #                                   :unique =&gt; true,
+    #                                   :name   =&gt; &quot;index_#{ table }_account_number_end_unique&quot;,
+    #                                   :where  =&gt; &quot;(effective_end = &#39;#{ SQL_DATE_MAXIMUM }&#39;)&quot;
+    #
+    # You might want to perform more detailed analysis on your index
+    # requirements once manual dating is enabled, but the above is a good rule
+    # of thumb.
+
+  end
+
+  # This would fail if any historic entries now existed in the database,
+  # because primary key &#39;id&#39; values would get set to non-unique &#39;uuid&#39;
+  # values. This is intentional and required to avoid corruption; you
+  # cannot roll back once history entries accumulate.
+  #
+  def down
+
+    # Remove any indices added manually at the end of &quot;up&quot;, for example:
+    #
+    #   remove_index :accounts, :name =&gt; &#39;index_accounts_an_es_ee&#39;
+    #   remove_index :accounts, :name =&gt; &#39;index_accounts_an_ee&#39;
+
+    TABLES_TO_CONVERT.each do | table |
+
+      remove_index table, :name =&gt; &quot;index_#{ table }_id_end&quot;
+      remove_index table, :name =&gt; &quot;index_#{ table }_id_start_end&quot;
+      remove_index table, :name =&gt; &quot;index_#{ table }_start_end&quot;
+
+      execute &quot;UPDATE #{ table } SET id = uuid&quot;
+
+      remove_column table, :uuid
+      remove_column table, :effective_end
+      remove_column table, :effective_start
+
+    end
+
+    # Add back any indexes you removed at the very start of &quot;up&quot;, e.g.:
+    #
+    #   add_index :accounts, :account_number, :unique =&gt; true
+
+  end
+end</pre>
+
+  </section>
+
+  <section id="5Buntitled-5D" class="documentation-section">
+
+
+    <section class="constants-list">
+      <header>
+        <h3>Constants</h3>
+      </header>
+      <dl>
+        <dt id="DATE_MAXIMUM">DATE_MAXIMUM
+        <dd><p>In order for indices to work properly on <code>effective_end</code> dates, <code>NULL</code> values cannot be permitted as SQL <code>NULL</code> is magic and means “has no value”, so such a value in a column prohibits indexing.</p>
+
+<p>We might have used a <code>NULL</code> value in the ‘end’ date to mean “this is the contemporary/current record”, but since we can’t do that, we need the rather nasty alternative of an agreed constant that defines a “large date” which represents “maximum possible end-of-time”.</p>
+
+<p>SQL does not define a maximum date, but most implementations do. PostgreSQL has a very high maximum year, while SQLite, MS SQL Server and MySQL (following a cursory Google search for documentation) say that the end of year 9999 is as high as it goes.</p>
+
+<p>To use this <code>DATE_MAXIMUM</code> constant in raw SQL, be sure to format the Time instance through your <a href="../ActiveRecord.html"><code>ActiveRecord</code></a> database adapter thus:</p>
+
+<pre class="ruby"><span class="ruby-constant">ActiveRecord</span><span class="ruby-operator">::</span><span class="ruby-constant">Base</span>.<span class="ruby-identifier">connection</span>.<span class="ruby-identifier">quoted_date</span>( <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">ActiveRecord</span><span class="ruby-operator">::</span><span class="ruby-constant">ManuallyDated</span><span class="ruby-operator">::</span><span class="ruby-constant">DATE_MAXIMUM</span> )
+<span class="ruby-comment"># =&gt; returns &quot;9999-12-31 23:59:59.000000&quot; for PostgreSQL 9.4.</span>
+</pre>
+        <dt id="SECONDS_DECIMAL_PLACES">SECONDS_DECIMAL_PLACES
+        <dd><p>Rounding resolution, in terms of number of decimal places to which seconds are rounded. Excessive accuracy makes for difficult, large indices in the database and may fall foul of system / database clock accuracy mismatches.</p>
+      </dl>
+    </section>
+
+
+
+     <section id="public-class-5Buntitled-5D-method-details" class="method-section">
+       <header>
+         <h3>Public Class Methods</h3>
+       </header>
+
+      <div id="method-c-included" class="method-detail ">
+        <div class="method-heading">
+          <span class="method-name">included</span><span
+            class="method-args">( model )</span>
+          <span class="method-click-advice">click to toggle source</span>
+        </div>
+
+        <div class="method-description">
+          <p>Instantiates this module when it is included.</p>
+
+<p>Example:</p>
+
+<pre class="ruby"><span class="ruby-keyword">class</span> <span class="ruby-constant">SomeModel</span> <span class="ruby-operator">&lt;</span> <span class="ruby-constant">ActiveRecord</span><span class="ruby-operator">::</span><span class="ruby-constant">Base</span>
+  <span class="ruby-identifier">include</span> <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">ActiveRecord</span><span class="ruby-operator">::</span><span class="ruby-constant">ManuallyDated</span>
+  <span class="ruby-comment"># ...</span>
+<span class="ruby-keyword">end</span>
+</pre>
+
+<p>Depends upon and auto-includes <a href="UUID.html"><code>Hoodoo::ActiveRecord::UUID</code></a> and <a href="Finder.html"><code>Hoodoo::ActiveRecord::Finder</code></a>.</p>
+<dl class="rdoc-list note-list"><dt><code>model</code>
+<dd>
+<p>The <a href="Base.html"><code>ActiveRecord::Base</code></a> descendant that is including this module.</p>
+</dd></dl>
+            <div class="method-calls-super">
+              Calls superclass method
+              
+            </div>
+
+          <div class="method-source-code" id="included-source">
+            <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/manually_dated.rb, line 386</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">included</span>( <span class="ruby-identifier">model</span> )
+  <span class="ruby-identifier">model</span>.<span class="ruby-identifier">class_attribute</span>(
+    <span class="ruby-value">:nz_co_loyalty_hoodoo_manually_dated</span>,
+    <span class="ruby-value">:instance_predicate</span> <span class="ruby-operator">=&gt;</span> <span class="ruby-keyword">false</span>,
+    <span class="ruby-value">:instance_accessor</span>  <span class="ruby-operator">=&gt;</span> <span class="ruby-keyword">false</span>
+  )
+
+  <span class="ruby-keyword">unless</span> <span class="ruby-identifier">model</span> <span class="ruby-operator">==</span> <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">ActiveRecord</span><span class="ruby-operator">::</span><span class="ruby-constant">Base</span>
+    <span class="ruby-identifier">model</span>.<span class="ruby-identifier">send</span>( <span class="ruby-value">:include</span>, <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">ActiveRecord</span><span class="ruby-operator">::</span><span class="ruby-constant">UUID</span>   )
+    <span class="ruby-identifier">model</span>.<span class="ruby-identifier">send</span>( <span class="ruby-value">:include</span>, <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">ActiveRecord</span><span class="ruby-operator">::</span><span class="ruby-constant">Finder</span> )
+
+    <span class="ruby-identifier">instantiate</span>( <span class="ruby-identifier">model</span> )
+  <span class="ruby-keyword">end</span>
+
+  <span class="ruby-keyword">super</span>( <span class="ruby-identifier">model</span> )
+<span class="ruby-keyword">end</span></pre>
+          </div>
+        </div>
+
+
+      </div>
+
+      <div id="method-c-instantiate" class="method-detail ">
+        <div class="method-heading">
+          <span class="method-name">instantiate</span><span
+            class="method-args">( model )</span>
+          <span class="method-click-advice">click to toggle source</span>
+        </div>
+
+        <div class="method-description">
+          <p>When instantiated in an <a href="Base.html"><code>ActiveRecord::Base</code></a> subclass, all of the Hoodoo::ActiveRecord::ManullyDated::ClassMethods methods are defined as class methods on the including class.</p>
+<dl class="rdoc-list note-list"><dt><code>model</code>
+<dd>
+<p>The <a href="Base.html"><code>ActiveRecord::Base</code></a> descendant that is including this module.</p>
+</dd></dl>
+
+          <div class="method-source-code" id="instantiate-source">
+            <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/manually_dated.rb, line 410</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">instantiate</span>( <span class="ruby-identifier">model</span> )
+  <span class="ruby-identifier">model</span>.<span class="ruby-identifier">extend</span>( <span class="ruby-constant">ClassMethods</span> )
+<span class="ruby-keyword">end</span></pre>
+          </div>
+        </div>
+
+
+      </div>
+
+    </section>
+
+  </section>
+</main>
+
+
+<footer id="validator-badges" role="contentinfo">
+  <p><a href="https://validator.w3.org/check/referer">Validate</a>
+  <p>Generated by <a href="https://ruby.github.io/rdoc/">RDoc</a> 6.4.0.
+  <p>Based on <a href="http://deveiate.org/projects/Darkfish-RDoc/">Darkfish</a> by <a href="http://deveiate.org">Michael Granger</a>.
+</footer>
+

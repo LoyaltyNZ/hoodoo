@@ -1,13 +1,380 @@
-<!DOCTYPE html
-     PUBLIC "-//W3C//DTD XHTML 1.0 Frameset//EN"
-     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-frameset.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<!DOCTYPE html>
+
+<html>
 <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-    <title>Hoodoo</title>
-</head>
-<frameset cols="300,*" frameborder="1" border="1" bordercolor="#999999" framespacing="1">
-    <frame src="panel/index.html" title="Search" name="panel" />
-    <frame src="files/README_md.html" name="docwin" />
-</frameset>
-</html>
+<meta charset="UTF-8">
+
+<title>Hoodoo</title>
+
+<script type="text/javascript">
+  var rdoc_rel_prefix = "./";
+  var index_rel_prefix = "./";
+</script>
+
+<script src="./js/navigation.js" defer></script>
+<script src="./js/search.js" defer></script>
+<script src="./js/search_index.js" defer></script>
+<script src="./js/searcher.js" defer></script>
+<script src="./js/darkfish.js" defer></script>
+
+<link href="./css/fonts.css" rel="stylesheet">
+<link href="./css/rdoc.css" rel="stylesheet">
+
+
+<body id="top" role="document" class="file">
+<nav role="navigation">
+  <div id="project-navigation">
+    <div id="home-section" role="region" title="Quick navigation" class="nav-section">
+  <h2>
+    <a href="./index.html" rel="home">Home</a>
+  </h2>
+
+  <div id="table-of-contents-navigation">
+    <a href="./table_of_contents.html#pages">Pages</a>
+    <a href="./table_of_contents.html#classes">Classes</a>
+    <a href="./table_of_contents.html#methods">Methods</a>
+  </div>
+</div>
+
+
+    <div id="search-section" role="search" class="project-section initially-hidden">
+  <form action="#" method="get" accept-charset="utf-8">
+    <div id="search-field-wrapper">
+      <input id="search-field" role="combobox" aria-label="Search"
+             aria-autocomplete="list" aria-controls="search-results"
+             type="text" name="search" placeholder="Search" spellcheck="false"
+             title="Type to search, Up and Down to navigate, Enter to load">
+    </div>
+
+    <ul id="search-results" aria-label="Search Results"
+        aria-busy="false" aria-expanded="false"
+        aria-atomic="false" class="initially-hidden"></ul>
+  </form>
+</div>
+
+  </div>
+
+  <div id="project-metadata">
+    
+<div id="fileindex-section" class="nav-section">
+  <h3>Pages</h3>
+
+  <ul class="link-list">
+    <li><a href="./README_md.html">README</a>
+  </ul>
+</div>
+
+    <div id="classindex-section" class="nav-section">
+  <h3>Class and Module Index</h3>
+
+  <ul class="link-list">
+    <li><a href="./Hoodoo.html">Hoodoo</a>
+    <li><a href="./Hoodoo/ActiveRecord.html">Hoodoo::ActiveRecord</a>
+    <li><a href="./Hoodoo/ActiveRecord/Base.html">Hoodoo::ActiveRecord::Base</a>
+    <li><a href="./Hoodoo/ActiveRecord/Creator.html">Hoodoo::ActiveRecord::Creator</a>
+    <li><a href="./Hoodoo/ActiveRecord/Creator/ClassMethods.html">Hoodoo::ActiveRecord::Creator::ClassMethods</a>
+    <li><a href="./Hoodoo/ActiveRecord/Dated.html">Hoodoo::ActiveRecord::Dated</a>
+    <li><a href="./Hoodoo/ActiveRecord/Dated/ClassMethods.html">Hoodoo::ActiveRecord::Dated::ClassMethods</a>
+    <li><a href="./Hoodoo/ActiveRecord/ErrorMapping.html">Hoodoo::ActiveRecord::ErrorMapping</a>
+    <li><a href="./Hoodoo/ActiveRecord/Finder.html">Hoodoo::ActiveRecord::Finder</a>
+    <li><a href="./Hoodoo/ActiveRecord/Finder/ClassMethods.html">Hoodoo::ActiveRecord::Finder::ClassMethods</a>
+    <li><a href="./Hoodoo/ActiveRecord/Finder/SearchHelper.html">Hoodoo::ActiveRecord::Finder::SearchHelper</a>
+    <li><a href="./Hoodoo/ActiveRecord/ManuallyDated.html">Hoodoo::ActiveRecord::ManuallyDated</a>
+    <li><a href="./Hoodoo/ActiveRecord/ManuallyDated/ClassMethods.html">Hoodoo::ActiveRecord::ManuallyDated::ClassMethods</a>
+    <li><a href="./Hoodoo/ActiveRecord/Secure.html">Hoodoo::ActiveRecord::Secure</a>
+    <li><a href="./Hoodoo/ActiveRecord/Secure/ClassMethods.html">Hoodoo::ActiveRecord::Secure::ClassMethods</a>
+    <li><a href="./Hoodoo/ActiveRecord/Secure/SecurityHelper.html">Hoodoo::ActiveRecord::Secure::SecurityHelper</a>
+    <li><a href="./Hoodoo/ActiveRecord/Support.html">Hoodoo::ActiveRecord::Support</a>
+    <li><a href="./Hoodoo/ActiveRecord/Translated.html">Hoodoo::ActiveRecord::Translated</a>
+    <li><a href="./Hoodoo/ActiveRecord/Translated/ClassMethods.html">Hoodoo::ActiveRecord::Translated::ClassMethods</a>
+    <li><a href="./Hoodoo/ActiveRecord/UUID.html">Hoodoo::ActiveRecord::UUID</a>
+    <li><a href="./Hoodoo/ActiveRecord/Writer.html">Hoodoo::ActiveRecord::Writer</a>
+    <li><a href="./Hoodoo/ActiveRecord/Writer/ClassMethods.html">Hoodoo::ActiveRecord::Writer::ClassMethods</a>
+    <li><a href="./Hoodoo/Client.html">Hoodoo::Client</a>
+    <li><a href="./Hoodoo/Client/AugmentedArray.html">Hoodoo::Client::AugmentedArray</a>
+    <li><a href="./Hoodoo/Client/AugmentedBase.html">Hoodoo::Client::AugmentedBase</a>
+    <li><a href="./Hoodoo/Client/AugmentedHash.html">Hoodoo::Client::AugmentedHash</a>
+    <li><a href="./Hoodoo/Client/Endpoint.html">Hoodoo::Client::Endpoint</a>
+    <li><a href="./Hoodoo/Client/Endpoint/AMQP.html">Hoodoo::Client::Endpoint::AMQP</a>
+    <li><a href="./Hoodoo/Client/Endpoint/AutoSession.html">Hoodoo::Client::Endpoint::AutoSession</a>
+    <li><a href="./Hoodoo/Client/Endpoint/HTTP.html">Hoodoo::Client::Endpoint::HTTP</a>
+    <li><a href="./Hoodoo/Client/Endpoint/HTTPBased.html">Hoodoo::Client::Endpoint::HTTPBased</a>
+    <li><a href="./Hoodoo/Client/Endpoint/HTTPBased/DataForRequest.html">Hoodoo::Client::Endpoint::HTTPBased::DataForRequest</a>
+    <li><a href="./Hoodoo/Client/Endpoint/HTTPBased/DescriptionOfRequest.html">Hoodoo::Client::Endpoint::HTTPBased::DescriptionOfRequest</a>
+    <li><a href="./Hoodoo/Client/Endpoint/HTTPBased/DescriptionOfResponse.html">Hoodoo::Client::Endpoint::HTTPBased::DescriptionOfResponse</a>
+    <li><a href="./Hoodoo/Client/Endpoint/NotFound.html">Hoodoo::Client::Endpoint::NotFound</a>
+    <li><a href="./Hoodoo/Client/Headers.html">Hoodoo::Client::Headers</a>
+    <li><a href="./Hoodoo/Client/PaginatedEnumeration.html">Hoodoo::Client::PaginatedEnumeration</a>
+    <li><a href="./Hoodoo/Communicators.html">Hoodoo::Communicators</a>
+    <li><a href="./Hoodoo/Communicators/Fast.html">Hoodoo::Communicators::Fast</a>
+    <li><a href="./Hoodoo/Communicators/Pool.html">Hoodoo::Communicators::Pool</a>
+    <li><a href="./Hoodoo/Communicators/Pool/QueueEntry.html">Hoodoo::Communicators::Pool::QueueEntry</a>
+    <li><a href="./Hoodoo/Communicators/Pool/QueueWithTimeout.html">Hoodoo::Communicators::Pool::QueueWithTimeout</a>
+    <li><a href="./Hoodoo/Communicators/Slow.html">Hoodoo::Communicators::Slow</a>
+    <li><a href="./Hoodoo/Data.html">Hoodoo::Data</a>
+    <li><a href="./Hoodoo/Data/Resources.html">Hoodoo::Data::Resources</a>
+    <li><a href="./Hoodoo/Data/Resources/Caller.html">Hoodoo::Data::Resources::Caller</a>
+    <li><a href="./Hoodoo/Data/Resources/Errors.html">Hoodoo::Data::Resources::Errors</a>
+    <li><a href="./Hoodoo/Data/Resources/Log.html">Hoodoo::Data::Resources::Log</a>
+    <li><a href="./Hoodoo/Data/Resources/Session.html">Hoodoo::Data::Resources::Session</a>
+    <li><a href="./Hoodoo/Data/Types.html">Hoodoo::Data::Types</a>
+    <li><a href="./Hoodoo/Data/Types/ErrorPrimitive.html">Hoodoo::Data::Types::ErrorPrimitive</a>
+    <li><a href="./Hoodoo/Data/Types/Permissions.html">Hoodoo::Data::Types::Permissions</a>
+    <li><a href="./Hoodoo/Data/Types/PermissionsDefaults.html">Hoodoo::Data::Types::PermissionsDefaults</a>
+    <li><a href="./Hoodoo/Data/Types/PermissionsFull.html">Hoodoo::Data::Types::PermissionsFull</a>
+    <li><a href="./Hoodoo/Data/Types/PermissionsResources.html">Hoodoo::Data::Types::PermissionsResources</a>
+    <li><a href="./Hoodoo/ErrorDescriptions.html">Hoodoo::ErrorDescriptions</a>
+    <li><a href="./Hoodoo/ErrorDescriptions/DomainDescriptions.html">Hoodoo::ErrorDescriptions::DomainDescriptions</a>
+    <li><a href="./Hoodoo/Errors.html">Hoodoo::Errors</a>
+    <li><a href="./Hoodoo/Errors/MissingReferenceData.html">Hoodoo::Errors::MissingReferenceData</a>
+    <li><a href="./Hoodoo/Errors/UnknownCode.html">Hoodoo::Errors::UnknownCode</a>
+    <li><a href="./Hoodoo/Generator.html">Hoodoo::Generator</a>
+    <li><a href="./Hoodoo/Logger.html">Hoodoo::Logger</a>
+    <li><a href="./Hoodoo/Logger/Communicator.html">Hoodoo::Logger::Communicator</a>
+    <li><a href="./Hoodoo/Logger/FastCommunicator.html">Hoodoo::Logger::FastCommunicator</a>
+    <li><a href="./Hoodoo/Logger/FastWriter.html">Hoodoo::Logger::FastWriter</a>
+    <li><a href="./Hoodoo/Logger/FileWriter.html">Hoodoo::Logger::FileWriter</a>
+    <li><a href="./Hoodoo/Logger/FlattenerMixin.html">Hoodoo::Logger::FlattenerMixin</a>
+    <li><a href="./Hoodoo/Logger/LogEntriesDotComWriter.html">Hoodoo::Logger::LogEntriesDotComWriter</a>
+    <li><a href="./Hoodoo/Logger/Payload.html">Hoodoo::Logger::Payload</a>
+    <li><a href="./Hoodoo/Logger/SlowCommunicator.html">Hoodoo::Logger::SlowCommunicator</a>
+    <li><a href="./Hoodoo/Logger/SlowWriter.html">Hoodoo::Logger::SlowWriter</a>
+    <li><a href="./Hoodoo/Logger/StreamWriter.html">Hoodoo::Logger::StreamWriter</a>
+    <li><a href="./Hoodoo/Logger/WriterMixin.html">Hoodoo::Logger::WriterMixin</a>
+    <li><a href="./Hoodoo/Monkey.html">Hoodoo::Monkey</a>
+    <li><a href="./Hoodoo/Monkey/Chaos.html">Hoodoo::Monkey::Chaos</a>
+    <li><a href="./Hoodoo/Monkey/Patch.html">Hoodoo::Monkey::Patch</a>
+    <li><a href="./Hoodoo/Monkey/Patch/ActiveRecordDatedFinderAdditions.html">Hoodoo::Monkey::Patch::ActiveRecordDatedFinderAdditions</a>
+    <li><a href="./Hoodoo/Monkey/Patch/ActiveRecordDatedFinderAdditions/ClassExtensions.html">Hoodoo::Monkey::Patch::ActiveRecordDatedFinderAdditions::ClassExtensions</a>
+    <li><a href="./Hoodoo/Monkey/Patch/ActiveRecordManuallyDatedFinderAdditions.html">Hoodoo::Monkey::Patch::ActiveRecordManuallyDatedFinderAdditions</a>
+    <li><a href="./Hoodoo/Monkey/Patch/ActiveRecordManuallyDatedFinderAdditions/ClassExtensions.html">Hoodoo::Monkey::Patch::ActiveRecordManuallyDatedFinderAdditions::ClassExtensions</a>
+    <li><a href="./Hoodoo/Monkey/Patch/DatadogTracedAMQP.html">Hoodoo::Monkey::Patch::DatadogTracedAMQP</a>
+    <li><a href="./Hoodoo/Monkey/Patch/DatadogTracedAMQP/InstanceExtensions.html">Hoodoo::Monkey::Patch::DatadogTracedAMQP::InstanceExtensions</a>
+    <li><a href="./Hoodoo/Monkey/Patch/NewRelicMiddlewareAnalytics.html">Hoodoo::Monkey::Patch::NewRelicMiddlewareAnalytics</a>
+    <li><a href="./Hoodoo/Monkey/Patch/NewRelicMiddlewareAnalytics/InstanceExtensions.html">Hoodoo::Monkey::Patch::NewRelicMiddlewareAnalytics::InstanceExtensions</a>
+    <li><a href="./Hoodoo/Monkey/Patch/NewRelicTracedAMQP.html">Hoodoo::Monkey::Patch::NewRelicTracedAMQP</a>
+    <li><a href="./Hoodoo/Monkey/Patch/NewRelicTracedAMQP/AlchemyFluxHTTPRequestWrapper.html">Hoodoo::Monkey::Patch::NewRelicTracedAMQP::AlchemyFluxHTTPRequestWrapper</a>
+    <li><a href="./Hoodoo/Monkey/Patch/NewRelicTracedAMQP/AlchemyFluxHTTPResponseWrapper.html">Hoodoo::Monkey::Patch::NewRelicTracedAMQP::AlchemyFluxHTTPResponseWrapper</a>
+    <li><a href="./Hoodoo/Monkey/Patch/NewRelicTracedAMQP/InstanceExtensions.html">Hoodoo::Monkey::Patch::NewRelicTracedAMQP::InstanceExtensions</a>
+    <li><a href="./Hoodoo/Presenters.html">Hoodoo::Presenters</a>
+    <li><a href="./Hoodoo/Presenters/Array.html">Hoodoo::Presenters::Array</a>
+    <li><a href="./Hoodoo/Presenters/Base.html">Hoodoo::Presenters::Base</a>
+    <li><a href="./Hoodoo/Presenters/BaseDSL.html">Hoodoo::Presenters::BaseDSL</a>
+    <li><a href="./Hoodoo/Presenters/Boolean.html">Hoodoo::Presenters::Boolean</a>
+    <li><a href="./Hoodoo/Presenters/CommonResourceFields.html">Hoodoo::Presenters::CommonResourceFields</a>
+    <li><a href="./Hoodoo/Presenters/Date.html">Hoodoo::Presenters::Date</a>
+    <li><a href="./Hoodoo/Presenters/DateTime.html">Hoodoo::Presenters::DateTime</a>
+    <li><a href="./Hoodoo/Presenters/Decimal.html">Hoodoo::Presenters::Decimal</a>
+    <li><a href="./Hoodoo/Presenters/Embedding.html">Hoodoo::Presenters::Embedding</a>
+    <li><a href="./Hoodoo/Presenters/Embedding/Embeddable.html">Hoodoo::Presenters::Embedding::Embeddable</a>
+    <li><a href="./Hoodoo/Presenters/Embedding/Embeds.html">Hoodoo::Presenters::Embedding::Embeds</a>
+    <li><a href="./Hoodoo/Presenters/Embedding/References.html">Hoodoo::Presenters::Embedding::References</a>
+    <li><a href="./Hoodoo/Presenters/Enum.html">Hoodoo::Presenters::Enum</a>
+    <li><a href="./Hoodoo/Presenters/Field.html">Hoodoo::Presenters::Field</a>
+    <li><a href="./Hoodoo/Presenters/Float.html">Hoodoo::Presenters::Float</a>
+    <li><a href="./Hoodoo/Presenters/Hash.html">Hoodoo::Presenters::Hash</a>
+    <li><a href="./Hoodoo/Presenters/Integer.html">Hoodoo::Presenters::Integer</a>
+    <li><a href="./Hoodoo/Presenters/Object.html">Hoodoo::Presenters::Object</a>
+    <li><a href="./Hoodoo/Presenters/String.html">Hoodoo::Presenters::String</a>
+    <li><a href="./Hoodoo/Presenters/Tags.html">Hoodoo::Presenters::Tags</a>
+    <li><a href="./Hoodoo/Presenters/Text.html">Hoodoo::Presenters::Text</a>
+    <li><a href="./Hoodoo/Presenters/UUID.html">Hoodoo::Presenters::UUID</a>
+    <li><a href="./Hoodoo/Services.html">Hoodoo::Services</a>
+    <li><a href="./Hoodoo/Services/Context.html">Hoodoo::Services::Context</a>
+    <li><a href="./Hoodoo/Services/Discovery.html">Hoodoo::Services::Discovery</a>
+    <li><a href="./Hoodoo/Services/Discovery/ByConvention.html">Hoodoo::Services::Discovery::ByConvention</a>
+    <li><a href="./Hoodoo/Services/Discovery/ByDRb.html">Hoodoo::Services::Discovery::ByDRb</a>
+    <li><a href="./Hoodoo/Services/Discovery/ByDRb/DRbServer.html">Hoodoo::Services::Discovery::ByDRb::DRbServer</a>
+    <li><a href="./Hoodoo/Services/Discovery/ByFlux.html">Hoodoo::Services::Discovery::ByFlux</a>
+    <li><a href="./Hoodoo/Services/Discovery/ForAMQP.html">Hoodoo::Services::Discovery::ForAMQP</a>
+    <li><a href="./Hoodoo/Services/Discovery/ForHTTP.html">Hoodoo::Services::Discovery::ForHTTP</a>
+    <li><a href="./Hoodoo/Services/Discovery/ForLocal.html">Hoodoo::Services::Discovery::ForLocal</a>
+    <li><a href="./Hoodoo/Services/Discovery/ForRemote.html">Hoodoo::Services::Discovery::ForRemote</a>
+    <li><a href="./Hoodoo/Services/Implementation.html">Hoodoo::Services::Implementation</a>
+    <li><a href="./Hoodoo/Services/Interface.html">Hoodoo::Services::Interface</a>
+    <li><a href="./Hoodoo/Services/Interface/ToList.html">Hoodoo::Services::Interface::ToList</a>
+    <li><a href="./Hoodoo/Services/Interface/ToListDSL.html">Hoodoo::Services::Interface::ToListDSL</a>
+    <li><a href="./Hoodoo/Services/Middleware.html">Hoodoo::Services::Middleware</a>
+    <li><a href="./Hoodoo/Services/Middleware/AMQPLogWriter.html">Hoodoo::Services::Middleware::AMQPLogWriter</a>
+    <li><a href="./Hoodoo/Services/Middleware/ExceptionReporting.html">Hoodoo::Services::Middleware::ExceptionReporting</a>
+    <li><a href="./Hoodoo/Services/Middleware/ExceptionReporting/AirbrakeReporter.html">Hoodoo::Services::Middleware::ExceptionReporting::AirbrakeReporter</a>
+    <li><a href="./Hoodoo/Services/Middleware/ExceptionReporting/BaseReporter.html">Hoodoo::Services::Middleware::ExceptionReporting::BaseReporter</a>
+    <li><a href="./Hoodoo/Services/Middleware/ExceptionReporting/Payload.html">Hoodoo::Services::Middleware::ExceptionReporting::Payload</a>
+    <li><a href="./Hoodoo/Services/Middleware/InterResourceLocal.html">Hoodoo::Services::Middleware::InterResourceLocal</a>
+    <li><a href="./Hoodoo/Services/Middleware/InterResourceRemote.html">Hoodoo::Services::Middleware::InterResourceRemote</a>
+    <li><a href="./Hoodoo/Services/Middleware/Interaction.html">Hoodoo::Services::Middleware::Interaction</a>
+    <li><a href="./Hoodoo/Services/Permissions.html">Hoodoo::Services::Permissions</a>
+    <li><a href="./Hoodoo/Services/Request.html">Hoodoo::Services::Request</a>
+    <li><a href="./Hoodoo/Services/Request/ListParameters.html">Hoodoo::Services::Request::ListParameters</a>
+    <li><a href="./Hoodoo/Services/Response.html">Hoodoo::Services::Response</a>
+    <li><a href="./Hoodoo/Services/Service.html">Hoodoo::Services::Service</a>
+    <li><a href="./Hoodoo/Services/Session.html">Hoodoo::Services::Session</a>
+    <li><a href="./Hoodoo/StringInquirer.html">Hoodoo::StringInquirer</a>
+    <li><a href="./Hoodoo/TransientStore.html">Hoodoo::TransientStore</a>
+    <li><a href="./Hoodoo/TransientStore/Base.html">Hoodoo::TransientStore::Base</a>
+    <li><a href="./Hoodoo/TransientStore/Memcached.html">Hoodoo::TransientStore::Memcached</a>
+    <li><a href="./Hoodoo/TransientStore/MemcachedRedisMirror.html">Hoodoo::TransientStore::MemcachedRedisMirror</a>
+    <li><a href="./Hoodoo/TransientStore/Mocks.html">Hoodoo::TransientStore::Mocks</a>
+    <li><a href="./Hoodoo/TransientStore/Mocks/DalliClient.html">Hoodoo::TransientStore::Mocks::DalliClient</a>
+    <li><a href="./Hoodoo/TransientStore/Mocks/Redis.html">Hoodoo::TransientStore::Mocks::Redis</a>
+    <li><a href="./Hoodoo/TransientStore/Redis.html">Hoodoo::TransientStore::Redis</a>
+    <li><a href="./Hoodoo/UUID.html">Hoodoo::UUID</a>
+    <li><a href="./Hoodoo/Utilities.html">Hoodoo::Utilities</a>
+    <li><a href="./Rack.html">Rack</a>
+    <li><a href="./Rack/Server.html">Rack::Server</a>
+    <li><a href="./UuidValidator.html">UuidValidator</a>
+  </ul>
+</div>
+
+  </div>
+</nav>
+
+<main role="main">
+
+
+<h1 id="label-Hoodoo"><a href="Hoodoo.html"><code>Hoodoo</code></a><span><a href="#label-Hoodoo">&para;</a> <a href="#top">&uarr;</a></span></h1>
+
+<p><a href="https://rubygems.org/gems/hoodoo"><img src="https://badge.fury.io/rb/hoodoo.svg"></a> <a href="https://travis-ci.com/LoyaltyNZ/hoodoo"><img src="https://travis-ci.com/LoyaltyNZ/hoodoo.svg?branch=master"></a> <a href="http://www.gnu.org/licenses/lgpl-3.0.en.html"><img src="https://img.shields.io/badge/license-LGPL--3.0-blue.svg"></a></p>
+
+<p>Simplify the implementation of services within an API-based software platform.</p>
+
+<p>See <a href="https://loyaltynz.github.io/hoodoo/">Hoodoo Guides</a> for extensive documentation and examples.</p>
+
+<h2 id="label-Note">Note<span><a href="#label-Note">&para;</a> <a href="#top">&uarr;</a></span></h2>
+
+<p>Latest version <code>v3.1.1</code> only supports <code>activerecord 7.0</code> onwards. Use <code>v2.12.11</code> if you need to support lower <code>activerecord</code> version</p>
+
+<h2 id="label-Usage">Usage<span><a href="#label-Usage">&para;</a> <a href="#top">&uarr;</a></span></h2>
+
+<p>Add the gem to your <code>Gemfile</code>:</p>
+
+<pre class="ruby"><span class="ruby-identifier">gem</span> <span class="ruby-string">&#39;hoodoo&#39;</span>, <span class="ruby-string">&#39;~&gt; 3.0&#39;</span>
+</pre>
+
+<p>Require hoodoo when needed:</p>
+
+<pre class="ruby"><span class="ruby-identifier">require</span> <span class="ruby-string">&#39;hoodoo&#39;</span>
+</pre>
+
+<p>Functionality includes:</p>
+<ul><li>
+<p><em>Middleware:</em> The heart of services; Rack-based service applications (think Sinatra, Grape, Rails…) – <a href="Hoodoo/Services/Middleware.html"><code>Hoodoo::Services::Middleware</code></a>; but start at <a href="Hoodoo/Services/Service.html"><code>Hoodoo::Services::Service</code></a> and see also <a href="Hoodoo/Services/Interface.html"><code>Hoodoo::Services::Interface</code></a>, <a href="Hoodoo/Services/Implementation.html"><code>Hoodoo::Services::Implementation</code></a> and related classes <a href="Hoodoo/Services/Request.html"><code>Hoodoo::Services::Request</code></a>, <a href="Hoodoo/Services/Response.html"><code>Hoodoo::Services::Response</code></a>, <a href="Hoodoo/Services/Session.html"><code>Hoodoo::Services::Session</code></a>, <a href="Hoodoo/Services/Context.html"><code>Hoodoo::Services::Context</code></a></p>
+</li><li>
+<p><em>Generic Presenter Layer:</em> Input and output validation and rendering – <a href="Hoodoo/Presenters/Base.html"><code>Hoodoo::Presenters::Base</code></a>, <a href="Hoodoo/Presenters/BaseDSL.html"><code>Hoodoo::Presenters::BaseDSL</code></a></p>
+</li><li>
+<p><em>Unified Error Helpers:</em> Adds standard platform error capability to any API/class – <a href="Hoodoo/ErrorDescriptions.html"><code>Hoodoo::ErrorDescriptions</code></a>, <a href="Hoodoo/Errors.html"><code>Hoodoo::Errors</code></a></p>
+</li><li>
+<p><em>Unified Logger:</em> A single logger for use with platform or local logs – <a href="Hoodoo/Logger.html"><code>Hoodoo::Logger</code></a></p>
+</li><li>
+<p><em>Platform Sessions:</em> Authentication of sessions, session context – <a href="Hoodoo/Services/Session.html"><code>Hoodoo::Services::Session</code></a></p>
+</li><li>
+<p><em>Platform Events:</em> Publishes Platform Events when running on a queue-based infrastructure – Hoodoo::Events::PlatformEvent</p>
+</li><li>
+<p><em>ActiveRecord Assistance</em>: If using ActiveRecord (optional), provides support methods/mixins for models to help bridge the gap between API resources and persistence – <a href="Hoodoo/ActiveRecord.html"><code>Hoodoo::ActiveRecord</code></a></p>
+</li></ul>
+
+<p>Master documentation is through RDoc (see below).</p>
+
+<h2 id="label-Workflow+-2F+branches">Workflow / branches<span><a href="#label-Workflow+-2F+branches">&para;</a> <a href="#top">&uarr;</a></span></h2>
+
+<p>Development occurs on either <code>master</code> directly, or temporary <code>hotfix</code> or <code>feature</code> branches which are subsequently merged to <code>master</code>. This model is used because Gem versions, once <a href="Hoodoo.html"><code>Hoodoo</code></a> is stored in a public Gem repository, will allow other software to decide what changes to import or ignore. The Gem version is not usually altered while <a href="Hoodoo.html"><code>Hoodoo</code></a> stays within a private repository.</p>
+
+<p>See also <code>CONTRIBUTING.md</code>.</p>
+
+<h2 id="label-Tests">Tests<span><a href="#label-Tests">&para;</a> <a href="#top">&uarr;</a></span></h2>
+
+<p>Run the tests:</p>
+
+<pre class="ruby"><span class="ruby-identifier">bundle</span> <span class="ruby-identifier">exec</span> <span class="ruby-identifier">rake</span>
+</pre>
+
+<p>…or…</p>
+
+<pre class="ruby"><span class="ruby-identifier">bundle</span> <span class="ruby-identifier">exec</span> <span class="ruby-identifier">rspec</span>
+</pre>
+
+<h2 id="label-Documentation+-28RDoc-29">Documentation (RDoc)<span><a href="#label-Documentation+-28RDoc-29">&para;</a> <a href="#top">&uarr;</a></span></h2>
+
+<p>The <a href="Hoodoo.html"><code>Hoodoo</code></a> public API is documented through source code comments with examples and workflow indications. RDoc turns these into HTML. See earlier for some pointers to classes of interest that will be linked to the relevant class documentation if you read all of this through the RDoc output.</p>
+
+<p>If working on an installed copy of the gem through normal channels, you should be able to issue this command:</p>
+
+<pre class="ruby"><span class="ruby-identifier">gem</span> <span class="ruby-identifier">server</span>
+</pre>
+
+<p>…and browse to port 8808 on <code>localhost</code> to get an index of all gem documentation, including that for <a href="Hoodoo.html"><code>Hoodoo</code></a>. Out of the box from GitHub, RDoc precompiled documentation is available but there is a risk it might be out of date. If working on development of the gem in a GitHub repository clone, you can generate or entirely regenerate RDoc files (re-RDoc) with:</p>
+
+<pre class="ruby"><span class="ruby-identifier">bundle</span> <span class="ruby-identifier">exec</span> <span class="ruby-identifier">rake</span> <span class="ruby-identifier">rerdoc</span>
+</pre>
+
+<p>Some additional higher level hand written documentation may also be present as Markdown data inside the <code>docs</code> folder.</p>
+
+<h2 id="label-Contributors">Contributors<span><a href="#label-Contributors">&para;</a> <a href="#top">&uarr;</a></span></h2>
+<ul><li>
+<p><a href="https://github.com/pond">Andrew Hodgkinson</a></p>
+</li><li>
+<p><a href="https://github.com/tomdionysus">Tom Cully</a></p>
+</li><li>
+<p><a href="https://github.com/aames">Andrew Amesbury</a></p>
+</li><li>
+<p><a href="https://github.com/aspett">Andrew Pett</a></p>
+</li><li>
+<p><a href="https://github.com/bengreville">Ben Greville</a></p>
+</li><li>
+<p><a href="https://github.com/charlespeach">Charles Peach</a></p>
+</li><li>
+<p><a href="https://github.com/daveharris">Dave Harris</a></p>
+</li><li>
+<p><a href="https://github.com/davidamitchell">David Mitchell</a></p>
+</li><li>
+<p><a href="https://github.com/davidoram">David Oram</a></p>
+</li><li>
+<p><a href="https://github.com/grahamjenson">Graham Jenson</a></p>
+</li><li>
+<p><a href="https://github.com/jeremyolliver">Jeremy Olliver</a></p>
+</li><li>
+<p><a href="https://github.com/whithajess">Jesse Whitham</a></p>
+</li><li>
+<p><a href="https://github.com/jordandcarter">Jordan Carter</a></p>
+</li><li>
+<p><a href="https://github.com/josephleniston">Joseph Leniston</a></p>
+</li><li>
+<p><a href="https://github.com/kasperite">Lukas Nguyen</a></p>
+</li><li>
+<p><a href="https://github.com/mjnguyenloyalty">Mai Nguyen</a></p>
+</li><li>
+<p><a href="https://github.com/copley">Max Copley</a></p>
+</li><li>
+<p><a href="https://github.com/mbdietrich">Max Dietrich</a></p>
+</li><li>
+<p><a href="https://github.com/natashadowse">Natasha Dowse</a></p>
+</li><li>
+<p><a href="https://github.com/OBaddeley">Olivia Baddeley</a></p>
+</li><li>
+<p><a href="https://github.com/pjscopeland">Patrick Copeland</a></p>
+</li><li>
+<p><a href="https://github.com/thelollies">Rory Stephenson</a></p>
+</li><li>
+<p><a href="https://github.com/waynehoover">Wayne Hoover</a></p>
+</li><li>
+<p><a href="https://github.com/ildomar-grings">Ildomar Grings</a></p>
+</li></ul>
+
+<h2 id="label-Licence">Licence<span><a href="#label-Licence">&para;</a> <a href="#top">&uarr;</a></span></h2>
+
+<p>Please see the <code>LICENSE</code> and <code>hoodoo.gemspec</code> file for licence details. Those files are authoritative. At the time of writing - though this note might get out of date - <a href="Hoodoo.html"><code>Hoodoo</code></a> is released under the LGPL v3; see:</p>
+<ul><li>
+<p><a href="http://www.gnu.org/licenses/lgpl-3.0-standalone.html">www.gnu.org/licenses/lgpl-3.0-standalone.html</a></p>
+</li><li>
+<p><a href="https://tldrlegal.com/license/gnu-lesser-general-public-license-v3-(lgpl-3">tldrlegal.com/license/gnu-lesser-general-public-license-v3-(lgpl-3</a>)</p>
+</li></ul>
+
+</main>
+
+
+<footer id="validator-badges" role="contentinfo">
+  <p><a href="https://validator.w3.org/check/referer">Validate</a>
+  <p>Generated by <a href="https://ruby.github.io/rdoc/">RDoc</a> 6.4.0.
+  <p>Based on <a href="http://deveiate.org/projects/Darkfish-RDoc/">Darkfish</a> by <a href="http://deveiate.org">Michael Granger</a>.
+</footer>
+

@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+<meta charset="UTF-8">
+
+<title>class Hoodoo::Client::Endpoint::AutoSession - Hoodoo</title>
+
+<script type="text/javascript">
+  var rdoc_rel_prefix = "../../../";
+  var index_rel_prefix = "../../../";
+</script>
+
+<script src="../../../js/navigation.js" defer></script>
+<script src="../../../js/search.js" defer></script>
+<script src="../../../js/search_index.js" defer></script>
+<script src="../../../js/searcher.js" defer></script>
+<script src="../../../js/darkfish.js" defer></script>
+
+<link href="../../../css/fonts.css" rel="stylesheet">
+<link href="../../../css/rdoc.css" rel="stylesheet">
+
+
+<body id="top" role="document" class="class">
+<nav role="navigation">
+  <div id="project-navigation">
+    <div id="home-section" role="region" title="Quick navigation" class="nav-section">
+  <h2>
+    <a href="../../../index.html" rel="home">Home</a>
+  </h2>
+
+  <div id="table-of-contents-navigation">
+    <a href="../../../table_of_contents.html#pages">Pages</a>
+    <a href="../../../table_of_contents.html#classes">Classes</a>
+    <a href="../../../table_of_contents.html#methods">Methods</a>
+  </div>
+</div>
+
+    <div id="search-section" role="search" class="project-section initially-hidden">
+  <form action="#" method="get" accept-charset="utf-8">
+    <div id="search-field-wrapper">
+      <input id="search-field" role="combobox" aria-label="Search"
+             aria-autocomplete="list" aria-controls="search-results"
+             type="text" name="search" placeholder="Search" spellcheck="false"
+             title="Type to search, Up and Down to navigate, Enter to load">
+    </div>
+
+    <ul id="search-results" aria-label="Search Results"
+        aria-busy="false" aria-expanded="false"
+        aria-atomic="false" class="initially-hidden"></ul>
+  </form>
+</div>
+
+  </div>
+
+  
+
+  <div id="class-metadata">
+    
+    
+<div id="parent-class-section" class="nav-section">
+  <h3>Parent</h3>
+
+  <p class="link"><a href="../Endpoint.html">Hoodoo::Client::Endpoint</a>
+</div>
+
+    
+    
+    
+<!-- Method Quickref -->
+<div id="method-list-section" class="nav-section">
+  <h3>Methods</h3>
+
+  <ul class="link-list" role="directory">
+    <li ><a href="#method-i-configure_with">#configure_with</a>
+    <li ><a href="#method-i-create">#create</a>
+    <li ><a href="#method-i-delete">#delete</a>
+    <li ><a href="#method-i-list">#list</a>
+    <li ><a href="#method-i-show">#show</a>
+    <li ><a href="#method-i-update">#update</a>
+  </ul>
+</div>
+
+  </div>
+</nav>
+
+<main role="main" aria-labelledby="class-Hoodoo::Client::Endpoint::AutoSession">
+  <h1 id="class-Hoodoo::Client::Endpoint::AutoSession" class="class">
+    class Hoodoo::Client::Endpoint::AutoSession
+  </h1>
+
+  <section class="description">
+    
+<p>This endpoint wraps something which does <em>actual</em> communication but requires a session; it maintains a valid session for that wrapped endpoint automatically. It implements the following model:</p>
+<ul><li>
+<p>It requires a Caller ID and Caller Authentication Secret to be instantiated (via the <code>options</code> parameter).</p>
+</li><li>
+<p>If there is no session ID available, it creates one using the above details. Otherwise, it tries to use the given session.</p>
+</li><li>
+<p>If a particular request leads to an ‘invalid session’ response, the request is marked for retry. A new session is obtained first, the retry happens and if it fails this time, the failure is returned to the caller.</p>
+</li></ul>
+
+<p>Since it wraps another endpoint and requires Caller information to be able to build sessions, instantiation requirements are rather unusual</p>
+<ul><li>
+<p>see <a href="AutoSession.html#method-i-configure_with"><code>configure_with</code></a> for details.</p>
+</li></ul>
+
+  </section>
+
+  <section id="5Buntitled-5D" class="documentation-section">
+
+
+
+
+
+     <section id="public-instance-5Buntitled-5D-method-details" class="method-section">
+       <header>
+         <h3>Public Instance Methods</h3>
+       </header>
+
+      <div id="method-i-create" class="method-detail ">
+        <div class="method-heading">
+          <span class="method-name">create</span><span
+            class="method-args">( body_hash, query_hash = nil )</span>
+          <span class="method-click-advice">click to toggle source</span>
+        </div>
+
+        <div class="method-description">
+          <p>See <a href="../Endpoint.html#method-i-create"><code>Hoodoo::Client::Endpoint#create</code></a>.</p>
+
+          <div class="method-source-code" id="create-source">
+            <pre><span class="ruby-comment"># File lib/hoodoo/client/endpoint/endpoints/auto_session.rb, line 94</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">create</span>( <span class="ruby-identifier">body_hash</span>, <span class="ruby-identifier">query_hash</span> = <span class="ruby-keyword">nil</span> )
+  <span class="ruby-keyword">return</span> <span class="ruby-identifier">auto_retry</span>( <span class="ruby-value">:create</span>, <span class="ruby-identifier">body_hash</span>, <span class="ruby-identifier">query_hash</span> )
+<span class="ruby-keyword">end</span></pre>
+          </div>
+        </div>
+
+
+      </div>
+
+      <div id="method-i-delete" class="method-detail ">
+        <div class="method-heading">
+          <span class="method-name">delete</span><span
+            class="method-args">( ident, query_hash = nil )</span>
+          <span class="method-click-advice">click to toggle source</span>
+        </div>
+
+        <div class="method-description">
+          <p>See <a href="../Endpoint.html#method-i-delete"><code>Hoodoo::Client::Endpoint#delete</code></a>.</p>
+
+          <div class="method-source-code" id="delete-source">
+            <pre><span class="ruby-comment"># File lib/hoodoo/client/endpoint/endpoints/auto_session.rb, line 106</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">delete</span>( <span class="ruby-identifier">ident</span>, <span class="ruby-identifier">query_hash</span> = <span class="ruby-keyword">nil</span> )
+  <span class="ruby-keyword">return</span> <span class="ruby-identifier">auto_retry</span>( <span class="ruby-value">:delete</span>, <span class="ruby-identifier">ident</span>, <span class="ruby-identifier">query_hash</span> )
+<span class="ruby-keyword">end</span></pre>
+          </div>
+        </div>
+
+
+      </div>
+
+      <div id="method-i-list" class="method-detail ">
+        <div class="method-heading">
+          <span class="method-name">list</span><span
+            class="method-args">( query_hash = nil )</span>
+          <span class="method-click-advice">click to toggle source</span>
+        </div>
+
+        <div class="method-description">
+          <p>See <a href="../Endpoint.html#method-i-list"><code>Hoodoo::Client::Endpoint#list</code></a>.</p>
+
+          <div class="method-source-code" id="list-source">
+            <pre><span class="ruby-comment"># File lib/hoodoo/client/endpoint/endpoints/auto_session.rb, line 82</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">list</span>( <span class="ruby-identifier">query_hash</span> = <span class="ruby-keyword">nil</span> )
+  <span class="ruby-keyword">return</span> <span class="ruby-identifier">auto_retry</span>( <span class="ruby-value">:list</span>, <span class="ruby-identifier">query_hash</span> )
+<span class="ruby-keyword">end</span></pre>
+          </div>
+        </div>
+
+
+      </div>
+
+      <div id="method-i-show" class="method-detail ">
+        <div class="method-heading">
+          <span class="method-name">show</span><span
+            class="method-args">( ident, query_hash = nil )</span>
+          <span class="method-click-advice">click to toggle source</span>
+        </div>
+
+        <div class="method-description">
+          <p>See <a href="../Endpoint.html#method-i-show"><code>Hoodoo::Client::Endpoint#show</code></a>.</p>
+
+          <div class="method-source-code" id="show-source">
+            <pre><span class="ruby-comment"># File lib/hoodoo/client/endpoint/endpoints/auto_session.rb, line 88</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">show</span>( <span class="ruby-identifier">ident</span>, <span class="ruby-identifier">query_hash</span> = <span class="ruby-keyword">nil</span> )
+  <span class="ruby-keyword">return</span> <span class="ruby-identifier">auto_retry</span>( <span class="ruby-value">:show</span>, <span class="ruby-identifier">ident</span>, <span class="ruby-identifier">query_hash</span> )
+<span class="ruby-keyword">end</span></pre>
+          </div>
+        </div>
+
+
+      </div>
+
+      <div id="method-i-update" class="method-detail ">
+        <div class="method-heading">
+          <span class="method-name">update</span><span
+            class="method-args">( ident, body_hash, query_hash = nil )</span>
+          <span class="method-click-advice">click to toggle source</span>
+        </div>
+
+        <div class="method-description">
+          <p>See <a href="../Endpoint.html#method-i-update"><code>Hoodoo::Client::Endpoint#update</code></a>.</p>
+
+          <div class="method-source-code" id="update-source">
+            <pre><span class="ruby-comment"># File lib/hoodoo/client/endpoint/endpoints/auto_session.rb, line 100</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">update</span>( <span class="ruby-identifier">ident</span>, <span class="ruby-identifier">body_hash</span>, <span class="ruby-identifier">query_hash</span> = <span class="ruby-keyword">nil</span> )
+  <span class="ruby-keyword">return</span> <span class="ruby-identifier">auto_retry</span>( <span class="ruby-value">:update</span>, <span class="ruby-identifier">ident</span>, <span class="ruby-identifier">body_hash</span>, <span class="ruby-identifier">query_hash</span> )
+<span class="ruby-keyword">end</span></pre>
+          </div>
+        </div>
+
+
+      </div>
+
+    </section>
+
+     <section id="protected-instance-5Buntitled-5D-method-details" class="method-section">
+       <header>
+         <h3>Protected Instance Methods</h3>
+       </header>
+
+      <div id="method-i-configure_with" class="method-detail ">
+        <div class="method-heading">
+          <span class="method-name">configure_with</span><span
+            class="method-args">( resource, version, options )</span>
+          <span class="method-click-advice">click to toggle source</span>
+        </div>
+
+        <div class="method-description">
+          <p>See <a href="../Endpoint.html#method-i-configure_with"><code>Hoodoo::Client::Endpoint#configure_with</code></a>.</p>
+
+<p>Configuration option keys which <em>must</em> be supplied are:</p>
+<dl class="rdoc-list note-list"><dt><code>caller_id</code>
+<dd>
+<p>The <a href="../../UUID.html"><code>UUID</code></a> of the Caller instance to be used for session creation.</p>
+</dd><dt><code>caller_secret</code>
+<dd>
+<p>The authentication secret of the Caller instance to be used for session creation.</p>
+</dd><dt>+session_endpoint
+<dd>
+<p>A Hooodo::Client::Endpoint subclass which can be used for talking to the Session endpoint (for obvious reasons!).</p>
+</dd><dt><code>discovery_result</code>
+<dd>
+<p>A <a href="../../Services/Discovery/ForRemote.html"><code>Hoodoo::Services::Discovery::ForRemote</code></a> instance describing the required, remotely available resource endpoint.</p>
+</dd></dl>
+
+<p>The pattern for creating and using this instance is:</p>
+<ul><li>
+<p>Discover the location of the remote resource.</p>
+</li><li>
+<p>Use the discovery result to build an appropriate <a href="../Endpoint.html"><code>Endpoint</code></a> subclass instance, e.g. <a href="HTTP.html"><code>Hoodoo::Client::Endpoint::HTTP</code></a>.</p>
+</li><li>
+<p>Create a <a href="../../Services/Discovery/ForRemote.html"><code>Hoodoo::Services::Discovery::ForRemote</code></a> instance which describes the above endpoint via the <code>wrapped_endpoint</code> option.</p>
+</li><li>
+<p>Build an instance of this auto-session <a href="../Endpoint.html"><code>Endpoint</code></a> subclass, giving it the above object as the <code>discovery_result</code>.</p>
+</li><li>
+<p>Use this endpoint in the normal fashion. All the special mechanics of session management are handled here.</p>
+</li></ul>
+
+          <div class="method-source-code" id="configure_with-source">
+            <pre><span class="ruby-comment"># File lib/hoodoo/client/endpoint/endpoints/auto_session.rb, line 71</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">configure_with</span>( <span class="ruby-identifier">resource</span>, <span class="ruby-identifier">version</span>, <span class="ruby-identifier">options</span> )
+  <span class="ruby-ivar">@caller_id</span>        = <span class="ruby-identifier">options</span>[ <span class="ruby-value">:caller_id</span>        ]
+  <span class="ruby-ivar">@caller_secret</span>    = <span class="ruby-identifier">options</span>[ <span class="ruby-value">:caller_secret</span>    ]
+  <span class="ruby-ivar">@session_endpoint</span> = <span class="ruby-identifier">options</span>[ <span class="ruby-value">:session_endpoint</span> ]
+  <span class="ruby-ivar">@wrapped_endpoint</span> = <span class="ruby-ivar">@discovery_result</span>.<span class="ruby-identifier">wrapped_endpoint</span>
+<span class="ruby-keyword">end</span></pre>
+          </div>
+        </div>
+
+
+      </div>
+
+    </section>
+
+  </section>
+</main>
+
+
+<footer id="validator-badges" role="contentinfo">
+  <p><a href="https://validator.w3.org/check/referer">Validate</a>
+  <p>Generated by <a href="https://ruby.github.io/rdoc/">RDoc</a> 6.4.0.
+  <p>Based on <a href="http://deveiate.org/projects/Darkfish-RDoc/">Darkfish</a> by <a href="http://deveiate.org">Michael Granger</a>.
+</footer>
+

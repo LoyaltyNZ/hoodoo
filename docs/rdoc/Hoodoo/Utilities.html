@@ -1,0 +1,767 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+<meta charset="UTF-8">
+
+<title>module Hoodoo::Utilities - Hoodoo</title>
+
+<script type="text/javascript">
+  var rdoc_rel_prefix = "../";
+  var index_rel_prefix = "../";
+</script>
+
+<script src="../js/navigation.js" defer></script>
+<script src="../js/search.js" defer></script>
+<script src="../js/search_index.js" defer></script>
+<script src="../js/searcher.js" defer></script>
+<script src="../js/darkfish.js" defer></script>
+
+<link href="../css/fonts.css" rel="stylesheet">
+<link href="../css/rdoc.css" rel="stylesheet">
+
+
+<body id="top" role="document" class="module">
+<nav role="navigation">
+  <div id="project-navigation">
+    <div id="home-section" role="region" title="Quick navigation" class="nav-section">
+  <h2>
+    <a href="../index.html" rel="home">Home</a>
+  </h2>
+
+  <div id="table-of-contents-navigation">
+    <a href="../table_of_contents.html#pages">Pages</a>
+    <a href="../table_of_contents.html#classes">Classes</a>
+    <a href="../table_of_contents.html#methods">Methods</a>
+  </div>
+</div>
+
+    <div id="search-section" role="search" class="project-section initially-hidden">
+  <form action="#" method="get" accept-charset="utf-8">
+    <div id="search-field-wrapper">
+      <input id="search-field" role="combobox" aria-label="Search"
+             aria-autocomplete="list" aria-controls="search-results"
+             type="text" name="search" placeholder="Search" spellcheck="false"
+             title="Type to search, Up and Down to navigate, Enter to load">
+    </div>
+
+    <ul id="search-results" aria-label="Search Results"
+        aria-busy="false" aria-expanded="false"
+        aria-atomic="false" class="initially-hidden"></ul>
+  </form>
+</div>
+
+  </div>
+
+  
+
+  <div id="class-metadata">
+    
+    
+    
+    
+    
+<!-- Method Quickref -->
+<div id="method-list-section" class="nav-section">
+  <h3>Methods</h3>
+
+  <ul class="link-list" role="directory">
+    <li ><a href="#method-c-clear_clock_drift_configuration_cache-21">::clear_clock_drift_configuration_cache!</a>
+    <li ><a href="#method-c-collated_hash_from">::collated_hash_from</a>
+    <li ><a href="#method-c-deep_dup">::deep_dup</a>
+    <li ><a href="#method-c-deep_merge_into">::deep_merge_into</a>
+    <li ><a href="#method-c-hash_diff">::hash_diff</a>
+    <li ><a href="#method-c-hash_key_paths">::hash_key_paths</a>
+    <li ><a href="#method-c-is_in_future-3F">::is_in_future?</a>
+    <li ><a href="#method-c-nanosecond_iso8601">::nanosecond_iso8601</a>
+    <li ><a href="#method-c-rationalise_datetime">::rationalise_datetime</a>
+    <li ><a href="#method-c-spare_port">::spare_port</a>
+    <li ><a href="#method-c-standard_datetime">::standard_datetime</a>
+    <li ><a href="#method-c-stringify">::stringify</a>
+    <li ><a href="#method-c-symbolize">::symbolize</a>
+    <li ><a href="#method-c-to_integer-3F">::to_integer?</a>
+    <li ><a href="#method-c-valid_iso8601_subset_date-3F">::valid_iso8601_subset_date?</a>
+    <li ><a href="#method-c-valid_iso8601_subset_datetime-3F">::valid_iso8601_subset_datetime?</a>
+  </ul>
+</div>
+
+  </div>
+</nav>
+
+<main role="main" aria-labelledby="module-Hoodoo::Utilities">
+  <h1 id="module-Hoodoo::Utilities" class="module">
+    module Hoodoo::Utilities
+  </h1>
+
+  <section class="description">
+    
+<p>Useful tools, especially for those working without Rails components.</p>
+
+  </section>
+
+  <section id="5Buntitled-5D" class="documentation-section">
+
+
+    <section class="constants-list">
+      <header>
+        <h3>Constants</h3>
+      </header>
+      <dl>
+        <dt id="DATETIME_ISO8601_SUBSET_REGEXP">DATETIME_ISO8601_SUBSET_REGEXP
+        <dd><p>Validation regular expression for DateTime subset selection.</p>
+        <dt id="DATE_ISO8601_SUBSET_REGEXP">DATE_ISO8601_SUBSET_REGEXP
+        <dd><p>Validation regular expression for Date subset selection.</p>
+      </dl>
+    </section>
+
+
+
+     <section id="public-class-5Buntitled-5D-method-details" class="method-section">
+       <header>
+         <h3>Public Class Methods</h3>
+       </header>
+
+      <div id="method-c-clear_clock_drift_configuration_cache-21" class="method-detail ">
+        <div class="method-heading">
+          <span class="method-name">clear_clock_drift_configuration_cache!</span><span
+            class="method-args">()</span>
+          <span class="method-click-advice">click to toggle source</span>
+        </div>
+
+        <div class="method-description">
+          <p>This method is intended really just for testing purposes; it clears the internal cache of clock drift tolerance read from environment variable <code>HOODOO_CLOCK_DRIFT_TOLERANCE</code>.</p>
+
+          <div class="method-source-code" id="clear_clock_drift_configuration_cache-21-source">
+            <pre><span class="ruby-comment"># File lib/hoodoo/utilities/utilities.rb, line 389</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">clear_clock_drift_configuration_cache!</span>
+  <span class="ruby-identifier">@@clock_drift_tolerance</span> = <span class="ruby-keyword">nil</span>
+<span class="ruby-keyword">end</span></pre>
+          </div>
+        </div>
+
+
+      </div>
+
+      <div id="method-c-collated_hash_from" class="method-detail ">
+        <div class="method-heading">
+          <span class="method-name">collated_hash_from</span><span
+            class="method-args">( array, dupes = false )</span>
+          <span class="method-click-advice">click to toggle source</span>
+        </div>
+
+        <div class="method-description">
+          <p>A very single-purpose method which converts an Array of specifc form into a Hash.</p>
+
+<p>The Hash class can already build itself from an Array of tuples, thus:</p>
+
+<pre class="ruby"><span class="ruby-identifier">array</span> = [ [ <span class="ruby-value">:one</span>, <span class="ruby-value">1</span> ], [ <span class="ruby-value">:two</span>, <span class="ruby-value">2</span> ] ]
+<span class="ruby-identifier">hash</span>  = <span class="ruby-constant">Hash</span>[ <span class="ruby-identifier">array</span> ]
+<span class="ruby-comment"># =&gt; { :one =&gt; 1, :two =&gt; 2 }</span>
+</pre>
+
+<p>This is fine, but what if the array contains the same key twice?</p>
+
+<pre class="ruby"><span class="ruby-identifier">array</span> = [ [ <span class="ruby-value">:one</span>, <span class="ruby-value">1</span> ], [ <span class="ruby-value">:two</span>, <span class="ruby-value">2</span> ], [ <span class="ruby-value">:one</span>, <span class="ruby-value">42</span> ] ]
+<span class="ruby-identifier">hash</span>  = <span class="ruby-constant">Hash</span>[ <span class="ruby-identifier">array</span> ]
+<span class="ruby-comment"># =&gt; { :one =&gt; 42, :two =&gt; 2 }</span>
+</pre>
+
+<p>The later duplicates simply override any former entries. This Array collation method is designed to instead take the tuples and set up a Hash where each key leads to an Array of unique values found in the original, thus:</p>
+
+<pre class="ruby"><span class="ruby-identifier">array</span> = [ [ <span class="ruby-value">:one</span>, <span class="ruby-value">1</span> ], [ <span class="ruby-value">:two</span>, <span class="ruby-value">2</span> ], [ <span class="ruby-value">:one</span>, <span class="ruby-value">42</span> ] ]
+<span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Utilities</span>.<span class="ruby-identifier">collated_hash_from</span>( <span class="ruby-identifier">array</span> )
+<span class="ruby-comment"># =&gt; { :one =&gt; [ 1, 42 ], :two =&gt; [ 2 ] }</span>
+</pre>
+
+<p>Note that:</p>
+<ul><li>
+<p>The Hash values are always Arrays, even if they only have one value.</p>
+</li><li>
+<p>The Array values are unique; duplicates are removed via <code>uniq!</code>.</p>
+</li></ul>
+<dl class="rdoc-list note-list"><dt><code>array</code>
+<dd>
+<p>Array of two-element Arrays. The first element becomes a key in the returned Hash. The last element is added to an Array of (unique) values associated with that key. An empty Array results in an empty Hash; <code>nil</code> is not allowed.</p>
+</dd><dt><code>dupes</code>
+<dd>
+<p>Optional. If omitted, duplicates are removed as described; if present and <code>true</code>, duplicates are allowed.</p>
+</dd></dl>
+
+<p>Returns a new Hash as described. The input Array is not modified.</p>
+
+          <div class="method-source-code" id="collated_hash_from-source">
+            <pre><span class="ruby-comment"># File lib/hoodoo/utilities/utilities.rb, line 252</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">collated_hash_from</span>( <span class="ruby-identifier">array</span>, <span class="ruby-identifier">dupes</span> = <span class="ruby-keyword">false</span> )
+  <span class="ruby-identifier">hash_of_arrays</span> = {}
+
+  <span class="ruby-identifier">array</span>.<span class="ruby-identifier">reduce</span>( <span class="ruby-identifier">hash_of_arrays</span> ) <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span> <span class="ruby-identifier">memo</span>, <span class="ruby-identifier">sub_array</span> <span class="ruby-operator">|</span>
+    <span class="ruby-identifier">memo</span>[ <span class="ruby-identifier">sub_array</span>.<span class="ruby-identifier">first</span> ] = ( <span class="ruby-identifier">memo</span>[ <span class="ruby-identifier">sub_array</span>.<span class="ruby-identifier">first</span> ] <span class="ruby-operator">||</span> [] ) <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">sub_array</span>.<span class="ruby-identifier">last</span>
+    <span class="ruby-identifier">memo</span>
+  <span class="ruby-keyword">end</span>
+
+  <span class="ruby-identifier">hash_of_arrays</span>.<span class="ruby-identifier">values</span>.<span class="ruby-identifier">collect</span>( <span class="ruby-operator">&amp;</span><span class="ruby-value">:uniq!</span> ) <span class="ruby-keyword">unless</span> <span class="ruby-identifier">dupes</span> <span class="ruby-operator">==</span> <span class="ruby-keyword">true</span>
+  <span class="ruby-keyword">return</span> <span class="ruby-identifier">hash_of_arrays</span>
+<span class="ruby-keyword">end</span></pre>
+          </div>
+        </div>
+
+
+      </div>
+
+      <div id="method-c-deep_dup" class="method-detail ">
+        <div class="method-heading">
+          <span class="method-name">deep_dup</span><span
+            class="method-args">( obj )</span>
+          <span class="method-click-advice">click to toggle source</span>
+        </div>
+
+        <div class="method-description">
+          <p>Thorough but slow deep duplication of any object (if it isn’t duplicable, e.g. FixNum, you just get the same thing back). Usually used with Hashes or Arrays.</p>
+<dl class="rdoc-list note-list"><dt><code>obj</code>
+<dd>
+<p>Object to duplicate.</p>
+</dd></dl>
+
+<p>Returns the duplicated object if duplicable, else returns the input parameter.</p>
+
+          <div class="method-source-code" id="deep_dup-source">
+            <pre><span class="ruby-comment"># File lib/hoodoo/utilities/utilities.rb, line 69</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">deep_dup</span>( <span class="ruby-identifier">obj</span> )
+  <span class="ruby-identifier">duplicate</span> = <span class="ruby-identifier">obj</span>.<span class="ruby-identifier">dup</span> <span class="ruby-keyword">rescue</span> <span class="ruby-identifier">obj</span>
+
+  <span class="ruby-identifier">result</span> = <span class="ruby-keyword">if</span> <span class="ruby-identifier">duplicate</span>.<span class="ruby-identifier">is_a?</span>( <span class="ruby-constant">Hash</span> )
+    <span class="ruby-identifier">duplicate</span>.<span class="ruby-identifier">each</span> { <span class="ruby-operator">|</span> <span class="ruby-identifier">k</span>, <span class="ruby-identifier">v</span> <span class="ruby-operator">|</span> <span class="ruby-identifier">duplicate</span>[ <span class="ruby-identifier">k</span> ] = <span class="ruby-identifier">deep_dup</span>( <span class="ruby-identifier">v</span> ) }
+  <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">duplicate</span>.<span class="ruby-identifier">is_a?</span>( <span class="ruby-constant">Array</span> )
+    <span class="ruby-identifier">duplicate</span>.<span class="ruby-identifier">map</span> { <span class="ruby-operator">|</span> <span class="ruby-identifier">entry</span> <span class="ruby-operator">|</span> <span class="ruby-identifier">deep_dup</span>( <span class="ruby-identifier">entry</span> ) }
+  <span class="ruby-keyword">else</span>
+    <span class="ruby-identifier">duplicate</span>
+  <span class="ruby-keyword">end</span>
+
+  <span class="ruby-keyword">return</span> <span class="ruby-identifier">result</span>
+<span class="ruby-keyword">end</span></pre>
+          </div>
+        </div>
+
+
+      </div>
+
+      <div id="method-c-deep_merge_into" class="method-detail ">
+        <div class="method-heading">
+          <span class="method-name">deep_merge_into</span><span
+            class="method-args">( target_hash, inbound_hash )</span>
+          <span class="method-click-advice">click to toggle source</span>
+        </div>
+
+        <div class="method-description">
+          <p>Deep merge two hashes.</p>
+
+<p>Hash#merge/merge! only do a shallow merge. For example, without a block, when starting with this hash:</p>
+
+<pre class="ruby">{ <span class="ruby-value">:one</span> <span class="ruby-operator">=&gt;</span> { <span class="ruby-value">:two</span> <span class="ruby-operator">=&gt;</span> { <span class="ruby-value">:three</span> <span class="ruby-operator">=&gt;</span> <span class="ruby-value">3</span> } } }
+</pre>
+
+<p>…and merging in this hash:</p>
+
+<pre class="ruby">{ <span class="ruby-value">:one</span> <span class="ruby-operator">=&gt;</span> { <span class="ruby-value">:two</span> <span class="ruby-operator">=&gt;</span> { <span class="ruby-value">:and_four</span> <span class="ruby-operator">=&gt;</span> <span class="ruby-value">4</span> } } }
+</pre>
+
+<p>…the possibly unexpected result is this:</p>
+
+<pre class="ruby">{ <span class="ruby-value">:one</span> <span class="ruby-operator">=&gt;</span> { <span class="ruby-value">:two</span> <span class="ruby-operator">=&gt;</span> { <span class="ruby-value">:and_four</span> <span class="ruby-operator">=&gt;</span> <span class="ruby-value">4</span> } } }
+</pre>
+
+<p>Because the value for key “:one” in the original hash is simply overwritten with the value from the merged-in hash.</p>
+
+<p>Deep merging takes a target hash, into which an “inbound” source hash is merged and returns a new hash that is the deep merged result. Taking the above example:</p>
+
+<pre class="ruby"><span class="ruby-identifier">target_hash</span>  = { <span class="ruby-value">:one</span> <span class="ruby-operator">=&gt;</span> { <span class="ruby-value">:two</span> <span class="ruby-operator">=&gt;</span> { <span class="ruby-value">:three</span> <span class="ruby-operator">=&gt;</span> <span class="ruby-value">3</span> } } }
+<span class="ruby-identifier">inbound_hash</span> = { <span class="ruby-value">:one</span> <span class="ruby-operator">=&gt;</span> { <span class="ruby-value">:two</span> <span class="ruby-operator">=&gt;</span> { <span class="ruby-value">:and_four</span> <span class="ruby-operator">=&gt;</span> <span class="ruby-value">4</span> } } }
+<span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Utilities</span>.<span class="ruby-identifier">deep_merge_into</span>( <span class="ruby-identifier">target_hash</span>, <span class="ruby-identifier">inbound_hash</span> )
+</pre>
+
+<p>…yields:</p>
+
+<pre class="ruby">{ <span class="ruby-value">:one</span> <span class="ruby-operator">=&gt;</span> { <span class="ruby-value">:two</span> <span class="ruby-operator">=&gt;</span> { <span class="ruby-value">:three</span> <span class="ruby-operator">=&gt;</span> <span class="ruby-value">3</span>, <span class="ruby-value">:and_four</span> <span class="ruby-operator">=&gt;</span> <span class="ruby-value">4</span> } } }
+</pre>
+
+<p>For any same-named key with a non-hash value, the value in the inbound hash will overwrite the value in the target hash.</p>
+
+<p>Parameters:</p>
+<dl class="rdoc-list note-list"><dt><code>target_hash</code>
+<dd>
+<p>The hash into which something will be merged.</p>
+</dd><dt><code>inbound_hash</code>
+<dd>
+<p>The hash that will be merged into the target.</p>
+</dd></dl>
+
+<p>Returns the merged result.</p>
+
+          <div class="method-source-code" id="deep_merge_into-source">
+            <pre><span class="ruby-comment"># File lib/hoodoo/utilities/utilities.rb, line 123</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">deep_merge_into</span>( <span class="ruby-identifier">target_hash</span>, <span class="ruby-identifier">inbound_hash</span> )
+
+  <span class="ruby-comment"># http://stackoverflow.com/questions/9381553/ruby-merge-nested-hash</span>
+  <span class="ruby-comment">#</span>
+  <span class="ruby-identifier">merger</span> = <span class="ruby-identifier">proc</span> { <span class="ruby-operator">|</span> <span class="ruby-identifier">key</span>, <span class="ruby-identifier">v1</span>, <span class="ruby-identifier">v2</span> <span class="ruby-operator">|</span>
+    <span class="ruby-identifier">v1</span>.<span class="ruby-identifier">is_a?</span>( <span class="ruby-constant">Hash</span> ) <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">v2</span>.<span class="ruby-identifier">is_a?</span>( <span class="ruby-constant">Hash</span> ) <span class="ruby-operator">?</span> <span class="ruby-identifier">v1</span>.<span class="ruby-identifier">merge</span>( <span class="ruby-identifier">v2</span>, <span class="ruby-operator">&amp;</span><span class="ruby-identifier">merger</span> ) <span class="ruby-operator">:</span> <span class="ruby-identifier">v2</span>.<span class="ruby-identifier">nil?</span> <span class="ruby-operator">?</span> <span class="ruby-identifier">v1</span> <span class="ruby-operator">:</span> <span class="ruby-identifier">v2</span>
+  }
+
+  <span class="ruby-keyword">return</span> <span class="ruby-identifier">target_hash</span>.<span class="ruby-identifier">merge</span>( <span class="ruby-identifier">inbound_hash</span>, <span class="ruby-operator">&amp;</span><span class="ruby-identifier">merger</span> )
+<span class="ruby-keyword">end</span></pre>
+          </div>
+        </div>
+
+
+      </div>
+
+      <div id="method-c-hash_diff" class="method-detail ">
+        <div class="method-heading">
+          <span class="method-name">hash_diff</span><span
+            class="method-args">( hash1, hash2 )</span>
+          <span class="method-click-advice">click to toggle source</span>
+        </div>
+
+        <div class="method-description">
+          <p>Deep diff two hashes.</p>
+<dl class="rdoc-list note-list"><dt><code>hash1</code>
+<dd>
+<p>“Left hand” hash for comparison.</p>
+</dd><dt><code>hash2</code>
+<dd>
+<p>“Right hand” hash for comparison.</p>
+</dd></dl>
+
+<p>The returned result is a Hash itself, potentially nested, with any present key paths leading to an array describing the difference found at that key path. If the two input hashes had values at the path, the differing values are placed in the array (“left hand” value at index 0, “right hand” at index 1). If one input hash has a key leading to a value which the other omits, the array contains <code>nil</code> for the omitted entry.</p>
+
+<p>Example:</p>
+
+<pre class="ruby"><span class="ruby-identifier">hash1</span> = { <span class="ruby-value">:foo</span> <span class="ruby-operator">=&gt;</span> { <span class="ruby-value">:bar</span> <span class="ruby-operator">=&gt;</span> <span class="ruby-value">2</span> }, <span class="ruby-value">:baz</span> <span class="ruby-operator">=&gt;</span> <span class="ruby-keyword">true</span>, <span class="ruby-value">:boo</span> <span class="ruby-operator">=&gt;</span> <span class="ruby-keyword">false</span> }
+<span class="ruby-identifier">hash2</span> = { <span class="ruby-value">:foo</span> <span class="ruby-operator">=&gt;</span> { <span class="ruby-value">:bar</span> <span class="ruby-operator">=&gt;</span> <span class="ruby-value">3</span> },               <span class="ruby-value">:boo</span> <span class="ruby-operator">=&gt;</span> <span class="ruby-keyword">false</span> }
+
+<span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Utilities</span>.<span class="ruby-identifier">hash_diff</span>( <span class="ruby-identifier">hash1</span>, <span class="ruby-identifier">hash2</span> )
+<span class="ruby-comment"># =&gt; { :foo =&gt; { :bar =&gt; [ 2, 3 ] }, :baz =&gt; [ true, nil ] }</span>
+
+<span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Utilities</span>.<span class="ruby-identifier">hash_diff</span>( <span class="ruby-identifier">hash2</span>, <span class="ruby-identifier">hash1</span> )
+<span class="ruby-comment"># =&gt; { :foo =&gt; { :bar =&gt; [ 3, 2 ] }, :baz =&gt; [ nil, true ] }</span>
+</pre>
+
+<p>Bear in mind that the difference array contains values of everything different from the first part of the key path where things diverge. So in this case:</p>
+
+<pre class="ruby"><span class="ruby-identifier">hash1</span> = { <span class="ruby-value">:foo</span> <span class="ruby-operator">=&gt;</span> { <span class="ruby-value">:bar</span> <span class="ruby-operator">=&gt;</span> { <span class="ruby-value">:baz</span> <span class="ruby-operator">=&gt;</span> [ <span class="ruby-value">1</span>, <span class="ruby-value">2</span>, <span class="ruby-value">3</span> ] } } }
+<span class="ruby-identifier">hash2</span> = {}
+</pre>
+
+<p>…the difference starts all the way up at “:foo”. The result is thus <strong>not</strong> a Hash where just the “:baz” array is picked out as a difference; the entire Hash sub-tree is picked out:</p>
+
+<pre class="ruby"><span class="ruby-identifier">diff</span> = <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Utilities</span>.<span class="ruby-identifier">hash_diff</span>( <span class="ruby-identifier">hash1</span>, <span class="ruby-identifier">hash2</span> )
+<span class="ruby-comment"># =&gt; { :foo =&gt; [ { :bar =&gt; { :baz =&gt; [ 1, 2, 3 ] } }, nil ] }</span>
+</pre>
+
+          <div class="method-source-code" id="hash_diff-source">
+            <pre><span class="ruby-comment"># File lib/hoodoo/utilities/utilities.rb, line 172</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">hash_diff</span>( <span class="ruby-identifier">hash1</span>, <span class="ruby-identifier">hash2</span> )
+
+  <span class="ruby-comment"># http://stackoverflow.com/questions/1766741/comparing-ruby-hashes</span>
+  <span class="ruby-comment">#</span>
+  <span class="ruby-keyword">return</span> ( <span class="ruby-identifier">hash1</span>.<span class="ruby-identifier">keys</span> <span class="ruby-operator">|</span> <span class="ruby-identifier">hash2</span>.<span class="ruby-identifier">keys</span> ).<span class="ruby-identifier">inject</span>( {} ) <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span> <span class="ruby-identifier">memo</span>, <span class="ruby-identifier">key</span> <span class="ruby-operator">|</span>
+    <span class="ruby-keyword">unless</span> <span class="ruby-identifier">hash1</span>[ <span class="ruby-identifier">key</span> ] <span class="ruby-operator">==</span> <span class="ruby-identifier">hash2</span>[ <span class="ruby-identifier">key</span> ]
+      <span class="ruby-keyword">if</span> <span class="ruby-identifier">hash1</span>[ <span class="ruby-identifier">key</span> ].<span class="ruby-identifier">kind_of?</span>( <span class="ruby-constant">Hash</span> ) <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">hash2</span>[ <span class="ruby-identifier">key</span> ].<span class="ruby-identifier">kind_of?</span>( <span class="ruby-constant">Hash</span> )
+        <span class="ruby-identifier">memo</span>[ <span class="ruby-identifier">key</span> ] = <span class="ruby-identifier">hash_diff</span>( <span class="ruby-identifier">hash1</span>[ <span class="ruby-identifier">key</span> ], <span class="ruby-identifier">hash2</span>[ <span class="ruby-identifier">key</span> ] )
+      <span class="ruby-keyword">else</span>
+        <span class="ruby-identifier">memo</span>[ <span class="ruby-identifier">key</span> ] = [ <span class="ruby-identifier">hash1</span>[ <span class="ruby-identifier">key</span> ], <span class="ruby-identifier">hash2</span>[ <span class="ruby-identifier">key</span> ] ]
+      <span class="ruby-keyword">end</span>
+    <span class="ruby-keyword">end</span>
+
+    <span class="ruby-identifier">memo</span>
+  <span class="ruby-keyword">end</span>
+<span class="ruby-keyword">end</span></pre>
+          </div>
+        </div>
+
+
+      </div>
+
+      <div id="method-c-hash_key_paths" class="method-detail ">
+        <div class="method-heading">
+          <span class="method-name">hash_key_paths</span><span
+            class="method-args">( hash )</span>
+          <span class="method-click-advice">click to toggle source</span>
+        </div>
+
+        <div class="method-description">
+          <p>Convert a (potentially nested) Hash into an array of entries which represent its keys, with the notation “foo.bar.baz” for nested hashes.</p>
+<dl class="rdoc-list note-list"><dt><code>hash</code>
+<dd>
+<p>Input Hash.</p>
+</dd></dl>
+
+<p>Example:</p>
+
+<pre class="ruby"><span class="ruby-identifier">hash</span> = { <span class="ruby-value">:foo</span> <span class="ruby-operator">=&gt;</span> <span class="ruby-value">1</span>, <span class="ruby-value">:bar</span> <span class="ruby-operator">=&gt;</span> { <span class="ruby-value">:baz</span> <span class="ruby-operator">=&gt;</span> <span class="ruby-value">2</span>, <span class="ruby-value">:boo</span> <span class="ruby-operator">=&gt;</span> { <span class="ruby-value">:hello</span> <span class="ruby-operator">=&gt;</span> <span class="ruby-value">:world</span> } } }
+
+<span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Utilities</span>.<span class="ruby-identifier">hash_key_paths</span>( <span class="ruby-identifier">hash</span> )
+<span class="ruby-comment"># =&gt; [ &#39;foo&#39;, &#39;bar.baz&#39;, &#39;bar.boo.hello&#39; ]</span>
+</pre>
+
+          <div class="method-source-code" id="hash_key_paths-source">
+            <pre><span class="ruby-comment"># File lib/hoodoo/utilities/utilities.rb, line 201</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">hash_key_paths</span>( <span class="ruby-identifier">hash</span> )
+  <span class="ruby-keyword">return</span> <span class="ruby-identifier">hash</span>.<span class="ruby-identifier">map</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span> <span class="ruby-identifier">key</span>, <span class="ruby-identifier">value</span> <span class="ruby-operator">|</span>
+    <span class="ruby-keyword">if</span> <span class="ruby-identifier">value</span>.<span class="ruby-identifier">is_a?</span>( <span class="ruby-constant">Hash</span> )
+      <span class="ruby-identifier">hash_key_paths</span>( <span class="ruby-identifier">value</span> ).<span class="ruby-identifier">map</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span> <span class="ruby-identifier">entry</span> <span class="ruby-operator">|</span>
+        <span class="ruby-node">&quot;#{ key }.#{ entry }&quot;</span>
+      <span class="ruby-keyword">end</span>
+    <span class="ruby-keyword">else</span>
+      <span class="ruby-identifier">key</span>.<span class="ruby-identifier">to_s</span>
+    <span class="ruby-keyword">end</span>
+  <span class="ruby-keyword">end</span>.<span class="ruby-identifier">flatten</span>
+<span class="ruby-keyword">end</span></pre>
+          </div>
+        </div>
+
+
+      </div>
+
+      <div id="method-c-is_in_future-3F" class="method-detail ">
+        <div class="method-heading">
+          <span class="method-name">is_in_future?</span><span
+            class="method-args">( input, backdated_to=DateTime.now )</span>
+          <span class="method-click-advice">click to toggle source</span>
+        </div>
+
+        <div class="method-description">
+          <p>Is the given Time, DateTime or String instance specifying a date-time that is in the future relevant to this executing environment’s concept of “now”, allowing for <code>CLOCK_DRIFT_TOLERANCE</code>? Returns <code>true</code> if so, else <code>false</code>.</p>
+
+<p>Future date (clock drift) tolerance is specified in seconds using the <code>HOODOO_CLOCK_DRIFT_TOLERANCE</code> environment variable. The default is 30 seconds, as described in the relevant <a href="../Hoodoo.html"><code>Hoodoo</code></a> Guide:</p>
+
+<pre class="ruby"><span class="ruby-identifier">http</span><span class="ruby-value">:/</span><span class="ruby-operator">/</span><span class="ruby-identifier">loyaltynz</span>.<span class="ruby-identifier">github</span>.<span class="ruby-identifier">io</span><span class="ruby-operator">/</span><span class="ruby-identifier">hoodoo</span><span class="ruby-operator">/</span><span class="ruby-identifier">guides_1000_env_vars</span>.<span class="ruby-identifier">html</span><span class="ruby-comment">#hoodoo_clock_drift_tolerance</span>
+</pre>
+<dl class="rdoc-list note-list"><dt><code>input</code>
+<dd>
+<p>A value that’s passed to <a href="Utilities.html#method-c-rationalise_datetime"><code>::rationalise_datetime</code></a> with the result checked against ‘now` allowing for clock drift.</p>
+</dd><dt><code>backdated_to</code>
+<dd>
+<p>Optional. The “now” of the context, defaulting to <code>DateTime.now</code>.</p>
+</dd></dl>
+
+<p>If the given input or ‘backdated_to` is not parseable as a date-time like object, then the method it will throw a RuntimeError exception via <a href="Utilities.html#method-c-rationalise_datetime"><code>::rationalise_datetime</code></a>.</p>
+
+          <div class="method-source-code" id="is_in_future-3F-source">
+            <pre><span class="ruby-comment"># File lib/hoodoo/utilities/utilities.rb, line 364</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">is_in_future?</span>( <span class="ruby-identifier">input</span>, <span class="ruby-identifier">backdated_to</span>=<span class="ruby-constant">DateTime</span>.<span class="ruby-identifier">now</span> )
+
+  <span class="ruby-comment"># See also ::clear_clock_drift_configuration_cache!.</span>
+  <span class="ruby-comment">#</span>
+  <span class="ruby-identifier">@@clock_drift_tolerance</span> <span class="ruby-operator">||=</span> (
+    <span class="ruby-constant">ENV</span>[ <span class="ruby-string">&#39;HOODOO_CLOCK_DRIFT_TOLERANCE&#39;</span> ].<span class="ruby-identifier">nil?</span> <span class="ruby-operator">?</span>
+                                            <span class="ruby-value">30</span> <span class="ruby-operator">:</span>
+    <span class="ruby-constant">ENV</span>[ <span class="ruby-string">&#39;HOODOO_CLOCK_DRIFT_TOLERANCE&#39;</span> ].<span class="ruby-identifier">to_i</span>
+  )
+
+  <span class="ruby-identifier">value</span> = <span class="ruby-keyword">self</span>.<span class="ruby-identifier">rationalise_datetime</span>( <span class="ruby-identifier">input</span> )
+
+  <span class="ruby-identifier">backdated_now</span> = <span class="ruby-keyword">self</span>.<span class="ruby-identifier">rationalise_datetime</span>( <span class="ruby-identifier">backdated_to</span> )
+
+  <span class="ruby-comment"># Unlike Time, integer addition to DateTime adds days. There are 86400</span>
+  <span class="ruby-comment"># seconds per day, so below we add @@clock_drift_tolerance seconds.</span>
+  <span class="ruby-comment">#</span>
+  <span class="ruby-identifier">value</span> <span class="ruby-operator">&gt;</span> <span class="ruby-identifier">backdated_now</span> <span class="ruby-operator">+</span> <span class="ruby-constant">Rational</span>(<span class="ruby-identifier">@@clock_drift_tolerance</span>, <span class="ruby-value">86400</span>)
+
+<span class="ruby-keyword">end</span></pre>
+          </div>
+        </div>
+
+
+      </div>
+
+      <div id="method-c-nanosecond_iso8601" class="method-detail ">
+        <div class="method-heading">
+          <span class="method-name">nanosecond_iso8601</span><span
+            class="method-args">( time_or_date_time )</span>
+          <span class="method-click-advice">click to toggle source</span>
+        </div>
+
+        <div class="method-description">
+          <p>Returns an ISO 8601 String equivalent of the given Time or DateTime instance, with nanosecond precision (subject to Ruby port / OS support). This is nothing more than a standardised central interface on calling Ruby’s <code>Time/DateTime#iso8601( 9 )</code>, to avoid the risk of lots of variable length precision times floating around by authors picking their own arbitrary precision parameters.</p>
+<dl class="rdoc-list note-list"><dt><code>date_time</code>
+<dd>
+<p>Ruby Time or DateTime instance to convert to an ISO 8601 String with nanosecond precision.</p>
+</dd></dl>
+
+          <div class="method-source-code" id="nanosecond_iso8601-source">
+            <pre><span class="ruby-comment"># File lib/hoodoo/utilities/utilities.rb, line 413</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">nanosecond_iso8601</span>( <span class="ruby-identifier">time_or_date_time</span> )
+  <span class="ruby-identifier">time_or_date_time</span>.<span class="ruby-identifier">iso8601</span>( <span class="ruby-value">9</span> )
+<span class="ruby-keyword">end</span></pre>
+          </div>
+        </div>
+
+
+      </div>
+
+      <div id="method-c-rationalise_datetime" class="method-detail ">
+        <div class="method-heading">
+          <span class="method-name">rationalise_datetime</span><span
+            class="method-args">( input )</span>
+          <span class="method-click-advice">click to toggle source</span>
+        </div>
+
+        <div class="method-description">
+          <p>Turn a given value of various types into a DateTime instance or <code>nil</code>. If the input value is not <code>nil</code>, a DateTime instance, a Time instance, a Date instance or something else that <code>DateTime.parse</code> can handle, the method will throw a RuntimeError exception.</p>
+<dl class="rdoc-list note-list"><dt><code>input</code>
+<dd>
+<p>A Time, Date or DateTime instance, or a String that can be converted to a DateTime instance; in these cases, an equivalent DateTime is returned. If <code>nil</code>, returns <code>nil</code>.</p>
+</dd></dl>
+
+          <div class="method-source-code" id="rationalise_datetime-source">
+            <pre><span class="ruby-comment"># File lib/hoodoo/utilities/utilities.rb, line 426</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">rationalise_datetime</span>( <span class="ruby-identifier">input</span> )
+  <span class="ruby-keyword">begin</span>
+    <span class="ruby-keyword">if</span> <span class="ruby-identifier">input</span>.<span class="ruby-identifier">nil?</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">input</span>.<span class="ruby-identifier">is_a?</span>( <span class="ruby-constant">DateTime</span> )
+      <span class="ruby-identifier">input</span>
+    <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">input</span>.<span class="ruby-identifier">is_a?</span>( <span class="ruby-constant">Time</span> ) <span class="ruby-operator">||</span> <span class="ruby-identifier">input</span>.<span class="ruby-identifier">is_a?</span>( <span class="ruby-constant">Date</span> )
+      <span class="ruby-identifier">input</span>.<span class="ruby-identifier">to_datetime</span>
+    <span class="ruby-keyword">else</span>
+      <span class="ruby-constant">DateTime</span>.<span class="ruby-identifier">parse</span>( <span class="ruby-identifier">input</span> )
+    <span class="ruby-keyword">end</span>
+
+  <span class="ruby-keyword">rescue</span>
+    <span class="ruby-identifier">raise</span> <span class="ruby-node">&quot;Hoodoo::Utilities\#rationalise_datetime: Invalid parameter &#39;#{ input }&#39;&quot;</span>
+
+  <span class="ruby-keyword">end</span>
+<span class="ruby-keyword">end</span></pre>
+          </div>
+        </div>
+
+
+      </div>
+
+      <div id="method-c-spare_port" class="method-detail ">
+        <div class="method-heading">
+          <span class="method-name">spare_port</span><span
+            class="method-args">()</span>
+          <span class="method-click-advice">click to toggle source</span>
+        </div>
+
+        <div class="method-description">
+          <p>Return a spare TCP port on localhost. This is free at the instant of calling, though of course if you have anything in other local machine processes/threads running which might start using ports at any moment, there’s a chance of the free port getting claimed in between you asking for it and it being returned. This utility method is usually therefore used for test environments only.</p>
+
+          <div class="method-source-code" id="spare_port-source">
+            <pre><span class="ruby-comment"># File lib/hoodoo/utilities/utilities.rb, line 282</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">spare_port</span>
+
+  <span class="ruby-comment"># http://stackoverflow.com/questions/5985822/how-do-you-find-a-random-open-port-in-ruby</span>
+  <span class="ruby-comment">#</span>
+  <span class="ruby-identifier">socket</span> = <span class="ruby-constant">Socket</span>.<span class="ruby-identifier">new</span>( <span class="ruby-value">:INET</span>, <span class="ruby-value">:STREAM</span>, <span class="ruby-value">0</span> )
+  <span class="ruby-identifier">socket</span>.<span class="ruby-identifier">bind</span>( <span class="ruby-constant">Addrinfo</span>.<span class="ruby-identifier">tcp</span>( <span class="ruby-string">&#39;127.0.0.1&#39;</span>, <span class="ruby-value">0</span> ) )
+  <span class="ruby-identifier">port</span> = <span class="ruby-identifier">socket</span>.<span class="ruby-identifier">local_address</span>.<span class="ruby-identifier">ip_port</span>
+  <span class="ruby-identifier">socket</span>.<span class="ruby-identifier">close</span>
+
+  <span class="ruby-keyword">return</span> <span class="ruby-identifier">port</span>
+<span class="ruby-keyword">end</span></pre>
+          </div>
+        </div>
+
+
+      </div>
+
+      <div id="method-c-standard_datetime" class="method-detail ">
+        <div class="method-heading">
+          <span class="method-name">standard_datetime</span><span
+            class="method-args">( date_or_time_or_date_time )</span>
+          <span class="method-click-advice">click to toggle source</span>
+        </div>
+
+        <div class="method-description">
+          <p>Returns an ISO 8601 String equivalent of the given Time, Date or DateTime instance as a full date-time with UTC timezone, with “standard high precision” (for rendeirng consistency), subject to Ruby port / OS support abilities. At the time of writing, 6 decimal places are included.</p>
+
+          <div class="method-source-code" id="standard_datetime-source">
+            <pre><span class="ruby-comment"># File lib/hoodoo/utilities/utilities.rb, line 399</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">standard_datetime</span>( <span class="ruby-identifier">date_or_time_or_date_time</span> )
+  <span class="ruby-identifier">date_or_time_or_date_time</span>.<span class="ruby-identifier">to_time</span>.<span class="ruby-identifier">utc</span>.<span class="ruby-identifier">iso8601</span>( <span class="ruby-value">6</span> )
+<span class="ruby-keyword">end</span></pre>
+          </div>
+        </div>
+
+
+      </div>
+
+      <div id="method-c-stringify" class="method-detail ">
+        <div class="method-heading">
+          <span class="method-name">stringify</span><span
+            class="method-args">(obj)</span>
+          <span class="method-click-advice">click to toggle source</span>
+        </div>
+
+        <div class="method-description">
+          <p>The keys-to-strings equivalent of <a href="Utilities.html#method-c-symbolize"><code>::symbolize</code></a>.</p>
+<dl class="rdoc-list note-list"><dt><code>obj</code>
+<dd>
+<p>Hash or Array of Hashes. Will recursively convert keys in Hashes to strings. Hashes with values that are Arrays of Hashes will be dealt with properly. Does not modify other types (e.g. an Array of Symbols would stay an Array of Symbols).</p>
+</dd></dl>
+
+<p>Returns a copy of your input object with keys converted to strings.</p>
+
+          <div class="method-source-code" id="stringify-source">
+            <pre><span class="ruby-comment"># File lib/hoodoo/utilities/utilities.rb, line 54</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">stringify</span>(<span class="ruby-identifier">obj</span>)
+  <span class="ruby-keyword">return</span> <span class="ruby-identifier">obj</span>.<span class="ruby-identifier">inject</span>({}){<span class="ruby-operator">|</span><span class="ruby-identifier">memo</span>,(<span class="ruby-identifier">k</span>,<span class="ruby-identifier">v</span>)<span class="ruby-operator">|</span> <span class="ruby-identifier">memo</span>[<span class="ruby-identifier">k</span>.<span class="ruby-identifier">to_s</span>] =  <span class="ruby-keyword">self</span>.<span class="ruby-identifier">stringify</span>(<span class="ruby-identifier">v</span>); <span class="ruby-identifier">memo</span>} <span class="ruby-keyword">if</span> <span class="ruby-identifier">obj</span>.<span class="ruby-identifier">is_a?</span>(<span class="ruby-operator">::</span><span class="ruby-constant">Hash</span>)
+  <span class="ruby-keyword">return</span> <span class="ruby-identifier">obj</span>.<span class="ruby-identifier">inject</span>([]){<span class="ruby-operator">|</span><span class="ruby-identifier">memo</span>,<span class="ruby-identifier">v</span>    <span class="ruby-operator">|</span> <span class="ruby-identifier">memo</span>         <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">stringify</span>(<span class="ruby-identifier">v</span>); <span class="ruby-identifier">memo</span>} <span class="ruby-keyword">if</span> <span class="ruby-identifier">obj</span>.<span class="ruby-identifier">is_a?</span>(<span class="ruby-operator">::</span><span class="ruby-constant">Array</span>)
+  <span class="ruby-keyword">return</span> <span class="ruby-identifier">obj</span>
+<span class="ruby-keyword">end</span></pre>
+          </div>
+        </div>
+
+
+      </div>
+
+      <div id="method-c-symbolize" class="method-detail ">
+        <div class="method-heading">
+          <span class="method-name">symbolize</span><span
+            class="method-args">(obj)</span>
+          <span class="method-click-advice">click to toggle source</span>
+        </div>
+
+        <div class="method-description">
+          <p>Given a hash, returns the same hash with keys converted to symbols. Works with nested hashes.</p>
+<dl class="rdoc-list note-list"><dt><code>obj</code>
+<dd>
+<p>Hash or Array of Hashes. Will recursively convert keys in Hashes to symbols. Hashes with values that are Arrays of Hashes will be dealt with properly. Does not modify other types (e.g. an Array of Strings would stay an Array of Strings).</p>
+</dd></dl>
+
+<p>Returns a copy of your input object with keys converted to symbols.</p>
+
+          <div class="method-source-code" id="symbolize-source">
+            <pre><span class="ruby-comment"># File lib/hoodoo/utilities/utilities.rb, line 36</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">symbolize</span>(<span class="ruby-identifier">obj</span>)
+
+  <span class="ruby-comment"># http://stackoverflow.com/questions/800122/best-way-to-convert-strings-to-symbols-in-hash</span>
+  <span class="ruby-comment">#</span>
+  <span class="ruby-keyword">return</span> <span class="ruby-identifier">obj</span>.<span class="ruby-identifier">inject</span>({}){<span class="ruby-operator">|</span><span class="ruby-identifier">memo</span>,(<span class="ruby-identifier">k</span>,<span class="ruby-identifier">v</span>)<span class="ruby-operator">|</span> <span class="ruby-identifier">memo</span>[<span class="ruby-identifier">k</span>.<span class="ruby-identifier">to_s</span>.<span class="ruby-identifier">to_sym</span>] =  <span class="ruby-keyword">self</span>.<span class="ruby-identifier">symbolize</span>(<span class="ruby-identifier">v</span>); <span class="ruby-identifier">memo</span>} <span class="ruby-keyword">if</span> <span class="ruby-identifier">obj</span>.<span class="ruby-identifier">is_a?</span>(<span class="ruby-operator">::</span><span class="ruby-constant">Hash</span>)
+  <span class="ruby-keyword">return</span> <span class="ruby-identifier">obj</span>.<span class="ruby-identifier">inject</span>([]){<span class="ruby-operator">|</span><span class="ruby-identifier">memo</span>,<span class="ruby-identifier">v</span>    <span class="ruby-operator">|</span> <span class="ruby-identifier">memo</span>                <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">symbolize</span>(<span class="ruby-identifier">v</span>); <span class="ruby-identifier">memo</span>} <span class="ruby-keyword">if</span> <span class="ruby-identifier">obj</span>.<span class="ruby-identifier">is_a?</span>(<span class="ruby-operator">::</span><span class="ruby-constant">Array</span>)
+  <span class="ruby-keyword">return</span> <span class="ruby-identifier">obj</span>
+<span class="ruby-keyword">end</span></pre>
+          </div>
+        </div>
+
+
+      </div>
+
+      <div id="method-c-to_integer-3F" class="method-detail ">
+        <div class="method-heading">
+          <span class="method-name">to_integer?</span><span
+            class="method-args">( value )</span>
+          <span class="method-click-advice">click to toggle source</span>
+        </div>
+
+        <div class="method-description">
+          <p>Is a parameter convertable to an integer cleanly? Returns the integer value if so, else <code>nil</code>.</p>
+<dl class="rdoc-list note-list"><dt><code>value</code>
+<dd>
+<p>Value to check, e.g. 2, “44”, :‘55’ (yields 2, 44, 55) or “hello”, Time.now (yields nil, nil).</p>
+</dd></dl>
+
+          <div class="method-source-code" id="to_integer-3F-source">
+            <pre><span class="ruby-comment"># File lib/hoodoo/utilities/utilities.rb, line 270</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">to_integer?</span>( <span class="ruby-identifier">value</span> )
+  <span class="ruby-identifier">value</span> = <span class="ruby-identifier">value</span>.<span class="ruby-identifier">to_s</span>
+  <span class="ruby-identifier">value</span>.<span class="ruby-identifier">to_i</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">value</span>.<span class="ruby-identifier">to_i</span>.<span class="ruby-identifier">to_s</span> <span class="ruby-operator">==</span> <span class="ruby-identifier">value</span>
+<span class="ruby-keyword">end</span></pre>
+          </div>
+        </div>
+
+
+      </div>
+
+      <div id="method-c-valid_iso8601_subset_date-3F" class="method-detail ">
+        <div class="method-heading">
+          <span class="method-name">valid_iso8601_subset_date?</span><span
+            class="method-args">( str )</span>
+          <span class="method-click-advice">click to toggle source</span>
+        </div>
+
+        <div class="method-description">
+          <p>Is the given String a valid ISO 8601 subset date (no time) as accepted by (for example) <a href="../Hoodoo.html"><code>Hoodoo</code></a> API calls?</p>
+<dl class="rdoc-list note-list"><dt><code>str</code>
+<dd>
+<p>Value to check</p>
+</dd></dl>
+
+<p>Returns a Date instance holding the parsed result if a valid ISO 8601 subset date, else <code>false</code>.</p>
+
+          <div class="method-source-code" id="valid_iso8601_subset_date-3F-source">
+            <pre><span class="ruby-comment"># File lib/hoodoo/utilities/utilities.rb, line 327</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">valid_iso8601_subset_date?</span>( <span class="ruby-identifier">str</span> )
+  <span class="ruby-keyword">return</span> <span class="ruby-keyword">false</span> <span class="ruby-keyword">unless</span> <span class="ruby-identifier">str</span>.<span class="ruby-identifier">is_a?</span>( <span class="ruby-constant">String</span> ) <span class="ruby-operator">||</span> <span class="ruby-identifier">str</span>.<span class="ruby-identifier">is_a?</span>( <span class="ruby-constant">Symbol</span> )
+
+  <span class="ruby-comment"># Same reliance as &#39;valid_iso8601_subset_datetime&#39;?.</span>
+
+  <span class="ruby-identifier">value</span> = <span class="ruby-keyword">begin</span>
+    ( <span class="ruby-constant">DATE_ISO8601_SUBSET_REGEXP</span> <span class="ruby-operator">=~</span> <span class="ruby-identifier">str</span>.<span class="ruby-identifier">to_s</span> ) <span class="ruby-operator">==</span> <span class="ruby-value">0</span> <span class="ruby-operator">&amp;&amp;</span>
+    <span class="ruby-identifier">str</span>.<span class="ruby-identifier">size</span> <span class="ruby-operator">==</span> <span class="ruby-value">10</span>                                  <span class="ruby-operator">&amp;&amp;</span>
+    <span class="ruby-operator">::</span><span class="ruby-constant">Date</span>.<span class="ruby-identifier">parse</span>( <span class="ruby-identifier">str</span> )
+
+  <span class="ruby-keyword">rescue</span> <span class="ruby-constant">ArgumentError</span>
+  <span class="ruby-keyword">end</span>
+
+  <span class="ruby-keyword">return</span> <span class="ruby-identifier">value</span>.<span class="ruby-identifier">is_a?</span>( <span class="ruby-operator">::</span><span class="ruby-constant">Date</span> ) <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">value</span>
+<span class="ruby-keyword">end</span></pre>
+          </div>
+        </div>
+
+
+      </div>
+
+      <div id="method-c-valid_iso8601_subset_datetime-3F" class="method-detail ">
+        <div class="method-heading">
+          <span class="method-name">valid_iso8601_subset_datetime?</span><span
+            class="method-args">( str )</span>
+          <span class="method-click-advice">click to toggle source</span>
+        </div>
+
+        <div class="method-description">
+          <p>Is the given String a valid ISO 8601 subset date and time as accepted by (for example) <a href="../Hoodoo.html"><code>Hoodoo</code></a> API calls?</p>
+<dl class="rdoc-list note-list"><dt><code>str</code>
+<dd>
+<p>Value to check</p>
+</dd></dl>
+
+<p>Returns a DateTime instance holding the parsed result if a valid ISO 8601 subset date and time, else <code>false</code>.</p>
+
+          <div class="method-source-code" id="valid_iso8601_subset_datetime-3F-source">
+            <pre><span class="ruby-comment"># File lib/hoodoo/utilities/utilities.rb, line 302</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">valid_iso8601_subset_datetime?</span>( <span class="ruby-identifier">str</span> )
+  <span class="ruby-keyword">return</span> <span class="ruby-keyword">false</span> <span class="ruby-keyword">unless</span> <span class="ruby-identifier">str</span>.<span class="ruby-identifier">is_a?</span>( <span class="ruby-constant">String</span> ) <span class="ruby-operator">||</span> <span class="ruby-identifier">str</span>.<span class="ruby-identifier">is_a?</span>( <span class="ruby-constant">Symbol</span> )
+
+  <span class="ruby-comment"># Relies on Ruby evaluation behaviour and operator precedence - &quot;&#39;foo&#39;</span>
+  <span class="ruby-comment"># &amp;&amp; true&quot; =&gt; true, but &quot;true &amp;&amp; &#39;foo&#39;&quot; =&gt; &#39;foo&#39;. Don&#39;t use &quot;and&quot; here!</span>
+
+  <span class="ruby-identifier">value</span> = <span class="ruby-keyword">begin</span>
+    ( <span class="ruby-constant">DATETIME_ISO8601_SUBSET_REGEXP</span> <span class="ruby-operator">=~</span> <span class="ruby-identifier">str</span>.<span class="ruby-identifier">to_s</span> ) <span class="ruby-operator">==</span> <span class="ruby-value">0</span> <span class="ruby-operator">&amp;&amp;</span>
+    <span class="ruby-identifier">str</span>.<span class="ruby-identifier">size</span> <span class="ruby-operator">&gt;</span> <span class="ruby-value">10</span>                                       <span class="ruby-operator">&amp;&amp;</span>
+    <span class="ruby-operator">::</span><span class="ruby-constant">DateTime</span>.<span class="ruby-identifier">parse</span>( <span class="ruby-identifier">str</span> )
+
+  <span class="ruby-keyword">rescue</span> <span class="ruby-constant">ArgumentError</span>
+  <span class="ruby-keyword">end</span>
+
+  <span class="ruby-keyword">return</span> <span class="ruby-identifier">value</span>.<span class="ruby-identifier">is_a?</span>( <span class="ruby-operator">::</span><span class="ruby-constant">DateTime</span> ) <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">value</span>
+<span class="ruby-keyword">end</span></pre>
+          </div>
+        </div>
+
+
+      </div>
+
+    </section>
+
+  </section>
+</main>
+
+
+<footer id="validator-badges" role="contentinfo">
+  <p><a href="https://validator.w3.org/check/referer">Validate</a>
+  <p>Generated by <a href="https://ruby.github.io/rdoc/">RDoc</a> 6.4.0.
+  <p>Based on <a href="http://deveiate.org/projects/Darkfish-RDoc/">Darkfish</a> by <a href="http://deveiate.org">Michael Granger</a>.
+</footer>
+

@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+<meta charset="UTF-8">
+
+<title>README - Hoodoo</title>
+
+<script type="text/javascript">
+  var rdoc_rel_prefix = "./";
+  var index_rel_prefix = "./";
+</script>
+
+<script src="./js/navigation.js" defer></script>
+<script src="./js/search.js" defer></script>
+<script src="./js/search_index.js" defer></script>
+<script src="./js/searcher.js" defer></script>
+<script src="./js/darkfish.js" defer></script>
+
+<link href="./css/fonts.css" rel="stylesheet">
+<link href="./css/rdoc.css" rel="stylesheet">
+
+
+<body id="top" role="document" class="file">
+<nav role="navigation">
+  <div id="project-navigation">
+    <div id="home-section" role="region" title="Quick navigation" class="nav-section">
+  <h2>
+    <a href="./index.html" rel="home">Home</a>
+  </h2>
+
+  <div id="table-of-contents-navigation">
+    <a href="./table_of_contents.html#pages">Pages</a>
+    <a href="./table_of_contents.html#classes">Classes</a>
+    <a href="./table_of_contents.html#methods">Methods</a>
+  </div>
+</div>
+
+    <div id="search-section" role="search" class="project-section initially-hidden">
+  <form action="#" method="get" accept-charset="utf-8">
+    <div id="search-field-wrapper">
+      <input id="search-field" role="combobox" aria-label="Search"
+             aria-autocomplete="list" aria-controls="search-results"
+             type="text" name="search" placeholder="Search" spellcheck="false"
+             title="Type to search, Up and Down to navigate, Enter to load">
+    </div>
+
+    <ul id="search-results" aria-label="Search Results"
+        aria-busy="false" aria-expanded="false"
+        aria-atomic="false" class="initially-hidden"></ul>
+  </form>
+</div>
+
+  </div>
+
+  
+<div class="nav-section">
+  <h3>Table of Contents</h3>
+
+  <ul class="link-list" role="directory">
+    <li><a href="#label-Hoodoo">Hoodoo</a>
+    <li><a href="#label-Note">Note</a>
+    <li><a href="#label-Usage">Usage</a>
+    <li><a href="#label-Workflow+-2F+branches">Workflow / branches</a>
+    <li><a href="#label-Tests">Tests</a>
+    <li><a href="#label-Documentation+-28RDoc-29">Documentation (RDoc)</a>
+    <li><a href="#label-Contributors">Contributors</a>
+    <li><a href="#label-Licence">Licence</a>
+  </ul>
+</div>
+
+
+  <div id="project-metadata">
+    
+<div id="fileindex-section" class="nav-section">
+  <h3>Pages</h3>
+
+  <ul class="link-list">
+    <li><a href="./README_md.html">README</a>
+  </ul>
+</div>
+
+  </div>
+</nav>
+
+<main role="main" aria-label="Page README.md">
+
+<h1 id="label-Hoodoo"><a href="Hoodoo.html"><code>Hoodoo</code></a><span><a href="#label-Hoodoo">&para;</a> <a href="#top">&uarr;</a></span></h1>
+
+<p><a href="https://rubygems.org/gems/hoodoo"><img src="https://badge.fury.io/rb/hoodoo.svg"></a> <a href="https://travis-ci.com/LoyaltyNZ/hoodoo"><img src="https://travis-ci.com/LoyaltyNZ/hoodoo.svg?branch=master"></a> <a href="http://www.gnu.org/licenses/lgpl-3.0.en.html"><img src="https://img.shields.io/badge/license-LGPL--3.0-blue.svg"></a></p>
+
+<p>Simplify the implementation of services within an API-based software platform.</p>
+
+<p>See <a href="https://loyaltynz.github.io/hoodoo/">Hoodoo Guides</a> for extensive documentation and examples.</p>
+
+<h2 id="label-Note">Note<span><a href="#label-Note">&para;</a> <a href="#top">&uarr;</a></span></h2>
+
+<p>Latest version <code>v3.1.1</code> only supports <code>activerecord 7.0</code> onwards. Use <code>v2.12.11</code> if you need to support lower <code>activerecord</code> version</p>
+
+<h2 id="label-Usage">Usage<span><a href="#label-Usage">&para;</a> <a href="#top">&uarr;</a></span></h2>
+
+<p>Add the gem to your <code>Gemfile</code>:</p>
+
+<pre class="ruby"><span class="ruby-identifier">gem</span> <span class="ruby-string">&#39;hoodoo&#39;</span>, <span class="ruby-string">&#39;~&gt; 3.0&#39;</span>
+</pre>
+
+<p>Require hoodoo when needed:</p>
+
+<pre class="ruby"><span class="ruby-identifier">require</span> <span class="ruby-string">&#39;hoodoo&#39;</span>
+</pre>
+
+<p>Functionality includes:</p>
+<ul><li>
+<p><em>Middleware:</em> The heart of services; Rack-based service applications (think Sinatra, Grape, Rails…) – <a href="Hoodoo/Services/Middleware.html"><code>Hoodoo::Services::Middleware</code></a>; but start at <a href="Hoodoo/Services/Service.html"><code>Hoodoo::Services::Service</code></a> and see also <a href="Hoodoo/Services/Interface.html"><code>Hoodoo::Services::Interface</code></a>, <a href="Hoodoo/Services/Implementation.html"><code>Hoodoo::Services::Implementation</code></a> and related classes <a href="Hoodoo/Services/Request.html"><code>Hoodoo::Services::Request</code></a>, <a href="Hoodoo/Services/Response.html"><code>Hoodoo::Services::Response</code></a>, <a href="Hoodoo/Services/Session.html"><code>Hoodoo::Services::Session</code></a>, <a href="Hoodoo/Services/Context.html"><code>Hoodoo::Services::Context</code></a></p>
+</li><li>
+<p><em>Generic Presenter Layer:</em> Input and output validation and rendering – <a href="Hoodoo/Presenters/Base.html"><code>Hoodoo::Presenters::Base</code></a>, <a href="Hoodoo/Presenters/BaseDSL.html"><code>Hoodoo::Presenters::BaseDSL</code></a></p>
+</li><li>
+<p><em>Unified Error Helpers:</em> Adds standard platform error capability to any API/class – <a href="Hoodoo/ErrorDescriptions.html"><code>Hoodoo::ErrorDescriptions</code></a>, <a href="Hoodoo/Errors.html"><code>Hoodoo::Errors</code></a></p>
+</li><li>
+<p><em>Unified Logger:</em> A single logger for use with platform or local logs – <a href="Hoodoo/Logger.html"><code>Hoodoo::Logger</code></a></p>
+</li><li>
+<p><em>Platform Sessions:</em> Authentication of sessions, session context – <a href="Hoodoo/Services/Session.html"><code>Hoodoo::Services::Session</code></a></p>
+</li><li>
+<p><em>Platform Events:</em> Publishes Platform Events when running on a queue-based infrastructure – Hoodoo::Events::PlatformEvent</p>
+</li><li>
+<p><em>ActiveRecord Assistance</em>: If using ActiveRecord (optional), provides support methods/mixins for models to help bridge the gap between API resources and persistence – <a href="Hoodoo/ActiveRecord.html"><code>Hoodoo::ActiveRecord</code></a></p>
+</li></ul>
+
+<p>Master documentation is through RDoc (see below).</p>
+
+<h2 id="label-Workflow+-2F+branches">Workflow / branches<span><a href="#label-Workflow+-2F+branches">&para;</a> <a href="#top">&uarr;</a></span></h2>
+
+<p>Development occurs on either <code>master</code> directly, or temporary <code>hotfix</code> or <code>feature</code> branches which are subsequently merged to <code>master</code>. This model is used because Gem versions, once <a href="Hoodoo.html"><code>Hoodoo</code></a> is stored in a public Gem repository, will allow other software to decide what changes to import or ignore. The Gem version is not usually altered while <a href="Hoodoo.html"><code>Hoodoo</code></a> stays within a private repository.</p>
+
+<p>See also <code>CONTRIBUTING.md</code>.</p>
+
+<h2 id="label-Tests">Tests<span><a href="#label-Tests">&para;</a> <a href="#top">&uarr;</a></span></h2>
+
+<p>Run the tests:</p>
+
+<pre class="ruby"><span class="ruby-identifier">bundle</span> <span class="ruby-identifier">exec</span> <span class="ruby-identifier">rake</span>
+</pre>
+
+<p>…or…</p>
+
+<pre class="ruby"><span class="ruby-identifier">bundle</span> <span class="ruby-identifier">exec</span> <span class="ruby-identifier">rspec</span>
+</pre>
+
+<h2 id="label-Documentation+-28RDoc-29">Documentation (RDoc)<span><a href="#label-Documentation+-28RDoc-29">&para;</a> <a href="#top">&uarr;</a></span></h2>
+
+<p>The <a href="Hoodoo.html"><code>Hoodoo</code></a> public API is documented through source code comments with examples and workflow indications. RDoc turns these into HTML. See earlier for some pointers to classes of interest that will be linked to the relevant class documentation if you read all of this through the RDoc output.</p>
+
+<p>If working on an installed copy of the gem through normal channels, you should be able to issue this command:</p>
+
+<pre class="ruby"><span class="ruby-identifier">gem</span> <span class="ruby-identifier">server</span>
+</pre>
+
+<p>…and browse to port 8808 on <code>localhost</code> to get an index of all gem documentation, including that for <a href="Hoodoo.html"><code>Hoodoo</code></a>. Out of the box from GitHub, RDoc precompiled documentation is available but there is a risk it might be out of date. If working on development of the gem in a GitHub repository clone, you can generate or entirely regenerate RDoc files (re-RDoc) with:</p>
+
+<pre class="ruby"><span class="ruby-identifier">bundle</span> <span class="ruby-identifier">exec</span> <span class="ruby-identifier">rake</span> <span class="ruby-identifier">rerdoc</span>
+</pre>
+
+<p>Some additional higher level hand written documentation may also be present as Markdown data inside the <code>docs</code> folder.</p>
+
+<h2 id="label-Contributors">Contributors<span><a href="#label-Contributors">&para;</a> <a href="#top">&uarr;</a></span></h2>
+<ul><li>
+<p><a href="https://github.com/pond">Andrew Hodgkinson</a></p>
+</li><li>
+<p><a href="https://github.com/tomdionysus">Tom Cully</a></p>
+</li><li>
+<p><a href="https://github.com/aames">Andrew Amesbury</a></p>
+</li><li>
+<p><a href="https://github.com/aspett">Andrew Pett</a></p>
+</li><li>
+<p><a href="https://github.com/bengreville">Ben Greville</a></p>
+</li><li>
+<p><a href="https://github.com/charlespeach">Charles Peach</a></p>
+</li><li>
+<p><a href="https://github.com/daveharris">Dave Harris</a></p>
+</li><li>
+<p><a href="https://github.com/davidamitchell">David Mitchell</a></p>
+</li><li>
+<p><a href="https://github.com/davidoram">David Oram</a></p>
+</li><li>
+<p><a href="https://github.com/grahamjenson">Graham Jenson</a></p>
+</li><li>
+<p><a href="https://github.com/jeremyolliver">Jeremy Olliver</a></p>
+</li><li>
+<p><a href="https://github.com/whithajess">Jesse Whitham</a></p>
+</li><li>
+<p><a href="https://github.com/jordandcarter">Jordan Carter</a></p>
+</li><li>
+<p><a href="https://github.com/josephleniston">Joseph Leniston</a></p>
+</li><li>
+<p><a href="https://github.com/kasperite">Lukas Nguyen</a></p>
+</li><li>
+<p><a href="https://github.com/mjnguyenloyalty">Mai Nguyen</a></p>
+</li><li>
+<p><a href="https://github.com/copley">Max Copley</a></p>
+</li><li>
+<p><a href="https://github.com/mbdietrich">Max Dietrich</a></p>
+</li><li>
+<p><a href="https://github.com/natashadowse">Natasha Dowse</a></p>
+</li><li>
+<p><a href="https://github.com/OBaddeley">Olivia Baddeley</a></p>
+</li><li>
+<p><a href="https://github.com/pjscopeland">Patrick Copeland</a></p>
+</li><li>
+<p><a href="https://github.com/thelollies">Rory Stephenson</a></p>
+</li><li>
+<p><a href="https://github.com/waynehoover">Wayne Hoover</a></p>
+</li><li>
+<p><a href="https://github.com/ildomar-grings">Ildomar Grings</a></p>
+</li></ul>
+
+<h2 id="label-Licence">Licence<span><a href="#label-Licence">&para;</a> <a href="#top">&uarr;</a></span></h2>
+
+<p>Please see the <code>LICENSE</code> and <code>hoodoo.gemspec</code> file for licence details. Those files are authoritative. At the time of writing - though this note might get out of date - <a href="Hoodoo.html"><code>Hoodoo</code></a> is released under the LGPL v3; see:</p>
+<ul><li>
+<p><a href="http://www.gnu.org/licenses/lgpl-3.0-standalone.html">www.gnu.org/licenses/lgpl-3.0-standalone.html</a></p>
+</li><li>
+<p><a href="https://tldrlegal.com/license/gnu-lesser-general-public-license-v3-(lgpl-3">tldrlegal.com/license/gnu-lesser-general-public-license-v3-(lgpl-3</a>)</p>
+</li></ul>
+
+</main>
+
+
+
+<footer id="validator-badges" role="contentinfo">
+  <p><a href="https://validator.w3.org/check/referer">Validate</a>
+  <p>Generated by <a href="https://ruby.github.io/rdoc/">RDoc</a> 6.4.0.
+  <p>Based on <a href="http://deveiate.org/projects/Darkfish-RDoc/">Darkfish</a> by <a href="http://deveiate.org">Michael Granger</a>.
+</footer>
+

@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+<meta charset="UTF-8">
+
+<title>class Hoodoo::Services::Discovery::ByConvention - Hoodoo</title>
+
+<script type="text/javascript">
+  var rdoc_rel_prefix = "../../../";
+  var index_rel_prefix = "../../../";
+</script>
+
+<script src="../../../js/navigation.js" defer></script>
+<script src="../../../js/search.js" defer></script>
+<script src="../../../js/search_index.js" defer></script>
+<script src="../../../js/searcher.js" defer></script>
+<script src="../../../js/darkfish.js" defer></script>
+
+<link href="../../../css/fonts.css" rel="stylesheet">
+<link href="../../../css/rdoc.css" rel="stylesheet">
+
+
+<body id="top" role="document" class="class">
+<nav role="navigation">
+  <div id="project-navigation">
+    <div id="home-section" role="region" title="Quick navigation" class="nav-section">
+  <h2>
+    <a href="../../../index.html" rel="home">Home</a>
+  </h2>
+
+  <div id="table-of-contents-navigation">
+    <a href="../../../table_of_contents.html#pages">Pages</a>
+    <a href="../../../table_of_contents.html#classes">Classes</a>
+    <a href="../../../table_of_contents.html#methods">Methods</a>
+  </div>
+</div>
+
+    <div id="search-section" role="search" class="project-section initially-hidden">
+  <form action="#" method="get" accept-charset="utf-8">
+    <div id="search-field-wrapper">
+      <input id="search-field" role="combobox" aria-label="Search"
+             aria-autocomplete="list" aria-controls="search-results"
+             type="text" name="search" placeholder="Search" spellcheck="false"
+             title="Type to search, Up and Down to navigate, Enter to load">
+    </div>
+
+    <ul id="search-results" aria-label="Search Results"
+        aria-busy="false" aria-expanded="false"
+        aria-atomic="false" class="initially-hidden"></ul>
+  </form>
+</div>
+
+  </div>
+
+  
+
+  <div id="class-metadata">
+    
+    
+<div id="parent-class-section" class="nav-section">
+  <h3>Parent</h3>
+
+  <p class="link"><a href="../Discovery.html">Hoodoo::Services::Discovery</a>
+</div>
+
+    
+    
+    
+<!-- Method Quickref -->
+<div id="method-list-section" class="nav-section">
+  <h3>Methods</h3>
+
+  <ul class="link-list" role="directory">
+    <li ><a href="#method-i-announce_remote">#announce_remote</a>
+    <li ><a href="#method-i-configure_with">#configure_with</a>
+    <li ><a href="#method-i-discover_remote">#discover_remote</a>
+  </ul>
+</div>
+
+  </div>
+</nav>
+
+<main role="main" aria-labelledby="class-Hoodoo::Services::Discovery::ByConvention">
+  <h1 id="class-Hoodoo::Services::Discovery::ByConvention" class="class">
+    class Hoodoo::Services::Discovery::ByConvention
+  </h1>
+
+  <section class="description">
+    
+<p>Discover - after a fashion - resource endpoint locations by convention, based on Rails-like pluralisation rules. For HTTP-based endpoints. Requires ActiveSupport.</p>
+
+<p><a href="https://rubygems.org/gems/activesupport">rubygems.org/gems/activesupport</a></p>
+
+<p>See <a href="ByConvention.html#method-i-configure_with"><code>configure_with</code></a> for details of required instantiation options. See <a href="ByConvention.html#method-i-discover_remote"><code>discover_remote</code></a> for the returned data type.</p>
+
+  </section>
+
+  <section id="5Buntitled-5D" class="documentation-section">
+
+
+
+
+
+     <section id="protected-instance-5Buntitled-5D-method-details" class="method-section">
+       <header>
+         <h3>Protected Instance Methods</h3>
+       </header>
+
+      <div id="method-i-announce_remote" class="method-detail ">
+        <div class="method-heading">
+          <span class="method-name">announce_remote</span><span
+            class="method-args">( resource, version, options = {} )</span>
+          <span class="method-click-advice">click to toggle source</span>
+        </div>
+
+        <div class="method-description">
+          <p>Announce the location of an instance. This is really a no-op that runs through and returns the result of <a href="ByConvention.html#method-i-discover_remote"><code>discover_remote</code></a>.</p>
+
+<p>Call via Hoodoo::Services::Discovery::Base#announce.</p>
+<dl class="rdoc-list note-list"><dt><code>resource</code>
+<dd>
+<p>Passed to <a href="ByConvention.html#method-i-discover_remote"><code>discover_remote</code></a>.</p>
+</dd><dt><code>version</code>
+<dd>
+<p>Passed to <a href="ByConvention.html#method-i-discover_remote"><code>discover_remote</code></a>.</p>
+</dd><dt><code>options</code>
+<dd>
+<p>Ignored.</p>
+</dd></dl>
+
+          <div class="method-source-code" id="announce_remote-source">
+            <pre><span class="ruby-comment"># File lib/hoodoo/services/discovery/discoverers/by_convention.rb, line 139</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">announce_remote</span>( <span class="ruby-identifier">resource</span>, <span class="ruby-identifier">version</span>, <span class="ruby-identifier">options</span> = {} )
+  <span class="ruby-keyword">return</span> <span class="ruby-identifier">discover_remote</span>( <span class="ruby-identifier">resource</span>, <span class="ruby-identifier">version</span> )
+<span class="ruby-keyword">end</span></pre>
+          </div>
+        </div>
+
+
+      </div>
+
+      <div id="method-i-configure_with" class="method-detail ">
+        <div class="method-heading">
+          <span class="method-name">configure_with</span><span
+            class="method-args">( options )</span>
+          <span class="method-click-advice">click to toggle source</span>
+        </div>
+
+        <div class="method-description">
+          <p>Configure an instance. Call via Hoodoo::Services::Discovery::Base#new. Parameters:</p>
+<dl class="rdoc-list note-list"><dt><code>options</code>
+<dd>
+<p>Options hash as described below.</p>
+</dd></dl>
+
+<p>Options are:</p>
+<dl class="rdoc-list note-list"><dt><code>base_uri</code>
+<dd>
+<p>A String giving the base URI at which resource endpoint implementations can be found. The protocol (HTTP or HTTPS), host and port are of interest. The path will be overwritten with by-convention values for individual resources.</p>
+</dd><dt><code>proxy_uri</code>
+<dd>
+<p>An optional full URI of an HTTP proxy to use if the base URI commands use of HTTP or HTTPS. Ruby will itself read <code>ENV[&#39;HTTP_PROXY&#39;]</code> if set; this option <em>overrides</em> that variable. Set as a String, as with <code>base_uri</code>.</p>
+</dd><dt><code>ca_file</code>
+<dd>
+<p>An optional String indicating a relative or absolute file path to the location of a <code>.pem</code> format Certificate Authority file (trust store), which may include multliple certificates. The certificates in the file will be used by Net::HTTP to validate the SSL ceritificate chain presented by remote servers, when calling endpoints over HTTPS with <a href="../../Client.html"><code>Hoodoo::Client</code></a>.</p>
+
+<p>The default <code>nil</code> value should be used in nearly all cases and uses Ruby OpenSSL defaults which are generally Operating System provided.</p>
+</dd><dt><code>http_timeout</code>
+<dd>
+<p>Optional Float providing a Net::HTTP read timeout value, when calling endpoints over HTTPS with <a href="../../Client.html"><code>Hoodoo::Client</code></a>. This is a value in seconds (default 60) that the client allows for any TCP read operation. It operates at the HTTP transport level and is independent of any higher level timeouts that might be set up.</p>
+</dd><dt><code>http_open_timeout</code>
+<dd>
+<p>Optional Float providing a Net::HTTP open timeout value, when calling endpoints over HTTPS with <a href="../../Client.html"><code>Hoodoo::Client</code></a>. This is a value in seconds (default 60) that the client allows for any TCP connection attempt. It operates at the HTTP transport level and is independent of any higher level timeouts that might be set up.</p>
+</dd><dt><code>routing</code>
+<dd>
+<p>An optional parameter which gives custom routing for exception cases where the by-convention map doesn’t work. This is usually because there is a resource singleton which lives logically at a singular named route rather than plural route, e.g. <code>/v1/health</code> rather than <code>/v1/healths</code>.</p>
+</dd></dl>
+
+<p>The <code>routing</code> parameter is a Hash of Resource names <em>as</em> <em>Symbols</em>, then values which are Hash of API Version <em>as</em> <em>Integers</em> with values that are the Strings giving the full alternative routing path.</p>
+
+<p>For example, by convention API version 2 of a Health resource would be routed to “/v2/healths”. You would override this to a singular route with this <code>routing</code> parameter Hash:</p>
+
+<pre class="ruby">{
+  <span class="ruby-value">:Health</span> <span class="ruby-operator">=&gt;</span> {
+    <span class="ruby-value">2</span> <span class="ruby-operator">=&gt;</span> <span class="ruby-string">&#39;/v2/health&#39;</span>
+  }
+}
+</pre>
+
+<p>This would leave version 1 of the endpoint (or any other version for that matter) still at the by-convention “v&lt;x&gt;/healths” path.</p>
+
+<p>Changing the “v&lt;x&gt;” convention for the version part of the path will break <a href="../../../Hoodoo.html"><code>Hoodoo</code></a> compatibility, but this is still allowed in the override in case you have unusual configurations or HTTP layer rewrites that redirect requests to paths that do map down to <a href="../../../Hoodoo.html"><code>Hoodoo</code></a>, or perhaps map to a Hoodoo-like system that’s not actually <a href="../../../Hoodoo.html"><code>Hoodoo</code></a> itself but implemented in a compatible fashion.</p>
+
+          <div class="method-source-code" id="configure_with-source">
+            <pre><span class="ruby-comment"># File lib/hoodoo/services/discovery/discoverers/by_convention.rb, line 120</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">configure_with</span>( <span class="ruby-identifier">options</span> )
+  <span class="ruby-ivar">@base_uri</span>          = <span class="ruby-constant">URI</span>.<span class="ruby-identifier">parse</span>( <span class="ruby-identifier">options</span>[ <span class="ruby-value">:base_uri</span>  ] )
+  <span class="ruby-ivar">@proxy_uri</span>         = <span class="ruby-constant">URI</span>.<span class="ruby-identifier">parse</span>( <span class="ruby-identifier">options</span>[ <span class="ruby-value">:proxy_uri</span> ] ) <span class="ruby-keyword">unless</span> <span class="ruby-identifier">options</span>[ <span class="ruby-value">:proxy_uri</span> ].<span class="ruby-identifier">nil?</span>
+
+  <span class="ruby-ivar">@ca_file</span>           = <span class="ruby-identifier">options</span>[ <span class="ruby-value">:ca_file</span>           ]
+  <span class="ruby-ivar">@http_timeout</span>      = <span class="ruby-identifier">options</span>[ <span class="ruby-value">:http_timeout</span>      ]
+  <span class="ruby-ivar">@http_open_timeout</span> = <span class="ruby-identifier">options</span>[ <span class="ruby-value">:http_open_timeout</span> ]
+  <span class="ruby-ivar">@routing</span>           = <span class="ruby-identifier">options</span>[ <span class="ruby-value">:routing</span>           ] <span class="ruby-operator">||</span> {}
+<span class="ruby-keyword">end</span></pre>
+          </div>
+        </div>
+
+
+      </div>
+
+      <div id="method-i-discover_remote" class="method-detail ">
+        <div class="method-heading">
+          <span class="method-name">discover_remote</span><span
+            class="method-args">( resource, version )</span>
+          <span class="method-click-advice">click to toggle source</span>
+        </div>
+
+        <div class="method-description">
+          <p>Using the base URI string from the options in <a href="ByConvention.html#method-i-configure_with"><code>configure_with</code></a>, underscore and pluralize the resource name with ActiveSupport to produce a path. For example:</p>
+<ul><li>
+<p>Version 3 of resource Member results in <code>/v3/members</code></p>
+</li><li>
+<p>Version 2 of resource FarmAnimal results in <code>/v2/farm_animals</code></p>
+</li></ul>
+
+<p>Returns a <a href="ForHTTP.html"><code>Hoodoo::Services::Discovery::ForHTTP</code></a> instance.</p>
+
+<p>The use of ActiveSupport means that pluralisation is subject to the well known Rails limitations and quirks. The behaviour can be overridden using the optional <code>routing</code> parameter in the constructor.</p>
+
+<p>Call via Hoodoo::Services::Discovery::Base#discover.</p>
+<dl class="rdoc-list note-list"><dt><code>resource</code>
+<dd>
+<p>Resource name as a <em>String</em>.</p>
+</dd><dt><code>version</code>
+<dd>
+<p>Endpoint version as an Integer.</p>
+</dd></dl>
+
+          <div class="method-source-code" id="discover_remote-source">
+            <pre><span class="ruby-comment"># File lib/hoodoo/services/discovery/discoverers/by_convention.rb, line 165</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">discover_remote</span>( <span class="ruby-identifier">resource</span>, <span class="ruby-identifier">version</span> )
+  <span class="ruby-identifier">custom_routes</span> = <span class="ruby-ivar">@routing</span>[ <span class="ruby-identifier">resource</span>.<span class="ruby-identifier">to_sym</span> ]
+
+  <span class="ruby-identifier">path</span> = <span class="ruby-keyword">unless</span> <span class="ruby-identifier">custom_routes</span>.<span class="ruby-identifier">nil?</span>
+    <span class="ruby-identifier">custom_routes</span>[ <span class="ruby-identifier">version</span> ]
+  <span class="ruby-keyword">end</span>
+
+  <span class="ruby-identifier">path</span> <span class="ruby-operator">||=</span> <span class="ruby-node">&quot;/v#{ version }/#{ resource.to_s.underscore.pluralize }&quot;</span>
+
+  <span class="ruby-identifier">endpoint_uri</span>      = <span class="ruby-ivar">@base_uri</span>.<span class="ruby-identifier">dup</span>
+  <span class="ruby-identifier">endpoint_uri</span>.<span class="ruby-identifier">path</span> = <span class="ruby-identifier">path</span>
+
+  <span class="ruby-keyword">return</span> <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Services</span><span class="ruby-operator">::</span><span class="ruby-constant">Discovery</span><span class="ruby-operator">::</span><span class="ruby-constant">ForHTTP</span>.<span class="ruby-identifier">new</span>(
+    <span class="ruby-value">resource:</span>          <span class="ruby-identifier">resource</span>,
+    <span class="ruby-value">version:</span>           <span class="ruby-identifier">version</span>,
+    <span class="ruby-value">endpoint_uri:</span>      <span class="ruby-identifier">endpoint_uri</span>,
+    <span class="ruby-value">proxy_uri:</span>         <span class="ruby-ivar">@proxy_uri</span>,
+    <span class="ruby-value">ca_file:</span>           <span class="ruby-ivar">@ca_file</span>,
+    <span class="ruby-value">http_timeout:</span>      <span class="ruby-ivar">@http_timeout</span>,
+    <span class="ruby-value">http_open_timeout:</span> <span class="ruby-ivar">@http_open_timeout</span>
+  )
+<span class="ruby-keyword">end</span></pre>
+          </div>
+        </div>
+
+
+      </div>
+
+    </section>
+
+  </section>
+</main>
+
+
+<footer id="validator-badges" role="contentinfo">
+  <p><a href="https://validator.w3.org/check/referer">Validate</a>
+  <p>Generated by <a href="https://ruby.github.io/rdoc/">RDoc</a> 6.4.0.
+  <p>Based on <a href="http://deveiate.org/projects/Darkfish-RDoc/">Darkfish</a> by <a href="http://deveiate.org">Michael Granger</a>.
+</footer>
+

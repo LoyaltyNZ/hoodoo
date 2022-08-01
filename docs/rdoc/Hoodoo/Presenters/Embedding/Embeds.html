@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+<meta charset="UTF-8">
+
+<title>class Hoodoo::Presenters::Embedding::Embeds - Hoodoo</title>
+
+<script type="text/javascript">
+  var rdoc_rel_prefix = "../../../";
+  var index_rel_prefix = "../../../";
+</script>
+
+<script src="../../../js/navigation.js" defer></script>
+<script src="../../../js/search.js" defer></script>
+<script src="../../../js/search_index.js" defer></script>
+<script src="../../../js/searcher.js" defer></script>
+<script src="../../../js/darkfish.js" defer></script>
+
+<link href="../../../css/fonts.css" rel="stylesheet">
+<link href="../../../css/rdoc.css" rel="stylesheet">
+
+
+<body id="top" role="document" class="class">
+<nav role="navigation">
+  <div id="project-navigation">
+    <div id="home-section" role="region" title="Quick navigation" class="nav-section">
+  <h2>
+    <a href="../../../index.html" rel="home">Home</a>
+  </h2>
+
+  <div id="table-of-contents-navigation">
+    <a href="../../../table_of_contents.html#pages">Pages</a>
+    <a href="../../../table_of_contents.html#classes">Classes</a>
+    <a href="../../../table_of_contents.html#methods">Methods</a>
+  </div>
+</div>
+
+    <div id="search-section" role="search" class="project-section initially-hidden">
+  <form action="#" method="get" accept-charset="utf-8">
+    <div id="search-field-wrapper">
+      <input id="search-field" role="combobox" aria-label="Search"
+             aria-autocomplete="list" aria-controls="search-results"
+             type="text" name="search" placeholder="Search" spellcheck="false"
+             title="Type to search, Up and Down to navigate, Enter to load">
+    </div>
+
+    <ul id="search-results" aria-label="Search Results"
+        aria-busy="false" aria-expanded="false"
+        aria-atomic="false" class="initially-hidden"></ul>
+  </form>
+</div>
+
+  </div>
+
+  
+
+  <div id="class-metadata">
+    
+    
+<div id="parent-class-section" class="nav-section">
+  <h3>Parent</h3>
+
+  <p class="link"><a href="Embeddable.html">Hoodoo::Presenters::Embedding::Embeddable</a>
+</div>
+
+    
+    
+    
+<!-- Method Quickref -->
+<div id="method-list-section" class="nav-section">
+  <h3>Methods</h3>
+
+  <ul class="link-list" role="directory">
+    <li ><a href="#method-i-resource_key">#resource_key</a>
+    <li ><a href="#method-i-validate_many">#validate_many</a>
+    <li ><a href="#method-i-validate_one">#validate_one</a>
+  </ul>
+</div>
+
+  </div>
+</nav>
+
+<main role="main" aria-labelledby="class-Hoodoo::Presenters::Embedding::Embeds">
+  <h1 id="class-Hoodoo::Presenters::Embedding::Embeds" class="class">
+    class Hoodoo::Presenters::Embedding::Embeds
+  </h1>
+
+  <section class="description">
+    
+<p>Instantiate this class and add one, or an <a href="../Array.html"><code>Array</code></a> of fully rendered resource objects to it via the API described in the base class, <a href="Embeddable.html"><code>Hoodoo::Presenters::Embedding::Embeddable</code></a>. You can then pass it to the likes of <a href="../Base.html#method-c-render_in"><code>Hoodoo::Presenters::Base.render_in</code></a> via the <code>options</code> parameter to have the embed data included in the fully rendered end result.</p>
+
+<p>When a request arrives to embed data for a particular resource or list of resources (in which case, do the following for each item in that list):</p>
+<ul><li>
+<p>Render the embedded resource(s)</p>
+</li><li>
+<p>Create an instance of this class</p>
+</li><li>
+<p>Add the rendered resource representations using this class’s API</p>
+</li><li>
+<p>Use <a href="../Base.html#method-c-render_in"><code>Hoodoo::Presenters::Base.render_in</code></a> to render the final, target resource, passing in the embed collection via the <code>options</code> <a href="../Hash.html"><code>Hash</code></a>.</p>
+</li></ul>
+
+<p>Simple example:</p>
+
+<pre class="ruby"><span class="ruby-identifier">embeds</span> = <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Presenters</span><span class="ruby-operator">::</span><span class="ruby-constant">Embedding</span><span class="ruby-operator">::</span><span class="ruby-constant">Embeds</span>.<span class="ruby-identifier">new</span>
+<span class="ruby-identifier">embeds</span>.<span class="ruby-identifier">add_one</span>( <span class="ruby-string">&#39;balance&#39;</span>, <span class="ruby-identifier">rendered_balance</span> )
+<span class="ruby-identifier">embeds</span>.<span class="ruby-identifier">add_many</span>( <span class="ruby-string">&#39;vouchers&#39;</span>, <span class="ruby-identifier">rendered_voucher_array</span> )
+</pre>
+
+  </section>
+
+  <section id="5Buntitled-5D" class="documentation-section">
+
+
+
+
+
+     <section id="public-instance-5Buntitled-5D-method-details" class="method-section">
+       <header>
+         <h3>Public Instance Methods</h3>
+       </header>
+
+      <div id="method-i-resource_key" class="method-detail ">
+        <div class="method-heading">
+          <span class="method-name">resource_key</span><span
+            class="method-args">()</span>
+          <span class="method-click-advice">click to toggle source</span>
+        </div>
+
+        <div class="method-description">
+          <p>Returns the top-level resource key used for reference data, as per the API documentation - which is the <a href="../String.html"><code>String</code></a> <code>_embed</code>.</p>
+
+          <div class="method-source-code" id="resource_key-source">
+            <pre><span class="ruby-comment"># File lib/hoodoo/presenters/embedding.rb, line 128</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">resource_key</span>
+  <span class="ruby-string">&#39;_embed&#39;</span>
+<span class="ruby-keyword">end</span></pre>
+          </div>
+        </div>
+
+
+      </div>
+
+    </section>
+
+     <section id="protected-instance-5Buntitled-5D-method-details" class="method-section">
+       <header>
+         <h3>Protected Instance Methods</h3>
+       </header>
+
+      <div id="method-i-validate_many" class="method-detail ">
+        <div class="method-heading">
+          <span class="method-name">validate_many</span><span
+            class="method-args">( thing )</span>
+          <span class="method-click-advice">click to toggle source</span>
+        </div>
+
+        <div class="method-description">
+          <p>Called from <a href="Embeddable.html#method-i-add_many"><code>add_many</code></a> in the base class to make sure the right data is being supplied. Raises an exception if it gets worried.</p>
+<dl class="rdoc-list note-list"><dt><code>thing</code>
+<dd>
+<p>The value that’ll be stored; should be an <a href="../Array.html"><code>Array</code></a> of Hashes but only the first array entry is checked, for speed.</p>
+</dd></dl>
+
+          <div class="method-source-code" id="validate_many-source">
+            <pre><span class="ruby-comment"># File lib/hoodoo/presenters/embedding.rb, line 151</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">validate_many</span>( <span class="ruby-identifier">thing</span> )
+  <span class="ruby-keyword">unless</span> <span class="ruby-identifier">thing</span>.<span class="ruby-identifier">is_a?</span>( <span class="ruby-operator">::</span><span class="ruby-constant">Array</span> )
+    <span class="ruby-identifier">raise</span> <span class="ruby-node">&quot;Hoodoo::Presenters::Embedding::Embeds\#add_many requires an Array, but was given an instance of #{ thing.class }&quot;</span>
+  <span class="ruby-keyword">end</span>
+
+  <span class="ruby-keyword">unless</span> <span class="ruby-identifier">thing</span>[ <span class="ruby-value">0</span> ].<span class="ruby-identifier">nil?</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">thing</span>[ <span class="ruby-value">0</span> ].<span class="ruby-identifier">is_a?</span>( <span class="ruby-operator">::</span><span class="ruby-constant">Hash</span> )
+    <span class="ruby-identifier">raise</span> <span class="ruby-node">&quot;Hoodoo::Presenters::Embedding::Embeds\#add_many requires an Array of rendered resource Hashes, but the first Array entry is an instance of #{ thing[ 0 ].class }&quot;</span>
+  <span class="ruby-keyword">end</span>
+<span class="ruby-keyword">end</span></pre>
+          </div>
+        </div>
+
+
+      </div>
+
+      <div id="method-i-validate_one" class="method-detail ">
+        <div class="method-heading">
+          <span class="method-name">validate_one</span><span
+            class="method-args">( thing )</span>
+          <span class="method-click-advice">click to toggle source</span>
+        </div>
+
+        <div class="method-description">
+          <p>Called from <a href="Embeddable.html#method-i-add_one"><code>add_one</code></a> in the base class to make sure the right data is being supplied. Raises an exception if it gets worried.</p>
+<dl class="rdoc-list note-list"><dt><code>thing</code>
+<dd>
+<p>The value that’ll be stored; should be a <a href="../Hash.html"><code>Hash</code></a>.</p>
+</dd></dl>
+
+          <div class="method-source-code" id="validate_one-source">
+            <pre><span class="ruby-comment"># File lib/hoodoo/presenters/embedding.rb, line 139</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">validate_one</span>( <span class="ruby-identifier">thing</span> )
+  <span class="ruby-keyword">unless</span> <span class="ruby-identifier">thing</span>.<span class="ruby-identifier">is_a?</span>( <span class="ruby-operator">::</span><span class="ruby-constant">Hash</span> )
+    <span class="ruby-identifier">raise</span> <span class="ruby-node">&quot;Hoodoo::Presenters::Embedding::Embeds\#add_one requires a rendered resource Hash, but was given an instance of #{ thing.class }&quot;</span>
+  <span class="ruby-keyword">end</span>
+<span class="ruby-keyword">end</span></pre>
+          </div>
+        </div>
+
+
+      </div>
+
+    </section>
+
+  </section>
+</main>
+
+
+<footer id="validator-badges" role="contentinfo">
+  <p><a href="https://validator.w3.org/check/referer">Validate</a>
+  <p>Generated by <a href="https://ruby.github.io/rdoc/">RDoc</a> 6.4.0.
+  <p>Based on <a href="http://deveiate.org/projects/Darkfish-RDoc/">Darkfish</a> by <a href="http://deveiate.org">Michael Granger</a>.
+</footer>
+
