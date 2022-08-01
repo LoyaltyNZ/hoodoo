@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+<meta charset="UTF-8">
+
+<title>class Hoodoo::TransientStore::Base - Hoodoo</title>
+
+<script type="text/javascript">
+  var rdoc_rel_prefix = "../../";
+  var index_rel_prefix = "../../";
+</script>
+
+<script src="../../js/navigation.js" defer></script>
+<script src="../../js/search.js" defer></script>
+<script src="../../js/search_index.js" defer></script>
+<script src="../../js/searcher.js" defer></script>
+<script src="../../js/darkfish.js" defer></script>
+
+<link href="../../css/fonts.css" rel="stylesheet">
+<link href="../../css/rdoc.css" rel="stylesheet">
+
+
+<body id="top" role="document" class="class">
+<nav role="navigation">
+  <div id="project-navigation">
+    <div id="home-section" role="region" title="Quick navigation" class="nav-section">
+  <h2>
+    <a href="../../index.html" rel="home">Home</a>
+  </h2>
+
+  <div id="table-of-contents-navigation">
+    <a href="../../table_of_contents.html#pages">Pages</a>
+    <a href="../../table_of_contents.html#classes">Classes</a>
+    <a href="../../table_of_contents.html#methods">Methods</a>
+  </div>
+</div>
+
+    <div id="search-section" role="search" class="project-section initially-hidden">
+  <form action="#" method="get" accept-charset="utf-8">
+    <div id="search-field-wrapper">
+      <input id="search-field" role="combobox" aria-label="Search"
+             aria-autocomplete="list" aria-controls="search-results"
+             type="text" name="search" placeholder="Search" spellcheck="false"
+             title="Type to search, Up and Down to navigate, Enter to load">
+    </div>
+
+    <ul id="search-results" aria-label="Search Results"
+        aria-busy="false" aria-expanded="false"
+        aria-atomic="false" class="initially-hidden"></ul>
+  </form>
+</div>
+
+  </div>
+
+  
+
+  <div id="class-metadata">
+    
+    
+<div id="parent-class-section" class="nav-section">
+  <h3>Parent</h3>
+
+  <p class="link">Object
+</div>
+
+    
+    
+    
+<!-- Method Quickref -->
+<div id="method-list-section" class="nav-section">
+  <h3>Methods</h3>
+
+  <ul class="link-list" role="directory">
+    <li ><a href="#method-c-new">::new</a>
+    <li ><a href="#method-i-close">#close</a>
+    <li ><a href="#method-i-delete">#delete</a>
+    <li ><a href="#method-i-get">#get</a>
+    <li ><a href="#method-i-set">#set</a>
+  </ul>
+</div>
+
+  </div>
+</nav>
+
+<main role="main" aria-labelledby="class-Hoodoo::TransientStore::Base">
+  <h1 id="class-Hoodoo::TransientStore::Base" class="class">
+    class Hoodoo::TransientStore::Base
+  </h1>
+
+  <section class="description">
+    
+<p><a href="Base.html"><code>Base</code></a> class for <a href="../TransientStore.html"><code>Hoodoo::TransientStore</code></a> plugins. This is in effect just a template / abstract class, providing a source-level guideline for plug-in authors. See also out-of-the-box existing plug-ins as worked examples.</p>
+
+  </section>
+
+  <section id="5Buntitled-5D" class="documentation-section">
+
+
+
+
+
+     <section id="public-class-5Buntitled-5D-method-details" class="method-section">
+       <header>
+         <h3>Public Class Methods</h3>
+       </header>
+
+      <div id="method-c-new" class="method-detail ">
+        <div class="method-heading">
+          <span class="method-name">new</span><span
+            class="method-args">( storage_host_uri:, namespace: )</span>
+          <span class="method-click-advice">click to toggle source</span>
+        </div>
+
+        <div class="method-description">
+          <p><a href="Base.html"><code>Base</code></a> class template for a constructor. Subclasses should try to establish a connection with their storage engine(s) here and raise exceptions if things go wrong.</p>
+<dl class="rdoc-list note-list"><dt><code>storage_host_uri</code>
+<dd>
+<p>The engine-dependent connection URI. See <a href="../TransientStore.html#method-c-new"><code>Hoodoo::TransientStore::new</code></a> for details.</p>
+</dd><dt><code>namespace</code>
+<dd>
+<p>The storage key namespace to use, as a String. See <a href="../TransientStore.html#method-c-new"><code>Hoodoo::TransientStore::new</code></a> for details.</p>
+</dd></dl>
+
+          <div class="method-source-code" id="new-source">
+            <pre><span class="ruby-comment"># File lib/hoodoo/transient_store/transient_store/base.rb, line 29</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">initialize</span>( <span class="ruby-value">storage_host_uri:</span>, <span class="ruby-value">namespace:</span> )
+  <span class="ruby-ivar">@storage_host_uri</span> = <span class="ruby-identifier">storage_host_uri</span>
+  <span class="ruby-ivar">@namespace</span>        = <span class="ruby-identifier">namespace</span>
+<span class="ruby-keyword">end</span></pre>
+          </div>
+        </div>
+
+
+      </div>
+
+    </section>
+
+     <section id="public-instance-5Buntitled-5D-method-details" class="method-section">
+       <header>
+         <h3>Public Instance Methods</h3>
+       </header>
+
+      <div id="method-i-close" class="method-detail ">
+        <div class="method-heading">
+          <span class="method-name">close</span><span
+            class="method-args">()</span>
+          <span class="method-click-advice">click to toggle source</span>
+        </div>
+
+        <div class="method-description">
+          <p><a href="Base.html"><code>Base</code></a> class template for the plug-in’s back-end implementation of <a href="../TransientStore.html#method-i-close"><code>Hoodoo::TransientStore#close</code></a> - see that for details.</p>
+
+<p>Any exception raised will be ignored by <a href="../TransientStore.html#method-i-close"><code>Hoodoo::TransientStore#close</code></a>.</p>
+
+          <div class="method-source-code" id="close-source">
+            <pre><span class="ruby-comment"># File lib/hoodoo/transient_store/transient_store/base.rb, line 75</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">close</span>
+  <span class="ruby-identifier">raise</span> <span class="ruby-string">&#39;Subclasses must implement Hoodoo::TransientStore::Base#close&#39;</span>
+<span class="ruby-keyword">end</span></pre>
+          </div>
+        </div>
+
+
+      </div>
+
+      <div id="method-i-delete" class="method-detail ">
+        <div class="method-heading">
+          <span class="method-name">delete</span><span
+            class="method-args">( key: )</span>
+          <span class="method-click-advice">click to toggle source</span>
+        </div>
+
+        <div class="method-description">
+          <p><a href="Base.html"><code>Base</code></a> class template for the plug-in’s back-end implementation of <a href="../TransientStore.html#method-i-delete"><code>Hoodoo::TransientStore#delete</code></a> - see that for details.</p>
+
+<p>The implementation is free to raise an exception if an error is encountered while trying to get the data - this will be caught and ignored by <a href="../TransientStore.html#method-i-delete"><code>Hoodoo::TransientStore#delete</code></a>. Otherwise return <code>true</code> on success or <code>false</code> for failures of unknown origin.</p>
+
+          <div class="method-source-code" id="delete-source">
+            <pre><span class="ruby-comment"># File lib/hoodoo/transient_store/transient_store/base.rb, line 66</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">delete</span>( <span class="ruby-value">key:</span> )
+  <span class="ruby-identifier">raise</span> <span class="ruby-string">&#39;Subclasses must implement Hoodoo::TransientStore::Base#delete&#39;</span>
+<span class="ruby-keyword">end</span></pre>
+          </div>
+        </div>
+
+
+      </div>
+
+      <div id="method-i-get" class="method-detail ">
+        <div class="method-heading">
+          <span class="method-name">get</span><span
+            class="method-args">( key: )</span>
+          <span class="method-click-advice">click to toggle source</span>
+        </div>
+
+        <div class="method-description">
+          <p><a href="Base.html"><code>Base</code></a> class template for the plug-in’s back-end implementation of <a href="../TransientStore.html#method-i-get"><code>Hoodoo::TransientStore#get</code></a> - see that for details. Returns <code>nil</code> if no data is found for the given key, or if data is explicitly <code>nil</code>.</p>
+
+<p>The implementation is free to raise an exception if an error is encountered while trying to get the data - this will be caught and <code>nil</code> returned by <a href="../TransientStore.html#method-i-get"><code>Hoodoo::TransientStore#get</code></a>.</p>
+
+          <div class="method-source-code" id="get-source">
+            <pre><span class="ruby-comment"># File lib/hoodoo/transient_store/transient_store/base.rb, line 54</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">get</span>( <span class="ruby-value">key:</span> )
+  <span class="ruby-identifier">raise</span> <span class="ruby-string">&#39;Subclasses must implement Hoodoo::TransientStore::Base#get&#39;</span>
+<span class="ruby-keyword">end</span></pre>
+          </div>
+        </div>
+
+
+      </div>
+
+      <div id="method-i-set" class="method-detail ">
+        <div class="method-heading">
+          <span class="method-name">set</span><span
+            class="method-args">( key:, payload:, maximum_lifespan: )</span>
+          <span class="method-click-advice">click to toggle source</span>
+        </div>
+
+        <div class="method-description">
+          <p><a href="Base.html"><code>Base</code></a> class template for the plug-in’s back-end implementation of <a href="../TransientStore.html#method-i-set"><code>Hoodoo::TransientStore#set</code></a> - see that for details.</p>
+
+<p>The implementation is free to raise an exception if an error is encountered while trying to set the data - this will be caught and returned by <a href="../TransientStore.html#method-i-set"><code>Hoodoo::TransientStore#set</code></a>. Otherwise return <code>true</code> on success or <code>false</code> for failures of unknown origin.</p>
+
+          <div class="method-source-code" id="set-source">
+            <pre><span class="ruby-comment"># File lib/hoodoo/transient_store/transient_store/base.rb, line 42</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">set</span>( <span class="ruby-value">key:</span>, <span class="ruby-value">payload:</span>, <span class="ruby-value">maximum_lifespan:</span> )
+  <span class="ruby-identifier">raise</span> <span class="ruby-string">&#39;Subclasses must implement Hoodoo::TransientStore::Base#set&#39;</span>
+<span class="ruby-keyword">end</span></pre>
+          </div>
+        </div>
+
+
+      </div>
+
+    </section>
+
+  </section>
+</main>
+
+
+<footer id="validator-badges" role="contentinfo">
+  <p><a href="https://validator.w3.org/check/referer">Validate</a>
+  <p>Generated by <a href="https://ruby.github.io/rdoc/">RDoc</a> 6.4.0.
+  <p>Based on <a href="http://deveiate.org/projects/Darkfish-RDoc/">Darkfish</a> by <a href="http://deveiate.org">Michael Granger</a>.
+</footer>
+

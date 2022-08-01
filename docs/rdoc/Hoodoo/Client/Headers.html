@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+<meta charset="UTF-8">
+
+<title>class Hoodoo::Client::Headers - Hoodoo</title>
+
+<script type="text/javascript">
+  var rdoc_rel_prefix = "../../";
+  var index_rel_prefix = "../../";
+</script>
+
+<script src="../../js/navigation.js" defer></script>
+<script src="../../js/search.js" defer></script>
+<script src="../../js/search_index.js" defer></script>
+<script src="../../js/searcher.js" defer></script>
+<script src="../../js/darkfish.js" defer></script>
+
+<link href="../../css/fonts.css" rel="stylesheet">
+<link href="../../css/rdoc.css" rel="stylesheet">
+
+
+<body id="top" role="document" class="class">
+<nav role="navigation">
+  <div id="project-navigation">
+    <div id="home-section" role="region" title="Quick navigation" class="nav-section">
+  <h2>
+    <a href="../../index.html" rel="home">Home</a>
+  </h2>
+
+  <div id="table-of-contents-navigation">
+    <a href="../../table_of_contents.html#pages">Pages</a>
+    <a href="../../table_of_contents.html#classes">Classes</a>
+    <a href="../../table_of_contents.html#methods">Methods</a>
+  </div>
+</div>
+
+    <div id="search-section" role="search" class="project-section initially-hidden">
+  <form action="#" method="get" accept-charset="utf-8">
+    <div id="search-field-wrapper">
+      <input id="search-field" role="combobox" aria-label="Search"
+             aria-autocomplete="list" aria-controls="search-results"
+             type="text" name="search" placeholder="Search" spellcheck="false"
+             title="Type to search, Up and Down to navigate, Enter to load">
+    </div>
+
+    <ul id="search-results" aria-label="Search Results"
+        aria-busy="false" aria-expanded="false"
+        aria-atomic="false" class="initially-hidden"></ul>
+  </form>
+</div>
+
+  </div>
+
+  
+
+  <div id="class-metadata">
+    
+    
+<div id="parent-class-section" class="nav-section">
+  <h3>Parent</h3>
+
+  <p class="link">Object
+</div>
+
+    
+    
+    
+<!-- Method Quickref -->
+<div id="method-list-section" class="nav-section">
+  <h3>Methods</h3>
+
+  <ul class="link-list" role="directory">
+    <li ><a href="#method-c-define_accessors_for_header_equivalents">::define_accessors_for_header_equivalents</a>
+    <li ><a href="#method-c-x_header_to_options">::x_header_to_options</a>
+  </ul>
+</div>
+
+  </div>
+</nav>
+
+<main role="main" aria-labelledby="class-Hoodoo::Client::Headers">
+  <h1 id="class-Hoodoo::Client::Headers" class="class">
+    class Hoodoo::Client::Headers
+  </h1>
+
+  <section class="description">
+    
+<p><a href="../Client.html"><code>Hoodoo::Client</code></a> and related software such as <a href="../Services/Middleware.html"><code>Hoodoo::Services::Middleware</code></a> need common access to information about special processing headers defined by <a href="../../Hoodoo.html"><code>Hoodoo</code></a> and the <a href="../../Hoodoo.html"><code>Hoodoo</code></a> API. This class is just a container - pretty much a namespaced library - holding that kind of information and support methods.</p>
+
+  </section>
+
+  <section id="5Buntitled-5D" class="documentation-section">
+
+
+    <section class="constants-list">
+      <header>
+        <h3>Constants</h3>
+      </header>
+      <dl>
+        <dt id="BOOLEAN_HEADER_PROC">BOOLEAN_HEADER_PROC
+        <dd><p>Used by <a href="Headers.html#HEADER_TO_PROPERTY"><code>HEADER_TO_PROPERTY</code></a>; this Proc when called with <code>true</code> or <code>false</code> evaluates to String “yes” for <code>true</code> or “no” for any other value.</p>
+        <dt id="BOOLEAN_PROPERTY_PROC">BOOLEAN_PROPERTY_PROC
+        <dd><p>Used by <a href="Headers.html#HEADER_TO_PROPERTY"><code>HEADER_TO_PROPERTY</code></a>; this Proc when called with some non-nil value from an HTTP header representing a Boolean as “yes” or “no”, evaluates to either <code>true</code> for “yes” or <code>false</code> for any other value. Case insensitive.</p>
+        <dt id="DATETIME_HEADER_PROC">DATETIME_HEADER_PROC
+        <dd><p>Used by <a href="Headers.html#HEADER_TO_PROPERTY"><code>HEADER_TO_PROPERTY</code></a>; this Proc when called with a DateTime instance evaluates to a String representing the DateTime as an ISO 8601 subset value given to nanosecond precision.</p>
+        <dt id="DATETIME_IN_PAST_ONLY_PROPERTY_PROC">DATETIME_IN_PAST_ONLY_PROPERTY_PROC
+        <dd><p>Used by <a href="Headers.html#HEADER_TO_PROPERTY"><code>HEADER_TO_PROPERTY</code></a>; this Proc when called with some non-nil value from an HTTP header representing a Date/Time in a supported format, evaluates to either a parsed DateTime instance or <code>nil</code> if the value appeared to not be in a supported format.</p>
+        <dt id="DATETIME_WRITER_PROC">DATETIME_WRITER_PROC
+        <dd><p>Used by <a href="Headers.html#HEADER_TO_PROPERTY"><code>HEADER_TO_PROPERTY</code></a>; this Proc is called with a Time, Date, DateTime or DateTime-parseable String and returns a DateTime. It is used for a custom write accessor for the property associated with a header entry and works independently of the validation mechanism for inbound String-only from-header data.</p>
+        <dt id="HEADER_TO_PROPERTY">HEADER_TO_PROPERTY
+        <dd><p>Various “X-Foo”-style HTTP headers specified in the <a href="../../Hoodoo.html"><code>Hoodoo</code></a> API Specification have special meanings and values for those need to be set up in request data and <a href="../Client.html"><code>Hoodoo::Client</code></a> endpoints. Processing around these is data driven by this mapping Hash.</p>
+
+<p>Keys are the HTTP header names in <a href="../../Rack.html"><code>Rack</code></a> (upper case, “HTTP_”-prefix) format. Values are options bundles as follows:</p>
+<dl class="rdoc-list note-list"><dt><code>property</code>
+<dd>
+<p>The property name to be associated with the header, as a Symbol.</p>
+</dd><dt><code>property_proc</code>
+<dd>
+<p>A Proc that’s called to both validate and clean up the raw value from the HTTP header. It evaluates to <code>nil</code> if the value is invalid, or non-<code>nil</code> for any other case. Note that there is no way for an HTTP header to explicitly convey a corresponding value internally of <code>nil</code> as a result, by design; instead the relevant header would simply be omitted by the caller (and/or change your header design!).</p>
+</dd><dt><code>writer_proc</code>
+<dd>
+<p>If a property has a possible amigbuity of input data types when set externally, independently of any validation etc. from the <code>property_proc</code> option, then this optional entry contains a Proc that is used for a custom write accessor and canonicalises assumed-valid but possibly not canonical input for writing. An example would be the conversion of String or Time instances to a DateTime so that a property always reads back with a DateTime instance.</p>
+</dd><dt><code>header</code>
+<dd>
+<p>For speed in lookups where it’s needed, this is the “real” (not <a href="../../Rack.html"><code>Rack</code></a> format) HTTP header name.</p>
+</dd><dt><code>header_proc</code>
+<dd>
+<p>A Proc that’s called to convert a cleaned-up value set in the <code>property</code> by its <code>property_proc</code>. It is called with this value and returns an equivalent appropriate value for use with the HTTP header given in <code>header</code>. This <em>MUST</em> always be a String.</p>
+</dd><dt><code>secured</code>
+<dd>
+<p>Optional, default <code>nil</code>. If <code>true</code>, marks that this header and its associated value can only be processed if there is a Session with a Caller that has an <code>authorised_http_headers</code> entry for this header.</p>
+</dd><dt><code>auto_transfer</code>
+<dd>
+<p>Optional, default <code>nil</code>. Only relevant to inter-resource call scenarios. If <code>true</code>, when one resource calls another, the value of this property is automatically transferred to the downstream resource. Otherwise, it is not, and the downstream resource will operate under whatever defaults are present. An inter-resource call endpoint which inherits an auto-transfer property can always have this property explicitly overwritten before any calls are made through it.</p>
+</dd></dl>
+
+<p>An additional key of <code>:property_writer</code> will be set up automatically which contains the value of the <code>:property</code> key with an “=” sign added, resulting in the name of a write accessor method for that property.</p>
+        <dt id="KVP_HEADER_PROC">KVP_HEADER_PROC
+        <dd><p>Used by <a href="Headers.html#HEADER_TO_PROPERTY"><code>HEADER_TO_PROPERTY</code></a>; this Proc when called with some non-nested Hash evaluates to a URL-encoded form data String as per:</p>
+
+<p><a href="http://www.w3.org/TR/html5/forms.html#url-encoded-form-data">www.w3.org/TR/html5/forms.html#url-encoded-form-data</a></p>
+        <dt id="KVP_PROPERTY_PROC">KVP_PROPERTY_PROC
+        <dd><p>Used by <a href="Headers.html#HEADER_TO_PROPERTY"><code>HEADER_TO_PROPERTY</code></a>; this Proc when called with some non-nil value from an HTTP header containing URL-encoded simple key/value pair data returns a decoded Hash of key/value pairs. Use URL encoding in the HTTP header value as per:</p>
+
+<p><a href="http://www.w3.org/TR/html5/forms.html#url-encoded-form-data">www.w3.org/TR/html5/forms.html#url-encoded-form-data</a></p>
+
+<p>Invalid input will produce unusual results, e.g. an empty Hash or a Hash where certain keys may have empty string values.</p>
+        <dt id="UUID_HEADER_PROC">UUID_HEADER_PROC
+        <dd><p>Used by <a href="Headers.html#HEADER_TO_PROPERTY"><code>HEADER_TO_PROPERTY</code></a>; this Proc when called with some <a href="../UUID.html"><code>UUID</code></a> evaluates to the input value coerced to a String and no other changes.</p>
+        <dt id="UUID_PROPERTY_PROC">UUID_PROPERTY_PROC
+        <dd><p>Used by <a href="Headers.html#HEADER_TO_PROPERTY"><code>HEADER_TO_PROPERTY</code></a>; this Proc when called with some non-nil value from an HTTP header representing a <a href="../UUID.html"><code>UUID</code></a>, evaluates to either the <a href="../UUID.html"><code>UUID</code></a> as a String or <code>nil</code> if the value appeared to not be a <a href="../UUID.html"><code>UUID</code></a>.</p>
+      </dl>
+    </section>
+
+
+
+     <section id="public-class-5Buntitled-5D-method-details" class="method-section">
+       <header>
+         <h3>Public Class Methods</h3>
+       </header>
+
+      <div id="method-c-define_accessors_for_header_equivalents" class="method-detail ">
+        <div class="method-heading">
+          <span class="method-name">define_accessors_for_header_equivalents</span><span
+            class="method-args">( klass )</span>
+          <span class="method-click-advice">click to toggle source</span>
+        </div>
+
+        <div class="method-description">
+          <p>Define a series of read and custom write accessors according to the HTTP_HEADER_OPTIONS_MAP. For example, a property of “dated_at” results in a <code>dated_at</code> reader, a <code>dated_at=</code> writer which calls <a href="../Utilities.html#method-c-rationalise_datetime"><code>Hoodoo::Utilities.rationalise_datetime</code></a> to clean up the input value and sets the result into the <code>@dated_at</code> instance variable which the read accessor will be expecting to use.</p>
+<dl class="rdoc-list note-list"><dt><code>klass</code>
+<dd>
+<p>The Class to which the instance methods will be added.</p>
+</dd></dl>
+
+          <div class="method-source-code" id="define_accessors_for_header_equivalents-source">
+            <pre><span class="ruby-comment"># File lib/hoodoo/client/headers.rb, line 240</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">define_accessors_for_header_equivalents</span>( <span class="ruby-identifier">klass</span> )
+  <span class="ruby-identifier">klass</span>.<span class="ruby-identifier">class_eval</span> <span class="ruby-keyword">do</span>
+    <span class="ruby-constant">HEADER_TO_PROPERTY</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span> <span class="ruby-identifier">rack_header</span>, <span class="ruby-identifier">description</span> <span class="ruby-operator">|</span>
+      <span class="ruby-identifier">attr_reader</span>( <span class="ruby-identifier">description</span>[ <span class="ruby-value">:property</span> ] )
+
+      <span class="ruby-identifier">custom_writer</span> = <span class="ruby-identifier">description</span>[ <span class="ruby-value">:writer_proc</span> ]
+
+      <span class="ruby-keyword">if</span> <span class="ruby-identifier">custom_writer</span>.<span class="ruby-identifier">nil?</span>
+        <span class="ruby-identifier">attr_writer</span>( <span class="ruby-identifier">description</span>[ <span class="ruby-value">:property</span> ] )
+      <span class="ruby-keyword">else</span>
+        <span class="ruby-identifier">define_method</span>( <span class="ruby-node">&quot;#{ description[ :property ] }=&quot;</span> ) <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span> <span class="ruby-identifier">parameter</span> <span class="ruby-operator">|</span>
+          <span class="ruby-identifier">instance_variable_set</span>(
+            <span class="ruby-node">&quot;@#{ description[ :property ] }&quot;</span>,
+            <span class="ruby-identifier">description</span>[ <span class="ruby-value">:writer_proc</span> ].<span class="ruby-identifier">call</span>( <span class="ruby-identifier">parameter</span> )
+          )
+          <span class="ruby-identifier">result</span> = <span class="ruby-identifier">instance_variable_get</span>(<span class="ruby-node">&quot;@#{ description[ :property ] }&quot;</span>)
+        <span class="ruby-keyword">end</span>
+      <span class="ruby-keyword">end</span>
+    <span class="ruby-keyword">end</span>
+  <span class="ruby-keyword">end</span>
+<span class="ruby-keyword">end</span></pre>
+          </div>
+        </div>
+
+
+      </div>
+
+      <div id="method-c-x_header_to_options" class="method-detail ">
+        <div class="method-heading">
+          <span class="method-name">x_header_to_options</span><span
+            class="method-args">( hashlike_source )</span>
+          <span class="method-click-advice">click to toggle source</span>
+        </div>
+
+        <div class="method-description">
+          <p>From a Hash-like source where keys are HTTP header names and values are the corresponding HTTP header values, extract interesting values and return a Hash of options as described below.</p>
+
+<p>Any <code>X-Foo</code> header is extracted, including core <a href="../../Hoodoo.html"><code>Hoodoo</code></a> extension headers such as <code>X-Interaction-ID</code>, which is present in any response. The “X-” is stripped, the rest converted to lower case and hyphens converted to underscores. The interaction ID, therefore, would be set as an <code>interaction_id</code> option. <code>X-Foo</code> would be set as a <code>foo</code> option - and so-on.</p>
+
+<p>The header matcher accepts headers from the Hash-like source in upper or lower case with hyphens or underscores inside; extracted headers can therefore start with any of <code>X_</code>, <code>x_</code>, <code>X-</code> or <code>x-</code>. The Hash-like source must support the <code>each</code> operator yielding a key and value to the block on each iteration.</p>
+
+<p>Header values are not translated at all, so (unless something very unsual is going on) the option values will be Strings.</p>
+
+<p>If the same header is encountered more than once, only the first one encountered (in enumeration order, whatever that might be) is stored.</p>
+
+<p>Parameters:</p>
+<dl class="rdoc-list note-list"><dt><code>hashlike_source</code>
+<dd>
+<p>Hash-like source containing HTTP headers/values.</p>
+</dd></dl>
+
+          <div class="method-source-code" id="x_header_to_options-source">
+            <pre><span class="ruby-comment"># File lib/hoodoo/client/headers.rb, line 289</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">x_header_to_options</span>( <span class="ruby-identifier">hashlike_source</span> )
+  <span class="ruby-identifier">hashlike_source</span> <span class="ruby-operator">||=</span> {}
+  <span class="ruby-identifier">options</span>           = {}
+
+  <span class="ruby-identifier">hashlike_source</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span> <span class="ruby-identifier">key</span>, <span class="ruby-identifier">value</span> <span class="ruby-operator">|</span>
+    <span class="ruby-keyword">next</span> <span class="ruby-keyword">unless</span> ( <span class="ruby-identifier">key</span>[ <span class="ruby-value">0</span> ] <span class="ruby-operator">==</span> <span class="ruby-string">&#39;x&#39;</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">key</span>[ <span class="ruby-value">0</span> ] <span class="ruby-operator">==</span> <span class="ruby-string">&#39;X&#39;</span> ) <span class="ruby-operator">&amp;&amp;</span>
+                ( <span class="ruby-identifier">key</span>[ <span class="ruby-value">1</span> ] <span class="ruby-operator">==</span> <span class="ruby-string">&#39;-&#39;</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">key</span>[ <span class="ruby-value">1</span> ] <span class="ruby-operator">==</span> <span class="ruby-string">&#39;_&#39;</span> )
+
+    <span class="ruby-identifier">entry</span> = <span class="ruby-identifier">key</span>.<span class="ruby-identifier">to_s</span>.<span class="ruby-identifier">downcase</span>.<span class="ruby-identifier">gsub</span>( <span class="ruby-string">&#39;-&#39;</span>, <span class="ruby-string">&#39;_&#39;</span> )[ <span class="ruby-value">2</span><span class="ruby-operator">..</span><span class="ruby-value">-1</span> ]
+
+    <span class="ruby-keyword">unless</span> <span class="ruby-identifier">entry</span> <span class="ruby-operator">==</span> <span class="ruby-string">&#39;&#39;</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">options</span>.<span class="ruby-identifier">has_key?</span>( <span class="ruby-identifier">entry</span> )
+      <span class="ruby-identifier">options</span>[ <span class="ruby-identifier">entry</span> ] = <span class="ruby-identifier">value</span>
+    <span class="ruby-keyword">end</span>
+  <span class="ruby-keyword">end</span>
+
+  <span class="ruby-keyword">return</span> <span class="ruby-identifier">options</span>
+<span class="ruby-keyword">end</span></pre>
+          </div>
+        </div>
+
+
+      </div>
+
+    </section>
+
+  </section>
+</main>
+
+
+<footer id="validator-badges" role="contentinfo">
+  <p><a href="https://validator.w3.org/check/referer">Validate</a>
+  <p>Generated by <a href="https://ruby.github.io/rdoc/">RDoc</a> 6.4.0.
+  <p>Based on <a href="http://deveiate.org/projects/Darkfish-RDoc/">Darkfish</a> by <a href="http://deveiate.org">Michael Granger</a>.
+</footer>
+

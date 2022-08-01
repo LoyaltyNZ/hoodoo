@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+<meta charset="UTF-8">
+
+<title>class Hoodoo::Presenters::Base - Hoodoo</title>
+
+<script type="text/javascript">
+  var rdoc_rel_prefix = "../../";
+  var index_rel_prefix = "../../";
+</script>
+
+<script src="../../js/navigation.js" defer></script>
+<script src="../../js/search.js" defer></script>
+<script src="../../js/search_index.js" defer></script>
+<script src="../../js/searcher.js" defer></script>
+<script src="../../js/darkfish.js" defer></script>
+
+<link href="../../css/fonts.css" rel="stylesheet">
+<link href="../../css/rdoc.css" rel="stylesheet">
+
+
+<body id="top" role="document" class="class">
+<nav role="navigation">
+  <div id="project-navigation">
+    <div id="home-section" role="region" title="Quick navigation" class="nav-section">
+  <h2>
+    <a href="../../index.html" rel="home">Home</a>
+  </h2>
+
+  <div id="table-of-contents-navigation">
+    <a href="../../table_of_contents.html#pages">Pages</a>
+    <a href="../../table_of_contents.html#classes">Classes</a>
+    <a href="../../table_of_contents.html#methods">Methods</a>
+  </div>
+</div>
+
+    <div id="search-section" role="search" class="project-section initially-hidden">
+  <form action="#" method="get" accept-charset="utf-8">
+    <div id="search-field-wrapper">
+      <input id="search-field" role="combobox" aria-label="Search"
+             aria-autocomplete="list" aria-controls="search-results"
+             type="text" name="search" placeholder="Search" spellcheck="false"
+             title="Type to search, Up and Down to navigate, Enter to load">
+    </div>
+
+    <ul id="search-results" aria-label="Search Results"
+        aria-busy="false" aria-expanded="false"
+        aria-atomic="false" class="initially-hidden"></ul>
+  </form>
+</div>
+
+  </div>
+
+  
+
+  <div id="class-metadata">
+    
+    
+<div id="parent-class-section" class="nav-section">
+  <h3>Parent</h3>
+
+  <p class="link">Object
+</div>
+
+    
+    
+    
+<!-- Method Quickref -->
+<div id="method-list-section" class="nav-section">
+  <h3>Methods</h3>
+
+  <ul class="link-list" role="directory">
+    <li ><a href="#method-c-get_schema">::get_schema</a>
+    <li ><a href="#method-c-get_schema_definition">::get_schema_definition</a>
+    <li ><a href="#method-c-is_internationalised-3F">::is_internationalised?</a>
+    <li ><a href="#method-c-render">::render</a>
+    <li ><a href="#method-c-render_in">::render_in</a>
+    <li ><a href="#method-c-schema">::schema</a>
+    <li ><a href="#method-c-validate">::validate</a>
+    <li ><a href="#method-c-walk">::walk</a>
+  </ul>
+</div>
+
+  </div>
+</nav>
+
+<main role="main" aria-labelledby="class-Hoodoo::Presenters::Base">
+  <h1 id="class-Hoodoo::Presenters::Base" class="class">
+    class Hoodoo::Presenters::Base
+  </h1>
+
+  <section class="description">
+    
+<p><a href="Base.html"><code>Base</code></a> functionality for JSON validation and presenter (rendering) layers. Subclass this to define a schema against which validation of inbound data or rendering of outbound data can be performed. Call schema in the subclass to declare, via the DSL, the shape of the schema.</p>
+
+  </section>
+
+  <section id="5Buntitled-5D" class="documentation-section">
+
+
+
+
+
+     <section id="public-class-5Buntitled-5D-method-details" class="method-section">
+       <header>
+         <h3>Public Class Methods</h3>
+       </header>
+
+      <div id="method-c-get_schema" class="method-detail ">
+        <div class="method-heading">
+          <span class="method-name">get_schema</span><span
+            class="method-args">()</span>
+          <span class="method-click-advice">click to toggle source</span>
+        </div>
+
+        <div class="method-description">
+          <p>Return the schema graph. See also get_schema_definition.</p>
+
+          <div class="method-source-code" id="get_schema-source">
+            <pre><span class="ruby-comment"># File lib/hoodoo/presenters/base.rb, line 299</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">get_schema</span>
+  <span class="ruby-ivar">@schema</span>
+<span class="ruby-keyword">end</span></pre>
+          </div>
+        </div>
+
+
+      </div>
+
+      <div id="method-c-get_schema_definition" class="method-detail ">
+        <div class="method-heading">
+          <span class="method-name">get_schema_definition</span><span
+            class="method-args">()</span>
+          <span class="method-click-advice">click to toggle source</span>
+        </div>
+
+        <div class="method-description">
+          <p>Read back the block that defined the schema graph. See also get_schema.</p>
+
+          <div class="method-source-code" id="get_schema_definition-source">
+            <pre><span class="ruby-comment"># File lib/hoodoo/presenters/base.rb, line 306</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">get_schema_definition</span>
+  <span class="ruby-ivar">@schema_definition</span>
+<span class="ruby-keyword">end</span></pre>
+          </div>
+        </div>
+
+
+      </div>
+
+      <div id="method-c-is_internationalised-3F" class="method-detail ">
+        <div class="method-heading">
+          <span class="method-name">is_internationalised?</span><span
+            class="method-args">()</span>
+          <span class="method-click-advice">click to toggle source</span>
+        </div>
+
+        <div class="method-description">
+          <p>Does this presenter use internationalisation? Returns <code>true</code> if so, else <code>false</code>.</p>
+
+          <div class="method-source-code" id="is_internationalised-3F-source">
+            <pre><span class="ruby-comment"># File lib/hoodoo/presenters/base.rb, line 293</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">is_internationalised?</span>
+  <span class="ruby-ivar">@schema</span>.<span class="ruby-identifier">is_internationalised?</span>
+<span class="ruby-keyword">end</span></pre>
+          </div>
+        </div>
+
+
+      </div>
+
+      <div id="method-c-render" class="method-detail ">
+        <div class="method-heading">
+          <span class="method-name">render</span><span
+            class="method-args">( data, uuid = nil, created_at = nil, language = &#39;en-nz&#39;, created_by = nil, updated_at = nil )</span>
+          <span class="method-click-advice">click to toggle source</span>
+        </div>
+
+        <div class="method-description">
+          <p>Given some data that should conform to the subclass presenter’s schema, render it to go from the input Ruby <a href="Hash.html"><code>Hash</code></a>, to an output Ruby <a href="Hash.html"><code>Hash</code></a> which will include default values - if any - present in the schema and will drop input fields not present in that schema. In essence, this takes data which may have been programatically generated and sanitises it to produce valid, with-defaults guaranteed valid output.</p>
+
+<p><a href="Field.html"><code>Field</code></a> <code>kind</code> is taken from the class name. If concerned about clashes between resource names and <a href="../ActiveRecord.html"><code>ActiveRecord</code></a> model names, put your resource classes inside a module for namespacing - for example:</p>
+
+<pre>module Resources
+  class Product &lt; Hoodoo::Presenters::Base
+    schema do
+      ...
+    end
+  end
+end</pre>
+
+<p>Only the class “leaf” name is used to infer the resource kind - in the above case, that’s <code>Product</code>.</p>
+
+<p>Any field with a schema giving a default value will only appear should a value for that field be <em>omitted</em> in the input data. If the data provides, for example, an explicit <code>nil</code> value then a corresponding explicit <code>nil</code> will be rendered, regardless of defaults.</p>
+
+<p>For belt-and-braces, unless subsequent profiling shows performance issues, callers should call validate first to self-check their internal data against the schema prior to rendering. That way, coding errors will be discovered immediately, rather than hidden / obscured by the rendered sanitisation.</p>
+
+<p>Since rendering top-level <code>nil</code> is not valid JSON, should <code>nil</code> be provided as input, it’ll be treated as an empty hash (“{}”) instead.</p>
+
+<p>This is quite a low-level call. For a higher level renderer which <a href="../../Hoodoo.html"><code>Hoodoo</code></a> service resource implementations will probably want to use for returning resource representations in responses, see <a href="Base.html#method-c-render_in"><code>::render_in</code></a>.</p>
+<dl class="rdoc-list note-list"><dt><code>data</code>
+<dd>
+<p><a href="Hash.html"><code>Hash</code></a> to be represented. <a href="../Data.html"><code>Data</code></a> within this is compared against the schema being called to ensure that correct information is returned and unknown data is ignored.</p>
+</dd><dt><code>uuid</code>
+<dd>
+<p>Unique ID of the resource instance that is to be represented. If nil / omitted, this is assumed to be a rendering of a type or other non-resource like item. Otherwise the field is mandatory.</p>
+</dd><dt><code>created_at</code>
+<dd>
+<p>Date/Time of instance creation. Only required if <a href="UUID.html"><code>UUID</code></a> has been provided. This is a Ruby <a href="DateTime.html"><code>DateTime</code></a> instance or similar, <em>NOT</em> a string!</p>
+</dd><dt><code>language</code>
+<dd>
+<p>Optional language. If the type/resource being rendered is internationalised but this is omitted, then a value of “en-nz” is used as a default.</p>
+</dd><dt><code>created_by</code>
+<dd>
+<p>Optional fingerprint of the Caller whose credentials were used to create the Session under which the resource instance was created. Absent if omitted.</p>
+</dd><dt><code>updated_at</code>
+<dd>
+<p>Optional Date/Time of instance update. This is a Ruby <a href="DateTime.html"><code>DateTime</code></a> instance or similar, <em>NOT</em> a string!</p>
+</dd></dl>
+
+          <div class="method-source-code" id="render-source">
+            <pre><span class="ruby-comment"># File lib/hoodoo/presenters/base.rb, line 96</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">render</span>( <span class="ruby-identifier">data</span>,
+                 <span class="ruby-identifier">uuid</span>       = <span class="ruby-keyword">nil</span>,
+                 <span class="ruby-identifier">created_at</span> = <span class="ruby-keyword">nil</span>,
+                 <span class="ruby-identifier">language</span>   = <span class="ruby-string">&#39;en-nz&#39;</span>,
+                 <span class="ruby-identifier">created_by</span> = <span class="ruby-keyword">nil</span>,
+                 <span class="ruby-identifier">updated_at</span> = <span class="ruby-keyword">nil</span>
+                )
+  <span class="ruby-identifier">target</span> = {}
+  <span class="ruby-identifier">data</span>   = <span class="ruby-identifier">data</span> <span class="ruby-operator">||</span> {}
+
+  <span class="ruby-ivar">@schema</span>.<span class="ruby-identifier">render</span>( <span class="ruby-identifier">data</span>, <span class="ruby-identifier">target</span> )
+
+  <span class="ruby-comment"># Common fields are added after rendering the data in case there are</span>
+  <span class="ruby-comment"># any same-named field collisions - platform defaults should take</span>
+  <span class="ruby-comment"># precedence, overwriting previous definitions intentionally.</span>
+
+  <span class="ruby-keyword">unless</span> ( <span class="ruby-identifier">uuid</span>.<span class="ruby-identifier">nil?</span> )
+
+    <span class="ruby-identifier">raise</span> <span class="ruby-string">&quot;Can&#39;t render a Resource with a nil &#39;created_at&#39;&quot;</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">created_at</span>.<span class="ruby-identifier">nil?</span>
+
+    <span class="ruby-comment"># Field &quot;kind&quot; is taken from the class name; this is a class method</span>
+    <span class="ruby-comment"># so &quot;self.name&quot; yields &quot;Hoodoo::Data::Resources::...&quot; or similar.</span>
+    <span class="ruby-comment"># We could just use &quot;split&quot;, but that creates an intermediate Array</span>
+    <span class="ruby-comment"># which uses more RAM and is about half the speed (or worse) of the</span>
+    <span class="ruby-comment"># following alternative (it turns out ActiveSupport 4&#39;s #demodulize</span>
+    <span class="ruby-comment"># uses much the same approach).</span>
+
+    <span class="ruby-identifier">name</span>  = <span class="ruby-keyword">self</span>.<span class="ruby-identifier">name</span>
+    <span class="ruby-identifier">index</span> = ( <span class="ruby-identifier">name</span>.<span class="ruby-identifier">rindex</span>( <span class="ruby-string">&#39;::&#39;</span> ) <span class="ruby-operator">||</span> <span class="ruby-value">-2</span> ) <span class="ruby-operator">+</span> <span class="ruby-value">2</span>
+    <span class="ruby-identifier">kind</span>  = <span class="ruby-identifier">name</span>[ <span class="ruby-identifier">index</span> <span class="ruby-operator">..</span> <span class="ruby-value">-1</span> ]
+
+    <span class="ruby-identifier">target</span>.<span class="ruby-identifier">merge!</span>( {
+      <span class="ruby-string">&#39;id&#39;</span>         <span class="ruby-operator">=&gt;</span> <span class="ruby-identifier">uuid</span>,
+      <span class="ruby-string">&#39;kind&#39;</span>       <span class="ruby-operator">=&gt;</span> <span class="ruby-identifier">kind</span>,
+      <span class="ruby-string">&#39;created_at&#39;</span> <span class="ruby-operator">=&gt;</span> <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Utilities</span>.<span class="ruby-identifier">standard_datetime</span>( <span class="ruby-identifier">created_at</span>.<span class="ruby-identifier">to_datetime</span> )
+    } )
+
+    <span class="ruby-identifier">target</span>[ <span class="ruby-string">&#39;updated_at&#39;</span> ] = <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Utilities</span>.<span class="ruby-identifier">standard_datetime</span>( <span class="ruby-identifier">updated_at</span>.<span class="ruby-identifier">to_datetime</span> ) <span class="ruby-keyword">unless</span> <span class="ruby-identifier">updated_at</span>.<span class="ruby-identifier">nil?</span>
+    <span class="ruby-identifier">target</span>[ <span class="ruby-string">&#39;created_by&#39;</span> ] = <span class="ruby-identifier">created_by</span> <span class="ruby-keyword">unless</span> <span class="ruby-identifier">created_by</span>.<span class="ruby-identifier">nil?</span>
+    <span class="ruby-identifier">target</span>[ <span class="ruby-string">&#39;language&#39;</span>   ] = <span class="ruby-identifier">language</span> <span class="ruby-keyword">if</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">is_internationalised?</span>()
+
+  <span class="ruby-keyword">end</span>
+
+  <span class="ruby-keyword">return</span> <span class="ruby-identifier">target</span>
+<span class="ruby-keyword">end</span></pre>
+          </div>
+        </div>
+
+
+      </div>
+
+      <div id="method-c-render_in" class="method-detail ">
+        <div class="method-heading">
+          <span class="method-name">render_in</span><span
+            class="method-args">( context, data, options = {} )</span>
+          <span class="method-click-advice">click to toggle source</span>
+        </div>
+
+        <div class="method-description">
+          <p>A higher level version of <a href="Base.html#method-c-render"><code>::render</code></a>, typically called from <a href="../../Hoodoo.html"><code>Hoodoo</code></a> services in their resource implementation code.</p>
+
+<p>As with <a href="Base.html#method-c-render"><code>::render</code></a>, data is rendered according to the schema of the object the <a href="Base.html#method-c-render_in"><code>::render_in</code></a> message is sent to. Options specify things like <a href="UUID.html"><code>UUID</code></a> and created-at date. Language information for internationalised fields can be given, but if omitted comes from the given request context data.</p>
+
+<p>Additional facilites exist over and above <a href="Base.html#method-c-render"><code>::render</code></a> - security scoping information in the resource via its <code>secured_with</code> field is made available through options (see below), along with support for embedded or referenced resource information.</p>
+<dl class="rdoc-list note-list"><dt><code>context</code>
+<dd>
+<p>A <a href="../Services/Context.html"><code>Hoodoo::Services::Context</code></a> instance, which is usually the value passed to a service implementation in calls like <a href="../Services/Implementation.html#method-i-list"><code>Hoodoo::Services::Implementation#list</code></a> or <a href="../Services/Implementation.html#method-i-show"><code>Hoodoo::Services::Implementation#show</code></a>.</p>
+</dd><dt><code>data</code>
+<dd>
+<p><a href="Hash.html"><code>Hash</code></a> to be represented. <a href="../Data.html"><code>Data</code></a> within this is compared against the schema being called to ensure that correct information is returned and unknown data is ignored.</p>
+</dd><dt><code>options</code>
+<dd>
+<p>Options hash, see below.</p>
+</dd></dl>
+
+<p>The options keys are Symbols, used as follows:</p>
+<dl class="rdoc-list note-list"><dt><code>uuid</code>
+<dd>
+<p>Same as the <code>uuid</code> parameter to <a href="Base.html#method-c-render"><code>::render</code></a>, except mandatory.</p>
+</dd><dt><code>created_at</code>
+<dd>
+<p>Same as the <code>created_at</code> parameter to <a href="Base.html#method-c-render"><code>::render</code></a>, except mandatory.</p>
+</dd><dt><code>updated_at</code>
+<dd>
+<p>Optional value expressing the time the resource was last updated.</p>
+</dd><dt><code>created_by</code>
+<dd>
+<p>Optional fingerprint of the Caller whose credentials were used to create the Session under which the resource instance was created.</p>
+</dd><dt><code>language</code>
+<dd>
+<p>Optional value for resource’s <code>language</code> field; taken from the <code>context</code> parameter if omitted.</p>
+</dd><dt><code>embeds</code>
+<dd>
+<p>A <a href="Embedding/Embeds.html"><code>Hoodoo::Presenters::Embedding::Embeds</code></a> instance that contains (fully rendered) resources which are to be embedded in this rendered representation. Optional.</p>
+</dd><dt><code>references</code>
+<dd>
+<p>A <a href="Embedding/References.html"><code>Hoodoo::Presenters::Embedding::References</code></a> instance that contains UUIDs which are to be embedded in this rendered representation as references. Optional.</p>
+</dd><dt><code>secured_with</code>
+<dd>
+<p>An <a href="../ActiveRecord/Base.html"><code>ActiveRecord::Base</code></a> subclass instance where the model class includes a <code>secure_with</code> declaration. As per documentation for <a href="../ActiveRecord/Secure/ClassMethods.html#method-i-secure"><code>Hoodoo::ActiveRecord::Secure::ClassMethods#secure</code></a> and <a href="../ActiveRecord/Secure/ClassMethods.html#method-i-secure_with"><code>Hoodoo::ActiveRecord::Secure::ClassMethods#secure_with</code></a>, this leads (potentially) to the generation of the <code>secured_with</code> field and object value in the rendered resource data.</p>
+</dd></dl>
+
+          <div class="method-source-code" id="render_in-source">
+            <pre><span class="ruby-comment"># File lib/hoodoo/presenters/base.rb, line 202</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">render_in</span>( <span class="ruby-identifier">context</span>, <span class="ruby-identifier">data</span>, <span class="ruby-identifier">options</span> = {} )
+  <span class="ruby-identifier">uuid</span>         = <span class="ruby-identifier">options</span>[ <span class="ruby-value">:uuid</span>         ]
+  <span class="ruby-identifier">created_at</span>   = <span class="ruby-identifier">options</span>[ <span class="ruby-value">:created_at</span>   ]
+  <span class="ruby-identifier">updated_at</span>   = <span class="ruby-identifier">options</span>[ <span class="ruby-value">:updated_at</span>   ]
+  <span class="ruby-identifier">created_by</span>   = <span class="ruby-identifier">options</span>[ <span class="ruby-value">:created_by</span>   ]
+  <span class="ruby-identifier">language</span>     = <span class="ruby-identifier">options</span>[ <span class="ruby-value">:language</span>     ] <span class="ruby-operator">||</span> <span class="ruby-identifier">context</span>.<span class="ruby-identifier">request</span>.<span class="ruby-identifier">locale</span>
+  <span class="ruby-identifier">secured_with</span> = <span class="ruby-identifier">options</span>[ <span class="ruby-value">:secured_with</span> ]
+  <span class="ruby-identifier">embeds</span>       = <span class="ruby-identifier">options</span>[ <span class="ruby-value">:embeds</span>       ]
+  <span class="ruby-identifier">references</span>   = <span class="ruby-identifier">options</span>[ <span class="ruby-value">:references</span>   ]
+
+  <span class="ruby-identifier">target</span> = <span class="ruby-keyword">self</span>.<span class="ruby-identifier">render</span>( <span class="ruby-identifier">data</span>, <span class="ruby-identifier">uuid</span>, <span class="ruby-identifier">created_at</span>, <span class="ruby-identifier">language</span>, <span class="ruby-identifier">created_by</span>, <span class="ruby-identifier">updated_at</span> )
+
+  <span class="ruby-keyword">if</span> <span class="ruby-keyword">defined?</span>( <span class="ruby-operator">::</span><span class="ruby-constant">ActiveRecord</span> ) <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">secured_with</span>.<span class="ruby-identifier">is_a?</span>( <span class="ruby-operator">::</span><span class="ruby-constant">ActiveRecord</span><span class="ruby-operator">::</span><span class="ruby-constant">Base</span> )
+    <span class="ruby-identifier">result_hash</span>     = {}
+    <span class="ruby-identifier">extra_scope_map</span> = <span class="ruby-identifier">secured_with</span>.<span class="ruby-identifier">class</span>.<span class="ruby-identifier">secured_with</span>()
+
+    <span class="ruby-identifier">extra_scope_map</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span> <span class="ruby-identifier">model_field_name</span>, <span class="ruby-identifier">key_or_options</span> <span class="ruby-operator">|</span>
+      <span class="ruby-identifier">resource_field</span> = <span class="ruby-keyword">if</span> <span class="ruby-identifier">key_or_options</span>.<span class="ruby-identifier">is_a?</span>( <span class="ruby-operator">::</span><span class="ruby-constant">Hash</span> )
+        <span class="ruby-keyword">next</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">key_or_options</span>[ <span class="ruby-value">:hide_from_resource</span> ] <span class="ruby-operator">==</span> <span class="ruby-keyword">true</span>
+        <span class="ruby-identifier">key_or_options</span>[ <span class="ruby-value">:resource_field_name</span> ] <span class="ruby-operator">||</span> <span class="ruby-identifier">model_field_name</span>
+      <span class="ruby-keyword">else</span>
+        <span class="ruby-identifier">model_field_name</span>
+      <span class="ruby-keyword">end</span>
+
+      <span class="ruby-identifier">result_hash</span>[ <span class="ruby-identifier">resource_field</span>.<span class="ruby-identifier">to_s</span> ] = <span class="ruby-identifier">secured_with</span>.<span class="ruby-identifier">send</span>( <span class="ruby-identifier">model_field_name</span> )
+    <span class="ruby-keyword">end</span> <span class="ruby-keyword">unless</span> <span class="ruby-identifier">extra_scope_map</span>.<span class="ruby-identifier">nil?</span>
+
+    <span class="ruby-identifier">target</span>[ <span class="ruby-string">&#39;secured_with&#39;</span> ] = <span class="ruby-identifier">result_hash</span> <span class="ruby-keyword">unless</span> <span class="ruby-identifier">result_hash</span>.<span class="ruby-identifier">empty?</span>
+  <span class="ruby-keyword">end</span>
+
+  <span class="ruby-identifier">target</span>[ <span class="ruby-string">&#39;_embed&#39;</span>     ] = <span class="ruby-identifier">embeds</span>.<span class="ruby-identifier">retrieve</span>()     <span class="ruby-keyword">unless</span> <span class="ruby-identifier">embeds</span>.<span class="ruby-identifier">nil?</span>
+  <span class="ruby-identifier">target</span>[ <span class="ruby-string">&#39;_reference&#39;</span> ] = <span class="ruby-identifier">references</span>.<span class="ruby-identifier">retrieve</span>() <span class="ruby-keyword">unless</span> <span class="ruby-identifier">references</span>.<span class="ruby-identifier">nil?</span>
+
+  <span class="ruby-keyword">return</span> <span class="ruby-identifier">target</span>
+<span class="ruby-keyword">end</span></pre>
+          </div>
+        </div>
+
+
+      </div>
+
+      <div id="method-c-schema" class="method-detail ">
+        <div class="method-heading">
+          <span class="method-name">schema</span><span
+            class="method-args">( &amp;block )</span>
+          <span class="method-click-advice">click to toggle source</span>
+        </div>
+
+        <div class="method-description">
+          <p>Define the JSON schema for validation.</p>
+<dl class="rdoc-list note-list"><dt>&amp;block
+<dd>
+<p>Block that makes calls to the DSL defined in <a href="BaseDSL.html"><code>Hoodoo::Presenters::BaseDSL</code></a> in order to define the schema.</p>
+</dd></dl>
+
+          <div class="method-source-code" id="schema-source">
+            <pre><span class="ruby-comment"># File lib/hoodoo/presenters/base.rb, line 26</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">schema</span>( <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span> )
+  <span class="ruby-ivar">@schema</span> = <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Presenters</span><span class="ruby-operator">::</span><span class="ruby-constant">Object</span>.<span class="ruby-identifier">new</span>
+  <span class="ruby-ivar">@schema</span>.<span class="ruby-identifier">instance_eval</span>( <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span> )
+  <span class="ruby-ivar">@schema_definition</span> = <span class="ruby-identifier">block</span>
+<span class="ruby-keyword">end</span></pre>
+          </div>
+        </div>
+
+
+      </div>
+
+      <div id="method-c-validate" class="method-detail ">
+        <div class="method-heading">
+          <span class="method-name">validate</span><span
+            class="method-args">( data, as_resource = false )</span>
+          <span class="method-click-advice">click to toggle source</span>
+        </div>
+
+        <div class="method-description">
+          <p>Is the given rendering of a resource valid? Returns an array of Error Primitive types (as hashes); this will be empty if the data given is valid.</p>
+<dl class="rdoc-list note-list"><dt><code>data</code>
+<dd>
+<p>Ruby <a href="Hash.html"><code>Hash</code></a> representation of JSON data that is to be validated against ‘this’ schema. Keys must be Strings, not Symbols.</p>
+</dd><dt><code>as_resource</code>
+<dd>
+<p>Check Resource common fields - <code>id</code>, <code>kind</code>, <code>created_at</code> and (for an internationalised resource) <code>language</code>. Otherwise, only basic data schema is examined. Optional; default is <code>false</code>.</p>
+</dd></dl>
+
+          <div class="method-source-code" id="validate-source">
+            <pre><span class="ruby-comment"># File lib/hoodoo/presenters/base.rb, line 250</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">validate</span>( <span class="ruby-identifier">data</span>, <span class="ruby-identifier">as_resource</span> = <span class="ruby-keyword">false</span> )
+  <span class="ruby-identifier">errors</span> = <span class="ruby-ivar">@schema</span>.<span class="ruby-identifier">validate</span>( <span class="ruby-identifier">data</span> )
+
+  <span class="ruby-keyword">if</span> <span class="ruby-identifier">as_resource</span>
+    <span class="ruby-identifier">common_fields</span> = {
+      <span class="ruby-string">&#39;id&#39;</span>         <span class="ruby-operator">=&gt;</span> <span class="ruby-identifier">data</span>[ <span class="ruby-value">:id</span>         ],
+      <span class="ruby-string">&#39;created_at&#39;</span> <span class="ruby-operator">=&gt;</span> <span class="ruby-identifier">data</span>[ <span class="ruby-value">:created_at</span> ],
+      <span class="ruby-string">&#39;kind&#39;</span>       <span class="ruby-operator">=&gt;</span> <span class="ruby-identifier">data</span>[ <span class="ruby-value">:kind</span>       ]
+    }
+
+    <span class="ruby-identifier">created_by</span> = <span class="ruby-identifier">data</span>[ <span class="ruby-value">:created_by</span> ]
+    <span class="ruby-identifier">common_fields</span>[ <span class="ruby-string">&#39;created_by&#39;</span> ] = <span class="ruby-identifier">created_by</span> <span class="ruby-keyword">unless</span> <span class="ruby-identifier">created_by</span>.<span class="ruby-identifier">nil?</span>
+
+    <span class="ruby-identifier">updated_at</span> = <span class="ruby-identifier">data</span>[ <span class="ruby-value">:updated_at</span> ]
+    <span class="ruby-identifier">common_fields</span>[ <span class="ruby-string">&#39;updated_at&#39;</span> ] = <span class="ruby-identifier">updated_at</span> <span class="ruby-keyword">unless</span> <span class="ruby-identifier">updated_at</span>.<span class="ruby-identifier">nil?</span>
+
+    <span class="ruby-keyword">if</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">is_internationalised?</span>
+      <span class="ruby-identifier">common_fields</span>[ <span class="ruby-string">&#39;internationalised&#39;</span> ] = <span class="ruby-identifier">data</span>[ <span class="ruby-string">&#39;internationalised&#39;</span> ]
+      <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Presenters</span><span class="ruby-operator">::</span><span class="ruby-constant">CommonResourceFields</span>.<span class="ruby-identifier">get_schema</span>.<span class="ruby-identifier">properties</span>[ <span class="ruby-string">&#39;language&#39;</span> ].<span class="ruby-identifier">required</span> = <span class="ruby-keyword">true</span>
+    <span class="ruby-keyword">end</span>
+
+    <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">merge!</span>( <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Presenters</span><span class="ruby-operator">::</span><span class="ruby-constant">CommonResourceFields</span>.<span class="ruby-identifier">validate</span>( <span class="ruby-identifier">data</span>, <span class="ruby-keyword">false</span> ) )
+
+    <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Presenters</span><span class="ruby-operator">::</span><span class="ruby-constant">CommonResourceFields</span>.<span class="ruby-identifier">get_schema</span>.<span class="ruby-identifier">properties</span>[ <span class="ruby-string">&#39;language&#39;</span> ].<span class="ruby-identifier">required</span> = <span class="ruby-keyword">false</span>
+  <span class="ruby-keyword">end</span>
+
+  <span class="ruby-keyword">return</span> <span class="ruby-identifier">errors</span>
+<span class="ruby-keyword">end</span></pre>
+          </div>
+        </div>
+
+
+      </div>
+
+      <div id="method-c-walk" class="method-detail ">
+        <div class="method-heading">
+          <span class="method-name">walk</span><span
+            class="method-args">( &amp;block )</span>
+          <span class="method-click-advice">click to toggle source</span>
+        </div>
+
+        <div class="method-description">
+          <p>Walk the schema graph and invoke the given block on each field within it, passing the field instances to the block for each call.</p>
+
+<p>All fields including the top-level “root” property (which has an empty string for a name) will be passed to the block in order of definition, recursing into nested objects, arrays and so-on as each is encountered.</p>
+
+          <div class="method-source-code" id="walk-source">
+            <pre><span class="ruby-comment"># File lib/hoodoo/presenters/base.rb, line 286</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">walk</span>( <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span> )
+  <span class="ruby-ivar">@schema</span>.<span class="ruby-identifier">walk</span>( <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span> )
+<span class="ruby-keyword">end</span></pre>
+          </div>
+        </div>
+
+
+      </div>
+
+    </section>
+
+  </section>
+</main>
+
+
+<footer id="validator-badges" role="contentinfo">
+  <p><a href="https://validator.w3.org/check/referer">Validate</a>
+  <p>Generated by <a href="https://ruby.github.io/rdoc/">RDoc</a> 6.4.0.
+  <p>Based on <a href="http://deveiate.org/projects/Darkfish-RDoc/">Darkfish</a> by <a href="http://deveiate.org">Michael Granger</a>.
+</footer>
+

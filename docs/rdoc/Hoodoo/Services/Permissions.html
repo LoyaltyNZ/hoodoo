@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+<meta charset="UTF-8">
+
+<title>class Hoodoo::Services::Permissions - Hoodoo</title>
+
+<script type="text/javascript">
+  var rdoc_rel_prefix = "../../";
+  var index_rel_prefix = "../../";
+</script>
+
+<script src="../../js/navigation.js" defer></script>
+<script src="../../js/search.js" defer></script>
+<script src="../../js/search_index.js" defer></script>
+<script src="../../js/searcher.js" defer></script>
+<script src="../../js/darkfish.js" defer></script>
+
+<link href="../../css/fonts.css" rel="stylesheet">
+<link href="../../css/rdoc.css" rel="stylesheet">
+
+
+<body id="top" role="document" class="class">
+<nav role="navigation">
+  <div id="project-navigation">
+    <div id="home-section" role="region" title="Quick navigation" class="nav-section">
+  <h2>
+    <a href="../../index.html" rel="home">Home</a>
+  </h2>
+
+  <div id="table-of-contents-navigation">
+    <a href="../../table_of_contents.html#pages">Pages</a>
+    <a href="../../table_of_contents.html#classes">Classes</a>
+    <a href="../../table_of_contents.html#methods">Methods</a>
+  </div>
+</div>
+
+    <div id="search-section" role="search" class="project-section initially-hidden">
+  <form action="#" method="get" accept-charset="utf-8">
+    <div id="search-field-wrapper">
+      <input id="search-field" role="combobox" aria-label="Search"
+             aria-autocomplete="list" aria-controls="search-results"
+             type="text" name="search" placeholder="Search" spellcheck="false"
+             title="Type to search, Up and Down to navigate, Enter to load">
+    </div>
+
+    <ul id="search-results" aria-label="Search Results"
+        aria-busy="false" aria-expanded="false"
+        aria-atomic="false" class="initially-hidden"></ul>
+  </form>
+</div>
+
+  </div>
+
+  
+
+  <div id="class-metadata">
+    
+    
+<div id="parent-class-section" class="nav-section">
+  <h3>Parent</h3>
+
+  <p class="link">Object
+</div>
+
+    
+    
+    
+<!-- Method Quickref -->
+<div id="method-list-section" class="nav-section">
+  <h3>Methods</h3>
+
+  <ul class="link-list" role="directory">
+    <li ><a href="#method-c-new">::new</a>
+    <li ><a href="#method-i-from_h-21">#from_h!</a>
+    <li ><a href="#method-i-merge-21">#merge!</a>
+    <li ><a href="#method-i-permitted-3F">#permitted?</a>
+    <li ><a href="#method-i-set_default">#set_default</a>
+    <li ><a href="#method-i-set_default_fallback">#set_default_fallback</a>
+    <li ><a href="#method-i-set_resource">#set_resource</a>
+    <li ><a href="#method-i-set_resource_fallback">#set_resource_fallback</a>
+    <li ><a href="#method-i-to_h">#to_h</a>
+  </ul>
+</div>
+
+  </div>
+</nav>
+
+<main role="main" aria-labelledby="class-Hoodoo::Services::Permissions">
+  <h1 id="class-Hoodoo::Services::Permissions" class="class">
+    class Hoodoo::Services::Permissions
+  </h1>
+
+  <section class="description">
+    
+<p>The <a href="Permissions.html"><code>Permissions</code></a> class provides a way to store and recall information on action behaviour for resources. It is just a way to store and query this information; actually enforcing the result is up to the caller.</p>
+
+<p><a href="Permissions.html"><code>Permissions</code></a> are based on the standard actions - <code>list</code>, <code>show</code>, <code>create</code>, <code>update</code> and <code>delete</code> - with defined permissions of constants <a href="Permissions.html#DENY"><code>DENY</code></a> (prohibit access), <a href="Permissions.html#ALLOW"><code>ALLOW</code></a> (allow access) and <a href="Permissions.html#ASK"><code>ASK</code></a>. The intention of <a href="Permissions.html#ASK"><code>ASK</code></a> is that some other component - usually a service application - should be passed details of the request and asked if it should be permitted.</p>
+
+<p>Callers must <strong>ensure</strong> they <strong>only</strong> use the <a href="Permissions.html#DENY"><code>DENY</code></a>, <a href="Permissions.html#ALLOW"><code>ALLOW</code></a> and <a href="Permissions.html#ASK"><code>ASK</code></a> constants defined herein, without making assumptions about their assigned values.</p>
+
+<p>There is both a default set of permissions in addition to per-resource permissions and there is a fallback for cases where a permission for a particular action has not been defined. This lets you define the baseline behaviour in the fallback cases and only describe exceptions to that baseline through the <a href="Permissions.html"><code>Permissions</code></a> interface, minimising caller workload.</p>
+
+<p><a href="Middleware.html"><code>Hoodoo::Services::Middleware</code></a> uses an instance of this class to determine whether or not it should pass on inbound requests to service applications.</p>
+
+<p>Example:</p>
+
+<p>Here, an object is created with a default fallback of <a href="Permissions.html#DENY"><code>DENY</code></a>, then has the action “list” allowed for all resources and says that resource “Member” must ask someone for permission if its “show” action is requested. Another resource “Ping” allows any action unconditionally.</p>
+
+<pre class="ruby"><span class="ruby-identifier">p</span> = <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Services</span><span class="ruby-operator">::</span><span class="ruby-constant">Permissions</span>.<span class="ruby-identifier">new</span>
+<span class="ruby-identifier">p</span>.<span class="ruby-identifier">set_default</span>( <span class="ruby-value">:list</span>, <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Services</span><span class="ruby-operator">::</span><span class="ruby-constant">Permissions</span><span class="ruby-operator">::</span><span class="ruby-constant">ALLOW</span> )
+<span class="ruby-identifier">p</span>.<span class="ruby-identifier">set_resource</span>( <span class="ruby-value">:Member</span>, <span class="ruby-value">:show</span>, <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Services</span><span class="ruby-operator">::</span><span class="ruby-constant">Permissions</span><span class="ruby-operator">::</span><span class="ruby-constant">ASK</span> )
+<span class="ruby-identifier">p</span>.<span class="ruby-identifier">set_resource_fallback</span>( <span class="ruby-value">:Ping</span>, <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Services</span><span class="ruby-operator">::</span><span class="ruby-constant">Permissions</span><span class="ruby-operator">::</span><span class="ruby-constant">ALLOW</span> )
+
+<span class="ruby-identifier">puts</span> <span class="ruby-constant">JSON</span>.<span class="ruby-identifier">pretty_generate</span>( <span class="ruby-identifier">p</span>.<span class="ruby-identifier">to_h</span>() )
+
+<span class="ruby-comment"># Yields...</span>
+<span class="ruby-comment">#</span>
+<span class="ruby-comment"># {</span>
+<span class="ruby-comment">#   &quot;default&quot;: {</span>
+<span class="ruby-comment">#     &quot;else&quot;: &quot;deny&quot;,</span>
+<span class="ruby-comment">#     &quot;actions&quot;: {</span>
+<span class="ruby-comment">#       &quot;list&quot;: &quot;allow&quot;</span>
+<span class="ruby-comment">#     }</span>
+<span class="ruby-comment">#   },</span>
+<span class="ruby-comment">#   &quot;resources&quot;: {</span>
+<span class="ruby-comment">#     &quot;Member&quot;: {</span>
+<span class="ruby-comment">#       &quot;actions&quot;: {</span>
+<span class="ruby-comment">#         &quot;show&quot;: &quot;ask&quot;</span>
+<span class="ruby-comment">#       }</span>
+<span class="ruby-comment">#     },</span>
+<span class="ruby-comment">#     &quot;Ping&quot;: {</span>
+<span class="ruby-comment">#       &quot;else&quot;: &quot;allow&quot;</span>
+<span class="ruby-comment">#     }</span>
+<span class="ruby-comment">#   }</span>
+<span class="ruby-comment"># }</span>
+</pre>
+
+  </section>
+
+  <section id="5Buntitled-5D" class="documentation-section">
+
+
+    <section class="constants-list">
+      <header>
+        <h3>Constants</h3>
+      </header>
+      <dl>
+        <dt id="ALLOW">ALLOW
+        <dd><p>Permission is granted; the action should be permitted.</p>
+        <dt id="ALLOWED_POLICIES">ALLOWED_POLICIES
+        <dd><p>All currently known (allowed/supported) permission policies.</p>
+        <dt id="ASK">ASK
+        <dd><p>Something else (e.g. a service application) needs to be asked to see if it permits the action.</p>
+        <dt id="DENY">DENY
+        <dd><p>Permission is denied; the action should not be permitted.</p>
+      </dl>
+    </section>
+
+
+
+     <section id="public-class-5Buntitled-5D-method-details" class="method-section">
+       <header>
+         <h3>Public Class Methods</h3>
+       </header>
+
+      <div id="method-c-new" class="method-detail ">
+        <div class="method-heading">
+          <span class="method-name">new</span><span
+            class="method-args">( hash = nil )</span>
+          <span class="method-click-advice">click to toggle source</span>
+        </div>
+
+        <div class="method-description">
+          <p>Create a new <a href="Permissions.html"><code>Permissions</code></a> instance, optionally from a Hash of the format returned by <a href="Permissions.html#method-i-to_h"><code>to_h</code></a>.</p>
+
+<p>By default the object is initialised with a default fallback which denies all actions for all resources.</p>
+
+          <div class="method-source-code" id="new-source">
+            <pre><span class="ruby-comment"># File lib/hoodoo/services/services/permissions.rb, line 98</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">initialize</span>( <span class="ruby-identifier">hash</span> = <span class="ruby-keyword">nil</span> )
+  <span class="ruby-keyword">if</span> <span class="ruby-identifier">hash</span>.<span class="ruby-identifier">nil?</span>
+    <span class="ruby-ivar">@permissions</span> = {}
+    <span class="ruby-identifier">set_default_fallback</span>( <span class="ruby-constant">DENY</span> )
+  <span class="ruby-keyword">else</span>
+    <span class="ruby-identifier">from_h!</span>( <span class="ruby-identifier">hash</span> )
+  <span class="ruby-keyword">end</span>
+<span class="ruby-keyword">end</span></pre>
+          </div>
+        </div>
+
+
+      </div>
+
+    </section>
+
+     <section id="public-instance-5Buntitled-5D-method-details" class="method-section">
+       <header>
+         <h3>Public Instance Methods</h3>
+       </header>
+
+      <div id="method-i-from_h-21" class="method-detail ">
+        <div class="method-heading">
+          <span class="method-name">from_h!</span><span
+            class="method-args">( hash )</span>
+          <span class="method-click-advice">click to toggle source</span>
+        </div>
+
+        <div class="method-description">
+          <p>Overwrite this instances’s permissions with those from the given Hash.</p>
+<dl class="rdoc-list note-list"><dt><code>hash</code>
+<dd>
+<p><a href="Permissions.html"><code>Permissions</code></a> hash, which must come (directly or indirectly) from a <a href="Permissions.html#method-i-to_h"><code>to_h</code></a> call.</p>
+</dd></dl>
+
+          <div class="method-source-code" id="from_h-21-source">
+            <pre><span class="ruby-comment"># File lib/hoodoo/services/services/permissions.rb, line 214</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">from_h!</span>( <span class="ruby-identifier">hash</span> )
+  <span class="ruby-ivar">@permissions</span> = <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Utilities</span>.<span class="ruby-identifier">stringify</span>( <span class="ruby-identifier">hash</span> )
+<span class="ruby-keyword">end</span></pre>
+          </div>
+        </div>
+
+
+      </div>
+
+      <div id="method-i-merge-21" class="method-detail ">
+        <div class="method-heading">
+          <span class="method-name">merge!</span><span
+            class="method-args">( hash )</span>
+          <span class="method-click-advice">click to toggle source</span>
+        </div>
+
+        <div class="method-description">
+          <p>Merge the permissions described by the given Hash with those inside this instance. This will add to, or overwrite permissions with those from the given input Hash.</p>
+<dl class="rdoc-list note-list"><dt><code>hash</code>
+<dd>
+<p><a href="Permissions.html"><code>Permissions</code></a> hash, which must come (directly or indirectly) from a <a href="Permissions.html#method-i-to_h"><code>to_h</code></a> call.</p>
+</dd></dl>
+
+          <div class="method-source-code" id="merge-21-source">
+            <pre><span class="ruby-comment"># File lib/hoodoo/services/services/permissions.rb, line 225</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">merge!</span>( <span class="ruby-identifier">hash</span> )
+  <span class="ruby-ivar">@permissions</span> = <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Utilities</span>.<span class="ruby-identifier">deep_merge_into</span>(
+    <span class="ruby-ivar">@permissions</span>,
+    <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Utilities</span>.<span class="ruby-identifier">stringify</span>( <span class="ruby-identifier">hash</span> )
+  )
+<span class="ruby-keyword">end</span></pre>
+          </div>
+        </div>
+
+
+      </div>
+
+      <div id="method-i-permitted-3F" class="method-detail ">
+        <div class="method-heading">
+          <span class="method-name">permitted?</span><span
+            class="method-args">( resource_name, action_name )</span>
+          <span class="method-click-advice">click to toggle source</span>
+        </div>
+
+        <div class="method-description">
+          <p>For the given resource, is the given action permitted? Returns one of the <a href="Permissions.html#ALLOW"><code>ALLOW</code></a>, <a href="Permissions.html#DENY"><code>DENY</code></a> or <a href="Permissions.html#ASK"><code>ASK</code></a> constant values.</p>
+<dl class="rdoc-list note-list"><dt><code>resource_name</code>
+<dd>
+<p>Resource name as a Symbol or String, e.g. “<code>Purchase</code>” or <code>:Member</code>.</p>
+</dd><dt><code>action_name</code>
+<dd>
+<p>Action as a String or Symbol, from: <code>list</code>, <code>show</code>, <code>create</code>, <code>update</code> or <code>delete</code>.</p>
+</dd></dl>
+
+          <div class="method-source-code" id="permitted-3F-source">
+            <pre><span class="ruby-comment"># File lib/hoodoo/services/services/permissions.rb, line 183</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">permitted?</span>( <span class="ruby-identifier">resource_name</span>, <span class="ruby-identifier">action_name</span> )
+  <span class="ruby-identifier">resource_name</span> = <span class="ruby-identifier">resource_name</span>.<span class="ruby-identifier">to_s</span>
+  <span class="ruby-identifier">action_name</span>   = <span class="ruby-identifier">action_name</span>.<span class="ruby-identifier">to_s</span>
+
+  <span class="ruby-identifier">tree</span> = <span class="ruby-keyword">if</span> <span class="ruby-ivar">@permissions</span>.<span class="ruby-identifier">has_key?</span>( <span class="ruby-string">&#39;resources&#39;</span> )
+    <span class="ruby-ivar">@permissions</span>[ <span class="ruby-string">&#39;resources&#39;</span> ][ <span class="ruby-identifier">resource_name</span> ]
+  <span class="ruby-keyword">end</span> <span class="ruby-operator">||</span> {}
+
+  <span class="ruby-identifier">result</span> = <span class="ruby-identifier">permitted_in?</span>( <span class="ruby-identifier">tree</span>, <span class="ruby-identifier">action_name</span> )
+
+  <span class="ruby-keyword">if</span> <span class="ruby-identifier">result</span>.<span class="ruby-identifier">nil?</span>
+    <span class="ruby-identifier">tree</span> = <span class="ruby-ivar">@permissions</span>[ <span class="ruby-string">&#39;default&#39;</span> ] <span class="ruby-operator">||</span> {}
+    <span class="ruby-identifier">result</span> = <span class="ruby-identifier">permitted_in?</span>( <span class="ruby-identifier">tree</span>, <span class="ruby-identifier">action_name</span> )
+  <span class="ruby-keyword">end</span>
+
+  <span class="ruby-keyword">return</span> <span class="ruby-identifier">result</span> <span class="ruby-operator">||</span> <span class="ruby-constant">DENY</span>
+<span class="ruby-keyword">end</span></pre>
+          </div>
+        </div>
+
+
+      </div>
+
+      <div id="method-i-set_default" class="method-detail ">
+        <div class="method-heading">
+          <span class="method-name">set_default</span><span
+            class="method-args">( action_name, permission )</span>
+          <span class="method-click-advice">click to toggle source</span>
+        </div>
+
+        <div class="method-description">
+          <p>Set the default permission for the given action. If a resource does not have a specific entry for it in the <a href="Permissions.html"><code>Permissions</code></a> object but the action matches the given name, then this permission is used.</p>
+<dl class="rdoc-list note-list"><dt><code>action_name</code>
+<dd>
+<p>Action as a String or Symbol, from: <code>list</code>, <code>show</code>, <code>create</code>, <code>update</code> or <code>delete</code>.</p>
+</dd><dt><code>permission</code>
+<dd>
+<p><a href="Permissions.html#DENY"><code>DENY</code></a>, <a href="Permissions.html#ALLOW"><code>ALLOW</code></a> or <a href="Permissions.html#ASK"><code>ASK</code></a>.</p>
+</dd></dl>
+
+          <div class="method-source-code" id="set_default-source">
+            <pre><span class="ruby-comment"># File lib/hoodoo/services/services/permissions.rb, line 129</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">set_default</span>( <span class="ruby-identifier">action_name</span>, <span class="ruby-identifier">permission</span> )
+  <span class="ruby-identifier">action_name</span> = <span class="ruby-identifier">action_name</span>.<span class="ruby-identifier">to_s</span>
+
+  <span class="ruby-ivar">@permissions</span>[ <span class="ruby-string">&#39;default&#39;</span> ] <span class="ruby-operator">||=</span> {}
+  <span class="ruby-ivar">@permissions</span>[ <span class="ruby-string">&#39;default&#39;</span> ][ <span class="ruby-string">&#39;actions&#39;</span> ] <span class="ruby-operator">||=</span> {}
+  <span class="ruby-ivar">@permissions</span>[ <span class="ruby-string">&#39;default&#39;</span> ][ <span class="ruby-string">&#39;actions&#39;</span> ][ <span class="ruby-identifier">action_name</span> ] = <span class="ruby-identifier">permission</span>
+<span class="ruby-keyword">end</span></pre>
+          </div>
+        </div>
+
+
+      </div>
+
+      <div id="method-i-set_default_fallback" class="method-detail ">
+        <div class="method-heading">
+          <span class="method-name">set_default_fallback</span><span
+            class="method-args">( permission )</span>
+          <span class="method-click-advice">click to toggle source</span>
+        </div>
+
+        <div class="method-description">
+          <p>Set the default fallback for actions. If a resource does not have a specific entry for it in the <a href="Permissions.html"><code>Permissions</code></a> object and if the action does not have a default permission, then this permission used.</p>
+<dl class="rdoc-list note-list"><dt><code>permission</code>
+<dd>
+<p><a href="Permissions.html#DENY"><code>DENY</code></a>, <a href="Permissions.html#ALLOW"><code>ALLOW</code></a> or <a href="Permissions.html#ASK"><code>ASK</code></a>.</p>
+</dd></dl>
+
+          <div class="method-source-code" id="set_default_fallback-source">
+            <pre><span class="ruby-comment"># File lib/hoodoo/services/services/permissions.rb, line 113</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">set_default_fallback</span>( <span class="ruby-identifier">permission</span> )
+  <span class="ruby-identifier">action_name</span> = <span class="ruby-identifier">action_name</span>.<span class="ruby-identifier">to_s</span>
+
+  <span class="ruby-ivar">@permissions</span>[ <span class="ruby-string">&#39;default&#39;</span> ] <span class="ruby-operator">||=</span> {}
+  <span class="ruby-ivar">@permissions</span>[ <span class="ruby-string">&#39;default&#39;</span> ][ <span class="ruby-string">&#39;else&#39;</span> ] = <span class="ruby-identifier">permission</span>
+<span class="ruby-keyword">end</span></pre>
+          </div>
+        </div>
+
+
+      </div>
+
+      <div id="method-i-set_resource" class="method-detail ">
+        <div class="method-heading">
+          <span class="method-name">set_resource</span><span
+            class="method-args">( resource_name, action_name, permission )</span>
+          <span class="method-click-advice">click to toggle source</span>
+        </div>
+
+        <div class="method-description">
+          <p>Set the permissions an action on a resource.</p>
+<dl class="rdoc-list note-list"><dt><code>resource_name</code>
+<dd>
+<p>Resource name as a Symbol or String, e.g. “<code>Purchase</code>” or <code>:Member</code>.</p>
+</dd><dt><code>action_name</code>
+<dd>
+<p>Action as a String or Symbol, from: <code>list</code>, <code>show</code>, <code>create</code>, <code>update</code> or <code>delete</code>.</p>
+</dd><dt><code>permission</code>
+<dd>
+<p><a href="Permissions.html#DENY"><code>DENY</code></a>, <a href="Permissions.html#ALLOW"><code>ALLOW</code></a> or <a href="Permissions.html#ASK"><code>ASK</code></a>.</p>
+</dd></dl>
+
+          <div class="method-source-code" id="set_resource-source">
+            <pre><span class="ruby-comment"># File lib/hoodoo/services/services/permissions.rb, line 164</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">set_resource</span>( <span class="ruby-identifier">resource_name</span>, <span class="ruby-identifier">action_name</span>, <span class="ruby-identifier">permission</span> )
+  <span class="ruby-identifier">resource_name</span> = <span class="ruby-identifier">resource_name</span>.<span class="ruby-identifier">to_s</span>
+  <span class="ruby-identifier">action_name</span>   = <span class="ruby-identifier">action_name</span>.<span class="ruby-identifier">to_s</span>
+
+  <span class="ruby-ivar">@permissions</span>[ <span class="ruby-string">&#39;resources&#39;</span> ] <span class="ruby-operator">||=</span> {}
+  <span class="ruby-ivar">@permissions</span>[ <span class="ruby-string">&#39;resources&#39;</span> ][ <span class="ruby-identifier">resource_name</span> ] <span class="ruby-operator">||=</span> {}
+  <span class="ruby-ivar">@permissions</span>[ <span class="ruby-string">&#39;resources&#39;</span> ][ <span class="ruby-identifier">resource_name</span> ][ <span class="ruby-string">&#39;actions&#39;</span> ] <span class="ruby-operator">||=</span> {}
+  <span class="ruby-ivar">@permissions</span>[ <span class="ruby-string">&#39;resources&#39;</span> ][ <span class="ruby-identifier">resource_name</span> ][ <span class="ruby-string">&#39;actions&#39;</span> ][ <span class="ruby-identifier">action_name</span> ] = <span class="ruby-identifier">permission</span>
+<span class="ruby-keyword">end</span></pre>
+          </div>
+        </div>
+
+
+      </div>
+
+      <div id="method-i-set_resource_fallback" class="method-detail ">
+        <div class="method-heading">
+          <span class="method-name">set_resource_fallback</span><span
+            class="method-args">( resource_name, permission )</span>
+          <span class="method-click-advice">click to toggle source</span>
+        </div>
+
+        <div class="method-description">
+          <p>Set the default fallback for a resource. If the resource is asked to perform an action that’s not otherwise listed in the resource’s entry in the <a href="Permissions.html"><code>Permissions</code></a> object, then this permission is used.</p>
+<dl class="rdoc-list note-list"><dt><code>resource_name</code>
+<dd>
+<p>Resource name as a Symbol or String, e.g. “<code>Purchase</code>” or <code>:Member</code>.</p>
+</dd><dt><code>permission</code>
+<dd>
+<p><a href="Permissions.html#DENY"><code>DENY</code></a>, <a href="Permissions.html#ALLOW"><code>ALLOW</code></a> or <a href="Permissions.html#ASK"><code>ASK</code></a>.</p>
+</dd></dl>
+
+          <div class="method-source-code" id="set_resource_fallback-source">
+            <pre><span class="ruby-comment"># File lib/hoodoo/services/services/permissions.rb, line 146</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">set_resource_fallback</span>( <span class="ruby-identifier">resource_name</span>, <span class="ruby-identifier">permission</span> )
+  <span class="ruby-identifier">resource_name</span> = <span class="ruby-identifier">resource_name</span>.<span class="ruby-identifier">to_s</span>
+
+  <span class="ruby-ivar">@permissions</span>[ <span class="ruby-string">&#39;resources&#39;</span> ] <span class="ruby-operator">||=</span> {}
+  <span class="ruby-ivar">@permissions</span>[ <span class="ruby-string">&#39;resources&#39;</span> ][ <span class="ruby-identifier">resource_name</span> ] <span class="ruby-operator">||=</span> {}
+  <span class="ruby-ivar">@permissions</span>[ <span class="ruby-string">&#39;resources&#39;</span> ][ <span class="ruby-identifier">resource_name</span> ][ <span class="ruby-string">&#39;else&#39;</span> ] = <span class="ruby-identifier">permission</span>
+<span class="ruby-keyword">end</span></pre>
+          </div>
+        </div>
+
+
+      </div>
+
+      <div id="method-i-to_h" class="method-detail ">
+        <div class="method-heading">
+          <span class="method-name">to_h</span><span
+            class="method-args">()</span>
+          <span class="method-click-advice">click to toggle source</span>
+        </div>
+
+        <div class="method-description">
+          <p>Return a Hash representative of this permissions object, which can be stored elsewhere, used to initialise another instance or written to an existing instance with <a href="Permissions.html#method-i-from_h-21"><code>from_h!</code></a>.</p>
+
+          <div class="method-source-code" id="to_h-source">
+            <pre><span class="ruby-comment"># File lib/hoodoo/services/services/permissions.rb, line 205</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">to_h</span>
+  <span class="ruby-ivar">@permissions</span>
+<span class="ruby-keyword">end</span></pre>
+          </div>
+        </div>
+
+
+      </div>
+
+    </section>
+
+  </section>
+</main>
+
+
+<footer id="validator-badges" role="contentinfo">
+  <p><a href="https://validator.w3.org/check/referer">Validate</a>
+  <p>Generated by <a href="https://ruby.github.io/rdoc/">RDoc</a> 6.4.0.
+  <p>Based on <a href="http://deveiate.org/projects/Darkfish-RDoc/">Darkfish</a> by <a href="http://deveiate.org">Michael Granger</a>.
+</footer>
+

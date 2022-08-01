@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+<meta charset="UTF-8">
+
+<title>module Hoodoo::ActiveRecord::UUID - Hoodoo</title>
+
+<script type="text/javascript">
+  var rdoc_rel_prefix = "../../";
+  var index_rel_prefix = "../../";
+</script>
+
+<script src="../../js/navigation.js" defer></script>
+<script src="../../js/search.js" defer></script>
+<script src="../../js/search_index.js" defer></script>
+<script src="../../js/searcher.js" defer></script>
+<script src="../../js/darkfish.js" defer></script>
+
+<link href="../../css/fonts.css" rel="stylesheet">
+<link href="../../css/rdoc.css" rel="stylesheet">
+
+
+<body id="top" role="document" class="module">
+<nav role="navigation">
+  <div id="project-navigation">
+    <div id="home-section" role="region" title="Quick navigation" class="nav-section">
+  <h2>
+    <a href="../../index.html" rel="home">Home</a>
+  </h2>
+
+  <div id="table-of-contents-navigation">
+    <a href="../../table_of_contents.html#pages">Pages</a>
+    <a href="../../table_of_contents.html#classes">Classes</a>
+    <a href="../../table_of_contents.html#methods">Methods</a>
+  </div>
+</div>
+
+    <div id="search-section" role="search" class="project-section initially-hidden">
+  <form action="#" method="get" accept-charset="utf-8">
+    <div id="search-field-wrapper">
+      <input id="search-field" role="combobox" aria-label="Search"
+             aria-autocomplete="list" aria-controls="search-results"
+             type="text" name="search" placeholder="Search" spellcheck="false"
+             title="Type to search, Up and Down to navigate, Enter to load">
+    </div>
+
+    <ul id="search-results" aria-label="Search Results"
+        aria-busy="false" aria-expanded="false"
+        aria-atomic="false" class="initially-hidden"></ul>
+  </form>
+</div>
+
+  </div>
+
+  
+
+  <div id="class-metadata">
+    
+    
+    
+    
+    
+<!-- Method Quickref -->
+<div id="method-list-section" class="nav-section">
+  <h3>Methods</h3>
+
+  <ul class="link-list" role="directory">
+    <li class="calls-super" ><a href="#method-c-included">::included</a>
+    <li ><a href="#method-c-instantiate">::instantiate</a>
+  </ul>
+</div>
+
+  </div>
+</nav>
+
+<main role="main" aria-labelledby="module-Hoodoo::ActiveRecord::UUID">
+  <h1 id="module-Hoodoo::ActiveRecord::UUID" class="module">
+    module Hoodoo::ActiveRecord::UUID
+  </h1>
+
+  <section class="description">
+    
+<p><a href="Support.html"><code>Support</code></a> mixin for models subclassed from <a href="Base.html"><code>ActiveRecord::Base</code></a> providing automatic <a href="UUID.html"><code>UUID</code></a> management. See:</p>
+<ul><li>
+<p><a href="http://guides.rubyonrails.org/active_record_basics.html">guides.rubyonrails.org/active_record_basics.html</a></p>
+</li></ul>
+
+<p>By including this module, an on-create validation is added to the including model which assigns a <a href="UUID.html"><code>UUID</code></a> if none is currently set (<code>id</code> is <code>nil</code>). It also adds validations to ensure the <code>id</code> is present, unique and a valid <a href="UUID.html"><code>UUID</code></a>. You should always make sure that there are accompanying database-level uniqueness and non-null constraints on the relevant table’s ‘id` column, too.</p>
+
+<p><strong>IMPORTANT:</strong> See <a href="UUID.html#method-c-included"><code>Hoodoo::ActiveRecord::UUID::included</code></a> for important information about database requirements / table creation when using this mixin.</p>
+
+  </section>
+
+  <section id="5Buntitled-5D" class="documentation-section">
+
+
+
+
+
+     <section id="public-class-5Buntitled-5D-method-details" class="method-section">
+       <header>
+         <h3>Public Class Methods</h3>
+       </header>
+
+      <div id="method-c-included" class="method-detail ">
+        <div class="method-heading">
+          <span class="method-name">included</span><span
+            class="method-args">( model )</span>
+          <span class="method-click-advice">click to toggle source</span>
+        </div>
+
+        <div class="method-description">
+          <p>Instantiates this module when it is included.</p>
+
+<p>Example:</p>
+
+<pre class="ruby"><span class="ruby-keyword">class</span> <span class="ruby-constant">SomeModel</span> <span class="ruby-operator">&lt;</span> <span class="ruby-constant">ActiveRecord</span><span class="ruby-operator">::</span><span class="ruby-constant">Base</span>
+  <span class="ruby-identifier">include</span> <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">ActiveRecord</span><span class="ruby-operator">::</span><span class="ruby-constant">UUID</span>
+  <span class="ruby-comment"># ...</span>
+<span class="ruby-keyword">end</span>
+</pre>
+<dl class="rdoc-list note-list"><dt><code>model</code>
+<dd>
+<p>The <a href="Base.html"><code>ActiveRecord::Base</code></a> descendant that is including this module.</p>
+</dd></dl>
+            <div class="method-calls-super">
+              Calls superclass method
+              
+            </div>
+
+          <div class="method-source-code" id="included-source">
+            <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/uuid.rb, line 44</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">included</span>( <span class="ruby-identifier">model</span> )
+  <span class="ruby-identifier">instantiate</span>( <span class="ruby-identifier">model</span> ) <span class="ruby-keyword">unless</span> <span class="ruby-identifier">model</span> <span class="ruby-operator">==</span> <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">ActiveRecord</span><span class="ruby-operator">::</span><span class="ruby-constant">Base</span>
+  <span class="ruby-keyword">super</span>( <span class="ruby-identifier">model</span> )
+<span class="ruby-keyword">end</span></pre>
+          </div>
+        </div>
+
+
+      </div>
+
+      <div id="method-c-instantiate" class="method-detail ">
+        <div class="method-heading">
+          <span class="method-name">instantiate</span><span
+            class="method-args">( model )</span>
+          <span class="method-click-advice">click to toggle source</span>
+        </div>
+
+        <div class="method-description">
+          <p>When called, this method:</p>
+<ul><li>
+<p>Declares ‘id’ as the primary key</p>
+</li><li>
+<p>Self-assigns a <a href="UUID.html"><code>UUID</code></a> to ‘id’ via an on-create validation</p>
+</li><li>
+<p>Adds validations to ‘id’ to ensure it is present, unique and a valid <a href="UUID.html"><code>UUID</code></a>.</p>
+</li></ul>
+
+<p>The model <strong>MUST</strong> define its database representation in migrations so that <code>id</code> is a string based primary key, as follows:</p>
+
+<pre class="ruby"><span class="ruby-identifier">create_table</span> <span class="ruby-value">:model_table_name</span>, <span class="ruby-value">:id</span> <span class="ruby-operator">=&gt;</span> <span class="ruby-value">:string</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span> <span class="ruby-identifier">t</span> <span class="ruby-operator">|</span>
+  <span class="ruby-comment"># ...your normal column definitions go here...</span>
+<span class="ruby-keyword">end</span>
+
+<span class="ruby-identifier">change_column</span> <span class="ruby-value">:model_table_name</span>, <span class="ruby-value">:id</span>, <span class="ruby-value">:string</span>, <span class="ruby-value">:limit</span> <span class="ruby-operator">=&gt;</span> <span class="ruby-value">32</span>
+</pre>
+<dl class="rdoc-list note-list"><dt><code>model</code>
+<dd>
+<p>The <a href="Base.html"><code>ActiveRecord::Base</code></a> descendant that is including this module.</p>
+</dd></dl>
+
+          <div class="method-source-code" id="instantiate-source">
+            <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/uuid.rb, line 68</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">instantiate</span>( <span class="ruby-identifier">model</span> )
+  <span class="ruby-identifier">model</span>.<span class="ruby-identifier">primary_key</span> = <span class="ruby-string">&#39;id&#39;</span>
+
+  <span class="ruby-identifier">model</span>.<span class="ruby-identifier">validate</span>( <span class="ruby-value">:on</span> <span class="ruby-operator">=&gt;</span> <span class="ruby-value">:create</span> ) <span class="ruby-keyword">do</span>
+    <span class="ruby-keyword">self</span>.<span class="ruby-identifier">id</span> <span class="ruby-operator">||=</span> <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">UUID</span>.<span class="ruby-identifier">generate</span>()
+  <span class="ruby-keyword">end</span>
+
+  <span class="ruby-identifier">model</span>.<span class="ruby-identifier">validates</span>(
+    <span class="ruby-value">:id</span>,
+    {
+      <span class="ruby-value">:uuid</span>       <span class="ruby-operator">=&gt;</span> <span class="ruby-keyword">true</span>,
+      <span class="ruby-value">:presence</span>   <span class="ruby-operator">=&gt;</span> <span class="ruby-keyword">true</span>,
+      <span class="ruby-value">:uniqueness</span> <span class="ruby-operator">=&gt;</span> <span class="ruby-keyword">true</span>
+    }
+  )
+<span class="ruby-keyword">end</span></pre>
+          </div>
+        </div>
+
+
+      </div>
+
+    </section>
+
+  </section>
+</main>
+
+
+<footer id="validator-badges" role="contentinfo">
+  <p><a href="https://validator.w3.org/check/referer">Validate</a>
+  <p>Generated by <a href="https://ruby.github.io/rdoc/">RDoc</a> 6.4.0.
+  <p>Based on <a href="http://deveiate.org/projects/Darkfish-RDoc/">Darkfish</a> by <a href="http://deveiate.org">Michael Granger</a>.
+</footer>
+

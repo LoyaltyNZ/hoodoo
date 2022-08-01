@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+<meta charset="UTF-8">
+
+<title>class Hoodoo::Services::Middleware::AMQPLogWriter - Hoodoo</title>
+
+<script type="text/javascript">
+  var rdoc_rel_prefix = "../../../";
+  var index_rel_prefix = "../../../";
+</script>
+
+<script src="../../../js/navigation.js" defer></script>
+<script src="../../../js/search.js" defer></script>
+<script src="../../../js/search_index.js" defer></script>
+<script src="../../../js/searcher.js" defer></script>
+<script src="../../../js/darkfish.js" defer></script>
+
+<link href="../../../css/fonts.css" rel="stylesheet">
+<link href="../../../css/rdoc.css" rel="stylesheet">
+
+
+<body id="top" role="document" class="class">
+<nav role="navigation">
+  <div id="project-navigation">
+    <div id="home-section" role="region" title="Quick navigation" class="nav-section">
+  <h2>
+    <a href="../../../index.html" rel="home">Home</a>
+  </h2>
+
+  <div id="table-of-contents-navigation">
+    <a href="../../../table_of_contents.html#pages">Pages</a>
+    <a href="../../../table_of_contents.html#classes">Classes</a>
+    <a href="../../../table_of_contents.html#methods">Methods</a>
+  </div>
+</div>
+
+    <div id="search-section" role="search" class="project-section initially-hidden">
+  <form action="#" method="get" accept-charset="utf-8">
+    <div id="search-field-wrapper">
+      <input id="search-field" role="combobox" aria-label="Search"
+             aria-autocomplete="list" aria-controls="search-results"
+             type="text" name="search" placeholder="Search" spellcheck="false"
+             title="Type to search, Up and Down to navigate, Enter to load">
+    </div>
+
+    <ul id="search-results" aria-label="Search Results"
+        aria-busy="false" aria-expanded="false"
+        aria-atomic="false" class="initially-hidden"></ul>
+  </form>
+</div>
+
+  </div>
+
+  
+
+  <div id="class-metadata">
+    
+    
+<div id="parent-class-section" class="nav-section">
+  <h3>Parent</h3>
+
+  <p class="link"><a href="../../Logger/FastWriter.html">Hoodoo::Logger::FastWriter</a>
+</div>
+
+    
+    
+    
+<!-- Method Quickref -->
+<div id="method-list-section" class="nav-section">
+  <h3>Methods</h3>
+
+  <ul class="link-list" role="directory">
+    <li ><a href="#method-c-new">::new</a>
+    <li ><a href="#method-i-report">#report</a>
+  </ul>
+</div>
+
+  </div>
+</nav>
+
+<main role="main" aria-labelledby="class-Hoodoo::Services::Middleware::AMQPLogWriter">
+  <h1 id="class-Hoodoo::Services::Middleware::AMQPLogWriter" class="class">
+    class Hoodoo::Services::Middleware::AMQPLogWriter
+  </h1>
+
+  <section class="description">
+    
+<p>Log writer which sends structured messages to an AMQP-based queue via the Alchemy Flux gem. A <a href="../../Logger/FastWriter.html"><code>Hoodoo::Logger::FastWriter</code></a> subclass, since though talking to the queue might be comparatively slow, Flux uses Event Machine for this so there’s no need to add another Thread for this logger.</p>
+
+<p>See also <a href="../../Logger.html"><code>Hoodoo::Logger</code></a>.</p>
+
+  </section>
+
+  <section id="5Buntitled-5D" class="documentation-section">
+
+
+
+
+
+     <section id="public-class-5Buntitled-5D-method-details" class="method-section">
+       <header>
+         <h3>Public Class Methods</h3>
+       </header>
+
+      <div id="method-c-new" class="method-detail ">
+        <div class="method-heading">
+          <span class="method-name">new</span><span
+            class="method-args">( alchemy, routing_key = nil )</span>
+          <span class="method-click-advice">click to toggle source</span>
+        </div>
+
+        <div class="method-description">
+          <p>Create an AMQP logger instance.</p>
+<dl class="rdoc-list note-list"><dt><code>alchemy</code>
+<dd>
+<p>The Alchemy endpoint to use for sending messages to the AMQP-based queue.</p>
+</dd><dt><code>routing_key</code>
+<dd>
+<p>The routing key (as a String) to use. Optional. If omitted, reads <code>ENV[&#39;AMQ_LOGGING_ENDPOINT&#39;]</code> or if that is unset, defaults to <code>platform.logging</code>.</p>
+</dd></dl>
+
+<p>If you’re running with <a href="../../../Rack.html"><code>Rack</code></a> on top of Alchemy, then the <code>call</code> method’s <code>env</code> parameter containing the <a href="../../../Rack.html"><code>Rack</code></a> environment <em>MUST</em> have a key of <code>alchemy.service</code> with a value that’s the AlchemyFlux::Service instance handling queue communication. This is assigned to the <code>alchemy</code> parameter. The logger will then use this active Alchemy service to send messages to its configured routing key.</p>
+
+<p>If <code>ENV[&#39;AMQ_ANALYTICS_LOGGING_ENDPOINT&#39;]</code> is defined then its value is used for a routing key in the case, very specifically, of a message logged with a <code>code</code> of <code>analytics</code>. If the variable is not set, the same routing key is used for all messages regardless of code; else that particular code can be streamed off to another Rabbit queue via the given alternative routing key.</p>
+
+          <div class="method-source-code" id="new-source">
+            <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/amqp_log_writer.rb, line 47</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">initialize</span>( <span class="ruby-identifier">alchemy</span>, <span class="ruby-identifier">routing_key</span> = <span class="ruby-keyword">nil</span> )
+  <span class="ruby-identifier">routing_key</span>           = <span class="ruby-identifier">routing_key</span> <span class="ruby-operator">||</span> <span class="ruby-constant">ENV</span>[ <span class="ruby-string">&#39;AMQ_LOGGING_ENDPOINT&#39;</span> ] <span class="ruby-operator">||</span> <span class="ruby-string">&#39;platform.logging&#39;</span>
+  <span class="ruby-identifier">analytics_routing_key</span> = <span class="ruby-constant">ENV</span>[ <span class="ruby-string">&#39;AMQ_ANALYTICS_LOGGING_ENDPOINT&#39;</span> ]
+
+  <span class="ruby-ivar">@alchemy</span>      = <span class="ruby-identifier">alchemy</span>
+  <span class="ruby-ivar">@routing_keys</span> = <span class="ruby-constant">Hash</span>.<span class="ruby-identifier">new</span>( <span class="ruby-identifier">routing_key</span> ) <span class="ruby-comment"># Use &quot;routing_key&quot; as a default value</span>
+
+  <span class="ruby-ivar">@routing_keys</span>[ <span class="ruby-value">:analytics</span> ] = <span class="ruby-identifier">analytics_routing_key</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">routing_key</span>
+<span class="ruby-keyword">end</span></pre>
+          </div>
+        </div>
+
+
+      </div>
+
+    </section>
+
+     <section id="public-instance-5Buntitled-5D-method-details" class="method-section">
+       <header>
+         <h3>Public Instance Methods</h3>
+       </header>
+
+      <div id="method-i-report" class="method-detail ">
+        <div class="method-heading">
+          <span class="method-name">report</span><span
+            class="method-args">( level, component, code, data )</span>
+          <span class="method-click-advice">click to toggle source</span>
+        </div>
+
+        <div class="method-description">
+          <p>Custom implementation of the <a href="../../Logger/WriterMixin.html#method-i-report"><code>Hoodoo::Logger::WriterMixin#report</code></a> interface. See that method for parameter details.</p>
+
+<p>The middleware custom logger has expectations about the data payload. It expects these optional but recommended (where the information is available / has been generated) keys/values:</p>
+<dl class="rdoc-list note-list"><dt><code>:id</code>
+<dd>
+<p>A <a href="../../UUID.html"><code>UUID</code></a> (via <a href="../../UUID.html#method-c-generate"><code>Hoodoo::UUID::generate</code></a>) to use for this log message - if absent, one is generated automatically.</p>
+</dd><dt><code>:session</code>
+<dd>
+<p>Description of the current request session when available; a <a href="../Session.html"><code>Hoodoo::Services::Session</code></a> as a Hash (via to_h; keys as Strings). The Caller <a href="../../UUID.html"><code>UUID</code></a>, identity Participant <a href="../../UUID.html"><code>UUID</code></a> and identity Outlet <a href="../../UUID.html"><code>UUID</code></a> are sent as independent, searchable fields in the log payload.</p>
+</dd><dt><code>interaction_id</code>
+<dd>
+<p>The interaction ID for this client’s call. This is also sent as an independent, searchable field in the log payload.</p>
+</dd></dl>
+
+          <div class="method-source-code" id="report-source">
+            <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/amqp_log_writer.rb, line 77</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">report</span>( <span class="ruby-identifier">level</span>, <span class="ruby-identifier">component</span>, <span class="ruby-identifier">code</span>, <span class="ruby-identifier">data</span> )
+  <span class="ruby-keyword">return</span> <span class="ruby-keyword">if</span> <span class="ruby-ivar">@alchemy</span>.<span class="ruby-identifier">nil?</span>
+
+  <span class="ruby-comment"># Take care with Symbol keys in &#39;data&#39; vs string keys in e.g. &#39;session&#39;.</span>
+
+  <span class="ruby-identifier">session</span> = <span class="ruby-identifier">data</span>[ <span class="ruby-value">:session</span> ] <span class="ruby-operator">||</span> {}
+  <span class="ruby-identifier">message</span> = {
+    <span class="ruby-value">:id</span>                   <span class="ruby-operator">=&gt;</span> <span class="ruby-identifier">data</span>[ <span class="ruby-value">:id</span> ],
+    <span class="ruby-value">:level</span>                <span class="ruby-operator">=&gt;</span> <span class="ruby-identifier">level</span>,
+    <span class="ruby-value">:component</span>            <span class="ruby-operator">=&gt;</span> <span class="ruby-identifier">component</span>,
+    <span class="ruby-value">:code</span>                 <span class="ruby-operator">=&gt;</span> <span class="ruby-identifier">code</span>,
+    <span class="ruby-value">:reported_at</span>          <span class="ruby-operator">=&gt;</span> <span class="ruby-constant">Time</span>.<span class="ruby-identifier">now</span>.<span class="ruby-identifier">iso8601</span>( <span class="ruby-value">12</span> ),
+
+    <span class="ruby-value">:interaction_id</span>       <span class="ruby-operator">=&gt;</span> <span class="ruby-identifier">data</span>[ <span class="ruby-value">:interaction_id</span> ],
+    <span class="ruby-value">:data</span>                 <span class="ruby-operator">=&gt;</span> <span class="ruby-identifier">data</span>,
+
+    <span class="ruby-value">:caller_id</span>            <span class="ruby-operator">=&gt;</span> <span class="ruby-identifier">session</span>[ <span class="ruby-string">&#39;caller_id&#39;</span>            ],
+    <span class="ruby-value">:caller_identity_name</span> <span class="ruby-operator">=&gt;</span> <span class="ruby-identifier">session</span>[ <span class="ruby-string">&#39;caller_identity_name&#39;</span> ],
+    <span class="ruby-value">:identity</span>             <span class="ruby-operator">=&gt;</span> ( <span class="ruby-identifier">session</span>[ <span class="ruby-string">&#39;identity&#39;</span> ] <span class="ruby-operator">||</span> {} ).<span class="ruby-identifier">to_h</span>
+  }.<span class="ruby-identifier">to_json</span>()
+
+  <span class="ruby-ivar">@alchemy</span>.<span class="ruby-identifier">send_message_to_service</span>(
+    <span class="ruby-ivar">@routing_keys</span>[ <span class="ruby-identifier">code</span>.<span class="ruby-identifier">to_sym</span> ],
+    { <span class="ruby-string">&quot;body&quot;</span> <span class="ruby-operator">=&gt;</span> <span class="ruby-identifier">message</span> }
+  )
+<span class="ruby-keyword">end</span></pre>
+          </div>
+        </div>
+
+
+      </div>
+
+    </section>
+
+  </section>
+</main>
+
+
+<footer id="validator-badges" role="contentinfo">
+  <p><a href="https://validator.w3.org/check/referer">Validate</a>
+  <p>Generated by <a href="https://ruby.github.io/rdoc/">RDoc</a> 6.4.0.
+  <p>Based on <a href="http://deveiate.org/projects/Darkfish-RDoc/">Darkfish</a> by <a href="http://deveiate.org">Michael Granger</a>.
+</footer>
+

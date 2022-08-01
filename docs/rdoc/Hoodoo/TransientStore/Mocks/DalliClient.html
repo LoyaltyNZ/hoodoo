@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+<meta charset="UTF-8">
+
+<title>class Hoodoo::TransientStore::Mocks::DalliClient - Hoodoo</title>
+
+<script type="text/javascript">
+  var rdoc_rel_prefix = "../../../";
+  var index_rel_prefix = "../../../";
+</script>
+
+<script src="../../../js/navigation.js" defer></script>
+<script src="../../../js/search.js" defer></script>
+<script src="../../../js/search_index.js" defer></script>
+<script src="../../../js/searcher.js" defer></script>
+<script src="../../../js/darkfish.js" defer></script>
+
+<link href="../../../css/fonts.css" rel="stylesheet">
+<link href="../../../css/rdoc.css" rel="stylesheet">
+
+
+<body id="top" role="document" class="class">
+<nav role="navigation">
+  <div id="project-navigation">
+    <div id="home-section" role="region" title="Quick navigation" class="nav-section">
+  <h2>
+    <a href="../../../index.html" rel="home">Home</a>
+  </h2>
+
+  <div id="table-of-contents-navigation">
+    <a href="../../../table_of_contents.html#pages">Pages</a>
+    <a href="../../../table_of_contents.html#classes">Classes</a>
+    <a href="../../../table_of_contents.html#methods">Methods</a>
+  </div>
+</div>
+
+    <div id="search-section" role="search" class="project-section initially-hidden">
+  <form action="#" method="get" accept-charset="utf-8">
+    <div id="search-field-wrapper">
+      <input id="search-field" role="combobox" aria-label="Search"
+             aria-autocomplete="list" aria-controls="search-results"
+             type="text" name="search" placeholder="Search" spellcheck="false"
+             title="Type to search, Up and Down to navigate, Enter to load">
+    </div>
+
+    <ul id="search-results" aria-label="Search Results"
+        aria-busy="false" aria-expanded="false"
+        aria-atomic="false" class="initially-hidden"></ul>
+  </form>
+</div>
+
+  </div>
+
+  
+
+  <div id="class-metadata">
+    
+    
+<div id="parent-class-section" class="nav-section">
+  <h3>Parent</h3>
+
+  <p class="link">Object
+</div>
+
+    
+    
+    
+<!-- Method Quickref -->
+<div id="method-list-section" class="nav-section">
+  <h3>Methods</h3>
+
+  <ul class="link-list" role="directory">
+    <li ><a href="#method-c-bypass">::bypass</a>
+    <li ><a href="#method-c-bypass-3F">::bypass?</a>
+    <li ><a href="#method-c-reset">::reset</a>
+    <li ><a href="#method-c-store">::store</a>
+    <li ><a href="#method-i-close">#close</a>
+    <li ><a href="#method-i-delete">#delete</a>
+    <li ><a href="#method-i-get">#get</a>
+    <li ><a href="#method-i-set">#set</a>
+    <li ><a href="#method-i-stats">#stats</a>
+  </ul>
+</div>
+
+  </div>
+</nav>
+
+<main role="main" aria-labelledby="class-Hoodoo::TransientStore::Mocks::DalliClient">
+  <h1 id="class-Hoodoo::TransientStore::Mocks::DalliClient" class="class">
+    class Hoodoo::TransientStore::Mocks::DalliClient
+  </h1>
+
+  <section class="description">
+    
+<p>Mock known uses of Dalli::Client with test implementations. Use explicitly, or as an RSpec implicit mock via something like this:</p>
+
+<pre class="ruby"><span class="ruby-identifier">allow</span>( <span class="ruby-constant">Dalli</span><span class="ruby-operator">::</span><span class="ruby-constant">Client</span> ).<span class="ruby-identifier">to</span>(
+  <span class="ruby-identifier">receive</span>( <span class="ruby-value">:new</span> ).
+  <span class="ruby-identifier">and_return</span>( <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">TransientStore</span><span class="ruby-operator">::</span><span class="ruby-constant">Mocks</span><span class="ruby-operator">::</span><span class="ruby-constant">DalliClient</span>.<span class="ruby-identifier">new</span> )
+)
+</pre>
+
+<p>…whenever you need to stub out real <a href="../Memcached.html"><code>Memcached</code></a>. You will probably want to add:</p>
+
+<pre class="ruby"><span class="ruby-identifier">before</span> <span class="ruby-value">:all</span> <span class="ruby-keyword">do</span> <span class="ruby-comment"># (or &quot;:each&quot;)</span>
+  <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">TransientStore</span><span class="ruby-operator">::</span><span class="ruby-constant">Mocks</span><span class="ruby-operator">::</span><span class="ruby-constant">DalliClient</span>.<span class="ruby-identifier">reset</span>()
+<span class="ruby-keyword">end</span>
+</pre>
+
+<p>…to “clean out Memcached” before or between tests. You can check the contents of mock <a href="../Memcached.html"><code>Memcached</code></a> by examining <a href="DalliClient.html#method-c-store"><code>::store</code></a>‘s hash of data.</p>
+
+<p>The test coverage for <a href="../../TransientStore.html"><code>Hoodoo::TransientStore</code></a> selects this backend in passing. Generally speaking you should favour <a href="../../TransientStore.html"><code>Hoodoo::TransientStore</code></a> over hard-coding to a storage engine available by the <a href="../../../Hoodoo.html"><code>Hoodoo</code></a> abstraction and, as a result, may never need this mock class at all.</p>
+
+  </section>
+
+  <section id="5Buntitled-5D" class="documentation-section">
+
+
+
+
+
+     <section id="public-class-5Buntitled-5D-method-details" class="method-section">
+       <header>
+         <h3>Public Class Methods</h3>
+       </header>
+
+      <div id="method-c-bypass" class="method-detail ">
+        <div class="method-heading">
+          <span class="method-name">bypass</span><span
+            class="method-args">( bypass_boolean )</span>
+          <span class="method-click-advice">click to toggle source</span>
+        </div>
+
+        <div class="method-description">
+          <p>Pass <code>true</code> to bypass the mock client (subject to the caller reading <a href="DalliClient.html#method-c-bypass-3F"><code>::bypass?</code></a>) to e.g. get test code coverage on real <a href="../Memcached.html"><code>Memcached</code></a>. Pass <code>false</code> otherwise.</p>
+
+<p>(Deprecated, but indefinitely maintained).</p>
+
+          <div class="method-source-code" id="bypass-source">
+            <pre><span class="ruby-comment"># File lib/hoodoo/transient_store/mocks/dalli_client.rb, line 70</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">bypass</span>( <span class="ruby-identifier">bypass_boolean</span> )
+  <span class="ruby-identifier">@@bypass</span> = <span class="ruby-identifier">bypass_boolean</span>
+<span class="ruby-keyword">end</span></pre>
+          </div>
+        </div>
+
+
+      </div>
+
+      <div id="method-c-bypass-3F" class="method-detail ">
+        <div class="method-heading">
+          <span class="method-name">bypass?</span><span
+            class="method-args">()</span>
+          <span class="method-click-advice">click to toggle source</span>
+        </div>
+
+        <div class="method-description">
+          <p>If <code>true</code>, bypass this class and use real Dalli::Client; else don’t. Default return value is <code>false</code>.</p>
+
+<p>(Deprecated, but indefinitely maintained).</p>
+
+          <div class="method-source-code" id="bypass-3F-source">
+            <pre><span class="ruby-comment"># File lib/hoodoo/transient_store/mocks/dalli_client.rb, line 81</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">bypass?</span>
+  <span class="ruby-identifier">@@bypass</span>
+<span class="ruby-keyword">end</span></pre>
+          </div>
+        </div>
+
+
+      </div>
+
+      <div id="method-c-reset" class="method-detail ">
+        <div class="method-heading">
+          <span class="method-name">reset</span><span
+            class="method-args">()</span>
+          <span class="method-click-advice">click to toggle source</span>
+        </div>
+
+        <div class="method-description">
+          <p>Wipe out all saved data.</p>
+
+          <div class="method-source-code" id="reset-source">
+            <pre><span class="ruby-comment"># File lib/hoodoo/transient_store/mocks/dalli_client.rb, line 60</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">reset</span>
+  <span class="ruby-identifier">@@store</span> = {}
+<span class="ruby-keyword">end</span></pre>
+          </div>
+        </div>
+
+
+      </div>
+
+      <div id="method-c-store" class="method-detail ">
+        <div class="method-heading">
+          <span class="method-name">store</span><span
+            class="method-args">()</span>
+          <span class="method-click-advice">click to toggle source</span>
+        </div>
+
+        <div class="method-description">
+          <p>For test analysis, return the hash of ‘memcached’ mock data.</p>
+
+<p>Entries are referenced by the key you used to originally store them; values are hashes with “:expires_at” giving an expiry time or “nil” and “:value” giving your stored value.</p>
+
+          <div class="method-source-code" id="store-source">
+            <pre><span class="ruby-comment"># File lib/hoodoo/transient_store/mocks/dalli_client.rb, line 54</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">store</span>
+  <span class="ruby-identifier">@@store</span>
+<span class="ruby-keyword">end</span></pre>
+          </div>
+        </div>
+
+
+      </div>
+
+    </section>
+
+     <section id="public-instance-5Buntitled-5D-method-details" class="method-section">
+       <header>
+         <h3>Public Instance Methods</h3>
+       </header>
+
+      <div id="method-i-close" class="method-detail ">
+        <div class="method-heading">
+          <span class="method-name">close</span><span
+            class="method-args">()</span>
+          <span class="method-click-advice">click to toggle source</span>
+        </div>
+
+        <div class="method-description">
+          <p>Stub for ‘closing’ a connection.</p>
+
+          <div class="method-source-code" id="close-source">
+            <pre><span class="ruby-comment"># File lib/hoodoo/transient_store/mocks/dalli_client.rb, line 133</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">close</span>; <span class="ruby-keyword">end</span></pre>
+          </div>
+        </div>
+
+
+      </div>
+
+      <div id="method-i-delete" class="method-detail ">
+        <div class="method-heading">
+          <span class="method-name">delete</span><span
+            class="method-args">( key )</span>
+          <span class="method-click-advice">click to toggle source</span>
+        </div>
+
+        <div class="method-description">
+          <p>Remove data for the given key.</p>
+
+          <div class="method-source-code" id="delete-source">
+            <pre><span class="ruby-comment"># File lib/hoodoo/transient_store/mocks/dalli_client.rb, line 122</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">delete</span>( <span class="ruby-identifier">key</span> )
+  <span class="ruby-keyword">if</span> <span class="ruby-identifier">@@store</span>.<span class="ruby-identifier">has_key?</span>( <span class="ruby-identifier">key</span> )
+    <span class="ruby-identifier">@@store</span>.<span class="ruby-identifier">delete</span>( <span class="ruby-identifier">key</span> )
+    <span class="ruby-keyword">true</span>
+  <span class="ruby-keyword">else</span>
+    <span class="ruby-keyword">false</span>
+  <span class="ruby-keyword">end</span>
+<span class="ruby-keyword">end</span></pre>
+          </div>
+        </div>
+
+
+      </div>
+
+      <div id="method-i-get" class="method-detail ">
+        <div class="method-heading">
+          <span class="method-name">get</span><span
+            class="method-args">( key )</span>
+          <span class="method-click-advice">click to toggle source</span>
+        </div>
+
+        <div class="method-description">
+          <p>Get the data stored under the given key. Returns <code>nil</code> if not found / expired.</p>
+<dl class="rdoc-list note-list"><dt><code>key</code>
+<dd>
+<p>Key to look up (see <a href="DalliClient.html#method-i-set"><code>set</code></a>).</p>
+</dd></dl>
+
+          <div class="method-source-code" id="get-source">
+            <pre><span class="ruby-comment"># File lib/hoodoo/transient_store/mocks/dalli_client.rb, line 90</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">get</span>( <span class="ruby-identifier">key</span> )
+  <span class="ruby-identifier">data</span> = <span class="ruby-identifier">@@store</span>[ <span class="ruby-identifier">key</span> ]
+  <span class="ruby-keyword">return</span> <span class="ruby-keyword">nil</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">data</span>.<span class="ruby-identifier">nil?</span>
+
+  <span class="ruby-identifier">expires_at</span> = <span class="ruby-identifier">data</span>[ <span class="ruby-value">:expires_at</span> ]
+  <span class="ruby-keyword">return</span> <span class="ruby-keyword">nil</span> <span class="ruby-keyword">unless</span> <span class="ruby-identifier">expires_at</span>.<span class="ruby-identifier">nil?</span> <span class="ruby-operator">||</span> <span class="ruby-constant">Time</span>.<span class="ruby-identifier">now</span> <span class="ruby-operator">&lt;</span> <span class="ruby-identifier">expires_at</span>
+
+  <span class="ruby-keyword">return</span> <span class="ruby-identifier">data</span>[ <span class="ruby-value">:value</span> ]
+<span class="ruby-keyword">end</span></pre>
+          </div>
+        </div>
+
+
+      </div>
+
+      <div id="method-i-set" class="method-detail ">
+        <div class="method-heading">
+          <span class="method-name">set</span><span
+            class="method-args">( key, value, ttl = nil )</span>
+          <span class="method-click-advice">click to toggle source</span>
+        </div>
+
+        <div class="method-description">
+          <p>Set data for a given key.</p>
+<dl class="rdoc-list note-list"><dt><code>key</code>
+<dd>
+<p>Key under which to store data.</p>
+</dd><dt><code>value</code>
+<dd>
+<p><a href="../../Data.html"><code>Data</code></a> to store.</p>
+</dd><dt><code>ttl</code>
+<dd>
+<p>(Optional) time-to-live (‘live’ as in living, not as in ‘live TV’) - a value in seconds, after which the data is considered expired. If omitted, the data does not expire.</p>
+</dd></dl>
+
+          <div class="method-source-code" id="set-source">
+            <pre><span class="ruby-comment"># File lib/hoodoo/transient_store/mocks/dalli_client.rb, line 110</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">set</span>( <span class="ruby-identifier">key</span>, <span class="ruby-identifier">value</span>, <span class="ruby-identifier">ttl</span> = <span class="ruby-keyword">nil</span> )
+  <span class="ruby-identifier">data</span> = {
+    <span class="ruby-value">:expires_at</span> <span class="ruby-operator">=&gt;</span> <span class="ruby-identifier">ttl</span>.<span class="ruby-identifier">nil?</span> <span class="ruby-operator">?</span> <span class="ruby-keyword">nil</span> <span class="ruby-operator">:</span> <span class="ruby-constant">Time</span>.<span class="ruby-identifier">now</span>.<span class="ruby-identifier">utc</span> <span class="ruby-operator">+</span> <span class="ruby-identifier">ttl</span>,
+    <span class="ruby-value">:value</span>      <span class="ruby-operator">=&gt;</span> <span class="ruby-identifier">value</span>
+  }
+
+  <span class="ruby-identifier">@@store</span>[ <span class="ruby-identifier">key</span> ] = <span class="ruby-identifier">data</span>
+  <span class="ruby-keyword">true</span>
+<span class="ruby-keyword">end</span></pre>
+          </div>
+        </div>
+
+
+      </div>
+
+      <div id="method-i-stats" class="method-detail ">
+        <div class="method-heading">
+          <span class="method-name">stats</span><span
+            class="method-args">()</span>
+          <span class="method-click-advice">click to toggle source</span>
+        </div>
+
+        <div class="method-description">
+          <p>Mock ‘stats’ health check.</p>
+
+          <div class="method-source-code" id="stats-source">
+            <pre><span class="ruby-comment"># File lib/hoodoo/transient_store/mocks/dalli_client.rb, line 137</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">stats</span>
+
+  <span class="ruby-comment"># Should really be a Hash, but kept as &#39;true&#39; in case any existing</span>
+  <span class="ruby-comment"># client depends on this; it isn&#39;t too important either way.</span>
+  <span class="ruby-comment">#</span>
+  <span class="ruby-keyword">true</span>
+
+<span class="ruby-keyword">end</span></pre>
+          </div>
+        </div>
+
+
+      </div>
+
+    </section>
+
+  </section>
+</main>
+
+
+<footer id="validator-badges" role="contentinfo">
+  <p><a href="https://validator.w3.org/check/referer">Validate</a>
+  <p>Generated by <a href="https://ruby.github.io/rdoc/">RDoc</a> 6.4.0.
+  <p>Based on <a href="http://deveiate.org/projects/Darkfish-RDoc/">Darkfish</a> by <a href="http://deveiate.org">Michael Granger</a>.
+</footer>
+

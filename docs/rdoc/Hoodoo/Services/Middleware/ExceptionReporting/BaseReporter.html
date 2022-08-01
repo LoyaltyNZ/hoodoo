@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+<meta charset="UTF-8">
+
+<title>class Hoodoo::Services::Middleware::ExceptionReporting::BaseReporter - Hoodoo</title>
+
+<script type="text/javascript">
+  var rdoc_rel_prefix = "../../../../";
+  var index_rel_prefix = "../../../../";
+</script>
+
+<script src="../../../../js/navigation.js" defer></script>
+<script src="../../../../js/search.js" defer></script>
+<script src="../../../../js/search_index.js" defer></script>
+<script src="../../../../js/searcher.js" defer></script>
+<script src="../../../../js/darkfish.js" defer></script>
+
+<link href="../../../../css/fonts.css" rel="stylesheet">
+<link href="../../../../css/rdoc.css" rel="stylesheet">
+
+
+<body id="top" role="document" class="class">
+<nav role="navigation">
+  <div id="project-navigation">
+    <div id="home-section" role="region" title="Quick navigation" class="nav-section">
+  <h2>
+    <a href="../../../../index.html" rel="home">Home</a>
+  </h2>
+
+  <div id="table-of-contents-navigation">
+    <a href="../../../../table_of_contents.html#pages">Pages</a>
+    <a href="../../../../table_of_contents.html#classes">Classes</a>
+    <a href="../../../../table_of_contents.html#methods">Methods</a>
+  </div>
+</div>
+
+    <div id="search-section" role="search" class="project-section initially-hidden">
+  <form action="#" method="get" accept-charset="utf-8">
+    <div id="search-field-wrapper">
+      <input id="search-field" role="combobox" aria-label="Search"
+             aria-autocomplete="list" aria-controls="search-results"
+             type="text" name="search" placeholder="Search" spellcheck="false"
+             title="Type to search, Up and Down to navigate, Enter to load">
+    </div>
+
+    <ul id="search-results" aria-label="Search Results"
+        aria-busy="false" aria-expanded="false"
+        aria-atomic="false" class="initially-hidden"></ul>
+  </form>
+</div>
+
+  </div>
+
+  
+
+  <div id="class-metadata">
+    
+    
+<div id="parent-class-section" class="nav-section">
+  <h3>Parent</h3>
+
+  <p class="link"><a href="../../../Communicators/Slow.html">Hoodoo::Communicators::Slow</a>
+</div>
+
+    
+<div id="includes-section" class="nav-section">
+  <h3>Included Modules</h3>
+
+  <ul class="link-list">
+    <li><span class="include">::Singleton</span>
+  </ul>
+</div>
+
+    
+    
+<!-- Method Quickref -->
+<div id="method-list-section" class="nav-section">
+  <h3>Methods</h3>
+
+  <ul class="link-list" role="directory">
+    <li ><a href="#method-i-communicate">#communicate</a>
+    <li ><a href="#method-i-contextual_report">#contextual_report</a>
+    <li ><a href="#method-i-report">#report</a>
+    <li ><a href="#method-i-user_data_for">#user_data_for</a>
+  </ul>
+</div>
+
+  </div>
+</nav>
+
+<main role="main" aria-labelledby="class-Hoodoo::Services::Middleware::ExceptionReporting::BaseReporter">
+  <h1 id="class-Hoodoo::Services::Middleware::ExceptionReporting::BaseReporter" class="class">
+    class Hoodoo::Services::Middleware::ExceptionReporting::BaseReporter
+  </h1>
+
+  <section class="description">
+    
+<p>Subclass this method to create a custom class used to contact external exception monitoring / reporting engine. Examples include:</p>
+<ul><li>
+<p>Honeybadger: <a href="https://www.honeybadger.io">www.honeybadger.io</a></p>
+</li><li>
+<p>Exceptional: <a href="http://www.exceptional.io">www.exceptional.io</a></p>
+</li><li>
+<p>Airbrake:    <a href="https://airbrake.io">airbrake.io</a></p>
+</li></ul>
+
+<p><a href="../../../../Hoodoo.html"><code>Hoodoo</code></a> includes some classes for integration which you can choose from if you want to use the integrated service. Alternatively write your own. When you do this, name your class <strong>outside</strong> the <a href="../../../../Hoodoo.html"><code>Hoodoo</code></a> namespace (the class’s name can be anything you like). Otherwise you will trample upon Hoodoo’ reserved namespace and may cause a naming collision in future <a href="../../../../Hoodoo.html"><code>Hoodoo</code></a> versions.</p>
+
+<p>“Under the hood” the <a href="../../../Communicators/Pool.html"><code>Hoodoo::Communicators::Pool</code></a> mechanism is used. All reporters are assumed to be (comparatively) slow communicators so are descendants of <a href="../../../Communicators/Slow.html"><code>Hoodoo::Communicators::Slow</code></a>.</p>
+
+<p>Add a reporter class to the middleware from any service application by calling <a href="../ExceptionReporting.html#method-c-add"><code>Hoodoo::Services::Middleware::ExceptionReporting.add</code></a>.</p>
+
+  </section>
+
+  <section id="5Buntitled-5D" class="documentation-section">
+
+
+
+
+
+     <section id="public-instance-5Buntitled-5D-method-details" class="method-section">
+       <header>
+         <h3>Public Instance Methods</h3>
+       </header>
+
+      <div id="method-i-communicate" class="method-detail ">
+        <div class="method-heading">
+          <span class="method-name">communicate</span><span
+            class="method-args">( object )</span>
+          <span class="method-click-advice">click to toggle source</span>
+        </div>
+
+        <div class="method-description">
+          <p>Subclasses <strong>MUST</strong> <strong>NOT</strong> override this method, which is part of the base class implementation and implements <a href="../../../Communicators/Slow.html#method-i-communicate"><code>Hoodoo::Communicators::Slow#communicate</code></a>. It calls through to the <a href="BaseReporter.html#method-i-report"><code>report</code></a> method which subclasses do implement, unpacking a payload used for the internal communicators into the parameters that <a href="BaseReporter.html#method-i-report"><code>report</code></a> expects.</p>
+<dl class="rdoc-list note-list"><dt><code>object</code>
+<dd>
+<p><a href="Payload.html"><code>Hoodoo::Services::Middleware::ExceptionReporting::Payload</code></a> instance.</p>
+</dd></dl>
+
+          <div class="method-source-code" id="communicate-source">
+            <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/exception_reporting/base_reporter.rb, line 120</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">communicate</span>( <span class="ruby-identifier">object</span> )
+
+  <span class="ruby-identifier">env</span> = <span class="ruby-identifier">object</span>.<span class="ruby-identifier">rack_env</span> <span class="ruby-operator">||</span> ( <span class="ruby-identifier">object</span>.<span class="ruby-identifier">context</span>.<span class="ruby-identifier">owning_interaction</span>.<span class="ruby-identifier">rack_request</span>.<span class="ruby-identifier">env</span> <span class="ruby-keyword">rescue</span> <span class="ruby-keyword">nil</span> )
+
+  <span class="ruby-comment"># The &#39;instance_methods( false )&#39; call pulls only instance methods</span>
+  <span class="ruby-comment"># strictly defined in &#39;self&#39; instance, not in any superclasses.</span>
+  <span class="ruby-comment"># Thus we don&#39;t see the base implementation of &#39;contextual_report&#39;</span>
+  <span class="ruby-comment"># in this source file; only an overriding implementation in a real</span>
+  <span class="ruby-comment"># reporter subclass.</span>
+  <span class="ruby-comment">#</span>
+  <span class="ruby-comment"># http://ruby-doc.org/core-2.1.8/Module.html#method-i-instance_methods</span>
+  <span class="ruby-comment">#</span>
+  <span class="ruby-identifier">subclass_methods</span> = <span class="ruby-keyword">self</span>.<span class="ruby-identifier">class</span>.<span class="ruby-identifier">instance_methods</span>( <span class="ruby-keyword">false</span> )
+
+  <span class="ruby-keyword">if</span> <span class="ruby-identifier">object</span>.<span class="ruby-identifier">context</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">subclass_methods</span>.<span class="ruby-identifier">include?</span>( <span class="ruby-value">:contextual_report</span> )
+    <span class="ruby-keyword">self</span>.<span class="ruby-identifier">contextual_report</span>( <span class="ruby-identifier">object</span>.<span class="ruby-identifier">exception</span>, <span class="ruby-identifier">object</span>.<span class="ruby-identifier">context</span> )
+  <span class="ruby-keyword">else</span>
+    <span class="ruby-keyword">self</span>.<span class="ruby-identifier">report</span>( <span class="ruby-identifier">object</span>.<span class="ruby-identifier">exception</span>, <span class="ruby-identifier">env</span> )
+  <span class="ruby-keyword">end</span>
+<span class="ruby-keyword">end</span></pre>
+          </div>
+        </div>
+
+
+      </div>
+
+      <div id="method-i-contextual_report" class="method-detail ">
+        <div class="method-heading">
+          <span class="method-name">contextual_report</span><span
+            class="method-args">( e, context )</span>
+          <span class="method-click-advice">click to toggle source</span>
+        </div>
+
+        <div class="method-description">
+          <p>Similar to <a href="BaseReporter.html#method-i-report"><code>report</code></a>, with the same caveats; but has more information available.</p>
+
+<p>Subclasses report an exception for errors that occur within a fully handled <a href="../../../../Rack.html"><code>Rack</code></a> request context, with a high level processed <a href="../../../../Hoodoo.html"><code>Hoodoo</code></a> representation available.</p>
+
+<p>Through the protected <a href="BaseReporter.html#method-i-user_data_for"><code>user_data_for</code></a> method, subclasses can, if the exception reporting backend supports it, include detailed request information with their contextual exception reports.</p>
+
+<p><a href="../../Implementation.html"><code>Implementation</code></a> is optional. If not available, the system falls back to the less detailed <a href="BaseReporter.html#method-i-report"><code>report</code></a> method. If called, all parameters must be provided; none are optional.</p>
+<dl class="rdoc-list note-list"><dt><code>e</code>
+<dd>
+<p>Exception (or subclass) instance to be reported.</p>
+</dd><dt><code>context</code>
+<dd>
+<p><a href="../../Context.html"><code>Hoodoo::Services::Context</code></a> instance describing an in-flight request/response cycle.</p>
+</dd></dl>
+
+          <div class="method-source-code" id="contextual_report-source">
+            <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/exception_reporting/base_reporter.rb, line 106</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">contextual_report</span>( <span class="ruby-identifier">e</span>, <span class="ruby-identifier">context</span> )
+  <span class="ruby-identifier">raise</span>( <span class="ruby-string">&#39;Subclasses may implement #contextual_report&#39;</span> )
+<span class="ruby-keyword">end</span></pre>
+          </div>
+        </div>
+
+
+      </div>
+
+      <div id="method-i-report" class="method-detail ">
+        <div class="method-heading">
+          <span class="method-name">report</span><span
+            class="method-args">( e, env = nil )</span>
+          <span class="method-click-advice">click to toggle source</span>
+        </div>
+
+        <div class="method-description">
+          <p>Subclasses implement this method. The middleware creates the singleton instance of the subclass, then calls your implementation of the method when it catches an exception in its top level handler. The subclass implementation sends details of the exception to the desired exception monitoring or reporting service. The return value is ignored.</p>
+
+<p>The middleware wraps calls to your subclass in a nested exception handler. If you raise an exception, the middleware logs details with a <code>:debug</code> level through its logger instance if possible (see <a href="../../Middleware.html#method-c-logger"><code>Hoodoo::Services::Middleware::logger</code></a>) along with printing details to $stderr, then continues processing.</p>
+
+<p>If service applications are expecting potential exceptions to occur and they catch them without re-raising for the middleware to catch, this reporting method will not be called. If a service author thinks such an exception ought to be logged, they must re-raise it.</p>
+
+<p>The middleware runs calls here in a processing Thread to avoid delays to the calling client. This means your implementation of this method can use blocking network calls should you so wish; but beware, you are running in your own Thread on every call and more than one call might be running concurrently. If your implementation is not threadsafe, use a Mutex. For example, add a mutex class variable to your class:</p>
+
+<pre class="ruby"><span class="ruby-identifier">@@mutex</span> = <span class="ruby-constant">Mutex</span>.<span class="ruby-identifier">new</span>
+</pre>
+
+<p>…then use it inside <code>report</code> with something like:</p>
+
+<pre class="ruby"><span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">report</span>( <span class="ruby-identifier">e</span> )
+  <span class="ruby-identifier">@@mutex</span>.<span class="ruby-identifier">synchronize</span> <span class="ruby-keyword">do</span>
+    <span class="ruby-comment"># Your reporting service&#39;s custom code goes here</span>
+  <span class="ruby-keyword">end</span>
+<span class="ruby-keyword">end</span>
+</pre>
+<dl class="rdoc-list note-list"><dt><code>e</code>
+<dd>
+<p>Exception (or subclass) instance to be reported.</p>
+</dd><dt><code>env</code>
+<dd>
+<p>Optional <a href="../../../../Rack.html"><code>Rack</code></a> environment hash for the inbound request, for exception reports made in the context of <a href="../../../../Rack.html"><code>Rack</code></a> request handling.</p>
+</dd></dl>
+
+          <div class="method-source-code" id="report-source">
+            <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/exception_reporting/base_reporter.rb, line 82</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">report</span>( <span class="ruby-identifier">e</span>, <span class="ruby-identifier">env</span> = <span class="ruby-keyword">nil</span> )
+  <span class="ruby-identifier">raise</span>( <span class="ruby-string">&#39;Subclasses must implement #report&#39;</span> )
+<span class="ruby-keyword">end</span></pre>
+          </div>
+        </div>
+
+
+      </div>
+
+    </section>
+
+     <section id="protected-instance-5Buntitled-5D-method-details" class="method-section">
+       <header>
+         <h3>Protected Instance Methods</h3>
+       </header>
+
+      <div id="method-i-user_data_for" class="method-detail ">
+        <div class="method-heading">
+          <span class="method-name">user_data_for</span><span
+            class="method-args">( context )</span>
+          <span class="method-click-advice">click to toggle source</span>
+        </div>
+
+        <div class="method-description">
+          <p>When passed a request context, extracts information that can be given as “user data” (or similar) to an exception reporting endpoint, if it supports such a concept.</p>
+<dl class="rdoc-list note-list"><dt><code>context</code>
+<dd>
+<p><a href="../../Context.html"><code>Hoodoo::Services::Context</code></a> instance describing an in-flight request/response cycle.</p>
+</dd></dl>
+
+          <div class="method-source-code" id="user_data_for-source">
+            <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/exception_reporting/base_reporter.rb, line 150</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">user_data_for</span>( <span class="ruby-identifier">context</span> )
+  <span class="ruby-keyword">begin</span>
+    <span class="ruby-identifier">hash</span> = {
+      <span class="ruby-value">:interaction_id</span> <span class="ruby-operator">=&gt;</span>   <span class="ruby-identifier">context</span>.<span class="ruby-identifier">owning_interaction</span>.<span class="ruby-identifier">interaction_id</span>,
+      <span class="ruby-value">:action</span>         <span class="ruby-operator">=&gt;</span> ( <span class="ruby-identifier">context</span>.<span class="ruby-identifier">owning_interaction</span>.<span class="ruby-identifier">requested_action</span>          <span class="ruby-operator">||</span> <span class="ruby-string">&#39;(unknown)&#39;</span> ).<span class="ruby-identifier">to_s</span>,
+      <span class="ruby-value">:resource</span>       <span class="ruby-operator">=&gt;</span> ( <span class="ruby-identifier">context</span>.<span class="ruby-identifier">owning_interaction</span>.<span class="ruby-identifier">target_interface</span>.<span class="ruby-identifier">resource</span> <span class="ruby-operator">||</span> <span class="ruby-string">&#39;(unknown)&#39;</span> ).<span class="ruby-identifier">to_s</span>,
+      <span class="ruby-value">:version</span>        <span class="ruby-operator">=&gt;</span>   <span class="ruby-identifier">context</span>.<span class="ruby-identifier">owning_interaction</span>.<span class="ruby-identifier">target_interface</span>.<span class="ruby-identifier">version</span>,
+      <span class="ruby-value">:request</span>        <span class="ruby-operator">=&gt;</span> {
+        <span class="ruby-value">:locale</span>              <span class="ruby-operator">=&gt;</span> <span class="ruby-identifier">context</span>.<span class="ruby-identifier">request</span>.<span class="ruby-identifier">locale</span>,
+        <span class="ruby-value">:uri_path_components</span> <span class="ruby-operator">=&gt;</span> <span class="ruby-identifier">context</span>.<span class="ruby-identifier">request</span>.<span class="ruby-identifier">uri_path_components</span>,
+        <span class="ruby-value">:uri_path_extension</span>  <span class="ruby-operator">=&gt;</span> <span class="ruby-identifier">context</span>.<span class="ruby-identifier">request</span>.<span class="ruby-identifier">uri_path_extension</span>,
+        <span class="ruby-value">:embeds</span>              <span class="ruby-operator">=&gt;</span> <span class="ruby-identifier">context</span>.<span class="ruby-identifier">request</span>.<span class="ruby-identifier">embeds</span>,
+        <span class="ruby-value">:references</span>          <span class="ruby-operator">=&gt;</span> <span class="ruby-identifier">context</span>.<span class="ruby-identifier">request</span>.<span class="ruby-identifier">references</span>,
+        <span class="ruby-value">:headers</span>             <span class="ruby-operator">=&gt;</span> <span class="ruby-identifier">context</span>.<span class="ruby-identifier">request</span>.<span class="ruby-identifier">headers</span>,
+        <span class="ruby-value">:list</span>                <span class="ruby-operator">=&gt;</span> {
+          <span class="ruby-value">:offset</span>      <span class="ruby-operator">=&gt;</span> <span class="ruby-identifier">context</span>.<span class="ruby-identifier">request</span>.<span class="ruby-identifier">list</span>.<span class="ruby-identifier">offset</span>,
+          <span class="ruby-value">:limit</span>       <span class="ruby-operator">=&gt;</span> <span class="ruby-identifier">context</span>.<span class="ruby-identifier">request</span>.<span class="ruby-identifier">list</span>.<span class="ruby-identifier">limit</span>,
+          <span class="ruby-value">:sort_data</span>   <span class="ruby-operator">=&gt;</span> <span class="ruby-identifier">context</span>.<span class="ruby-identifier">request</span>.<span class="ruby-identifier">list</span>.<span class="ruby-identifier">sort_data</span>,
+          <span class="ruby-value">:search_data</span> <span class="ruby-operator">=&gt;</span> <span class="ruby-identifier">context</span>.<span class="ruby-identifier">request</span>.<span class="ruby-identifier">list</span>.<span class="ruby-identifier">search_data</span>,
+          <span class="ruby-value">:filter_data</span> <span class="ruby-operator">=&gt;</span> <span class="ruby-identifier">context</span>.<span class="ruby-identifier">request</span>.<span class="ruby-identifier">list</span>.<span class="ruby-identifier">filter_data</span>
+        }
+      }
+    }
+
+    <span class="ruby-identifier">hash</span>[ <span class="ruby-value">:session</span> ] = <span class="ruby-identifier">context</span>.<span class="ruby-identifier">session</span>.<span class="ruby-identifier">to_h</span> <span class="ruby-keyword">unless</span> <span class="ruby-identifier">context</span>.<span class="ruby-identifier">session</span>.<span class="ruby-identifier">nil?</span>
+    <span class="ruby-keyword">return</span> <span class="ruby-identifier">hash</span>
+
+  <span class="ruby-keyword">rescue</span>
+    <span class="ruby-keyword">return</span> <span class="ruby-keyword">nil</span>
+
+  <span class="ruby-keyword">end</span>
+<span class="ruby-keyword">end</span></pre>
+          </div>
+        </div>
+
+
+      </div>
+
+    </section>
+
+  </section>
+</main>
+
+
+<footer id="validator-badges" role="contentinfo">
+  <p><a href="https://validator.w3.org/check/referer">Validate</a>
+  <p>Generated by <a href="https://ruby.github.io/rdoc/">RDoc</a> 6.4.0.
+  <p>Based on <a href="http://deveiate.org/projects/Darkfish-RDoc/">Darkfish</a> by <a href="http://deveiate.org">Michael Granger</a>.
+</footer>
+

@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+<meta charset="UTF-8">
+
+<title>module Hoodoo::Logger::Communicator - Hoodoo</title>
+
+<script type="text/javascript">
+  var rdoc_rel_prefix = "../../";
+  var index_rel_prefix = "../../";
+</script>
+
+<script src="../../js/navigation.js" defer></script>
+<script src="../../js/search.js" defer></script>
+<script src="../../js/search_index.js" defer></script>
+<script src="../../js/searcher.js" defer></script>
+<script src="../../js/darkfish.js" defer></script>
+
+<link href="../../css/fonts.css" rel="stylesheet">
+<link href="../../css/rdoc.css" rel="stylesheet">
+
+
+<body id="top" role="document" class="module">
+<nav role="navigation">
+  <div id="project-navigation">
+    <div id="home-section" role="region" title="Quick navigation" class="nav-section">
+  <h2>
+    <a href="../../index.html" rel="home">Home</a>
+  </h2>
+
+  <div id="table-of-contents-navigation">
+    <a href="../../table_of_contents.html#pages">Pages</a>
+    <a href="../../table_of_contents.html#classes">Classes</a>
+    <a href="../../table_of_contents.html#methods">Methods</a>
+  </div>
+</div>
+
+    <div id="search-section" role="search" class="project-section initially-hidden">
+  <form action="#" method="get" accept-charset="utf-8">
+    <div id="search-field-wrapper">
+      <input id="search-field" role="combobox" aria-label="Search"
+             aria-autocomplete="list" aria-controls="search-results"
+             type="text" name="search" placeholder="Search" spellcheck="false"
+             title="Type to search, Up and Down to navigate, Enter to load">
+    </div>
+
+    <ul id="search-results" aria-label="Search Results"
+        aria-busy="false" aria-expanded="false"
+        aria-atomic="false" class="initially-hidden"></ul>
+  </form>
+</div>
+
+  </div>
+
+  
+
+  <div id="class-metadata">
+    
+    
+    
+    
+    
+<!-- Method Quickref -->
+<div id="method-list-section" class="nav-section">
+  <h3>Methods</h3>
+
+  <ul class="link-list" role="directory">
+    <li ><a href="#method-c-new">::new</a>
+    <li ><a href="#method-i-communicate">#communicate</a>
+    <li ><a href="#method-i-dropped">#dropped</a>
+  </ul>
+</div>
+
+  </div>
+</nav>
+
+<main role="main" aria-labelledby="module-Hoodoo::Logger::Communicator">
+  <h1 id="module-Hoodoo::Logger::Communicator" class="module">
+    module Hoodoo::Logger::Communicator
+  </h1>
+
+  <section class="description">
+    
+<p>Mixin used internally for the <a href="FastCommunicator.html"><code>FastCommunicator</code></a> and <a href="SlowCommunicator.html"><code>SlowCommunicator</code></a> wrappers that hide implementation complexity from log writer subclasses.</p>
+
+  </section>
+
+  <section id="5Buntitled-5D" class="documentation-section">
+
+
+
+
+
+     <section id="public-class-5Buntitled-5D-method-details" class="method-section">
+       <header>
+         <h3>Public Class Methods</h3>
+       </header>
+
+      <div id="method-c-new" class="method-detail ">
+        <div class="method-heading">
+          <span class="method-name">new</span><span
+            class="method-args">( writer_instance, owning_logger )</span>
+          <span class="method-click-advice">click to toggle source</span>
+        </div>
+
+        <div class="method-description">
+          <p>Create an instance of a logging communicator, based on the given log writer and owning logger instance.</p>
+<dl class="rdoc-list note-list"><dt><code>writer_instance</code>
+<dd>
+<p><a href="FastWriter.html"><code>Hoodoo::Logger::FastWriter</code></a> or <a href="SlowWriter.html"><code>Hoodoo::Logger::SlowWriter</code></a> subclass instance that will log things when this <a href="Communicator.html"><code>Communicator</code></a> asks it to do so.</p>
+</dd><dt><code>owning_logger</code>
+<dd>
+<p><a href="../Logger.html"><code>Hoodoo::Logger</code></a> instance that will be using this communicator instance.</p>
+</dd></dl>
+
+          <div class="method-source-code" id="new-source">
+            <pre><span class="ruby-comment"># File lib/hoodoo/logger/logger.rb, line 369</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">initialize</span>( <span class="ruby-identifier">writer_instance</span>, <span class="ruby-identifier">owning_logger</span> )
+  <span class="ruby-ivar">@writer_instance</span> = <span class="ruby-identifier">writer_instance</span>
+  <span class="ruby-ivar">@owning_logger</span>   = <span class="ruby-identifier">owning_logger</span>
+<span class="ruby-keyword">end</span></pre>
+          </div>
+        </div>
+
+
+      </div>
+
+    </section>
+
+     <section id="public-instance-5Buntitled-5D-method-details" class="method-section">
+       <header>
+         <h3>Public Instance Methods</h3>
+       </header>
+
+      <div id="method-i-communicate" class="method-detail ">
+        <div class="method-heading">
+          <span class="method-name">communicate</span><span
+            class="method-args">( payload )</span>
+          <span class="method-click-advice">click to toggle source</span>
+        </div>
+
+        <div class="method-description">
+          <p>Implement Hoodoo::Communicators::Base#communicate for both slow and fast writers. Assumes it will be passed a <a href="Payload.html"><code>Hoodoo::Logger::Payload</code></a> class instance which describes the structured log data to report; also assumes it is only called when the calling logger’s configured log level threshold should allow through the level of the log message in question. Calls through to the report implementation.</p>
+
+          <div class="method-source-code" id="communicate-source">
+            <pre><span class="ruby-comment"># File lib/hoodoo/logger/logger.rb, line 381</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">communicate</span>( <span class="ruby-identifier">payload</span> )
+  <span class="ruby-ivar">@writer_instance</span>.<span class="ruby-identifier">report</span>(
+    <span class="ruby-identifier">payload</span>.<span class="ruby-identifier">log_level</span>,
+    <span class="ruby-identifier">payload</span>.<span class="ruby-identifier">component</span>,
+    <span class="ruby-identifier">payload</span>.<span class="ruby-identifier">code</span>,
+    <span class="ruby-identifier">payload</span>.<span class="ruby-identifier">data</span>
+  )
+<span class="ruby-keyword">end</span></pre>
+          </div>
+        </div>
+
+
+      </div>
+
+      <div id="method-i-dropped" class="method-detail ">
+        <div class="method-heading">
+          <span class="method-name">dropped</span><span
+            class="method-args">( number )</span>
+          <span class="method-click-advice">click to toggle source</span>
+        </div>
+
+        <div class="method-description">
+          <p>Implement optional method <a href="../Communicators/Slow.html#method-i-dropped"><code>Hoodoo::Communicators::Slow#dropped</code></a> on behalf of subclasses. The method turns the ‘messages dropped’ notification into a log message of <code>:warn</code> level and which it reports internally immediately for the Writer instance only (since different writers have different queues and thus different dropped message warnings), provided that the owning <a href="../Logger.html"><code>Hoodoo::Logger</code></a> instance log level lets warnings through.</p>
+
+          <div class="method-source-code" id="dropped-source">
+            <pre><span class="ruby-comment"># File lib/hoodoo/logger/logger.rb, line 398</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">dropped</span>( <span class="ruby-identifier">number</span> )
+  <span class="ruby-keyword">if</span> <span class="ruby-ivar">@owning_logger</span>.<span class="ruby-identifier">report?</span>( <span class="ruby-value">:warn</span> )
+    <span class="ruby-ivar">@writer_instance</span>.<span class="ruby-identifier">report</span>(
+      <span class="ruby-value">:warn</span>,
+      <span class="ruby-keyword">self</span>.<span class="ruby-identifier">class</span>.<span class="ruby-identifier">name</span>,
+      <span class="ruby-string">&#39;dropped.messages&#39;</span>,
+      <span class="ruby-node">&quot;Logging flooded - #{ number } messages dropped&quot;</span>
+    )
+  <span class="ruby-keyword">end</span>
+<span class="ruby-keyword">end</span></pre>
+          </div>
+        </div>
+
+
+      </div>
+
+    </section>
+
+  </section>
+</main>
+
+
+<footer id="validator-badges" role="contentinfo">
+  <p><a href="https://validator.w3.org/check/referer">Validate</a>
+  <p>Generated by <a href="https://ruby.github.io/rdoc/">RDoc</a> 6.4.0.
+  <p>Based on <a href="http://deveiate.org/projects/Darkfish-RDoc/">Darkfish</a> by <a href="http://deveiate.org">Michael Granger</a>.
+</footer>
+

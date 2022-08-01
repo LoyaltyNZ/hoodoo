@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+<meta charset="UTF-8">
+
+<title>class Hoodoo::Services::Middleware::ExceptionReporting::AirbrakeReporter - Hoodoo</title>
+
+<script type="text/javascript">
+  var rdoc_rel_prefix = "../../../../";
+  var index_rel_prefix = "../../../../";
+</script>
+
+<script src="../../../../js/navigation.js" defer></script>
+<script src="../../../../js/search.js" defer></script>
+<script src="../../../../js/search_index.js" defer></script>
+<script src="../../../../js/searcher.js" defer></script>
+<script src="../../../../js/darkfish.js" defer></script>
+
+<link href="../../../../css/fonts.css" rel="stylesheet">
+<link href="../../../../css/rdoc.css" rel="stylesheet">
+
+
+<body id="top" role="document" class="class">
+<nav role="navigation">
+  <div id="project-navigation">
+    <div id="home-section" role="region" title="Quick navigation" class="nav-section">
+  <h2>
+    <a href="../../../../index.html" rel="home">Home</a>
+  </h2>
+
+  <div id="table-of-contents-navigation">
+    <a href="../../../../table_of_contents.html#pages">Pages</a>
+    <a href="../../../../table_of_contents.html#classes">Classes</a>
+    <a href="../../../../table_of_contents.html#methods">Methods</a>
+  </div>
+</div>
+
+    <div id="search-section" role="search" class="project-section initially-hidden">
+  <form action="#" method="get" accept-charset="utf-8">
+    <div id="search-field-wrapper">
+      <input id="search-field" role="combobox" aria-label="Search"
+             aria-autocomplete="list" aria-controls="search-results"
+             type="text" name="search" placeholder="Search" spellcheck="false"
+             title="Type to search, Up and Down to navigate, Enter to load">
+    </div>
+
+    <ul id="search-results" aria-label="Search Results"
+        aria-busy="false" aria-expanded="false"
+        aria-atomic="false" class="initially-hidden"></ul>
+  </form>
+</div>
+
+  </div>
+
+  
+
+  <div id="class-metadata">
+    
+    
+<div id="parent-class-section" class="nav-section">
+  <h3>Parent</h3>
+
+  <p class="link"><a href="BaseReporter.html">Hoodoo::Services::Middleware::ExceptionReporting::BaseReporter</a>
+</div>
+
+    
+    
+    
+<!-- Method Quickref -->
+<div id="method-list-section" class="nav-section">
+  <h3>Methods</h3>
+
+  <ul class="link-list" role="directory">
+    <li ><a href="#method-i-contextual_report">#contextual_report</a>
+    <li ><a href="#method-i-report">#report</a>
+  </ul>
+</div>
+
+  </div>
+</nav>
+
+<main role="main" aria-labelledby="class-Hoodoo::Services::Middleware::ExceptionReporting::AirbrakeReporter">
+  <h1 id="class-Hoodoo::Services::Middleware::ExceptionReporting::AirbrakeReporter" class="class">
+    class Hoodoo::Services::Middleware::ExceptionReporting::AirbrakeReporter
+  </h1>
+
+  <section class="description">
+    
+<p><a href="BaseReporter.html"><code>Hoodoo::Services::Middleware::ExceptionReporting::BaseReporter</code></a> subclass giving <a href="../ExceptionReporting.html"><code>Hoodoo::Services::Middleware::ExceptionReporting</code></a> access to Airbrake for error reporting. See <a href="https://airbrake.io">airbrake.io</a>.</p>
+
+<p>Your application must include the Airbrake gem ‘airbrake’ via Gemfile (+gem ‘airbrake’+ / +bundle install) or direct installation (+gem install airbrake+).</p>
+
+<p>The API key must be set during your application initialization and the class must be added to <a href="../../../../Hoodoo.html"><code>Hoodoo</code></a> for use as an error reporter, e.g. through a ‘config/initializers’ folder, as follows:</p>
+
+<pre class="ruby"><span class="ruby-identifier">require</span> <span class="ruby-string">&#39;airbrake&#39;</span>
+
+<span class="ruby-constant">Airbrake</span>.<span class="ruby-identifier">configure</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span> <span class="ruby-identifier">config</span> <span class="ruby-operator">|</span>
+  <span class="ruby-identifier">config</span>.<span class="ruby-identifier">project_key</span> = <span class="ruby-string">&#39;YOUR_AIRBRAKE_PROJECT_KEY&#39;</span>
+  <span class="ruby-identifier">config</span>.<span class="ruby-identifier">project_id</span>  = <span class="ruby-string">&#39;YOUR_AIRBRAKE_PROJECT_ID&#39;</span>
+<span class="ruby-keyword">end</span>
+
+<span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Services</span><span class="ruby-operator">::</span><span class="ruby-constant">Middleware</span><span class="ruby-operator">::</span><span class="ruby-constant">ExceptionReporting</span>.<span class="ruby-identifier">add</span>(
+  <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Services</span><span class="ruby-operator">::</span><span class="ruby-constant">Middleware</span><span class="ruby-operator">::</span><span class="ruby-constant">ExceptionReporting</span><span class="ruby-operator">::</span><span class="ruby-constant">AirbrakeReporter</span>
+) <span class="ruby-keyword">unless</span> <span class="ruby-constant">Service</span>.<span class="ruby-identifier">config</span>.<span class="ruby-identifier">env</span>.<span class="ruby-identifier">test?</span> <span class="ruby-operator">||</span> <span class="ruby-constant">Service</span>.<span class="ruby-identifier">config</span>.<span class="ruby-identifier">env</span>.<span class="ruby-identifier">development?</span>
+</pre>
+
+<p><a href="../../../Services.html"><code>Services</code></a> and the <a href="../../../../Hoodoo.html"><code>Hoodoo</code></a> middleware do not pass Rails-like params around in forms or query strings, but do beware of search or filter query data containing sensitive material or POST bodies in e.g. JSON encoding containing sensitive data. This comes down to the filtering ability of the Airbrake gem:</p>
+
+<pre class="ruby"><span class="ruby-identifier">https</span><span class="ruby-value">:/</span><span class="ruby-operator">/</span><span class="ruby-identifier">github</span>.<span class="ruby-identifier">com</span><span class="ruby-operator">/</span><span class="ruby-identifier">airbrake</span><span class="ruby-operator">/</span><span class="ruby-identifier">airbrake</span><span class="ruby-operator">/</span><span class="ruby-identifier">wiki</span><span class="ruby-operator">/</span><span class="ruby-constant">Customizing</span><span class="ruby-operator">-</span><span class="ruby-identifier">your</span><span class="ruby-operator">-</span><span class="ruby-identifier">airbrake</span>.<span class="ruby-identifier">rb</span>
+</pre>
+
+  </section>
+
+  <section id="5Buntitled-5D" class="documentation-section">
+
+
+
+
+
+     <section id="public-instance-5Buntitled-5D-method-details" class="method-section">
+       <header>
+         <h3>Public Instance Methods</h3>
+       </header>
+
+      <div id="method-i-contextual_report" class="method-detail ">
+        <div class="method-heading">
+          <span class="method-name">contextual_report</span><span
+            class="method-args">( e, context )</span>
+          <span class="method-click-advice">click to toggle source</span>
+        </div>
+
+        <div class="method-description">
+          <p>Report an exception for errors that occur within a fully handled <a href="../../../../Rack.html"><code>Rack</code></a> request context, with a high level processed <a href="../../../../Hoodoo.html"><code>Hoodoo</code></a> representation available.</p>
+<dl class="rdoc-list note-list"><dt><code>e</code>
+<dd>
+<p>Exception (or subclass) instance to be reported.</p>
+</dd><dt><code>context</code>
+<dd>
+<p><a href="../../Context.html"><code>Hoodoo::Services::Context</code></a> instance describing an in-flight request/response cycle.</p>
+</dd></dl>
+
+          <div class="method-source-code" id="contextual_report-source">
+            <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/exception_reporting/reporters/airbrake_reporter.rb, line 73</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">contextual_report</span>( <span class="ruby-identifier">e</span>, <span class="ruby-identifier">context</span> )
+  <span class="ruby-identifier">opts</span> = {
+    <span class="ruby-value">:rack_env</span>         <span class="ruby-operator">=&gt;</span> <span class="ruby-identifier">context</span>.<span class="ruby-identifier">owning_interaction</span>.<span class="ruby-identifier">rack_request</span>.<span class="ruby-identifier">env</span>,
+    <span class="ruby-value">:backtrace</span>        <span class="ruby-operator">=&gt;</span> <span class="ruby-constant">Kernel</span>.<span class="ruby-identifier">caller</span>(),
+    <span class="ruby-value">:environment_name</span> <span class="ruby-operator">=&gt;</span> <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Services</span><span class="ruby-operator">::</span><span class="ruby-constant">Middleware</span>.<span class="ruby-identifier">environment</span>,
+    <span class="ruby-value">:session</span>          <span class="ruby-operator">=&gt;</span> <span class="ruby-identifier">user_data_for</span>( <span class="ruby-identifier">context</span> ) <span class="ruby-operator">||</span> <span class="ruby-string">&#39;unknown&#39;</span>
+  }
+
+  <span class="ruby-identifier">send_synchronously_to_airbrake</span>( <span class="ruby-identifier">e</span>, <span class="ruby-identifier">opts</span> )
+<span class="ruby-keyword">end</span></pre>
+          </div>
+        </div>
+
+
+      </div>
+
+      <div id="method-i-report" class="method-detail ">
+        <div class="method-heading">
+          <span class="method-name">report</span><span
+            class="method-args">( e, env )</span>
+          <span class="method-click-advice">click to toggle source</span>
+        </div>
+
+        <div class="method-description">
+          <p>Report an exception to Airbrake.</p>
+<dl class="rdoc-list note-list"><dt><code>e</code>
+<dd>
+<p>Exception (or subclass) instance to be reported.</p>
+</dd><dt><code>env</code>
+<dd>
+<p>Optional <a href="../../../../Rack.html"><code>Rack</code></a> environment hash for the inbound request, for exception reports made in the context of <a href="../../../../Rack.html"><code>Rack</code></a> request handling. In the case of Airbrake, the call may just hang unless a <a href="../../../../Rack.html"><code>Rack</code></a> environment is provided.</p>
+</dd></dl>
+
+          <div class="method-source-code" id="report-source">
+            <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/exception_reporting/reporters/airbrake_reporter.rb, line 57</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">report</span>( <span class="ruby-identifier">e</span>, <span class="ruby-identifier">env</span> )
+  <span class="ruby-identifier">opts</span> = { <span class="ruby-value">:backtrace</span> <span class="ruby-operator">=&gt;</span> <span class="ruby-constant">Kernel</span>.<span class="ruby-identifier">caller</span>() }
+  <span class="ruby-identifier">opts</span>[ <span class="ruby-value">:rack_env</span> ] = <span class="ruby-identifier">env</span> <span class="ruby-keyword">unless</span> <span class="ruby-identifier">env</span>.<span class="ruby-identifier">nil?</span>
+
+  <span class="ruby-identifier">send_synchronously_to_airbrake</span>( <span class="ruby-identifier">e</span>, <span class="ruby-identifier">opts</span> )
+<span class="ruby-keyword">end</span></pre>
+          </div>
+        </div>
+
+
+      </div>
+
+    </section>
+
+  </section>
+</main>
+
+
+<footer id="validator-badges" role="contentinfo">
+  <p><a href="https://validator.w3.org/check/referer">Validate</a>
+  <p>Generated by <a href="https://ruby.github.io/rdoc/">RDoc</a> 6.4.0.
+  <p>Based on <a href="http://deveiate.org/projects/Darkfish-RDoc/">Darkfish</a> by <a href="http://deveiate.org">Michael Granger</a>.
+</footer>
+

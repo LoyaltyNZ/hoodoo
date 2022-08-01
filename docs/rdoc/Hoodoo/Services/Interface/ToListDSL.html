@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+<meta charset="UTF-8">
+
+<title>class Hoodoo::Services::Interface::ToListDSL - Hoodoo</title>
+
+<script type="text/javascript">
+  var rdoc_rel_prefix = "../../../";
+  var index_rel_prefix = "../../../";
+</script>
+
+<script src="../../../js/navigation.js" defer></script>
+<script src="../../../js/search.js" defer></script>
+<script src="../../../js/search_index.js" defer></script>
+<script src="../../../js/searcher.js" defer></script>
+<script src="../../../js/darkfish.js" defer></script>
+
+<link href="../../../css/fonts.css" rel="stylesheet">
+<link href="../../../css/rdoc.css" rel="stylesheet">
+
+
+<body id="top" role="document" class="class">
+<nav role="navigation">
+  <div id="project-navigation">
+    <div id="home-section" role="region" title="Quick navigation" class="nav-section">
+  <h2>
+    <a href="../../../index.html" rel="home">Home</a>
+  </h2>
+
+  <div id="table-of-contents-navigation">
+    <a href="../../../table_of_contents.html#pages">Pages</a>
+    <a href="../../../table_of_contents.html#classes">Classes</a>
+    <a href="../../../table_of_contents.html#methods">Methods</a>
+  </div>
+</div>
+
+    <div id="search-section" role="search" class="project-section initially-hidden">
+  <form action="#" method="get" accept-charset="utf-8">
+    <div id="search-field-wrapper">
+      <input id="search-field" role="combobox" aria-label="Search"
+             aria-autocomplete="list" aria-controls="search-results"
+             type="text" name="search" placeholder="Search" spellcheck="false"
+             title="Type to search, Up and Down to navigate, Enter to load">
+    </div>
+
+    <ul id="search-results" aria-label="Search Results"
+        aria-busy="false" aria-expanded="false"
+        aria-atomic="false" class="initially-hidden"></ul>
+  </form>
+</div>
+
+  </div>
+
+  
+
+  <div id="class-metadata">
+    
+    
+<div id="parent-class-section" class="nav-section">
+  <h3>Parent</h3>
+
+  <p class="link">Object
+</div>
+
+    
+    
+    
+<!-- Method Quickref -->
+<div id="method-list-section" class="nav-section">
+  <h3>Methods</h3>
+
+  <ul class="link-list" role="directory">
+    <li ><a href="#method-c-new">::new</a>
+    <li ><a href="#method-i-default">#default</a>
+    <li ><a href="#method-i-do_not_filter">#do_not_filter</a>
+    <li ><a href="#method-i-do_not_search">#do_not_search</a>
+    <li ><a href="#method-i-filter">#filter</a>
+    <li ><a href="#method-i-limit">#limit</a>
+    <li ><a href="#method-i-search">#search</a>
+    <li ><a href="#method-i-sort">#sort</a>
+  </ul>
+</div>
+
+  </div>
+</nav>
+
+<main role="main" aria-labelledby="class-Hoodoo::Services::Interface::ToListDSL">
+  <h1 id="class-Hoodoo::Services::Interface::ToListDSL" class="class">
+    class Hoodoo::Services::Interface::ToListDSL
+  </h1>
+
+  <section class="description">
+    
+<p><a href="../Implementation.html"><code>Implementation</code></a> of the DSL that’s written inside a block passed to <a href="../Interface.html#method-i-to_list"><code>Hoodoo::Services::Interface#to_list</code></a>. This is an internal implementation class. Instantiate with a <a href="ToList.html"><code>Hoodoo::Services::Interface::ToList</code></a> instance, the data in which is updated as the DSL methods run.</p>
+
+  </section>
+
+  <section id="5Buntitled-5D" class="documentation-section">
+
+
+
+
+
+     <section id="public-class-5Buntitled-5D-method-details" class="method-section">
+       <header>
+         <h3>Public Class Methods</h3>
+       </header>
+
+      <div id="method-c-new" class="method-detail ">
+        <div class="method-heading">
+          <span class="method-name">new</span><span
+            class="method-args">( hoodoo_interface_to_list_instance, &amp;block )</span>
+          <span class="method-click-advice">click to toggle source</span>
+        </div>
+
+        <div class="method-description">
+          <p>Initialize an instance and run the DSL methods.</p>
+<dl class="rdoc-list note-list"><dt><code>hoodoo_interface_to_list_instance</code>
+<dd>
+<p>Instance of <a href="ToList.html"><code>Hoodoo::Services::Interface::ToList</code></a> to update with data from DSL method calls.</p>
+</dd><dt>&amp;block
+<dd>
+<p>Block of code that makes calls to the DSL herein.</p>
+</dd></dl>
+
+<p>On exit, the DSL is run and the <a href="ToList.html"><code>Hoodoo::Services::Interface::ToList</code></a> has been updated.</p>
+
+          <div class="method-source-code" id="new-source">
+            <pre><span class="ruby-comment"># File lib/hoodoo/services/services/interface.rb, line 159</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">initialize</span>( <span class="ruby-identifier">hoodoo_interface_to_list_instance</span>, <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span> )
+  <span class="ruby-ivar">@tl</span> = <span class="ruby-identifier">hoodoo_interface_to_list_instance</span> <span class="ruby-comment"># Shorthand!</span>
+
+  <span class="ruby-keyword">unless</span> <span class="ruby-ivar">@tl</span>.<span class="ruby-identifier">instance_of?</span>( <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Services</span><span class="ruby-operator">::</span><span class="ruby-constant">Interface</span><span class="ruby-operator">::</span><span class="ruby-constant">ToList</span> )
+    <span class="ruby-identifier">raise</span> <span class="ruby-node">&quot;Hoodoo::Services::Interface::ToListDSL\#initialize requires a Hoodoo::Services::Interface::ToList instance - got &#39;#{ @tl.class }&#39;&quot;</span>
+  <span class="ruby-keyword">end</span>
+
+  <span class="ruby-keyword">self</span>.<span class="ruby-identifier">instance_eval</span>( <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span> )
+<span class="ruby-keyword">end</span></pre>
+          </div>
+        </div>
+
+
+      </div>
+
+    </section>
+
+     <section id="public-instance-5Buntitled-5D-method-details" class="method-section">
+       <header>
+         <h3>Public Instance Methods</h3>
+       </header>
+
+      <div id="method-i-default" class="method-detail ">
+        <div class="method-heading">
+          <span class="method-name">default</span><span
+            class="method-args">( sort_key )</span>
+          <span class="method-click-advice">click to toggle source</span>
+        </div>
+
+        <div class="method-description">
+          <p>Used in conjunction with <a href="ToListDSL.html#method-i-sort"><code>sort</code></a>. Specifies that a sort key should be the default sort order for the interface.</p>
+
+<p>Example - add sort key ‘<code>code</code>’ with directions <code>:asc</code> and <code>:desc</code>, plus sort key <code>:member</code> which only supports direction <code>:asc</code>. Say that ‘<code>code</code>’ is to be the default sort order.</p>
+
+<pre class="ruby"><span class="ruby-identifier">sort</span> <span class="ruby-identifier">default</span>( <span class="ruby-value">:code</span> ) <span class="ruby-operator">=&gt;</span> [ <span class="ruby-value">:asc</span>, <span class="ruby-value">:desc</span> ],
+     <span class="ruby-value">:member</span>          <span class="ruby-operator">=&gt;</span> [ <span class="ruby-value">:asc</span> ]
+</pre>
+
+          <div class="method-source-code" id="default-source">
+            <pre><span class="ruby-comment"># File lib/hoodoo/services/services/interface.rb, line 231</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">default</span>( <span class="ruby-identifier">sort_key</span> )
+  <span class="ruby-keyword">unless</span> <span class="ruby-identifier">sort_key</span>.<span class="ruby-identifier">is_a?</span>( <span class="ruby-operator">::</span><span class="ruby-constant">String</span> ) <span class="ruby-operator">||</span> <span class="ruby-identifier">sort_key</span>.<span class="ruby-identifier">is_a?</span>( <span class="ruby-operator">::</span><span class="ruby-constant">Symbol</span> )
+    <span class="ruby-identifier">raise</span> <span class="ruby-node">&quot;Hoodoo::Services::Interface::ToListDSL\#default requires a String or Symbol - got &#39;#{ sort_key.class }&#39;&quot;</span>
+  <span class="ruby-keyword">end</span>
+
+  <span class="ruby-ivar">@tl</span>.<span class="ruby-identifier">send</span>( <span class="ruby-value">:default_sort_key=</span>, <span class="ruby-identifier">sort_key</span>.<span class="ruby-identifier">to_s</span> )
+  <span class="ruby-keyword">return</span> <span class="ruby-identifier">sort_key</span>
+<span class="ruby-keyword">end</span></pre>
+          </div>
+        </div>
+
+
+      </div>
+
+      <div id="method-i-do_not_filter" class="method-detail ">
+        <div class="method-heading">
+          <span class="method-name">do_not_filter</span><span
+            class="method-args">( *keys )</span>
+          <span class="method-click-advice">click to toggle source</span>
+        </div>
+
+        <div class="method-description">
+          <p>As <a href="ToListDSL.html#method-i-do_not_search"><code>do_not_search</code></a>, but for default <a href="../../../Hoodoo.html"><code>Hoodoo</code></a> framework exclusions.</p>
+<dl class="rdoc-list note-list"><dt><code>keys</code>
+<dd>
+<p>Array of prohibited framework filter keys, as symbols or strings. The order of array entries is arbitrary.</p>
+</dd></dl>
+
+          <div class="method-source-code" id="do_not_filter-source">
+            <pre><span class="ruby-comment"># File lib/hoodoo/services/services/interface.rb, line 293</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">do_not_filter</span>( <span class="ruby-operator">*</span><span class="ruby-identifier">keys</span> )
+  <span class="ruby-ivar">@tl</span>.<span class="ruby-identifier">send</span>( <span class="ruby-value">:do_not_filter=</span>, <span class="ruby-identifier">keys</span>.<span class="ruby-identifier">map</span> { <span class="ruby-operator">|</span> <span class="ruby-identifier">item</span> <span class="ruby-operator">|</span> <span class="ruby-identifier">item</span>.<span class="ruby-identifier">to_s</span> } )
+
+  <span class="ruby-identifier">unknown</span> = <span class="ruby-ivar">@tl</span>.<span class="ruby-identifier">do_not_filter</span>() <span class="ruby-operator">-</span> <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Services</span><span class="ruby-operator">::</span><span class="ruby-constant">Middleware</span><span class="ruby-operator">::</span><span class="ruby-constant">FRAMEWORK_QUERY_DATA</span>.<span class="ruby-identifier">keys</span>
+
+  <span class="ruby-keyword">unless</span> <span class="ruby-identifier">unknown</span>.<span class="ruby-identifier">empty?</span>
+    <span class="ruby-identifier">raise</span> <span class="ruby-node">&quot;Hoodoo::Services::Interface::ToListDSL\#do_not_filter was given one or more unknown keys: #{ unknown.join( &#39;, &#39; ) }&quot;</span>
+  <span class="ruby-keyword">end</span>
+<span class="ruby-keyword">end</span></pre>
+          </div>
+        </div>
+
+
+      </div>
+
+      <div id="method-i-do_not_search" class="method-detail ">
+        <div class="method-heading">
+          <span class="method-name">do_not_search</span><span
+            class="method-args">( *keys )</span>
+          <span class="method-click-advice">click to toggle source</span>
+        </div>
+
+        <div class="method-description">
+          <p>Similar to <a href="ToListDSL.html#method-i-search"><code>search</code></a>, but for default <a href="../../../Hoodoo.html"><code>Hoodoo</code></a> framework exclusions. The <a href="../Middleware.html"><code>Hoodoo::Services::Middleware</code></a> <code>FRAMEWORK_QUERY_DATA</code> array lists the known framework keys for a given <a href="../../../Hoodoo.html"><code>Hoodoo</code></a> version. An exception is raised if an attempt is made to exclude unknown keys.</p>
+<dl class="rdoc-list note-list"><dt><code>keys</code>
+<dd>
+<p>Array of prohibited framework search keys, as symbols or strings. The order of array entries is arbitrary.</p>
+</dd></dl>
+
+          <div class="method-source-code" id="do_not_search-source">
+            <pre><span class="ruby-comment"># File lib/hoodoo/services/services/interface.rb, line 269</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">do_not_search</span>( <span class="ruby-operator">*</span><span class="ruby-identifier">keys</span> )
+  <span class="ruby-ivar">@tl</span>.<span class="ruby-identifier">send</span>( <span class="ruby-value">:do_not_search=</span>, <span class="ruby-identifier">keys</span>.<span class="ruby-identifier">map</span> { <span class="ruby-operator">|</span> <span class="ruby-identifier">item</span> <span class="ruby-operator">|</span> <span class="ruby-identifier">item</span>.<span class="ruby-identifier">to_s</span> } )
+
+  <span class="ruby-identifier">unknown</span> = <span class="ruby-ivar">@tl</span>.<span class="ruby-identifier">do_not_search</span>() <span class="ruby-operator">-</span> <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Services</span><span class="ruby-operator">::</span><span class="ruby-constant">Middleware</span><span class="ruby-operator">::</span><span class="ruby-constant">FRAMEWORK_QUERY_DATA</span>.<span class="ruby-identifier">keys</span>
+
+  <span class="ruby-keyword">unless</span> <span class="ruby-identifier">unknown</span>.<span class="ruby-identifier">empty?</span>
+    <span class="ruby-identifier">raise</span> <span class="ruby-node">&quot;Hoodoo::Services::Interface::ToListDSL\#do_not_search was given one or more unknown keys: #{ unknown.join( &#39;, &#39; ) }&quot;</span>
+  <span class="ruby-keyword">end</span>
+<span class="ruby-keyword">end</span></pre>
+          </div>
+        </div>
+
+
+      </div>
+
+      <div id="method-i-filter" class="method-detail ">
+        <div class="method-heading">
+          <span class="method-name">filter</span><span
+            class="method-args">( *keys )</span>
+          <span class="method-click-advice">click to toggle source</span>
+        </div>
+
+        <div class="method-description">
+          <p>As <a href="ToListDSL.html#method-i-search"><code>search</code></a>, but for filtering.</p>
+<dl class="rdoc-list note-list"><dt><code>keys</code>
+<dd>
+<p>Array of permitted filter keys, as symbols or strings. The order of array entries is arbitrary.</p>
+</dd></dl>
+
+          <div class="method-source-code" id="filter-source">
+            <pre><span class="ruby-comment"># File lib/hoodoo/services/services/interface.rb, line 284</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">filter</span>( <span class="ruby-operator">*</span><span class="ruby-identifier">keys</span> )
+  <span class="ruby-ivar">@tl</span>.<span class="ruby-identifier">send</span>( <span class="ruby-value">:filter=</span>, <span class="ruby-identifier">keys</span>.<span class="ruby-identifier">map</span> { <span class="ruby-operator">|</span> <span class="ruby-identifier">item</span> <span class="ruby-operator">|</span> <span class="ruby-identifier">item</span>.<span class="ruby-identifier">to_s</span> } )
+<span class="ruby-keyword">end</span></pre>
+          </div>
+        </div>
+
+
+      </div>
+
+      <div id="method-i-limit" class="method-detail ">
+        <div class="method-heading">
+          <span class="method-name">limit</span><span
+            class="method-args">( limit )</span>
+          <span class="method-click-advice">click to toggle source</span>
+        </div>
+
+        <div class="method-description">
+          <p>Specify the page size (limit) for lists.</p>
+<dl class="rdoc-list note-list"><dt><code>limit</code>
+<dd>
+<p>Page size (integer).</p>
+</dd></dl>
+
+<p>Example:</p>
+
+<pre class="ruby"><span class="ruby-identifier">limit</span> <span class="ruby-value">100</span>
+</pre>
+
+          <div class="method-source-code" id="limit-source">
+            <pre><span class="ruby-comment"># File lib/hoodoo/services/services/interface.rb, line 177</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">limit</span>( <span class="ruby-identifier">limit</span> )
+  <span class="ruby-keyword">unless</span> <span class="ruby-identifier">limit</span>.<span class="ruby-identifier">is_a?</span>( <span class="ruby-operator">::</span><span class="ruby-constant">Integer</span> )
+    <span class="ruby-identifier">raise</span> <span class="ruby-node">&quot;Hoodoo::Services::Interface::ToListDSL\#limit requires an Integer - got &#39;#{ limit.class }&#39;&quot;</span>
+  <span class="ruby-keyword">end</span>
+
+  <span class="ruby-ivar">@tl</span>.<span class="ruby-identifier">send</span>( <span class="ruby-value">:limit=</span>, <span class="ruby-identifier">limit</span> )
+<span class="ruby-keyword">end</span></pre>
+          </div>
+        </div>
+
+
+      </div>
+
+      <div id="method-i-search" class="method-detail ">
+        <div class="method-heading">
+          <span class="method-name">search</span><span
+            class="method-args">( *keys )</span>
+          <span class="method-click-advice">click to toggle source</span>
+        </div>
+
+        <div class="method-description">
+          <p>Specify supported search keys in an array. The middleware will make sure the interface implementation is only called with search keys in that list. If a client attempts a search on an unsupported key, their request will be rejected by the middleware.</p>
+
+<p>If a service wants to do its own search validation, it should not list call here. Note also that only the keys are specified and validated; value escaping and validation, if necessary, is up to the service implementation.</p>
+<dl class="rdoc-list note-list"><dt><code>keys</code>
+<dd>
+<p>Array of permitted search keys, as symbols or strings. The order of array entries is arbitrary.</p>
+</dd></dl>
+
+<p>Example - allow searches specifying <code>first_name</code> and <code>last_name</code> keys:</p>
+
+<pre class="ruby"><span class="ruby-identifier">search</span> <span class="ruby-value">:first_name</span>, <span class="ruby-value">:last_name</span>
+</pre>
+
+          <div class="method-source-code" id="search-source">
+            <pre><span class="ruby-comment"># File lib/hoodoo/services/services/interface.rb, line 257</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">search</span>( <span class="ruby-operator">*</span><span class="ruby-identifier">keys</span> )
+  <span class="ruby-ivar">@tl</span>.<span class="ruby-identifier">send</span>( <span class="ruby-value">:search=</span>, <span class="ruby-identifier">keys</span>.<span class="ruby-identifier">map</span> { <span class="ruby-operator">|</span> <span class="ruby-identifier">item</span> <span class="ruby-operator">|</span> <span class="ruby-identifier">item</span>.<span class="ruby-identifier">to_s</span> } )
+<span class="ruby-keyword">end</span></pre>
+          </div>
+        </div>
+
+
+      </div>
+
+      <div id="method-i-sort" class="method-detail ">
+        <div class="method-heading">
+          <span class="method-name">sort</span><span
+            class="method-args">( sort )</span>
+          <span class="method-click-advice">click to toggle source</span>
+        </div>
+
+        <div class="method-description">
+          <p>Specify extra sort keys and orders that add with whatever platform common defaults are already in place.</p>
+<dl class="rdoc-list note-list"><dt><code>sort</code>
+<dd>
+<p>Hash of sort keys, with values that are an array of supported sort directions. The first array entry is used as the default direction if no direction is specified in the client caller’s query string. Use strings or symbols.</p>
+
+<p>To specify that a sort key should be the new default for the interface in question, wrap it in a call to the <a href="ToListDSL.html#method-i-default"><code>default</code></a> DSL method.</p>
+</dd></dl>
+
+<p>Example - add sort key ‘<code>code</code>’ with directions <code>:asc</code> and <code>:desc</code>, plus sort key <code>:member</code> which only supports direction <code>:asc</code>.</p>
+
+<pre class="ruby"><span class="ruby-identifier">sort</span> <span class="ruby-value">:code</span>   <span class="ruby-operator">=&gt;</span> [ <span class="ruby-value">:asc</span>, <span class="ruby-value">:desc</span> ],
+     <span class="ruby-value">:member</span> <span class="ruby-operator">=&gt;</span> [ <span class="ruby-value">:asc</span> ]
+</pre>
+
+          <div class="method-source-code" id="sort-source">
+            <pre><span class="ruby-comment"># File lib/hoodoo/services/services/interface.rb, line 203</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">sort</span>( <span class="ruby-identifier">sort</span> )
+  <span class="ruby-keyword">unless</span> <span class="ruby-identifier">sort</span>.<span class="ruby-identifier">is_a?</span>( <span class="ruby-operator">::</span><span class="ruby-constant">Hash</span> )
+    <span class="ruby-identifier">raise</span> <span class="ruby-node">&quot;Hoodoo::Services::Interface::ToListDSL\#sort requires a Hash - got &#39;#{ sort.class }&#39;&quot;</span>
+  <span class="ruby-keyword">end</span>
+
+  <span class="ruby-comment"># Convert Hash keys to Strings and Arrays to Sets of Strings too.</span>
+
+  <span class="ruby-identifier">sort</span> = <span class="ruby-identifier">sort</span>.<span class="ruby-identifier">inject</span>( {} ) <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span> <span class="ruby-identifier">memo</span>, ( <span class="ruby-identifier">k</span>, <span class="ruby-identifier">v</span> ) <span class="ruby-operator">|</span>
+    <span class="ruby-identifier">memo</span>[ <span class="ruby-identifier">k</span>.<span class="ruby-identifier">to_s</span> ] = <span class="ruby-constant">Set</span>.<span class="ruby-identifier">new</span>( <span class="ruby-identifier">v</span>.<span class="ruby-identifier">map</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span> <span class="ruby-identifier">entry</span> <span class="ruby-operator">|</span>
+      <span class="ruby-identifier">entry</span>.<span class="ruby-identifier">to_s</span>
+    <span class="ruby-keyword">end</span> )
+    <span class="ruby-identifier">memo</span>
+  <span class="ruby-keyword">end</span>
+
+  <span class="ruby-identifier">merged</span> = <span class="ruby-ivar">@tl</span>.<span class="ruby-identifier">sort</span>().<span class="ruby-identifier">merge</span>( <span class="ruby-identifier">sort</span> )
+  <span class="ruby-ivar">@tl</span>.<span class="ruby-identifier">send</span>( <span class="ruby-value">:sort=</span>, <span class="ruby-identifier">merged</span> )
+<span class="ruby-keyword">end</span></pre>
+          </div>
+        </div>
+
+
+      </div>
+
+    </section>
+
+  </section>
+</main>
+
+
+<footer id="validator-badges" role="contentinfo">
+  <p><a href="https://validator.w3.org/check/referer">Validate</a>
+  <p>Generated by <a href="https://ruby.github.io/rdoc/">RDoc</a> 6.4.0.
+  <p>Based on <a href="http://deveiate.org/projects/Darkfish-RDoc/">Darkfish</a> by <a href="http://deveiate.org">Michael Granger</a>.
+</footer>
+

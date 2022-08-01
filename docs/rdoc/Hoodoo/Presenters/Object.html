@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+<meta charset="UTF-8">
+
+<title>class Hoodoo::Presenters::Object - Hoodoo</title>
+
+<script type="text/javascript">
+  var rdoc_rel_prefix = "../../";
+  var index_rel_prefix = "../../";
+</script>
+
+<script src="../../js/navigation.js" defer></script>
+<script src="../../js/search.js" defer></script>
+<script src="../../js/search_index.js" defer></script>
+<script src="../../js/searcher.js" defer></script>
+<script src="../../js/darkfish.js" defer></script>
+
+<link href="../../css/fonts.css" rel="stylesheet">
+<link href="../../css/rdoc.css" rel="stylesheet">
+
+
+<body id="top" role="document" class="class">
+<nav role="navigation">
+  <div id="project-navigation">
+    <div id="home-section" role="region" title="Quick navigation" class="nav-section">
+  <h2>
+    <a href="../../index.html" rel="home">Home</a>
+  </h2>
+
+  <div id="table-of-contents-navigation">
+    <a href="../../table_of_contents.html#pages">Pages</a>
+    <a href="../../table_of_contents.html#classes">Classes</a>
+    <a href="../../table_of_contents.html#methods">Methods</a>
+  </div>
+</div>
+
+    <div id="search-section" role="search" class="project-section initially-hidden">
+  <form action="#" method="get" accept-charset="utf-8">
+    <div id="search-field-wrapper">
+      <input id="search-field" role="combobox" aria-label="Search"
+             aria-autocomplete="list" aria-controls="search-results"
+             type="text" name="search" placeholder="Search" spellcheck="false"
+             title="Type to search, Up and Down to navigate, Enter to load">
+    </div>
+
+    <ul id="search-results" aria-label="Search Results"
+        aria-busy="false" aria-expanded="false"
+        aria-atomic="false" class="initially-hidden"></ul>
+  </form>
+</div>
+
+  </div>
+
+  
+
+  <div id="class-metadata">
+    
+    
+<div id="parent-class-section" class="nav-section">
+  <h3>Parent</h3>
+
+  <p class="link"><a href="Field.html">Hoodoo::Presenters::Field</a>
+</div>
+
+    
+<div id="includes-section" class="nav-section">
+  <h3>Included Modules</h3>
+
+  <ul class="link-list">
+    <li><a class="include" href="BaseDSL.html">Hoodoo::Presenters::BaseDSL</a>
+  </ul>
+</div>
+
+    
+    
+<!-- Method Quickref -->
+<div id="method-list-section" class="nav-section">
+  <h3>Methods</h3>
+
+  <ul class="link-list" role="directory">
+    <li class="calls-super" ><a href="#method-c-new">::new</a>
+    <li class="calls-super" ><a href="#method-i-render">#render</a>
+    <li class="calls-super" ><a href="#method-i-validate">#validate</a>
+    <li ><a href="#method-i-walk">#walk</a>
+  </ul>
+</div>
+
+  </div>
+</nav>
+
+<main role="main" aria-labelledby="class-Hoodoo::Presenters::Object">
+  <h1 id="class-Hoodoo::Presenters::Object" class="class">
+    class Hoodoo::Presenters::Object
+  </h1>
+
+  <section class="description">
+    
+<p>A JSON <a href="Object.html"><code>Object</code></a> schema member.</p>
+
+  </section>
+
+  <section id="5Buntitled-5D" class="documentation-section">
+
+
+
+    <section class="attribute-method-details" class="method-section">
+      <header>
+        <h3>Attributes</h3>
+      </header>
+
+      <div id="attribute-i-properties" class="method-detail">
+        <div class="method-heading attribute-method-heading">
+          <span class="method-name">properties</span><span
+            class="attribute-access-type">[RW]</span>
+        </div>
+
+        <div class="method-description">
+        <p>The properties of this object; a <a href="Hash.html"><code>Hash</code></a> of <code>Field</code> instances keyed by field name.</p>
+        </div>
+      </div>
+    </section>
+
+
+     <section id="public-class-5Buntitled-5D-method-details" class="method-section">
+       <header>
+         <h3>Public Class Methods</h3>
+       </header>
+
+      <div id="method-c-new" class="method-detail ">
+        <div class="method-heading">
+          <span class="method-name">new</span><span
+            class="method-args">( name = nil, options = {} )</span>
+          <span class="method-click-advice">click to toggle source</span>
+        </div>
+
+        <div class="method-description">
+          <p>Initialize an <a href="Object.html"><code>Object</code></a> instance with the appropriate name and options.</p>
+<dl class="rdoc-list note-list"><dt><code>name</code>
+<dd>
+<p>The JSON key.</p>
+</dd><dt><code>options</code>
+<dd>
+<p>A <code>Hash</code> of options, e.g. :required =&gt; true.</p>
+</dd></dl>
+            <div class="method-calls-super">
+              Calls superclass method
+              <a href="Field.html#method-c-new"><code>Hoodoo::Presenters::Field::new</code></a>
+            </div>
+
+          <div class="method-source-code" id="new-source">
+            <pre><span class="ruby-comment"># File lib/hoodoo/presenters/types/object.rb, line 20</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">initialize</span>( <span class="ruby-identifier">name</span> = <span class="ruby-keyword">nil</span>, <span class="ruby-identifier">options</span> = {} )
+  <span class="ruby-keyword">super</span>( <span class="ruby-identifier">name</span>, <span class="ruby-identifier">options</span> )
+
+  <span class="ruby-ivar">@properties</span>        = {}
+  <span class="ruby-ivar">@internationalised</span> = <span class="ruby-keyword">false</span>
+<span class="ruby-keyword">end</span></pre>
+          </div>
+        </div>
+
+
+      </div>
+
+    </section>
+
+     <section id="public-instance-5Buntitled-5D-method-details" class="method-section">
+       <header>
+         <h3>Public Instance Methods</h3>
+       </header>
+
+      <div id="method-i-render" class="method-detail ">
+        <div class="method-heading">
+          <span class="method-name">render</span><span
+            class="method-args">( data, target )</span>
+          <span class="method-click-advice">click to toggle source</span>
+        </div>
+
+        <div class="method-description">
+          <p>Render inbound data into a target hash according to the schema, applying defaults where defined for fields with no value supplied in the inbound data.</p>
+<dl class="rdoc-list note-list"><dt><code>data</code>
+<dd>
+<p>Inbound data to render.</p>
+</dd><dt><code>target</code>
+<dd>
+<p>For internal callers only in theory. The target hash into which rendering should occur. This may then be merged into outer level hashes as part of nested items defined in the schema.</p>
+</dd></dl>
+            <div class="method-calls-super">
+              Calls superclass method
+              <a href="Field.html#method-i-render"><code>Hoodoo::Presenters::Field#render</code></a>
+            </div>
+
+          <div class="method-source-code" id="render-source">
+            <pre><span class="ruby-comment"># File lib/hoodoo/presenters/types/object.rb, line 70</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">render</span>( <span class="ruby-identifier">data</span>, <span class="ruby-identifier">target</span> )
+
+  <span class="ruby-comment"># In an simple field, e.g. a text field, then whether or not it has</span>
+  <span class="ruby-comment"># a default, should someone give a value of &quot;nil&quot; we expect that field</span>
+  <span class="ruby-comment"># to be rendered in output with the explicitly provided &quot;nil&quot; value.</span>
+  <span class="ruby-comment"># We thus apply the same to objects. A field with an associated object,</span>
+  <span class="ruby-comment"># if rendered with an explicit &quot;nil&quot;, renders as just that.</span>
+  <span class="ruby-comment">#</span>
+  <span class="ruby-keyword">return</span> <span class="ruby-keyword">super</span>( <span class="ruby-keyword">nil</span>, <span class="ruby-identifier">target</span> ) <span class="ruby-keyword">unless</span> <span class="ruby-identifier">data</span>.<span class="ruby-identifier">is_a?</span>( <span class="ruby-operator">::</span><span class="ruby-constant">Hash</span> ) <span class="ruby-comment"># nil or invalid</span>
+
+  <span class="ruby-identifier">have_rendered_something</span> = <span class="ruby-keyword">false</span>
+
+  <span class="ruby-ivar">@properties</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span> <span class="ruby-identifier">name</span>, <span class="ruby-identifier">property</span> <span class="ruby-operator">|</span>
+    <span class="ruby-identifier">name</span>    = <span class="ruby-identifier">name</span>.<span class="ruby-identifier">to_s</span>
+    <span class="ruby-identifier">has_key</span> = <span class="ruby-identifier">data</span>.<span class="ruby-identifier">has_key?</span>( <span class="ruby-identifier">name</span> )
+
+    <span class="ruby-keyword">next</span> <span class="ruby-keyword">unless</span> <span class="ruby-identifier">has_key</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">property</span>.<span class="ruby-identifier">has_default?</span>()
+
+    <span class="ruby-identifier">have_rendered_something</span> = <span class="ruby-keyword">true</span>
+    <span class="ruby-identifier">property</span>.<span class="ruby-identifier">render</span>( <span class="ruby-identifier">has_key</span> <span class="ruby-operator">?</span> <span class="ruby-identifier">data</span>[ <span class="ruby-identifier">name</span> ] <span class="ruby-operator">:</span> <span class="ruby-identifier">property</span>.<span class="ruby-identifier">default</span>, <span class="ruby-identifier">target</span> )
+  <span class="ruby-keyword">end</span>
+
+  <span class="ruby-comment"># If someone passes an empty object for a field and the object schema</span>
+  <span class="ruby-comment"># includes no default values, then the above code would render nothing</span>
+  <span class="ruby-comment"># as no properties have associated keys in the input data, and none of</span>
+  <span class="ruby-comment"># them have default values either. Make sure we render the field for</span>
+  <span class="ruby-comment"># this object with the associated empty object given by the input data</span>
+  <span class="ruby-comment"># in such cases.</span>
+  <span class="ruby-comment">#</span>
+  <span class="ruby-keyword">super</span>( {}, <span class="ruby-identifier">target</span> ) <span class="ruby-keyword">unless</span> <span class="ruby-identifier">have_rendered_something</span>
+
+<span class="ruby-keyword">end</span></pre>
+          </div>
+        </div>
+
+
+      </div>
+
+      <div id="method-i-validate" class="method-detail ">
+        <div class="method-heading">
+          <span class="method-name">validate</span><span
+            class="method-args">( data, path = &#39;&#39; )</span>
+          <span class="method-click-advice">click to toggle source</span>
+        </div>
+
+        <div class="method-description">
+          <p>Check if data is a valid <a href="Object.html"><code>Object</code></a> and return a <a href="../Errors.html"><code>Hoodoo::Errors</code></a> instance with zero (valid) or more (has validation problems) errors inside.</p>
+<dl class="rdoc-list note-list"><dt><code>data</code>
+<dd>
+<p><a href="../Data.html"><code>Data</code></a> to check (and check nested properties therein). Expected to be nil (unless field is required) or a <a href="Hash.html"><code>Hash</code></a>.</p>
+</dd><dt><code>path</code>
+<dd>
+<p>For internal callers only in theory - the human-readable nesting path to this “level”, as an array. Omitted at the top level. In :errors =&gt; { :foo =&gt; { … } }, validation of “:foo” would be at path “[ :errors ]”. Validation of the contents of the object at “:foo” would be under “[ :errors, :foo ]”.</p>
+</dd></dl>
+            <div class="method-calls-super">
+              Calls superclass method
+              <a href="Field.html#method-i-validate"><code>Hoodoo::Presenters::Field#validate</code></a>
+            </div>
+
+          <div class="method-source-code" id="validate-source">
+            <pre><span class="ruby-comment"># File lib/hoodoo/presenters/types/object.rb, line 39</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">validate</span>( <span class="ruby-identifier">data</span>, <span class="ruby-identifier">path</span> = <span class="ruby-string">&#39;&#39;</span> )
+  <span class="ruby-identifier">errors</span> = <span class="ruby-keyword">super</span>( <span class="ruby-identifier">data</span>, <span class="ruby-identifier">path</span> )
+  <span class="ruby-keyword">return</span> <span class="ruby-identifier">errors</span> <span class="ruby-keyword">if</span> <span class="ruby-operator">!</span><span class="ruby-ivar">@required</span> <span class="ruby-keyword">and</span> <span class="ruby-identifier">data</span>.<span class="ruby-identifier">nil?</span> <span class="ruby-comment"># If there are existing errors, we carry on and validate internally too</span>
+
+  <span class="ruby-keyword">if</span> <span class="ruby-operator">!</span> <span class="ruby-identifier">data</span>.<span class="ruby-identifier">nil?</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-operator">!</span> <span class="ruby-identifier">data</span>.<span class="ruby-identifier">is_a?</span>( <span class="ruby-operator">::</span><span class="ruby-constant">Hash</span> )
+    <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add_error</span>(
+      <span class="ruby-string">&#39;generic.invalid_object&#39;</span>,
+      <span class="ruby-value">:message</span>   <span class="ruby-operator">=&gt;</span> <span class="ruby-node">&quot;Field `#{ full_path( path ) }` is an invalid object&quot;</span>,
+      <span class="ruby-value">:reference</span> <span class="ruby-operator">=&gt;</span> { <span class="ruby-value">:field_name</span> <span class="ruby-operator">=&gt;</span> <span class="ruby-identifier">full_path</span>( <span class="ruby-identifier">path</span> ) }
+    )
+  <span class="ruby-keyword">end</span>
+
+  <span class="ruby-ivar">@properties</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span> <span class="ruby-identifier">name</span>, <span class="ruby-identifier">property</span> <span class="ruby-operator">|</span>
+    <span class="ruby-identifier">rdata</span> = ( <span class="ruby-identifier">data</span>.<span class="ruby-identifier">is_a?</span>( <span class="ruby-operator">::</span><span class="ruby-constant">Hash</span> ) <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">data</span>.<span class="ruby-identifier">has_key?</span>( <span class="ruby-identifier">name</span> ) ) <span class="ruby-operator">?</span> <span class="ruby-identifier">data</span>[ <span class="ruby-identifier">name</span> ] <span class="ruby-operator">:</span> <span class="ruby-keyword">nil</span>
+    <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">merge!</span>( <span class="ruby-identifier">property</span>.<span class="ruby-identifier">validate</span>( <span class="ruby-identifier">rdata</span>, <span class="ruby-identifier">full_path</span>( <span class="ruby-identifier">path</span> ) ) )
+  <span class="ruby-keyword">end</span>
+
+  <span class="ruby-identifier">errors</span>
+<span class="ruby-keyword">end</span></pre>
+          </div>
+        </div>
+
+
+      </div>
+
+      <div id="method-i-walk" class="method-detail ">
+        <div class="method-heading">
+          <span class="method-name">walk</span><span
+            class="method-args">( &amp;block )</span>
+          <span class="method-click-advice">click to toggle source</span>
+        </div>
+
+        <div class="method-description">
+          <p>Invoke a given block, passing this item; call recursively for any defined sub-fields too. See Hoodoo::Presenters::Base#walk for why.</p>
+<dl class="rdoc-list note-list"><dt>&amp;block
+<dd>
+<p>Mandatory block, which is passed ‘self’ when called.</p>
+</dd></dl>
+
+          <div class="method-source-code" id="walk-source">
+            <pre><span class="ruby-comment"># File lib/hoodoo/presenters/types/object.rb, line 108</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">walk</span>( <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span> )
+  <span class="ruby-identifier">block</span>.<span class="ruby-identifier">call</span>( <span class="ruby-keyword">self</span> )
+
+  <span class="ruby-ivar">@properties</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span> <span class="ruby-identifier">name</span>, <span class="ruby-identifier">property</span> <span class="ruby-operator">|</span>
+    <span class="ruby-identifier">property</span>.<span class="ruby-identifier">walk</span>( <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span> )
+  <span class="ruby-keyword">end</span> <span class="ruby-keyword">unless</span> <span class="ruby-ivar">@properties</span>.<span class="ruby-identifier">nil?</span>
+<span class="ruby-keyword">end</span></pre>
+          </div>
+        </div>
+
+
+      </div>
+
+    </section>
+
+  </section>
+</main>
+
+
+<footer id="validator-badges" role="contentinfo">
+  <p><a href="https://validator.w3.org/check/referer">Validate</a>
+  <p>Generated by <a href="https://ruby.github.io/rdoc/">RDoc</a> 6.4.0.
+  <p>Based on <a href="http://deveiate.org/projects/Darkfish-RDoc/">Darkfish</a> by <a href="http://deveiate.org">Michael Granger</a>.
+</footer>
+
