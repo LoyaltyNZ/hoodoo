@@ -3,6 +3,7 @@
 ## 3.1.4 (2022-08-02)
 
 - Fix rdoc generation. Removed refences to sdoc gem which has security vulnerabilities. [FT-1253](https://loyaltynz.atlassian.net/browse/FT-1253)
+- Updated `rack` and `activerecord` gems to fix security vulnerabilities.
 
 ## 3.1.3 (2022-04-27)
 
