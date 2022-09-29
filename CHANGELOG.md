@@ -1,5 +1,9 @@
 # Hoodoo v3.x
 
+## 3.1.5
+
+- Add 'downstream_error' to error_descriptions [FT-1114](https://loyaltynz.atlassian.net/browse/FT-1114)
+
 ## 3.1.4 (2022-08-02)
 
 - Fix rdoc generation. Removed refences to sdoc gem which has security vulnerabilities. [FT-1253](https://loyaltynz.atlassian.net/browse/FT-1253)

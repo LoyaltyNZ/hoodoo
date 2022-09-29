@@ -91,6 +91,7 @@ module Hoodoo
         error 'method_not_allowed',     status: 405, message: 'Method not allowed'
         error 'timeout',                status: 408, message: 'Request timeout'
         error 'fault',                  status: 500, message: 'Internal error',               reference: [ :exception ]
+        error 'downstream_error',       status: 500, message: 'downstream error',             reference: [ :downstream_system, :message, :http_code, :platform_uuid, :url ]
       end
 
       # Up to date at Preview Release 9, 2014-11-10.
