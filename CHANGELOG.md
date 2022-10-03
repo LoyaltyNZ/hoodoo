@@ -1,5 +1,9 @@
 # Hoodoo v3.x
 
+## 3.1.6
+
+- Updated docs for 'downstream_error' added in v3.1.5 [FT-1114](https://loyaltynz.atlassian.net/browse/FT-1114)
+
 ## 3.1.5
 
 - Add 'downstream_error' to error_descriptions [FT-1114](https://loyaltynz.atlassian.net/browse/FT-1114)

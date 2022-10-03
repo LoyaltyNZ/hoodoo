@@ -175,6 +175,7 @@ Platform-level errors generally arise from the top level of API call processing,
 | 405 Method Not Allowed    | `platform.method_not_allowed`      | Undefined       | Attempt to use an HTTP method in a call to an interface which does not support it ("we know who you are and you're allowed to try that, but the target resource doesn't support it"). |
 | 408 Request Timeout       | `platform.timeout`                 | Undefined       | Internal systems did not respond within a given timeout period. Retry the request later. |
 | 500 Internal Server Error | `platform.fault`                   | "{exception}"   | An internal platform error occurred. If exception information is available it will be put in the `reference` data in string form, else `reference` will be an empty string. |
+| 500 Downstream Error | `platform.downstream_error`             | "{downstream_system}, {message}, {http_code}, {platform_uuid}, {url}"   | The platform called out to an external system which resulted in an error. Details of the error returned by the external system are returned in the reference fields, some of which can be empty. |
 
 When a `408 Request Timeout` is received, the general recommendation is, after a back-off delay, to retry the operation, setting the [`X-Deja-Vu`](#http_x_deja_vu) HTTP header for creation or deletion attempts. See that header's documentation for details.
 
