@@ -1,5 +1,9 @@
 # Hoodoo v3.x
 
+## 3.1.7
+
+- Updated `dalli` from 2.x to 3.x, to fix security vulnerabilities. [DS-2779](https://loyaltynz.atlassian.net/browse/DS-2779)
+
 ## 3.1.6
 
 - Updated docs for 'downstream_error' added in v3.1.5 [FT-1114](https://loyaltynz.atlassian.net/browse/FT-1114)
