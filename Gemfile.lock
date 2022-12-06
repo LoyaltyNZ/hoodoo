@@ -2,7 +2,7 @@ PATH
   remote: .
   specs:
     hoodoo (3.1.6)
-      dalli (~> 2.7)
+      dalli (>= 2.7, < 4.0)
       rack
 
 GEM
@@ -41,7 +41,7 @@ GEM
     concurrent-ruby (1.1.10)
     crack (0.4.5)
       rexml
-    dalli (2.7.11)
+    dalli (3.2.3)
     database_cleaner (1.99.0)
     diff-lcs (1.5.0)
     docile (1.4.0)
