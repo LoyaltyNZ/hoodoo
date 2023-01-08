@@ -1,5 +1,9 @@
 # Hoodoo v3.x
 
+## 3.2.0
+
+- Updated `dalli` gem requirements to disallow 2.7.x. [DS-2723](https://loyaltynz.atlassian.net/browse/DS-2723)
+
 ## 3.1.7
 
 - Updated `dalli` from 2.x to 3.x, to fix security vulnerabilities. [DS-2779](https://loyaltynz.atlassian.net/browse/DS-2779)
