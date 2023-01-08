@@ -1,18 +1,18 @@
 # Hoodoo v3.x
 
-## 3.2.0
+## 3.2.0 (2023-01-09)
 
 - Updated `dalli` gem requirements to disallow 2.7.x. [DS-2723](https://loyaltynz.atlassian.net/browse/DS-2723)
 
-## 3.1.7
+## 3.1.7 (2022-11-22)
 
 - Updated `dalli` from 2.x to 3.x, to fix security vulnerabilities. [DS-2779](https://loyaltynz.atlassian.net/browse/DS-2779)
 
-## 3.1.6
+## 3.1.6 (2022-10-04)
 
 - Updated docs for 'downstream_error' added in v3.1.5 [FT-1114](https://loyaltynz.atlassian.net/browse/FT-1114)
 
-## 3.1.5
+## 3.1.5 (2022-09-29)
 
 - Add 'downstream_error' to error_descriptions [FT-1114](https://loyaltynz.atlassian.net/browse/FT-1114)
 
