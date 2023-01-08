@@ -19,7 +19,7 @@ Gem::Specification.new do | s |
 
   s.required_ruby_version = '>= 3.1.0'
 
-  s.add_runtime_dependency     'dalli',            '>= 2.7', '< 4.0' # Memcached client
+  s.add_runtime_dependency     'dalli',            '~> 3.2.3' # Memcached client
   s.add_runtime_dependency     'rack'
 
   s.add_development_dependency 'activerecord',     '~>  7.0.1'
