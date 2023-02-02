@@ -12,3 +12,4 @@ cache: bundler
 
 script:
   - bundle exec jekyll build
+
