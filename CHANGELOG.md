@@ -1,5 +1,17 @@
 # Hoodoo v3.x
 
+## 3.2.2
+
+Automated Monthly Patching Feb23
+- Gems updated:
+  - dalli 3.2.4 (was 3.2.3)
+  - redis 4.8.1 (was 4.8.0)
+  - rspec-core 3.12.1 (was 3.12.0)
+  - tzinfo 2.0.6 (was 2.0.5)
+  - activesupport 7.0.4.2 (was 7.0.4.1)
+  - activemodel 7.0.4.2 (was 7.0.4.1)
+  - activerecord 7.0.4.2 (was 7.0.4.1)
+
 ## 3.2.1 (2023-01-19)
 
 - Monthly patches. [DS-2849](https://loyaltynz.atlassian.net/browse/DS-2849)
@@ -511,3 +523,4 @@ No functional changes; just some internal or documentation tweaks.
 ## 1.0.0, 1.0.1 (2015-12-10)
 
 Initial public release. Yanked as part of testing release processes, updating basic `hoodoo.gemspec` data and similar housekeeping.
+
