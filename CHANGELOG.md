@@ -1,5 +1,11 @@
 # Hoodoo v3.x
 
+## 3.2.5
+
+Automated Monthly Patching Apr23
+- Gems updated:
+  - addressable 2.8.3 (was 2.8.2)
+
 ## 3.2.4
 
 Automated Monthly Patching Apr23
@@ -541,6 +547,7 @@ No functional changes; just some internal or documentation tweaks.
 ## 1.0.0, 1.0.1 (2015-12-10)
 
 Initial public release. Yanked as part of testing release processes, updating basic `hoodoo.gemspec` data and similar housekeeping.
+
 
 
 
