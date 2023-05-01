@@ -1,5 +1,14 @@
 # Hoodoo v3.x
 
+## 3.2.6
+
+Automated Monthly Patching May23
+- Gems updated:
+  - rack 2.2.7 (was 2.2.6.4)
+  - addressable 2.8.4 (was 2.8.3)
+  - rspec-core 3.12.2 (was 3.12.1)
+  - rspec-expectations 3.12.3 (was 3.12.2)
+
 ## 3.2.5
 
 Automated Monthly Patching Apr23
@@ -547,6 +556,7 @@ No functional changes; just some internal or documentation tweaks.
 ## 1.0.0, 1.0.1 (2015-12-10)
 
 Initial public release. Yanked as part of testing release processes, updating basic `hoodoo.gemspec` data and similar housekeeping.
+
 
 
 
