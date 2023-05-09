@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    hoodoo (3.2.5)
+    hoodoo (3.2.6)
       dalli (~> 3.2.3)
       rack
 
@@ -18,7 +18,7 @@ GEM
       i18n (>= 1.6, < 2)
       minitest (>= 5.1)
       tzinfo (~> 2.0)
-    addressable (2.8.3)
+    addressable (2.8.4)
       public_suffix (>= 2.0.2, < 6.0)
     airbrake (7.4.0)
       airbrake-ruby (~> 2.12)
@@ -53,7 +53,7 @@ GEM
     minitest (5.17.0)
     pg (1.4.6)
     public_suffix (4.0.7)
-    rack (2.2.6.4)
+    rack (2.2.7)
     rack-test (1.1.0)
       rack (>= 1.0, < 3)
     rake (12.3.3)
@@ -63,9 +63,9 @@ GEM
       rspec-core (~> 3.12.0)
       rspec-expectations (~> 3.12.0)
       rspec-mocks (~> 3.12.0)
-    rspec-core (3.12.1)
+    rspec-core (3.12.2)
       rspec-support (~> 3.12.0)
-    rspec-expectations (3.12.2)
+    rspec-expectations (3.12.3)
       diff-lcs (>= 1.2.0, < 2.0)
       rspec-support (~> 3.12.0)
     rspec-mocks (3.12.5)
