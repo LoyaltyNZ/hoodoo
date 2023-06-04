@@ -1,5 +1,14 @@
 # Hoodoo v3.x
 
+## 3.2.7
+
+Automated Monthly Patching Jun23
+- Gems updated:
+  - thor 1.2.2 (was 1.2.1)
+  - activesupport 7.0.5 (was 7.0.4.3)
+  - activemodel 7.0.5 (was 7.0.4.3)
+  - activerecord 7.0.5 (was 7.0.4.3)
+
 ## 3.2.6
 
 Automated Monthly Patching May23
@@ -556,6 +565,7 @@ No functional changes; just some internal or documentation tweaks.
 ## 1.0.0, 1.0.1 (2015-12-10)
 
 Initial public release. Yanked as part of testing release processes, updating basic `hoodoo.gemspec` data and similar housekeeping.
+
 
 
 
