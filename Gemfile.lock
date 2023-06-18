@@ -1,19 +1,19 @@
 PATH
   remote: .
   specs:
-    hoodoo (3.2.6)
+    hoodoo (3.2.7)
       dalli (~> 3.2.3)
       rack
 
 GEM
   remote: https://rubygems.org/
   specs:
-    activemodel (7.0.4.3)
-      activesupport (= 7.0.4.3)
-    activerecord (7.0.4.3)
-      activemodel (= 7.0.4.3)
-      activesupport (= 7.0.4.3)
-    activesupport (7.0.4.3)
+    activemodel (7.0.5)
+      activesupport (= 7.0.5)
+    activerecord (7.0.5)
+      activemodel (= 7.0.5)
+      activesupport (= 7.0.5)
+    activesupport (7.0.5)
       concurrent-ruby (~> 1.0, >= 1.0.2)
       i18n (>= 1.6, < 2)
       minitest (>= 5.1)
@@ -41,7 +41,7 @@ GEM
     concurrent-ruby (1.1.10)
     crack (0.4.5)
       rexml
-    dalli (3.2.4)
+    dalli (3.2.5)
     database_cleaner (1.99.0)
     diff-lcs (1.5.0)
     docile (1.4.0)
@@ -80,7 +80,7 @@ GEM
     simplecov-rcov (0.3.1)
       simplecov (>= 0.4.1)
     simplecov_json_formatter (0.1.4)
-    thor (1.2.1)
+    thor (1.2.2)
     timecop (0.9.6)
     tzinfo (2.0.6)
       concurrent-ruby (~> 1.0)
