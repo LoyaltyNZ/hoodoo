@@ -1,5 +1,14 @@
 # Hoodoo v3.x
 
+## 3.2.8
+
+Automated Monthly Patching Jul23
+- Gems updated:
+  - rspec-support 3.12.1 (was 3.12.0)
+  - activesupport 7.0.6 (was 7.0.5)
+  - activemodel 7.0.6 (was 7.0.5)
+  - activerecord 7.0.6 (was 7.0.5)
+
 ## 3.2.7
 
 Automated Monthly Patching Jun23
@@ -565,6 +574,7 @@ No functional changes; just some internal or documentation tweaks.
 ## 1.0.0, 1.0.1 (2015-12-10)
 
 Initial public release. Yanked as part of testing release processes, updating basic `hoodoo.gemspec` data and similar housekeeping.
+
 
 
 
