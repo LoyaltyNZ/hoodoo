@@ -64,17 +64,6 @@ module Hoodoo; module Services; class Discovery # Just used as a namespace here
 
         uri = self.uri( port )
 
-        # $SAFE and taint tracking is being removed from ruby 2.7+
-        # https://bugs.ruby-lang.org/issues/16131
-        # Set to 0 to disable taint tracking in earlier versions
-        $SAFE = 0
-
-        # Have to allow a tained port string from "outside" just to be able
-        # to start the service on a given port; so untaint that deliberately.
-        #
-        # http://ruby-doc.com/docs/ProgrammingRuby/html/taint.html
-
-        uri.untaint()
         $stop_queue = ::Queue.new
 
         ::DRb.start_service( uri,
