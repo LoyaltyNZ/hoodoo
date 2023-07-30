@@ -1,0 +1,10 @@
+# See https://help.github.com/articles/about-codeowners/ for more about how CODEOWNERS files work
+
+# Set the default ownership of all files, so that reviews of PR's will be requested from each of these teams
+# Any member of each team may approve the PR on behalf of that team
+
+* @LoyaltyNZ/foundation-tech
+/cicd/ @LoyaltyNZ/devops
+/chart/ @LoyaltyNZ/devops
+
+# More specific patterns may be matched further down this file if required.

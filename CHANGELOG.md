@@ -1,5 +1,9 @@
 # Hoodoo v3.x
 
+## 3.2.9
+
+- Update ruby-version to `3.2.2` [FT-3182](https://loyaltynz.atlassian.net/browse/FT-3182)
+
 ## 3.2.8
 
 Automated Monthly Patching Jul23

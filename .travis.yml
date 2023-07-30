@@ -3,7 +3,7 @@ os: linux
 dist: focal
 
 rvm:
-  - 3.1.0
+  - 3.2.2
 
 # http://docs.travis-ci.com/user/caching/
 #
