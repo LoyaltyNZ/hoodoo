@@ -1,0 +1,11 @@
+version: 2
+mergeable:
+  - when: pull_request.*, pull_request_review.*
+    validate:
+      - do: title
+        must_include:
+          regex: '[A-Z]{2,}-\d+'
+          message: The Pull Request must include associated Jira Issue Key in title! eg. FT-1234
+      - do: label
+        must_exclude:
+          regex: 'dont-merge'
