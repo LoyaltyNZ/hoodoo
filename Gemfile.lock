@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    hoodoo (3.2.9)
+    hoodoo (3.3.0)
       dalli (~> 3.2.3)
       rack
 
@@ -49,10 +49,10 @@ GEM
     hashdiff (1.0.1)
     i18n (1.12.0)
       concurrent-ruby (~> 1.0)
-    le (2.7.6)
     minitest (5.17.0)
     pg (1.4.6)
     public_suffix (4.0.7)
+    r7insight (3.0.4)
     rack (2.2.7)
     rack-test (1.1.0)
       rack (>= 1.0, < 3)
@@ -104,8 +104,8 @@ DEPENDENCIES
   byebug (~> 10.0)
   database_cleaner (~> 1.8)
   hoodoo!
-  le (~> 2.7)
   pg (~> 1.0)
+  r7insight (~> 3.0)
   rack-test (~> 1.1)
   rake (~> 12.0)
   redis (~> 4.0)
