@@ -30,7 +30,7 @@ Gem::Specification.new do | s |
   s.add_development_dependency 'bundle-audit'
   s.add_development_dependency 'byebug',           '~> 10.0'
   s.add_development_dependency 'database_cleaner', '~>  1.8'
-  s.add_development_dependency 'le',               '~>  2.7'  # logentries.com
+  s.add_development_dependency 'r7insight',        '~>  3.0'  # logentries.com / Rapid7
   s.add_development_dependency 'pg',               '~>  1.0'
   s.add_development_dependency 'rack-test',        '~>  1.1'
   s.add_development_dependency 'rake',             '~> 12.0'

@@ -12,10 +12,10 @@ require 'json'
 module Hoodoo
   class Logger
 
-    begin          # Exception handler as 'le' gem inclusion is optional.
-      require 'le' # Might raise LoadError; that's allowed.
+    begin          # Exception handler as 'r7_insight' gem inclusion is optional.
+      require 'r7_insight' # Might raise LoadError; that's allowed.
 
-      # Writes structured messages to logentries.com via the "le" gem,
+      # Writes structured messages to Rapid7 via the "r7_insight" gem,
       # which uses its own asynchronous worker thread for network data.
       # Thus, a Hoodoo::Logger::FastWriter subclass. See also
       # Hoodoo::Logger.
@@ -27,7 +27,7 @@ module Hoodoo
         # +token+:: Your logentries.com API token.
         #
         def initialize( token )
-          @@logger ||= Le.new( token, :ssl => true )
+          @@logger ||= R7Insight.new( token, 'eu', :ssl => true )
         end
 
         # See Hoodoo::Logger::WriterMixin#report.
@@ -57,7 +57,7 @@ module Hoodoo
         end
       end
 
-    rescue LoadError # From "require 'le'"
+    rescue LoadError # From "require 'r7_insight'"
     end
 
   end

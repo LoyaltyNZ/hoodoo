@@ -1,5 +1,10 @@
 # Hoodoo v3.x
 
+## 3.3.0
+
+- Replace gem `le` with `r7insight` - [DS-3525](https://loyaltynz.atlassian.net/browse/DS-3525)
+  - Callers must include  the `r7insight` gem instead of `le` gem in their `Gemfile`
+
 ## 3.2.9
 
 - Update ruby-version to `3.2.2` [FT-3182](https://loyaltynz.atlassian.net/browse/FT-3182)

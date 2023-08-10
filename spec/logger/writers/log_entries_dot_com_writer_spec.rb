@@ -13,7 +13,7 @@ describe Hoodoo::Logger::LogEntriesDotComWriter do
   end
 
   it 'creates an appropriate logger instance' do
-    example = Le.new( example_token(), :ssl => true )
+    example = R7Insight.new( example_token(), :ssl => true )
     expect( @logger.class ).to eq( example.class )
   end
 
