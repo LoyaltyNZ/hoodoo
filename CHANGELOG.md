@@ -1,5 +1,9 @@
 # Hoodoo v3.x
 
+## 3.3.1
+
+- Support ruby `3.1.2` - [DS-3525](https://loyaltynz.atlassian.net/browse/DS-3525)
+
 ## 3.3.0
 
 - Replace gem `le` with `r7insight` - [DS-3525](https://loyaltynz.atlassian.net/browse/DS-3525)
