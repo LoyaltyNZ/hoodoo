@@ -1,5 +1,14 @@
 # Hoodoo v3.x
 
+## 3.3.2
+
+Automated Monthly Patching Aug23
+- Gems updated:
+  - rack 2.2.8 (was 2.2.7)
+  - rexml 3.2.6 (was 3.2.5)
+  - addressable 2.8.5 (was 2.8.4)
+  - rspec-mocks 3.12.6 (was 3.12.5)
+
 ## 3.3.1
 
 - Support ruby `3.1.2` - [DS-3525](https://loyaltynz.atlassian.net/browse/DS-3525)
