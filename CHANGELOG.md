@@ -1,5 +1,14 @@
 # Hoodoo v3.x
 
+## 3.3.3
+
+Automated Monthly Patching Sep23
+- Gems updated:
+  - timecop 0.9.8 (was 0.9.6)
+  - activesupport 7.0.7.2 (was 7.0.6)
+  - activemodel 7.0.7.2 (was 7.0.6)
+  - activerecord 7.0.7.2 (was 7.0.6)
+
 ## 3.3.2
 
 Automated Monthly Patching Aug23
