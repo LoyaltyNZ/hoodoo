@@ -1,5 +1,16 @@
 # Hoodoo v3.x
 
+## 3.3.3
+
+Automated Monthly Patching Oct23
+- Gems updated:
+  - dalli 3.2.6 (was 3.2.5)
+  - timecop 0.9.8 (was 0.9.6)
+  - activesupport 7.0.8 (was 7.0.6)
+  - simplecov-rcov 0.3.3 (was 0.3.1)
+  - activemodel 7.0.8 (was 7.0.6)
+  - activerecord 7.0.8 (was 7.0.6)
+
 ## 3.3.2
 
 Automated Monthly Patching Aug23

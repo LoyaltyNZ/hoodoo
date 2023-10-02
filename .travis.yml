@@ -32,7 +32,6 @@ before_install:
 install:
   # Updated to remove deprecated flags '--deployment' and '--path'
   - bundle config set --local deployment 'true'
-  - bundle config set --local path 'vendor/bundle'
   - bundle install --jobs=3 --retry=3
 
 script:
