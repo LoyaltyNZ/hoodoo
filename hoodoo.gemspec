@@ -21,6 +21,7 @@ Gem::Specification.new do | s |
 
   s.add_runtime_dependency     'dalli',            '~> 3.2.3' # Memcached client
   s.add_runtime_dependency     'rack'
+  s.add_runtime_dependency     'ddtrace',          '~> 1.0'   # Datadog APM v1 (not v0)
 
   s.add_development_dependency 'activerecord',     '~>  7.0.1'
   s.add_development_dependency 'activesupport',    '~>  7.0.1'
@@ -41,4 +42,5 @@ Gem::Specification.new do | s |
   s.add_development_dependency 'webrick'
   s.add_development_dependency 'timecop',          '~>  0.9'
   s.add_development_dependency 'webmock',          '~>  3.4'
+  s.add_development_dependency 'debug',            '>=  1.0.0'
 end

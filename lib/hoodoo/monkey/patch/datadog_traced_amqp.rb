@@ -16,7 +16,7 @@ module Hoodoo
     module Patch
 
       begin
-        require 'ddtrace' # Raises LoadError if Datadog is absent
+        require 'datadog/tracing' # Raises LoadError if Datadog is absent
 
         # Wrap Hoodoo::Client::Endpoint::AMQP using Datadog transaction
         # tracing so that over-queue inter-resource calls get connected
@@ -43,7 +43,7 @@ module Hoodoo
             def monkey_send_request( http_message, full_uri )
               amqp_response = nil
 
-              Datadog.tracer.trace( 'alchemy.request' ) do |span|
+              Datadog::Tracing.trace( 'alchemy.request' ) do |span|
                 span.service   = 'alchemy'
                 span.span_type = 'alchemy'
                 span.resource  = http_message[ 'verb' ]
