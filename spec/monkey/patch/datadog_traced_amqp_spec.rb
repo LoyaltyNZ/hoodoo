@@ -18,9 +18,8 @@ describe Hoodoo::Monkey::Patch::DatadogTracedAMQP, :order => :defined do
     CounterAMQ.datadog_trace_count     = 0
 
     # Stub Datadog
-    class Datadog
-      def self.tracer
-        Datadog.new
+    module Datadog
+      module Tracing
       end
     end
 
@@ -29,7 +28,7 @@ describe Hoodoo::Monkey::Patch::DatadogTracedAMQP, :order => :defined do
 
   after :all do
     Hoodoo::Monkey.disable( extension_module: Hoodoo::Monkey::Patch::DatadogTracedAMQP )
-    Object.send( :remove_const, :Datadog )
+    Datadog.send( :remove_const, :Tracing )
   end
 
   before :each do
@@ -43,8 +42,8 @@ describe Hoodoo::Monkey::Patch::DatadogTracedAMQP, :order => :defined do
       result
     end
 
-    allow_any_instance_of( Datadog ).to receive( :trace ) do | &block |
-      # Datadog Trace method responds with a yielded span this is here to mock tha
+    allow( Datadog::Tracing ).to receive( :trace ) do | &block |
+      # Datadog Trace method responds with a yielded span this is here to mock that
       span = double('span', trace_id: 'trace_id', span_id: 'span_id').as_null_object
       CounterAMQ.datadog_trace_count += 1
       block.call(span)

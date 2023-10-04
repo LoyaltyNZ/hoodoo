@@ -16,7 +16,7 @@ module Hoodoo
     module Patch
 
       begin
-        require 'ddtrace' # Raises LoadError if Datadog is absent
+        require 'datadog/tracing' # Raises LoadError if Datadog is absent
 
         # Wrap Hoodoo::Client::Endpoint::AMQP using Datadog transaction
         # tracing so that over-queue inter-resource calls get connected

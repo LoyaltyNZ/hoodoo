@@ -42,4 +42,5 @@ Gem::Specification.new do | s |
   s.add_development_dependency 'webrick'
   s.add_development_dependency 'timecop',          '~>  0.9'
   s.add_development_dependency 'webmock',          '~>  3.4'
+  s.add_development_dependency 'debug',            '>=  1.0.0'
 end
