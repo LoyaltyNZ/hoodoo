@@ -58,7 +58,7 @@ GEM
     i18n (1.14.1)
       concurrent-ruby (~> 1.0)
     libdatadog (3.0.0.1.0)
-    libddwaf (1.9.0.0.1-arm64-darwin)
+    libddwaf (1.9.0.0.1)
       ffi (~> 1.0)
     minitest (5.20.0)
     msgpack (1.7.2)
