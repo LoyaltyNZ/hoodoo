@@ -43,7 +43,7 @@ module Hoodoo
             def monkey_send_request( http_message, full_uri )
               amqp_response = nil
 
-              Datadog.tracer.trace( 'alchemy.request' ) do |span|
+              Datadog::Tracing.trace( 'alchemy.request' ) do |span|
                 span.service   = 'alchemy'
                 span.span_type = 'alchemy'
                 span.resource  = http_message[ 'verb' ]

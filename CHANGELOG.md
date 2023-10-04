@@ -1,5 +1,10 @@
 # Hoodoo v3.x
 
+## 3.4.0
+
+Requires ddtrace gem 1.0 or better [DS-3791](https://loyaltynz.atlassian.net/browse/DS-3791)
+Applications will need to update their Gems to match, see the [Upgrade guide](https://github.com/DataDog/dd-trace-rb/blob/master/docs/UpgradeGuide.md#1.0-configuration-requires) for help.
+
 ## 3.3.3
 
 Automated Monthly Patching Oct23
