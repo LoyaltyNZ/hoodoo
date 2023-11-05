@@ -1,5 +1,13 @@
 # Hoodoo v3.x
 
+## 3.4.1
+
+Automated Monthly Patching Nov23
+- Gems updated:
+  - ffi 1.16.3 (was 1.16.2) with native extensions
+  - psych 5.1.1.1 (was 5.1.0) with native extensions
+  - irb 1.8.3 (was 1.8.1)
+
 ## 3.4.0
 
 - Requires ddtrace gem 1.0 or better [DS-3791](https://loyaltynz.atlassian.net/browse/DS-3791)

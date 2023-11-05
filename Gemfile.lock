@@ -56,12 +56,12 @@ GEM
     diff-lcs (1.5.0)
     docile (1.4.0)
     eventmachine (1.2.7)
-    ffi (1.16.2)
+    ffi (1.16.3)
     hashdiff (1.0.1)
     i18n (1.14.1)
       concurrent-ruby (~> 1.0)
     io-console (0.6.0)
-    irb (1.8.1)
+    irb (1.8.3)
       rdoc
       reline (>= 0.3.8)
     libdatadog (3.0.0.1.0)
@@ -70,7 +70,7 @@ GEM
     minitest (5.20.0)
     msgpack (1.7.2)
     pg (1.5.4)
-    psych (5.1.0)
+    psych (5.1.1.1)
       stringio
     public_suffix (5.0.3)
     r7insight (3.0.4)
