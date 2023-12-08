@@ -1,5 +1,12 @@
 # Hoodoo v3.x
 
+## 3.4.2
+
+Automated Monthly Patching Dec23
+- Gems updated:
+  - public_suffix 5.0.4 (was 5.0.3)
+  - stringio 3.0.9 (was 3.0.8) with native extensions
+
 ## 3.4.1
 
 Automated Monthly Patching Nov23
