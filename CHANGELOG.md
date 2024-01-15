@@ -1,5 +1,12 @@
 # Hoodoo v3.x
 
+## 3.4.3
+
+Automated Monthly Patching Jan24
+- Gems updated:
+  - addressable 2.8.6 (was 2.8.5)
+  - psych 5.1.2 (was 5.1.1.1) with native extensions
+
 ## 3.4.2
 
 Automated Monthly Patching Dec23
