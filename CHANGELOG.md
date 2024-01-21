@@ -1,5 +1,11 @@
 # Hoodoo v3.x
 
+## 3.4.4
+
+Automated Monthly Patching Jan24
+- Gems updated:
+  - concurrent-ruby 1.2.3 (was 1.2.2)
+
 ## 3.4.3
 
 Automated Monthly Patching Jan24

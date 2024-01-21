@@ -39,7 +39,7 @@ GEM
       bundler (>= 1.2.0, < 3)
       thor (~> 1.0)
     byebug (10.0.2)
-    concurrent-ruby (1.2.2)
+    concurrent-ruby (1.2.3)
     crack (0.4.5)
       rexml
     dalli (3.2.6)
