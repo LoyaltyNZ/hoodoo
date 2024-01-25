@@ -6,7 +6,7 @@ describe Hoodoo::Data::Resources::Caller do
 
     expect(schema.is_internationalised?()).to eq(true)
 
-    expect(schema.properties.count).to eq(6)
+    expect(schema.properties.count).to eq(7)
 
     expect(schema.properties['authentication_secret']).to be_a(Hoodoo::Presenters::Text)
     expect(schema.properties['authentication_secret_parameter_store_path']).to be_a(Hoodoo::Presenters::Text)
