@@ -1,5 +1,9 @@
 # Hoodoo v3.x
 
+## 3.5.0
+
+- Updated `Caller` resource schema, added `authentication_secret_parameter_store_path` - [FT-4004](https://loyaltynz.atlassian.net/browse/FT-4004)
+
 ## 3.4.3
 
 Automated Monthly Patching Jan24
