@@ -139,8 +139,7 @@ describe Hoodoo::Data::Resources::Caller do
       {
         "identity"    => {},
         "permissions" => { "resources" => {} },
-        "scoping"     => {},
-        "authentication_secret_parameter_store_path" => "/path/to/secret"
+        "scoping"     => {}
       },
       id,
       created_at
@@ -154,8 +153,7 @@ describe Hoodoo::Data::Resources::Caller do
         "identity"    => {},
         "permissions" => { "resources" => {} },
         "scoping"     => {},
-        "language"    => "en-nz",
-        "authentication_secret_parameter_store_path" => "/path/to/secret"
+        "language"    => "en-nz"
       }
     )
   end
