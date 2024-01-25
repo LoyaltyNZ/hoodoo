@@ -9,6 +9,7 @@ describe Hoodoo::Data::Resources::Caller do
     expect(schema.properties.count).to eq(6)
 
     expect(schema.properties['authentication_secret']).to be_a(Hoodoo::Presenters::Text)
+    expect(schema.properties['authentication_secret_parameter_store_path']).to be_a(Hoodoo::Presenters::Text)
     expect(schema.properties['name']).to be_a(Hoodoo::Presenters::Text)
     expect(schema.properties['fingerprint']).to be_a(Hoodoo::Presenters::UUID)
     expect(schema.properties['identity']).to be_a(Hoodoo::Presenters::Hash)
@@ -63,6 +64,7 @@ describe Hoodoo::Data::Resources::Caller do
     json       = described_class.render(
       {
         "name"       => "Test Caller",
+        "authentication_secret_parameter_store_path" => "/path/to/secret",
         "identity"   => {
           "array"   => [],
           "integer" => 1,
@@ -99,6 +101,7 @@ describe Hoodoo::Data::Resources::Caller do
         'created_at' => Hoodoo::Utilities.standard_datetime( created_at ),
         'kind'       => 'Caller',
         "name"       => "Test Caller",
+        "authentication_secret_parameter_store_path" => "/path/to/secret",
         "identity"   => {
           "array"   => [],
           "integer" => 1,
@@ -136,7 +139,8 @@ describe Hoodoo::Data::Resources::Caller do
       {
         "identity"    => {},
         "permissions" => { "resources" => {} },
-        "scoping"     => {}
+        "scoping"     => {},
+        "authentication_secret_parameter_store_path" => "/path/to/secret"
       },
       id,
       created_at
@@ -150,7 +154,8 @@ describe Hoodoo::Data::Resources::Caller do
         "identity"    => {},
         "permissions" => { "resources" => {} },
         "scoping"     => {},
-        "language"    => "en-nz"
+        "language"    => "en-nz",
+        "authentication_secret_parameter_store_path" => "/path/to/secret"
       }
     )
   end

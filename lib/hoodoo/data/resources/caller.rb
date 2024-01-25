@@ -19,6 +19,7 @@ module Hoodoo
           internationalised
 
           text :authentication_secret
+          text :authentication_secret_parameter_store_path, :required => false
           text :name
           uuid :fingerprint, :required => false
 
