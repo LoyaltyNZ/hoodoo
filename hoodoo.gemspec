@@ -38,7 +38,7 @@ Gem::Specification.new do | s |
   s.add_development_dependency 'redis',            '~>  4.0' # Redis client
   s.add_development_dependency 'rspec',            '~>  3.11'
   s.add_development_dependency 'rspec-mocks',      '~>  3.11'
-  s.add_development_dependency 'simplecov-rcov',   '~>  0.2'
+  s.add_development_dependency 'simplecov-rcov',   '~>  0.3'
   s.add_development_dependency 'webrick'
   s.add_development_dependency 'timecop',          '~>  0.9'
   s.add_development_dependency 'webmock',          '~>  3.4'
