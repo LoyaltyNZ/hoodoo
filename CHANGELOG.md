@@ -1,5 +1,13 @@
 # Hoodoo v3.x
 
+## 3.5.1
+
+Automated Monthly Patching Jan24
+- Gems updated:
+  - concurrent-ruby 1.2.3 (was 1.2.2)
+  - dalli 3.2.7 (was 3.2.6)
+  - simplecov-rcov 0.3.7 (was 0.3.3)
+
 ## 3.5.0
 
 - Updated `Caller` resource schema, added `authentication_secret_parameter_store_path` - [FT-4004](https://loyaltynz.atlassian.net/browse/FT-4004)
