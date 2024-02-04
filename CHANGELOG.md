@@ -1,5 +1,15 @@
 # Hoodoo v3.x
 
+## 3.5.2
+
+Automated Monthly Patching Feb24
+- Gems updated:
+  - diff-lcs 1.5.1 (was 1.5.0)
+  - rspec-support 3.12.2 (was 3.12.1)
+  - rspec-core 3.12.3 (was 3.12.2)
+  - rspec-expectations 3.12.4 (was 3.12.3)
+  - rspec-mocks 3.12.7 (was 3.12.6)
+
 ## 3.5.1
 
 Automated Monthly Patching Jan24
