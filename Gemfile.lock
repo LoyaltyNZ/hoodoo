@@ -1,9 +1,12 @@
 PATH
   remote: .
   specs:
-    hoodoo (3.5.2)
+    hoodoo (3.5.3)
+      bigdecimal
       dalli (~> 3.2.3)
       ddtrace (~> 1.0)
+      drb
+      mutex_m
       rack
 
 GEM
@@ -34,6 +37,7 @@ GEM
       amq-protocol (>= 2.2.0)
       eventmachine
     base64 (0.1.1)
+    bigdecimal (3.1.5)
     bundle-audit (0.1.0)
       bundler-audit
     bundler-audit (0.9.1)
@@ -57,6 +61,8 @@ GEM
       reline (>= 0.3.1)
     diff-lcs (1.5.0)
     docile (1.4.0)
+    drb (2.2.0)
+      ruby2_keywords
     eventmachine (1.2.7)
     ffi (1.16.3)
     hashdiff (1.0.1)
@@ -71,6 +77,7 @@ GEM
       ffi (~> 1.0)
     minitest (5.20.0)
     msgpack (1.7.2)
+    mutex_m (0.2.0)
     pg (1.5.4)
     psych (5.1.2)
       stringio
@@ -99,6 +106,7 @@ GEM
       diff-lcs (>= 1.2.0, < 2.0)
       rspec-support (~> 3.12.0)
     rspec-support (3.12.1)
+    ruby2_keywords (0.0.5)
     simplecov (0.22.0)
       docile (~> 1.1)
       simplecov-html (~> 0.11)
@@ -146,4 +154,4 @@ DEPENDENCIES
   webrick
 
 BUNDLED WITH
-   2.4.20
+   2.5.3

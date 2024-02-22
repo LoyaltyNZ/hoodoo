@@ -5,6 +5,7 @@ dist: focal
 rvm:
   - 3.1.2
   - 3.2.2
+  - 3.3.0
 
 # http://docs.travis-ci.com/user/caching/
 #
