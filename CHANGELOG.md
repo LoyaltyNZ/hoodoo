@@ -1,5 +1,9 @@
 # Hoodoo v3.x
 
+## 3.5.3
+
+- Updated ruby to 3.3.0
+
 ## 3.5.2
 
 Automated Monthly Patching Feb24
