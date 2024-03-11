@@ -1,5 +1,24 @@
 # Hoodoo v3.x
 
+## 3.5.4
+
+Automated Monthly Patching Mar24
+- Gems updated:
+  - bigdecimal 3.1.6 (was 3.1.5) with native extensions
+  - rack 2.2.8.1 (was 2.2.8)
+  - dalli 3.2.8 (was 3.2.7)
+  - diff-lcs 1.5.1 (was 1.5.0)
+  - drb 2.2.1 (was 2.2.0)
+  - pg 1.5.6 (was 1.5.4) with native extensions
+  - rspec-support 3.12.2 (was 3.12.1)
+  - rspec-core 3.12.3 (was 3.12.2)
+  - rspec-expectations 3.12.4 (was 3.12.3)
+  - rspec-mocks 3.12.7 (was 3.12.6)
+  - activesupport 7.0.8.1 (was 7.0.8)
+  - activemodel 7.0.8.1 (was 7.0.8)
+  - activerecord 7.0.8.1 (was 7.0.8)
+  - crack 0.4.6 (was 0.4.5)
+
 ## 3.5.3
 
 - Updated ruby to 3.3.0
