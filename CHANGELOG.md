@@ -1,5 +1,14 @@
 # Hoodoo v3.x
 
+## 3.5.5
+
+Automated Monthly Patching Mar24
+- Gems updated:
+  - bigdecimal 3.1.7 (was 3.1.6) with native extensions
+  - rack 2.2.9 (was 2.2.8.1)
+  - i18n 1.14.4 (was 1.14.1)
+  - rdoc 6.5.1.1 (was 6.5.0)
+
 ## 3.5.4
 
 Automated Monthly Patching Mar24
