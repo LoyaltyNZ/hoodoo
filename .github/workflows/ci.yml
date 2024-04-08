@@ -1,0 +1,71 @@
+name: Ruby CI
+
+on:
+  push:
+    branches:
+      - main
+      - master
+  pull_request:
+    branches:
+      - main
+      - master
+
+jobs:
+  build:
+    name: Ruby ${{ matrix.ruby }}
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        ruby: [3.1.2]
+
+    services:
+      memcached:
+        image: memcached
+      redis:
+        image: redis
+      postgres:
+        image: postgres:13.3
+        env:
+          POSTGRES_PASSWORD: ''
+          POSTGRES_HOST_AUTH_METHOD: trust
+        ports:
+          - 15432:5432
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Setup Ruby
+        uses: ruby/setup-ruby@ec02537da5712d66d4d50a0f33b7eb52773b5ed1
+        with:
+          ruby-version: ${{ matrix.ruby }}
+
+      - name: Install dependencies
+        run: |
+          gem update --system
+          bundler_version=$(grep -A 1 "BUNDLED WITH" Gemfile.lock | sed -n 2p | tr -d ' ')
+          gem install bundler --version "${bundler_version}"
+          gem --version
+          gem list bundler
+          bundle config set --local deployment 'true'
+        #   bundle install --jobs=3 --retry=3
+
+      - name: Wait for Postgres
+        run: |
+          curl -sSL https://raw.githubusercontent.com/vishnubob/wait-for-it/master/wait-for-it.sh -o wait-for-it.sh
+          chmod +x wait-for-it.sh
+          ./wait-for-it.sh 127.0.0.1:15432
+
+      - name: Run tests
+        env:
+          TZ: Pacific/Auckland
+          DATABASE_USER: postgres
+          DATABASE_PORT: 15432
+        run: bundle exec rake check_version && bundle exec bundle-audit update && bundle exec bundle-audit check && TZ=Pacific/Auckland DATABASE_USER=postgres DATABASE_PORT=15432 bundle exec rspec spec --backtrace
+
+    #   - name: Deploy to RubyGems
+    #     if: github.ref == 'refs/tags/*'
+    #     run: echo "Deploying to rubygems.org ..."
+    #     env:
+    #       RUBYGEMS_API_KEY: ${{ secrets.RUBYGEMS_API_KEY }}
