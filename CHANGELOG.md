@@ -1,5 +1,10 @@
 # Hoodoo v3.x
 
+## 3.5.5
+
+- Removed the `Hoodoo::Services::Middleware::Middleware#has_memcached? is deprecated - use #has_session_store?` deprecation warning. The `has_memcached?` method is still in use within the library and only once that has been resolved, will the deprecation warning can be re-introduced.
+- Updated rdoc gem to fix security vulnerabilities.
+
 ## 3.5.4
 
 Automated Monthly Patching Mar24
