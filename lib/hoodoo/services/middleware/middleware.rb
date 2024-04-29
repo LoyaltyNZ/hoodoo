@@ -253,8 +253,6 @@ module Hoodoo; module Services
     # not a valid assumption in modern code.
     #
     def self.has_memcached?
-      $stderr.puts( 'Hoodoo::Services::Middleware::Middleware#has_memcached? is deprecated - use #has_session_store?' )
-
       m = self.memcached_host()
       m.nil? == false && m.empty? == false
     end

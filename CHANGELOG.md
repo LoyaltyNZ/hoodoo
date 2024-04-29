@@ -1,6 +1,6 @@
 # Hoodoo v3.x
 
-## 3.5.5
+## 3.5.6
 
 Automated Monthly Patching Mar24
 - Gems updated:
@@ -8,6 +8,11 @@ Automated Monthly Patching Mar24
   - rack 2.2.9 (was 2.2.8.1)
   - i18n 1.14.4 (was 1.14.1)
   - rdoc 6.5.1.1 (was 6.5.0)
+
+## 3.5.5
+
+- Removed the `Hoodoo::Services::Middleware::Middleware#has_memcached? is deprecated - use #has_session_store?` deprecation warning. The `has_memcached?` method is still in use within the library and only once that has been resolved, will the deprecation warning can be re-introduced.
+- Updated rdoc gem to fix security vulnerabilities.
 
 ## 3.5.4
 
