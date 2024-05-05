@@ -1,5 +1,11 @@
 # Hoodoo v3.x
 
+## 3.5.7
+
+Automated Monthly Patching May24
+- Gems updated:
+  - public_suffix 5.0.5 (was 5.0.4)
+
 ## 3.5.6
 
 Automated Monthly Patching Mar24
