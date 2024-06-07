@@ -1,5 +1,17 @@
 # Hoodoo v3.x
 
+## 3.5.8
+
+Automated Monthly Patching Jun24
+- Gems updated:
+  - bigdecimal 3.1.8 (was 3.1.7) with native extensions
+  - timecop 0.9.9 (was 0.9.8)
+  - i18n 1.14.5 (was 1.14.4)
+  - rexml 3.2.8 (was 3.2.6)
+  - activesupport 7.0.8.3 (was 7.0.8.1)
+  - activemodel 7.0.8.3 (was 7.0.8.1)
+  - activerecord 7.0.8.3 (was 7.0.8.1)
+
 ## 3.5.7
 
 Automated Monthly Patching May24
