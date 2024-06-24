@@ -1,5 +1,23 @@
 # Hoodoo v3.x
 
+## 3.6.0
+
+- Bump `Rack` version to 3.1 
+- Other gems updated:
+  - rack 3.1.3 (was 2.2.9)
+  - byebug 11.1.3 (was 10.0.2)
+  - rspec-support 3.13.1 (was 3.12.2)git add
+  - rack-test 2.1.0 (was 1.1.0)
+  - rspec-core 3.13.0 (was 3.12.3)
+  - rspec-expectations 3.13.0 (was 3.12.4)
+  - rspec-mocks 3.13.1 (was 3.12.7)
+  - rspec 3.13.0 (was 3.12.0)
+  - alchemy-flux 1.5.0 (was 1.2.1)
+  - activesupport 7.0.8.4 (was 7.0.8.3)
+  - activemodel 7.0.8.4 (was 7.0.8.3)
+  - activerecord 7.0.8.4 (was 7.0.8.3)
+  - rexml 3.3.0
+
 ## 3.5.8
 
 Automated Monthly Patching Jun24
