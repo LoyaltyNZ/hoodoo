@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    hoodoo (3.5.8)
+    hoodoo (3.6.0)
       base64
       bigdecimal
       dalli (~> 3.2.3)

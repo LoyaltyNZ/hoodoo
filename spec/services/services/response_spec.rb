@@ -159,7 +159,7 @@ describe Hoodoo::Services::Response do
 
       expected = JSON.generate({})
       expect(status).to eq(200)
-      expect(headers).to eq({'Content-Length' => expected.length.to_s})
+      expect(headers).to eq({'content-length' => expected.length.to_s})
       expect(body).to eq([expected])
     end
 
@@ -171,7 +171,7 @@ describe Hoodoo::Services::Response do
 
       expected = JSON.generate({})
       expect(status).to eq(200)
-      expect(headers).to eq({'X-Foo' => 'baz', 'X-Bar' => 'boo', 'Content-Length' => expected.length.to_s})
+      expect(headers).to eq({'x-foo' => 'baz', 'x-bar' => 'boo', 'content-length' => expected.length.to_s})
       expect(body).to eq([expected])
     end
 
@@ -186,7 +186,7 @@ describe Hoodoo::Services::Response do
 
       expected = JSON.generate(errors_hash)
       expect(status).to eq(422) # From the first error we stored, not the second
-      expect(headers).to eq({'Content-Length' => expected.length.to_s})
+      expect(headers).to eq({'content-length' => expected.length.to_s})
       expect(body).to eq([expected])
     end
 
@@ -198,7 +198,7 @@ describe Hoodoo::Services::Response do
 
       expected = JSON.generate(response_hash)
       expect(status).to eq(200) # From the first error we stored, not the second
-      expect(headers).to eq({'Content-Length' => expected.length.to_s})
+      expect(headers).to eq({'content-length' => expected.length.to_s})
       expect(body).to eq([expected])
     end
 
@@ -210,7 +210,7 @@ describe Hoodoo::Services::Response do
 
       expected = JSON.generate({'_data' => response_array})
       expect(status).to eq(200) # From the first error we stored, not the second
-      expect(headers).to eq({'Content-Length' => expected.length.to_s})
+      expect(headers).to eq({'content-length' => expected.length.to_s})
       expect(body).to eq([expected])
     end
 
@@ -222,7 +222,7 @@ describe Hoodoo::Services::Response do
 
       expected = JSON.generate( { '_data' => response_array, '_dataset_size' => response_array.count } )
       expect( status    ).to eq( 200 )
-      expect( headers   ).to eq( { 'Content-Length' => expected.length.to_s } )
+      expect( headers   ).to eq( { 'content-length' => expected.length.to_s } )
       expect( body ).to eq( [ expected ] )
     end
 
@@ -234,7 +234,7 @@ describe Hoodoo::Services::Response do
 
       expected = JSON.generate( { '_data' => response_array, '_estimated_dataset_size' => response_array.count } )
       expect( status    ).to eq( 200 )
-      expect( headers   ).to eq( { 'Content-Length' => expected.length.to_s } )
+      expect( headers   ).to eq( { 'content-length' => expected.length.to_s } )
       expect( body ).to eq( [ expected ] )
     end
 
@@ -251,7 +251,7 @@ describe Hoodoo::Services::Response do
                                   '_estimated_dataset_size' => response_array.count } )
 
       expect( status    ).to eq( 200 )
-      expect( headers   ).to eq( { 'Content-Length' => expected.length.to_s } )
+      expect( headers   ).to eq( { 'content-length' => expected.length.to_s } )
       expect( body ).to eq( [ expected ] )
     end
 

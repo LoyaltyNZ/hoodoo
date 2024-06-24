@@ -88,14 +88,7 @@ module Hoodoo; module Services
     # entries from the list below could cause their requests to be rejected
     # with a 'platform.malformed' error.
     #
-    ALLOWED_QUERIES_LIST = [
-      'offset',
-      'limit',
-      'sort',
-      'direction',
-      'search',
-      'filter'
-    ]
+    ALLOWED_QUERIES_LIST = %w[offset limit sort direction search filter]
 
     # Allowed common fields in query strings (all actions). Strings. Adds to
     # the ::ALLOWED_QUERIES_LIST for list actions.
@@ -105,10 +98,7 @@ module Hoodoo; module Services
     # entries from the list below could cause their requests to be rejected
     # with a 'platform.malformed' error.
     #
-    ALLOWED_QUERIES_ALL = [
-      '_embed',
-      '_reference'
-    ]
+    ALLOWED_QUERIES_ALL = %w[_embed _reference]
 
     # Allowed media types in Content-Type headers.
     #
@@ -1160,8 +1150,22 @@ module Hoodoo; module Services
       # Compile the remaining log payload and send it.
 
       unless secure
-        body = interaction.rack_request.body.read( MAXIMUM_LOGGED_PAYLOAD_SIZE )
-               interaction.rack_request.body.rewind()
+        body = interaction.rack_request.body.read( MAXIMUM_LOGGED_PAYLOAD_SIZE ) unless interaction.rack_request.body.nil?
+
+        # In case the body will get read again later, we need to restore the reader.
+        #
+        # A) When the reader is an Rack::RewindableInput, we can just rewind it.
+        # B) Case not, we need to replace the body with a new reader instance.
+        if body
+          if interaction.rack_request.body.respond_to?(:rewind)
+            interaction.rack_request.body.rewind()
+          else
+
+            # When Rackup uses Fiber as a reader,
+            # or other one-way-read-only approach, it is not rewindable.
+            interaction.rack_request.env['rack.input'] = StringIO.new(body)
+          end
+        end
 
         data[ :payload ][ :body ] = body
       end
@@ -1678,15 +1682,15 @@ module Hoodoo; module Services
         # Rack provides no formal way to find out our host or port before a
         # request arrives, because in part it might change due to clustering.
         # For local development on an assumed single instance server, we can
-        # ask Ruby itself for all Rack::Server instances, expecting just one.
+        # ask Ruby itself for all Rackup::Server instances, expecting just one.
         # If there isn't just one, we rely on the Rack monkey patch or a
         # hard coded default.
 
         host = nil
         port = nil
 
-        if defined?( ::Rack ) && defined?( ::Rack::Server )
-          servers = ObjectSpace.each_object( ::Rack::Server )
+        if defined?( ::Rackup ) && defined?( ::Rackup::Server )
+          servers = ObjectSpace.each_object( ::Rackup::Server )
 
           if servers.count == 1
             server = servers.first
@@ -1963,13 +1967,12 @@ module Hoodoo; module Services
       # ...then when we call "read" with a length value and there's no more
       # data to read, it should return nil. If it doesn't, the payload is
       # too big. Reject it.
-
-      body = interaction.rack_request.body.read( MAXIMUM_PAYLOAD_SIZE )
-
-      unless ( body.nil? || body.is_a?( ::String ) ) && interaction.rack_request.body.read( MAXIMUM_PAYLOAD_SIZE ).nil?
+      if interaction.rack_request.body.respond_to?(:size) && interaction.rack_request.body.size > MAXIMUM_PAYLOAD_SIZE
         return response.add_error( 'platform.malformed',
                                    'message' => 'Body data exceeds configured maximum size for platform' )
       end
+
+      body = interaction.rack_request.body.read( MAXIMUM_PAYLOAD_SIZE ) unless interaction.rack_request.body.nil?
 
       debug_log( interaction, 'Raw body data read successfully', body )
 

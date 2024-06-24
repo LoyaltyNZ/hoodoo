@@ -191,6 +191,7 @@ describe Hoodoo::Services::Middleware do
     end
 
     it 'should know about Memcached via environment variable' do
+      ENV[ 'MEMCACHE_URL' ] = nil
       spec_helper_change_environment( 'MEMCACHED_HOST', nil ) do
         expect(Hoodoo::Services::Middleware.has_memcached?).to eq(false)
       end
@@ -251,6 +252,7 @@ describe Hoodoo::Services::Middleware do
     end
 
     it 'should know about Memcached via legacy environment variable' do
+      ENV[ 'MEMCACHED_HOST' ] = nil
       spec_helper_change_environment( 'MEMCACHE_URL', nil ) do
         expect(Hoodoo::Services::Middleware.has_memcached?).to eq(false)
       end

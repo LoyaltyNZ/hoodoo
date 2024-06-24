@@ -20,7 +20,7 @@ Gem::Specification.new do | s |
   s.required_ruby_version = '>= 3.1'
 
   s.add_runtime_dependency     'dalli',            '~> 3.2.3' # Memcached client
-  s.add_runtime_dependency     'rack',          '~> 3.1'
+  s.add_runtime_dependency     'rack',             '~> 3.1'
   s.add_runtime_dependency     'rackup'
   s.add_runtime_dependency     'ddtrace',          '~> 1.0'   # Datadog APM v1 (not v0)
   s.add_runtime_dependency     'bigdecimal'
@@ -40,7 +40,7 @@ Gem::Specification.new do | s |
   s.add_development_dependency 'pg',               '~>  1.0'
   s.add_development_dependency 'rack-test',        '~>  2.1'
   s.add_development_dependency 'rake',             '~> 12.0'
-  s.add_development_dependency 'redis',            '~>  4.0' # Redis client
+  s.add_development_dependency 'redis',            '~>  4.0'  # Redis client
   s.add_development_dependency 'rspec',            '~>  3.11'
   s.add_development_dependency 'rspec-mocks',      '~>  3.11'
   s.add_development_dependency 'simplecov-rcov',   '~>  0.3'

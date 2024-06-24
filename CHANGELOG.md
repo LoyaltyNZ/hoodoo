@@ -2,11 +2,11 @@
 
 ## 3.6.0
 
-- Bump `Rack` version to 3.1 
+- Bump `Rack` version to 3.1.3 (was 2.2.9)
 - Other gems updated:
-  - rack 3.1.3 (was 2.2.9)
+  - alchemy-flux 1.6.0 (was 1.2.1)
   - byebug 11.1.3 (was 10.0.2)
-  - rspec-support 3.13.1 (was 3.12.2)git add
+  - rspec-support 3.13.1 (was 3.12.2)
   - rack-test 2.1.0 (was 1.1.0)
   - rspec-core 3.13.0 (was 3.12.3)
   - rspec-expectations 3.13.0 (was 3.12.4)
