@@ -258,6 +258,7 @@ def spec_helper_start_svc_app_in_thread_for( app_class, use_ssl = false, app_opt
 
   Thread.start do
     app = Rack::Builder.new do
+      use Rack::RewindableInput::Middleware
       use Hoodoo::Services::Middleware unless app_options[:skip_hoodoo_middleware]
       run app_class.new
     end

@@ -88,7 +88,14 @@ module Hoodoo; module Services
     # entries from the list below could cause their requests to be rejected
     # with a 'platform.malformed' error.
     #
-    ALLOWED_QUERIES_LIST = %w[offset limit sort direction search filter]
+    ALLOWED_QUERIES_LIST = [
+      'offset',
+      'limit',
+      'sort',
+      'direction',
+      'search',
+      'filter'
+    ]
 
     # Allowed common fields in query strings (all actions). Strings. Adds to
     # the ::ALLOWED_QUERIES_LIST for list actions.
@@ -98,7 +105,10 @@ module Hoodoo; module Services
     # entries from the list below could cause their requests to be rejected
     # with a 'platform.malformed' error.
     #
-    ALLOWED_QUERIES_ALL = %w[_embed _reference]
+    ALLOWED_QUERIES_ALL = [
+      '_embed',
+      '_reference'
+    ]
 
     # Allowed media types in Content-Type headers.
     #
@@ -204,7 +214,7 @@ module Hoodoo; module Services
     #   of a search string, would find records on-or-after the date.
     #
     # Values are either a validation Proc or +nil+ for no validation. The
-    # Proc takes the search query value as its sole input paraeter and must
+    # Proc takes the search query value as its sole input parameter and must
     # evaluate to the input value either unmodified or in some canonicalised
     # form if it is valid, else to +nil+ if the input value is invalid. The
     # canonicalisation is typically used to coerce a URI query string based
@@ -1150,21 +1160,10 @@ module Hoodoo; module Services
       # Compile the remaining log payload and send it.
 
       unless secure
-        body = interaction.rack_request.body.read( MAXIMUM_LOGGED_PAYLOAD_SIZE ) unless interaction.rack_request.body.nil?
-
-        # In case the body will get read again later, we need to restore the reader.
-        #
-        # A) When the reader is an Rack::RewindableInput, we can just rewind it.
-        # B) Case not, we need to replace the body with a new reader instance.
-        if body
-          if interaction.rack_request.body.respond_to?(:rewind)
-            interaction.rack_request.body.rewind()
-          else
-
-            # When Rackup uses Fiber as a reader,
-            # or other one-way-read-only approach, it is not rewindable.
-            interaction.rack_request.env['rack.input'] = StringIO.new(body)
-          end
+        body = nil
+        if interaction.rack_request.body
+          body = interaction.rack_request.body.read( MAXIMUM_LOGGED_PAYLOAD_SIZE )
+                 interaction.rack_request.body.rewind()
         end
 
         data[ :payload ][ :body ] = body
@@ -1967,12 +1966,16 @@ module Hoodoo; module Services
       # ...then when we call "read" with a length value and there's no more
       # data to read, it should return nil. If it doesn't, the payload is
       # too big. Reject it.
-      if interaction.rack_request.body.respond_to?(:size) && interaction.rack_request.body.size > MAXIMUM_PAYLOAD_SIZE
-        return response.add_error( 'platform.malformed',
-                                   'message' => 'Body data exceeds configured maximum size for platform' )
-      end
 
-      body = interaction.rack_request.body.read( MAXIMUM_PAYLOAD_SIZE ) unless interaction.rack_request.body.nil?
+      body = nil
+      if interaction.rack_request.body
+        body = interaction.rack_request.body.read( MAXIMUM_PAYLOAD_SIZE )
+
+        unless ( body.nil? || body.is_a?( ::String ) ) && interaction.rack_request.body.read( MAXIMUM_PAYLOAD_SIZE ).nil?
+          return response.add_error( 'platform.malformed',
+                                     'message' => 'Body data exceeds configured maximum size for platform' )
+        end
+      end
 
       debug_log( interaction, 'Raw body data read successfully', body )
 
