@@ -1,8 +1,11 @@
 # Hoodoo v3.x
 
-## 3.6.0
+## 4.0.0
 
-- Bump `Rack` version to 3.1.3 (was 2.2.9)
+- Migrate to `Rack` version to 3.1.4 (was 2.2.9)
+  - `Hoodoo` now runs on top of `Rackup::Server`
+  - The `rack.input` reader is still expected to be rewindable, so any implementation of Hoodoo must ensure the use of `Rack::RewindableInput::Middleware`
+  - Response Headers are now lowercase
 - Other gems updated:
   - alchemy-flux 1.6.0 (was 1.2.1)
   - byebug 11.1.3 (was 10.0.2)
@@ -16,7 +19,7 @@
   - activesupport 7.0.8.4 (was 7.0.8.3)
   - activemodel 7.0.8.4 (was 7.0.8.3)
   - activerecord 7.0.8.4 (was 7.0.8.3)
-  - rexml 3.3.0
+  - rexml 3.3.0 (was 3.2.8)
 
 ## 3.5.8
 

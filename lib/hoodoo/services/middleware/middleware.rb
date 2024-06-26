@@ -1161,7 +1161,7 @@ module Hoodoo; module Services
 
       unless secure
         body = nil
-        if interaction.rack_request.body
+        if !interaction.rack_request.body.nil?
           body = interaction.rack_request.body.read( MAXIMUM_LOGGED_PAYLOAD_SIZE )
                  interaction.rack_request.body.rewind()
         end
@@ -1345,7 +1345,7 @@ module Hoodoo; module Services
     end
 
     # This is part of the formalised structured logging interface upon which
-    # external entites might depend. Change with care.
+    # external entities might depend. Change with care.
     #
     # For a given interaction, log the response *after the fact* of calling
     # a resource implementation, using the target interface's resource name
@@ -1376,7 +1376,7 @@ module Hoodoo; module Services
       # For other kinds of data, check the secure actions to see if the body
       # should be included.
       #
-      # TODO: This uses deprecated acccessors into the "context.request.list"
+      # TODO: This uses deprecated accessors into the "context.request.list"
       #       object, but it keeps the code simple. It'd be nice to just have
       #       e.g. "data[ :list ] = context.request.list.to_h()" but the
       #       change in log output format might break dependent clients.
@@ -1419,7 +1419,7 @@ module Hoodoo; module Services
     end
 
     # This is part of the formalised structured logging interface upon which
-    # external entites might depend. Change with care.
+    # external entities might depend. Change with care.
     #
     # For a given service interface, an implementation of which is receiving
     # a given action under the given request context, log the response *after
@@ -1498,7 +1498,7 @@ module Hoodoo; module Services
     # Log a debug message. Pass optional extra arguments which will be used as
     # strings that get appended to the log message.
     #
-    # THIS IS INSCURE. Sensitive data might be logged. DO NOT USE IN DEPLOYED
+    # THIS IS INSECURE. Sensitive data might be logged. DO NOT USE IN DEPLOYED
     # ENVIRONMENTS. At the time of writing, Hoodoo ensures this by only using
     # debug logging in 'development' or 'test' environments.
     #
@@ -1709,7 +1709,7 @@ module Hoodoo; module Services
           port ||= '9292'
         end
 
-        # Announce the resource endpoints. We might not be able to annouce
+        # Announce the resource endpoints. We might not be able to announce
         # the remote availability of this endpoint if the host/port are not
         # determined; but that might just be because we are running under
         # "racksh" and we wouldn't want to announce remotely anyway.
@@ -1968,7 +1968,7 @@ module Hoodoo; module Services
       # too big. Reject it.
 
       body = nil
-      if interaction.rack_request.body
+      if !interaction.rack_request.body.nil?
         body = interaction.rack_request.body.read( MAXIMUM_PAYLOAD_SIZE )
 
         unless ( body.nil? || body.is_a?( ::String ) ) && interaction.rack_request.body.read( MAXIMUM_PAYLOAD_SIZE ).nil?
@@ -2162,7 +2162,7 @@ module Hoodoo; module Services
     # locale value.
     #
     # We support neither a list of preferences nor "qvalues", so if there is
-    # a list, we only take the first item; if there is a qvalue, we strip it
+    # a list, we only take the first item; if there is a value, we strip it
     # leaving just the language part, e.g. "en-gb".
     #
     # +interaction+:: Hoodoo::Services::Middleware::Interaction instance
@@ -2428,7 +2428,7 @@ module Hoodoo; module Services
       interaction.context.response.add_header( 'Content-Type', "#{ interaction.requested_content_type || 'application/json' }; charset=#{ interaction.requested_content_encoding || 'utf-8' }" )
     end
 
-    # Simplisitic CORS preflight handler.
+    # Simplistic CORS preflight handler.
     #
     # * http://www.w3.org/TR/cors/
     # * http://www.w3.org/TR/cors/#preflight-request
@@ -2764,7 +2764,7 @@ module Hoodoo; module Services
     #                 describing the current interaction.
     #
     # The interaction's request data will be updated with list parameter
-    # information if successul. The interaction's response data will be
+    # information if successful. The interaction's response data will be
     # updated with error information if anything is wrong.
     #
     def process_query_string( interaction )
@@ -2855,7 +2855,7 @@ module Hoodoo; module Services
     #                 #process_query_string.
     #
     # The interaction's request data will be updated with list parameter
-    # information if successul. The interaction's response data will be
+    # information if successful. The interaction's response data will be
     # updated with error information if anything is wrong.
     #
     def process_query_hash( interaction, query_hash )
