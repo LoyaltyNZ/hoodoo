@@ -8,13 +8,13 @@ See [Hoodoo Guides](https://loyaltynz.github.io/hoodoo/) for extensive documenta
 
 ## Note
 
-Latest version `v3.1.1` only supports `activerecord 7.0` onwards. Use `v2.12.11` if you need to support lower `activerecord` version
+Latest version `v4.0.0` only supports `activerecord 7.0` onwards. Use `v2.12.11` if you need to support lower `activerecord` version
 
 ## Usage
 
 Add the gem to your `Gemfile`:
 
-    gem 'hoodoo', '~> 3.0'
+    gem 'hoodoo', '~> 4.0'
 
 Require hoodoo when needed:
 

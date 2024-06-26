@@ -484,7 +484,6 @@ describe Hoodoo::Services::Middleware do
       expect( parsed[ '_data' ] ).to eq( [ {
         'CONTENT_TYPE'    => 'application/json; charset=utf-8',
         'HTTP_CONNECTION' => 'close',
-        'HTTP_VERSION'    => 'HTTP/1.1',
         'HTTP_HOST'       => "127.0.0.1:#{ @port }"
       } ] )
     end
@@ -1577,7 +1576,7 @@ describe Hoodoo::Services::Middleware do
     # Ruby can't kill off an "unresponsive" thread - there seems to be no
     # equivalent of "kill -9" and the likes of "#exit!" are long gone - so
     # the WEBrick server thread, which never returns to the Ruby interpreter
-    # after the Rack::Server.start() call (or equivalent) can't die. Instead
+    # after the Rackup::Server.start() call (or equivalent) can't die. Instead
     # we are forced to write a fragile test that simulates a connection
     # failure to the endpoint.
     #

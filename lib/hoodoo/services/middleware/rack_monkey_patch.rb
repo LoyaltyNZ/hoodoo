@@ -28,12 +28,12 @@
 #           11-Nov-2014 (ADH): Split out from service_middleware.rb.
 ########################################################################
 
-if defined?( Rack ) && defined?( Rack::Server )
+if defined?( Rackup ) && defined?( Rackup::Server )
 
   # Part of the Rack monkey patch. See file
   # "rack_monkey_path.rb"'s documentation for details.
   #
-  module Rack
+  module Rackup
 
     # Part of the Rack monkey patch. See file
     # "rack_monkey_path.rb"'s documentation for details.
@@ -45,12 +45,12 @@ if defined?( Rack ) && defined?( Rack::Server )
         # Part of the Rack monkey patch. See file
         # "rack_monkey_path.rb"'s documentation for details.
         #
-        # This method is aliased in place of Rack::Server::start and reads
+        # This method is aliased in place of Rackup::Server::start and reads
         # the passed-in options hash to attempt to determine the host name
         # and port number under which a Rack based service is running. It
         # then calls through to Rack's original ::start implementation.
         #
-        # +options+:: Options (see original Rack::Server documentation).
+        # +options+:: Options (see original Rackup::Server documentation).
         #
         def start_and_record_host_and_port( options = nil )
           Hoodoo::Services::Middleware.record_host_and_port( options )
@@ -58,7 +58,7 @@ if defined?( Rack ) && defined?( Rack::Server )
         end
 
         # Part of the Rack monkey patch. Alias for the original
-        # Rack::Server::start.
+        # Rackup::Server::start.
         #
         alias racks_original_start start
 
