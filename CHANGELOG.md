@@ -1,5 +1,14 @@
 # Hoodoo v3.x
 
+## 4.0.1
+
+Automated Monthly Patching Jun24
+- Gems updated:
+  - timecop 0.9.10 (was 0.9.9)
+  - addressable 2.8.7 (was 2.8.6)
+  - rexml 3.3.1 (was 3.3.0)
+  - irb 1.13.2 (was 1.13.1)
+
 ## 4.0.0
 
 - Migrate to `Rack` version to 3.1.4 (was 2.2.9)
